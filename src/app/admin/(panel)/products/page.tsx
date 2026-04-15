@@ -16,9 +16,9 @@ export default async function AdminProductsPage() {
   return (
     <>
       <AdminPageHeader
-        eyebrow="Catalog"
-        title="Products"
-        description="Create and maintain the sellable digital goods catalog while preserving the manual delivery operating model."
+        eyebrow="Catalogue"
+        title="Produits"
+        description="Créez et maintenez le catalogue de produits digitaux vendables tout en conservant un modèle de livraison manuel."
       />
       <ProductsManager
         initialProducts={products.items}

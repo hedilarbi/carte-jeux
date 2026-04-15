@@ -8,9 +8,9 @@ export default async function AdminRegionsPage() {
   return (
     <>
       <AdminPageHeader
-        eyebrow="Catalog"
-        title="Regions"
-        description="Maintain region definitions used for supplier matching, pricing, and storefront availability."
+        eyebrow="Catalogue"
+        title="Régions"
+        description="Maintenez les définitions de région utilisées pour l'association fournisseur, le pricing et la disponibilité."
       />
       <RegionsManager initialRegions={regions.items} />
     </>

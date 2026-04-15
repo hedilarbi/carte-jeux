@@ -8,9 +8,9 @@ export default async function AdminPlatformsPage() {
   return (
     <>
       <AdminPageHeader
-        eyebrow="Catalog"
-        title="Platforms"
-        description="Manage storefront platform targets such as PlayStation, Xbox, Steam, Nintendo, or top-up channels."
+        eyebrow="Catalogue"
+        title="Plateformes"
+        description="Gérez les cibles de plateforme comme PlayStation, Xbox, Steam, Nintendo ou les canaux de recharge."
       />
       <PlatformsManager initialPlatforms={platforms.items} />
     </>

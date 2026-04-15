@@ -29,24 +29,24 @@ export const orderService = {
   },
 
   async getById(id: string) {
-    assertObjectId(id, "Order id");
+    assertObjectId(id, "Identifiant de commande");
 
     const order = await getOrderById(id);
 
     if (!order) {
-      throw new AppError("Order not found.", 404);
+      throw new AppError("Commande introuvable.", 404);
     }
 
     return serializeDocument<Order>(order);
   },
 
   async update(id: string, input: z.input<typeof orderUpdateSchema>) {
-    assertObjectId(id, "Order id");
+    assertObjectId(id, "Identifiant de commande");
 
     const existing = await getOrderById(id);
 
     if (!existing) {
-      throw new AppError("Order not found.", 404);
+      throw new AppError("Commande introuvable.", 404);
     }
 
     const parsed = orderUpdateSchema.parse(input);
@@ -55,7 +55,7 @@ export const orderService = {
 
     if (nextStatus === "delivered" && !deliveredCode) {
       throw new AppError(
-        "Delivered orders require a delivered code before status can be updated.",
+        "Une commande livrée doit contenir un code livré avant la mise à jour du statut.",
         400,
       );
     }
@@ -73,7 +73,7 @@ export const orderService = {
     });
 
     if (!updated) {
-      throw new AppError("Order not found.", 404);
+      throw new AppError("Commande introuvable.", 404);
     }
 
     return serializeDocument<Order>(updated);

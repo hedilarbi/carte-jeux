@@ -11,19 +11,19 @@ const emptyToUndefined = (value: unknown) => {
 export const objectIdSchema = z
   .string()
   .trim()
-  .regex(/^[a-f\d]{24}$/i, "Invalid identifier.");
+  .regex(/^[a-f\d]{24}$/i, "Identifiant invalide.");
 
 export const slugSchema = z
   .string()
   .trim()
-  .min(2, "Slug must be at least 2 characters.")
-  .max(160, "Slug must be at most 160 characters.")
-  .regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/, "Slug format is invalid.");
+  .min(2, "Le slug doit contenir au moins 2 caractères.")
+  .max(160, "Le slug doit contenir au maximum 160 caractères.")
+  .regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/, "Le format du slug est invalide.");
 
 export const currencySchema = z
   .string()
   .trim()
-  .length(3, "Currency must be a 3-letter code.")
+  .length(3, "La devise doit être un code à 3 lettres.")
   .transform((value) => value.toUpperCase());
 
 export const optionalString = (maxLength: number) =>
@@ -31,7 +31,7 @@ export const optionalString = (maxLength: number) =>
 
 export const optionalUrlSchema = z.preprocess(
   emptyToUndefined,
-  z.string().trim().url("Invalid URL.").optional(),
+  z.string().trim().url("URL invalide.").optional(),
 );
 
 export const optionalSlugSchema = z.preprocess(
@@ -44,12 +44,12 @@ export const booleanDefaultTrueSchema = z.boolean().optional().default(true);
 
 export const percentageSchema = z
   .number()
-  .min(0, "Percentage cannot be negative.")
-  .max(100, "Percentage cannot exceed 100.");
+  .min(0, "Le pourcentage ne peut pas être négatif.")
+  .max(100, "Le pourcentage ne peut pas dépasser 100.");
 
 export const nonNegativeNumberSchema = z
   .number()
-  .min(0, "Value cannot be negative.");
+  .min(0, "La valeur ne peut pas être négative.");
 
 export function createUpdateSchema<T extends z.ZodRawShape>(shape: T) {
   return z
@@ -60,6 +60,6 @@ export function createUpdateSchema<T extends z.ZodRawShape>(shape: T) {
         Object.values(value).some(
           (entry) => entry !== undefined && entry !== null,
         ),
-      "At least one field must be provided.",
+      "Au moins un champ doit être renseigné.",
     );
 }

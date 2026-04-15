@@ -41,15 +41,15 @@ async function ensureProductRelations(input: {
   ]);
 
   if (!checks[0]) {
-    throw new AppError("Category reference is invalid.", 400);
+    throw new AppError("La référence de catégorie est invalide.", 400);
   }
 
   if (!checks[1]) {
-    throw new AppError("Platform reference is invalid.", 400);
+    throw new AppError("La référence de plateforme est invalide.", 400);
   }
 
   if (!checks[2]) {
-    throw new AppError("Region reference is invalid.", 400);
+    throw new AppError("La référence de région est invalide.", 400);
   }
 }
 
@@ -57,7 +57,7 @@ async function resolveProductSlug(source: string, excludeId?: string) {
   const candidate = generateSlug(source);
 
   if (!candidate) {
-    throw new AppError("Unable to generate a valid product slug.", 400);
+    throw new AppError("Impossible de générer un slug de produit valide.", 400);
   }
 
   return generateUniqueSlug(candidate, (slug) =>
@@ -86,12 +86,12 @@ export const productService = {
   },
 
   async getById(id: string) {
-    assertObjectId(id, "Product id");
+    assertObjectId(id, "Identifiant de produit");
 
     const product = await getProductById(id);
 
     if (!product) {
-      throw new AppError("Product not found.", 404);
+      throw new AppError("Produit introuvable.", 404);
     }
 
     return serializeDocument<Product>(product);
@@ -104,7 +104,7 @@ export const productService = {
     const normalizedSku = parsed.sku.toUpperCase();
 
     if (await existsProductSku(normalizedSku)) {
-      throw new AppError("Product SKU already exists.", 409);
+      throw new AppError("Le SKU produit existe déjà.", 409);
     }
 
     const slug = await resolveProductSlug(parsed.slug ?? parsed.title);
@@ -123,12 +123,12 @@ export const productService = {
   },
 
   async update(id: string, input: z.input<typeof productUpdateSchema>) {
-    assertObjectId(id, "Product id");
+    assertObjectId(id, "Identifiant de produit");
 
     const existing = await getProductById(id);
 
     if (!existing) {
-      throw new AppError("Product not found.", 404);
+      throw new AppError("Produit introuvable.", 404);
     }
 
     const parsed = productUpdateSchema.parse(input);
@@ -137,7 +137,7 @@ export const productService = {
     const normalizedSku = parsed.sku?.toUpperCase();
 
     if (normalizedSku && (await existsProductSku(normalizedSku, id))) {
-      throw new AppError("Product SKU already exists.", 409);
+      throw new AppError("Le SKU produit existe déjà.", 409);
     }
 
     const price = parsed.price ?? existing.price;
@@ -158,19 +158,19 @@ export const productService = {
     });
 
     if (!updated) {
-      throw new AppError("Product not found.", 404);
+      throw new AppError("Produit introuvable.", 404);
     }
 
     return serializeDocument<Product>(updated);
   },
 
   async delete(id: string) {
-    assertObjectId(id, "Product id");
+    assertObjectId(id, "Identifiant de produit");
 
     const deleted = await deleteProductById(id);
 
     if (!deleted) {
-      throw new AppError("Product not found.", 404);
+      throw new AppError("Produit introuvable.", 404);
     }
 
     return {

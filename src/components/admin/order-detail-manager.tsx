@@ -17,7 +17,9 @@ import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import {
+  ORDER_STATUS_LABELS,
   ORDER_STATUS_OPTIONS,
+  PAYMENT_STATUS_LABELS,
   PAYMENT_STATUS_OPTIONS,
 } from "@/constants/admin";
 import { formatCurrency, formatDateTime } from "@/lib/utils/format";
@@ -129,7 +131,9 @@ export function OrderDetailManager({
       await applyPatch(statusForm, "status");
     } catch (error) {
       setStatusError(
-        error instanceof Error ? error.message : "Unable to update order status.",
+        error instanceof Error
+          ? error.message
+          : "Impossible de mettre à jour le statut de la commande.",
       );
       setActivePanel(null);
     }
@@ -155,7 +159,7 @@ export function OrderDetailManager({
       setSupplierError(
         error instanceof Error
           ? error.message
-          : "Unable to update supplier details.",
+          : "Impossible de mettre à jour les informations fournisseur.",
       );
       setActivePanel(null);
     }
@@ -172,7 +176,7 @@ export function OrderDetailManager({
       setDeliveryError(
         error instanceof Error
           ? error.message
-          : "Unable to update delivery details.",
+          : "Impossible de mettre à jour les informations de livraison.",
       );
       setActivePanel(null);
     }
@@ -188,10 +192,10 @@ export function OrderDetailManager({
               <PaymentStatusBadge status={order.paymentStatus} />
             </div>
             <CardTitle className="mt-4">
-              Order {order.orderNumber}
+              Commande {order.orderNumber}
             </CardTitle>
             <CardDescription className="mt-2">
-              Customer {order.customerEmail} · Created {formatDateTime(order.createdAt)}
+              Client {order.customerEmail} · Créée le {formatDateTime(order.createdAt)}
             </CardDescription>
           </CardHeader>
           <CardContent className="grid gap-4 md:grid-cols-2">
@@ -203,22 +207,22 @@ export function OrderDetailManager({
                 {formatCurrency(order.total, order.currency)}
               </div>
               <div className="mt-2 text-sm text-slate-400">
-                Subtotal {formatCurrency(order.subtotal, order.currency)} ·
-                Discount {formatCurrency(order.totalDiscount, order.currency)}
+                Sous-total {formatCurrency(order.subtotal, order.currency)} ·
+                Remise {formatCurrency(order.totalDiscount, order.currency)}
               </div>
             </div>
             <div className="rounded-2xl border border-white/8 bg-slate-950/40 p-4">
               <div className="text-xs uppercase tracking-[0.24em] text-slate-500">
-                Delivery
+                Livraison
               </div>
               <div className="mt-2 text-sm text-slate-200">
-                Method: {order.deliveryMethod}
+                Méthode : {order.deliveryMethod}
               </div>
               <div className="mt-2 text-sm text-slate-400">
-                Delivered at {formatDateTime(order.deliveredAt)}
+                Livrée le {formatDateTime(order.deliveredAt)}
               </div>
               <div className="mt-2 text-sm text-slate-400">
-                Paid at {formatDateTime(order.paidAt)}
+                Payée le {formatDateTime(order.paidAt)}
               </div>
             </div>
           </CardContent>
@@ -226,10 +230,10 @@ export function OrderDetailManager({
 
         <Card>
           <CardHeader>
-            <CardTitle>Order items</CardTitle>
+            <CardTitle>Articles de la commande</CardTitle>
             <CardDescription className="mt-2">
-              Immutable checkout snapshot used for supplier sourcing and customer
-              delivery.
+              Instantané immuable du checkout utilisé pour l’achat fournisseur
+              et la livraison client.
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-3">
@@ -242,7 +246,7 @@ export function OrderDetailManager({
                   <div>
                     <div className="font-medium text-white">{item.productTitle}</div>
                     <div className="mt-1 text-xs text-slate-500">
-                      {item.sku} · Qty {item.quantity}
+                      {item.sku} · Qté {item.quantity}
                     </div>
                   </div>
                   <div className="text-right text-sm">
@@ -250,7 +254,7 @@ export function OrderDetailManager({
                       {formatCurrency(item.lineTotal, item.currency)}
                     </div>
                     <div className="mt-1 text-xs text-slate-500">
-                      Unit {formatCurrency(item.finalUnitPrice, item.currency)}
+                      Unité {formatCurrency(item.finalUnitPrice, item.currency)}
                     </div>
                   </div>
                 </div>
@@ -268,9 +272,9 @@ export function OrderDetailManager({
                 <PackageCheck className="size-5" />
               </div>
               <div>
-                <CardTitle>Status and payment</CardTitle>
+                <CardTitle>Statut et paiement</CardTitle>
                 <CardDescription className="mt-2">
-                  Update the operational stage and payment tracking metadata.
+                  Mettez à jour l’étape opérationnelle et les métadonnées de suivi du paiement.
                 </CardDescription>
               </div>
             </div>
@@ -280,7 +284,7 @@ export function OrderDetailManager({
               <div className="grid gap-4 md:grid-cols-2">
                 <div>
                   <label className="mb-2 block text-sm font-medium text-slate-300">
-                    Order status
+                    Statut de la commande
                   </label>
                   <Select
                     value={statusForm.status}
@@ -293,14 +297,14 @@ export function OrderDetailManager({
                   >
                     {ORDER_STATUS_OPTIONS.map((status) => (
                       <option key={status} value={status}>
-                        {status}
+                        {ORDER_STATUS_LABELS[status]}
                       </option>
                     ))}
                   </Select>
                 </div>
                 <div>
                   <label className="mb-2 block text-sm font-medium text-slate-300">
-                    Payment status
+                    Statut du paiement
                   </label>
                   <Select
                     value={statusForm.paymentStatus}
@@ -313,14 +317,14 @@ export function OrderDetailManager({
                   >
                     {PAYMENT_STATUS_OPTIONS.map((status) => (
                       <option key={status} value={status}>
-                        {status}
+                        {PAYMENT_STATUS_LABELS[status]}
                       </option>
                     ))}
                   </Select>
                 </div>
                 <div>
                   <label className="mb-2 block text-sm font-medium text-slate-300">
-                    Payment provider
+                    Fournisseur de paiement
                   </label>
                   <Input
                     value={statusForm.paymentProvider}
@@ -335,7 +339,7 @@ export function OrderDetailManager({
                 </div>
                 <div>
                   <label className="mb-2 block text-sm font-medium text-slate-300">
-                    Payment reference
+                    Référence de paiement
                   </label>
                   <Input
                     value={statusForm.paymentReference}
@@ -359,7 +363,7 @@ export function OrderDetailManager({
                 disabled={activePanel === "status"}
                 className="w-full"
               >
-                {activePanel === "status" ? "Saving..." : "Save status"}
+                {activePanel === "status" ? "Enregistrement..." : "Enregistrer le statut"}
               </Button>
             </form>
           </CardContent>
@@ -372,9 +376,9 @@ export function OrderDetailManager({
                 <Truck className="size-5" />
               </div>
               <div>
-                <CardTitle>Supplier sourcing</CardTitle>
+                <CardTitle>Achat fournisseur</CardTitle>
                 <CardDescription className="mt-2">
-                  Record external supplier purchase metadata and internal notes.
+                  Enregistrez les métadonnées d’achat fournisseur externe et les notes internes.
                 </CardDescription>
               </div>
             </div>
@@ -384,7 +388,7 @@ export function OrderDetailManager({
               <div className="grid gap-4 md:grid-cols-2">
                 <div>
                   <label className="mb-2 block text-sm font-medium text-slate-300">
-                    Supplier platform
+                    Plateforme fournisseur
                   </label>
                   <Input
                     value={supplierForm.supplierPlatform}
@@ -394,12 +398,12 @@ export function OrderDetailManager({
                         supplierPlatform: event.target.value,
                       }))
                     }
-                    placeholder="Card supplier portal"
+                    placeholder="Portail fournisseur de cartes"
                   />
                 </div>
                 <div>
                   <label className="mb-2 block text-sm font-medium text-slate-300">
-                    Supplier reference
+                    Référence fournisseur
                   </label>
                   <Input
                     value={supplierForm.supplierPurchaseReference}
@@ -414,7 +418,7 @@ export function OrderDetailManager({
                 </div>
                 <div className="md:col-span-2">
                   <label className="mb-2 block text-sm font-medium text-slate-300">
-                    Supplier cost
+                    Coût fournisseur
                   </label>
                   <Input
                     type="number"
@@ -432,7 +436,7 @@ export function OrderDetailManager({
                 </div>
                 <div className="md:col-span-2">
                   <label className="mb-2 block text-sm font-medium text-slate-300">
-                    Internal note
+                    Note interne
                   </label>
                   <Textarea
                     value={supplierForm.internalNote}
@@ -442,7 +446,7 @@ export function OrderDetailManager({
                         internalNote: event.target.value,
                       }))
                     }
-                    placeholder="Supplier stock fluctuates every evening."
+                    placeholder="Le stock fournisseur fluctue chaque soir."
                   />
                 </div>
               </div>
@@ -456,7 +460,7 @@ export function OrderDetailManager({
                 disabled={activePanel === "supplier"}
                 className="w-full"
               >
-                {activePanel === "supplier" ? "Saving..." : "Save supplier info"}
+                {activePanel === "supplier" ? "Enregistrement..." : "Enregistrer les infos fournisseur"}
               </Button>
             </form>
           </CardContent>
@@ -469,10 +473,10 @@ export function OrderDetailManager({
                 <Mail className="size-5" />
               </div>
               <div>
-                <CardTitle>Delivery details</CardTitle>
+                <CardTitle>Détails de livraison</CardTitle>
                 <CardDescription className="mt-2">
-                  Store the code sent to the customer and the delivery note used
-                  for manual email fulfillment.
+                  Stockez le code envoyé au client et la note de livraison
+                  utilisée pour l’envoi manuel par e-mail.
                 </CardDescription>
               </div>
             </div>
@@ -481,7 +485,7 @@ export function OrderDetailManager({
             <form className="space-y-4" onSubmit={handleDeliverySubmit}>
               <div>
                 <label className="mb-2 block text-sm font-medium text-slate-300">
-                  Delivered code
+                  Code livré
                 </label>
                 <Textarea
                   value={deliveryForm.deliveredCode}
@@ -496,7 +500,7 @@ export function OrderDetailManager({
               </div>
               <div>
                 <label className="mb-2 block text-sm font-medium text-slate-300">
-                  Delivery note
+                  Note de livraison
                 </label>
                 <Textarea
                   value={deliveryForm.deliveryNote}
@@ -506,8 +510,8 @@ export function OrderDetailManager({
                       deliveryNote: event.target.value,
                     }))
                   }
-                  placeholder="Sent manually from support@domain.com"
-                />
+                    placeholder="Envoyé manuellement depuis support@domain.com"
+                  />
               </div>
               {deliveryError ? (
                 <div className="rounded-2xl border border-rose-500/20 bg-rose-500/10 px-4 py-3 text-sm text-rose-200">
@@ -519,7 +523,7 @@ export function OrderDetailManager({
                 disabled={activePanel === "delivery"}
                 className="w-full"
               >
-                {activePanel === "delivery" ? "Saving..." : "Save delivery data"}
+                {activePanel === "delivery" ? "Enregistrement..." : "Enregistrer les données de livraison"}
               </Button>
             </form>
           </CardContent>
@@ -532,22 +536,22 @@ export function OrderDetailManager({
                 <ReceiptText className="size-5" />
               </div>
               <div>
-                <CardTitle>References</CardTitle>
+                <CardTitle>Références</CardTitle>
                 <CardDescription className="mt-2">
-                  Quick operational reference for the fulfillment team.
+                  Référence opérationnelle rapide pour l’équipe de fulfilment.
                 </CardDescription>
               </div>
             </div>
           </CardHeader>
           <CardContent className="space-y-3 text-sm text-slate-300">
             <div className="rounded-2xl border border-white/8 bg-slate-950/40 p-4">
-              Payment reference: {order.paymentReference || "—"}
+              Référence de paiement : {order.paymentReference || "—"}
             </div>
             <div className="rounded-2xl border border-white/8 bg-slate-950/40 p-4">
-              Supplier reference: {order.supplierPurchaseReference || "—"}
+              Référence fournisseur : {order.supplierPurchaseReference || "—"}
             </div>
             <div className="rounded-2xl border border-white/8 bg-slate-950/40 p-4">
-              Delivered code stored: {order.deliveredCode ? "Yes" : "No"}
+              Code livré enregistré : {order.deliveredCode ? "Oui" : "Non"}
             </div>
           </CardContent>
         </Card>

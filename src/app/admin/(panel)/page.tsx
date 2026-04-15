@@ -18,33 +18,33 @@ export default async function AdminDashboardPage() {
     <>
       <AdminPageHeader
         eyebrow="Backoffice"
-        title="Admin dashboard"
-        description="Operational visibility for the manual digital product sourcing and email delivery workflow."
+        title="Tableau de bord admin"
+        description="Vision opérationnelle du workflow d'achat manuel et de livraison par e-mail des produits digitaux."
       />
 
       <section className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
         <KpiCard
-          label="Total products"
+          label="Total produits"
           value={stats.totalProducts}
-          hint="Sellable SKUs"
+          hint="SKU vendables"
           icon={Package2}
         />
         <KpiCard
-          label="Total orders"
+          label="Total commandes"
           value={stats.totalOrders}
-          hint="Captured orders"
+          hint="Commandes enregistrées"
           icon={ShoppingCart}
         />
         <KpiCard
-          label="Total users"
+          label="Total utilisateurs"
           value={stats.totalUsers}
-          hint="Customer base"
+          hint="Base clients"
           icon={Users}
         />
         <KpiCard
-          label="Pending orders"
+          label="Commandes en attente"
           value={stats.pendingOrders}
-          hint="Needs admin action"
+          hint="Action admin requise"
           icon={Clock3}
         />
       </section>
@@ -52,45 +52,46 @@ export default async function AdminDashboardPage() {
       <section className="grid gap-6 xl:grid-cols-2">
         <Card>
           <CardHeader>
-            <CardTitle>Workflow reminder</CardTitle>
+            <CardTitle>Rappel du workflow</CardTitle>
             <CardDescription className="mt-2">
-              This backoffice does not manage preloaded code inventory. Every
-              fulfilled order is sourced after purchase and delivered manually.
+              Ce backoffice ne gère pas de stock de codes préchargés. Chaque
+              commande livrée est sourcée après achat puis envoyée manuellement.
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-3 text-sm leading-6 text-slate-300">
             <div className="rounded-2xl border border-white/8 bg-slate-950/40 p-4">
-              1. Customer places an order and payment is confirmed.
+              1. Le client passe commande et le paiement est confirmé.
             </div>
             <div className="rounded-2xl border border-white/8 bg-slate-950/40 p-4">
-              2. Admin purchases the matching code from an external supplier.
+              2. L’admin achète le code correspondant chez un fournisseur externe.
             </div>
             <div className="rounded-2xl border border-white/8 bg-slate-950/40 p-4">
-              3. Admin records supplier details and emails the code to the
-              customer.
+              3. L’admin enregistre les détails fournisseur et envoie le code par e-mail au client.
             </div>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader>
-            <CardTitle>Implementation scope</CardTitle>
+            <CardTitle>Périmètre implémenté</CardTitle>
             <CardDescription className="mt-2">
-              This first slice focuses on backoffice data operations with clean
-              repositories, services, route handlers, and a typed admin UI.
+              Cette première version se concentre sur les opérations backoffice
+              avec des repositories propres, des services, des route handlers et
+              une interface admin typée.
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4 text-sm text-slate-300">
             <div className="rounded-2xl border border-sky-400/12 bg-sky-400/8 p-4">
-              Catalog CRUD is ready for categories, platforms, regions, and
-              products.
+              Le CRUD catalogue est prêt pour les catégories, plateformes,
+              régions et produits.
             </div>
             <div className="rounded-2xl border border-emerald-500/12 bg-emerald-500/8 p-4">
-              Order views are prepared for status updates, supplier metadata, and
-              delivered code tracking.
+              Les vues commandes sont prêtes pour les mises à jour de statut,
+              les métadonnées fournisseur et le suivi des codes livrés.
             </div>
             <div className="rounded-2xl border border-white/8 bg-slate-950/40 p-4">
-              Users and promos remain scaffolded placeholders for the next phase.
+              Les utilisateurs et promotions restent des placeholders pour la
+              prochaine phase.
             </div>
           </CardContent>
         </Card>

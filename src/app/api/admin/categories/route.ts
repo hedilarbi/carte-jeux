@@ -11,8 +11,8 @@ import {
 import { categoryService } from "@/services/category.service";
 
 export async function GET(request: NextRequest) {
-  if (!getAdminApiSession(request)) {
-    return errorResponse("Unauthorized.", 401);
+  if (!(await getAdminApiSession(request))) {
+    return errorResponse("Non autorisé.", 401);
   }
 
   try {
@@ -32,8 +32,8 @@ export async function GET(request: NextRequest) {
 }
 
 export async function POST(request: NextRequest) {
-  if (!getAdminApiSession(request)) {
-    return errorResponse("Unauthorized.", 401);
+  if (!(await getAdminApiSession(request))) {
+    return errorResponse("Non autorisé.", 401);
   }
 
   try {

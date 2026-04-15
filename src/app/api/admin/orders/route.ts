@@ -10,8 +10,8 @@ import { orderService } from "@/services/order.service";
 import type { OrderStatus, PaymentStatus } from "@/types/entities";
 
 export async function GET(request: NextRequest) {
-  if (!getAdminApiSession(request)) {
-    return errorResponse("Unauthorized.", 401);
+  if (!(await getAdminApiSession(request))) {
+    return errorResponse("Non autorisé.", 401);
   }
 
   try {

@@ -28,9 +28,9 @@ export default async function AdminOrderDetailPage({
   return (
     <>
       <AdminPageHeader
-        eyebrow="Operations"
-        title={`Order ${order.orderNumber}`}
-        description="Review the order, capture supplier data, and complete manual email delivery in one place."
+        eyebrow="Opérations"
+        title={`Commande ${order.orderNumber}`}
+        description="Consultez la commande, enregistrez les données fournisseur et finalisez la livraison manuelle par e-mail au même endroit."
       />
       <OrderDetailManager initialOrder={order} />
     </>

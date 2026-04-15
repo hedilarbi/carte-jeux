@@ -27,12 +27,12 @@ export const promoCampaignService = {
   },
 
   async getById(id: string) {
-    assertObjectId(id, "Promo campaign id");
+    assertObjectId(id, "Identifiant de campagne promo");
 
     const campaign = await getPromoCampaignById(id);
 
     if (!campaign) {
-      throw new AppError("Promo campaign not found.", 404);
+      throw new AppError("Campagne promotionnelle introuvable.", 404);
     }
 
     return serializeDocument<PromoCampaign>(campaign);
@@ -49,7 +49,7 @@ export const promoCampaignService = {
   },
 
   async update(id: string, input: z.input<typeof promoCampaignUpdateSchema>) {
-    assertObjectId(id, "Promo campaign id");
+    assertObjectId(id, "Identifiant de campagne promo");
 
     const parsed = promoCampaignUpdateSchema.parse(input);
     const updated = await updatePromoCampaignById(id, {
@@ -60,19 +60,19 @@ export const promoCampaignService = {
     });
 
     if (!updated) {
-      throw new AppError("Promo campaign not found.", 404);
+      throw new AppError("Campagne promotionnelle introuvable.", 404);
     }
 
     return serializeDocument<PromoCampaign>(updated);
   },
 
   async delete(id: string) {
-    assertObjectId(id, "Promo campaign id");
+    assertObjectId(id, "Identifiant de campagne promo");
 
     const deleted = await deletePromoCampaignById(id);
 
     if (!deleted) {
-      throw new AppError("Promo campaign not found.", 404);
+      throw new AppError("Campagne promotionnelle introuvable.", 404);
     }
 
     return {

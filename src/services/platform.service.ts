@@ -30,7 +30,7 @@ async function resolvePlatformSlug(source: string, excludeId?: string) {
   const candidate = generateSlug(source);
 
   if (!candidate) {
-    throw new AppError("Unable to generate a valid platform slug.", 400);
+    throw new AppError("Impossible de générer un slug de plateforme valide.", 400);
   }
 
   return generateUniqueSlug(candidate, (slug) =>
@@ -56,12 +56,12 @@ export const platformService = {
   },
 
   async getById(id: string) {
-    assertObjectId(id, "Platform id");
+    assertObjectId(id, "Identifiant de plateforme");
 
     const platform = await getPlatformById(id);
 
     if (!platform) {
-      throw new AppError("Platform not found.", 404);
+      throw new AppError("Plateforme introuvable.", 404);
     }
 
     return serializeDocument<Platform>(platform);
@@ -79,12 +79,12 @@ export const platformService = {
   },
 
   async update(id: string, input: z.input<typeof platformUpdateSchema>) {
-    assertObjectId(id, "Platform id");
+    assertObjectId(id, "Identifiant de plateforme");
 
     const existing = await getPlatformById(id);
 
     if (!existing) {
-      throw new AppError("Platform not found.", 404);
+      throw new AppError("Plateforme introuvable.", 404);
     }
 
     const parsed = platformUpdateSchema.parse(input);
@@ -98,20 +98,20 @@ export const platformService = {
     });
 
     if (!updated) {
-      throw new AppError("Platform not found.", 404);
+      throw new AppError("Plateforme introuvable.", 404);
     }
 
     return serializeDocument<Platform>(updated);
   },
 
   async delete(id: string) {
-    assertObjectId(id, "Platform id");
+    assertObjectId(id, "Identifiant de plateforme");
 
     const linkedProducts = await countProductsByPlatformId(id);
 
     if (linkedProducts > 0) {
       throw new AppError(
-        "This platform is attached to existing products and cannot be deleted.",
+        "Cette plateforme est liée à des produits existants et ne peut pas être supprimée.",
         409,
       );
     }
@@ -119,7 +119,7 @@ export const platformService = {
     const deleted = await deletePlatformById(id);
 
     if (!deleted) {
-      throw new AppError("Platform not found.", 404);
+      throw new AppError("Plateforme introuvable.", 404);
     }
 
     return {

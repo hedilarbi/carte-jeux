@@ -8,9 +8,9 @@ export default async function AdminCategoriesPage() {
   return (
     <>
       <AdminPageHeader
-        eyebrow="Catalog"
-        title="Categories"
-        description="Control the top-level product taxonomy used by the marketplace catalog and admin workflows."
+        eyebrow="Catalogue"
+        title="Catégories"
+        description="Contrôlez la taxonomie de premier niveau utilisée par le catalogue marketplace et les workflows d'administration."
       />
       <CategoriesManager initialCategories={categories.items} />
     </>

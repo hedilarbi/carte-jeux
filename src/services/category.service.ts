@@ -30,7 +30,7 @@ async function resolveCategorySlug(source: string, excludeId?: string) {
   const candidate = generateSlug(source);
 
   if (!candidate) {
-    throw new AppError("Unable to generate a valid category slug.", 400);
+    throw new AppError("Impossible de générer un slug de catégorie valide.", 400);
   }
 
   return generateUniqueSlug(candidate, (slug) =>
@@ -51,12 +51,12 @@ export const categoryService = {
   },
 
   async getById(id: string) {
-    assertObjectId(id, "Category id");
+    assertObjectId(id, "Identifiant de catégorie");
 
     const category = await getCategoryById(id);
 
     if (!category) {
-      throw new AppError("Category not found.", 404);
+      throw new AppError("Catégorie introuvable.", 404);
     }
 
     return serializeDocument<Category>(category);
@@ -74,12 +74,12 @@ export const categoryService = {
   },
 
   async update(id: string, input: z.input<typeof categoryUpdateSchema>) {
-    assertObjectId(id, "Category id");
+    assertObjectId(id, "Identifiant de catégorie");
 
     const existing = await getCategoryById(id);
 
     if (!existing) {
-      throw new AppError("Category not found.", 404);
+      throw new AppError("Catégorie introuvable.", 404);
     }
 
     const parsed = categoryUpdateSchema.parse(input);
@@ -93,20 +93,20 @@ export const categoryService = {
     });
 
     if (!updated) {
-      throw new AppError("Category not found.", 404);
+      throw new AppError("Catégorie introuvable.", 404);
     }
 
     return serializeDocument<Category>(updated);
   },
 
   async delete(id: string) {
-    assertObjectId(id, "Category id");
+    assertObjectId(id, "Identifiant de catégorie");
 
     const linkedProducts = await countProductsByCategoryId(id);
 
     if (linkedProducts > 0) {
       throw new AppError(
-        "This category is attached to existing products and cannot be deleted.",
+        "Cette catégorie est liée à des produits existants et ne peut pas être supprimée.",
         409,
       );
     }
@@ -114,7 +114,7 @@ export const categoryService = {
     const deleted = await deleteCategoryById(id);
 
     if (!deleted) {
-      throw new AppError("Category not found.", 404);
+      throw new AppError("Catégorie introuvable.", 404);
     }
 
     return {

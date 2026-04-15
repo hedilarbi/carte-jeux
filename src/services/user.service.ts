@@ -27,7 +27,7 @@ export const userService = {
     }
 
     if (input.password.length < 8) {
-      throw new AppError("Seed user password must be at least 8 characters.", 400);
+      throw new AppError("Le mot de passe seed doit contenir au moins 8 caractères.", 400);
     }
 
     const created = await createUser({
@@ -55,7 +55,7 @@ export const userService = {
     });
 
     if (!nextUser) {
-      throw new AppError("Unable to bootstrap admin user.", 500);
+      throw new AppError("Impossible d'initialiser l'utilisateur administrateur.", 500);
     }
 
     return {

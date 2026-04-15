@@ -197,7 +197,7 @@ export function ProductsManager({
       setError(
         submissionError instanceof Error
           ? submissionError.message
-          : "Unable to save product.",
+          : "Impossible d'enregistrer le produit.",
       );
     } finally {
       setIsSubmitting(false);
@@ -205,7 +205,7 @@ export function ProductsManager({
   }
 
   async function handleDelete(id: string) {
-    if (!window.confirm("Delete this product?")) {
+    if (!window.confirm("Supprimer ce produit ?")) {
       return;
     }
 
@@ -222,7 +222,7 @@ export function ProductsManager({
       setError(
         deleteError instanceof Error
           ? deleteError.message
-          : "Unable to delete product.",
+          : "Impossible de supprimer le produit.",
       );
     }
   }
@@ -232,21 +232,21 @@ export function ProductsManager({
       <Card>
         <CardHeader className="flex flex-col gap-4 border-b border-white/8 pb-6 md:flex-row md:items-center md:justify-between">
           <div>
-            <CardTitle>Product catalog</CardTitle>
+            <CardTitle>Catalogue produits</CardTitle>
             <CardDescription className="mt-2">
-              Build the sellable offer layer while keeping delivery strictly manual.
+              Construisez la couche d’offre vendable tout en gardant une livraison strictement manuelle.
             </CardDescription>
           </div>
           <div className="flex w-full gap-3 md:w-auto">
             <Input
               value={search}
               onChange={(event) => setSearch(event.target.value)}
-              placeholder="Search products"
+              placeholder="Rechercher des produits"
               className="md:w-72"
             />
             <Button onClick={resetForm}>
               <Plus className="size-4" />
-              New
+              Nouveau
             </Button>
           </div>
         </CardHeader>
@@ -254,10 +254,10 @@ export function ProductsManager({
           <table className="min-w-full text-left text-sm">
             <thead className="border-b border-white/8 bg-slate-950/30 text-xs uppercase tracking-[0.24em] text-slate-500">
               <tr>
-                <th className="px-6 py-4">Product</th>
-                <th className="px-6 py-4">Catalog</th>
-                <th className="px-6 py-4">Pricing</th>
-                <th className="px-6 py-4">State</th>
+                <th className="px-6 py-4">Produit</th>
+                <th className="px-6 py-4">Catalogue</th>
+                <th className="px-6 py-4">Tarification</th>
+                <th className="px-6 py-4">État</th>
                 <th className="px-6 py-4 text-right">Actions</th>
               </tr>
             </thead>
@@ -282,16 +282,16 @@ export function ProductsManager({
                       {formatCurrency(product.finalPrice, product.currency)}
                     </div>
                     <div className="mt-1 text-slate-500">
-                      Base {formatCurrency(product.price, product.currency)} ·{" "}
-                      {product.discountPercent}% off
+                      Prix de base {formatCurrency(product.price, product.currency)} ·{" "}
+                      remise de {product.discountPercent} %
                     </div>
                   </td>
                   <td className="px-6 py-4">
                     <div className="flex flex-wrap gap-2">
                       <Badge variant={product.isActive ? "success" : "muted"}>
-                        {product.isActive ? "Active" : "Hidden"}
+                        {product.isActive ? "Actif" : "Inactif"}
                       </Badge>
-                      {product.isFeatured ? <Badge>Featured</Badge> : null}
+                      {product.isFeatured ? <Badge>Mis en avant</Badge> : null}
                     </div>
                   </td>
                   <td className="px-6 py-4">
@@ -320,7 +320,7 @@ export function ProductsManager({
                     className="px-6 py-10 text-center text-sm text-slate-500"
                     colSpan={5}
                   >
-                    No products match the current filter.
+                    Aucun produit ne correspond au filtre actuel.
                   </td>
                 </tr>
               ) : null}
@@ -331,10 +331,12 @@ export function ProductsManager({
 
       <Card>
         <CardHeader>
-          <CardTitle>{editingId ? "Edit product" : "Create product"}</CardTitle>
+          <CardTitle>
+            {editingId ? "Modifier le produit" : "Créer un produit"}
+          </CardTitle>
           <CardDescription className="mt-2">
-            This admin flow models a manual supplier purchase and manual email
-            delivery workflow.
+            Ce flux admin modélise un achat manuel chez le fournisseur et une
+            livraison manuelle par e-mail.
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -342,16 +344,16 @@ export function ProductsManager({
             <div className="grid gap-4 md:grid-cols-2">
               <div className="md:col-span-2">
                 <label className="mb-2 block text-sm font-medium text-slate-300">
-                  Title
+                  Titre
                 </label>
                 <Input
                   value={form.title}
                   onChange={(event) =>
                     setForm((current) => ({ ...current, title: event.target.value }))
                   }
-                  placeholder="PlayStation Store $50 Gift Card"
-                  required
-                />
+                placeholder="Carte cadeau PlayStation Store 50 $"
+                required
+              />
               </div>
               <div>
                 <label className="mb-2 block text-sm font-medium text-slate-300">
@@ -380,7 +382,7 @@ export function ProductsManager({
               </div>
               <div className="md:col-span-2">
                 <label className="mb-2 block text-sm font-medium text-slate-300">
-                  Short description
+                  Description courte
                 </label>
                 <Input
                   value={form.shortDescription}
@@ -390,7 +392,7 @@ export function ProductsManager({
                       shortDescription: event.target.value,
                     }))
                   }
-                  placeholder="US wallet top-up delivered manually by email"
+                  placeholder="Recharge wallet US livrée manuellement par e-mail"
                 />
               </div>
               <div className="md:col-span-2">
@@ -405,12 +407,12 @@ export function ProductsManager({
                       description: event.target.value,
                     }))
                   }
-                  placeholder="Long product description"
+                  placeholder="Description longue du produit"
                 />
               </div>
               <div className="md:col-span-2">
                 <label className="mb-2 block text-sm font-medium text-slate-300">
-                  Primary image URL
+                  URL image principale
                 </label>
                 <Input
                   value={form.image}
@@ -422,7 +424,7 @@ export function ProductsManager({
               </div>
               <div className="md:col-span-2">
                 <label className="mb-2 block text-sm font-medium text-slate-300">
-                  Gallery URLs
+                  URLs de la galerie
                 </label>
                 <Textarea
                   value={form.galleryText}
@@ -432,12 +434,12 @@ export function ProductsManager({
                       galleryText: event.target.value,
                     }))
                   }
-                  placeholder="One URL per line"
+                  placeholder="Une URL par ligne"
                 />
               </div>
               <div>
                 <label className="mb-2 block text-sm font-medium text-slate-300">
-                  Category
+                  Catégorie
                 </label>
                 <Select
                   value={form.categoryId}
@@ -449,7 +451,7 @@ export function ProductsManager({
                   }
                   required
                 >
-                  <option value="">Select category</option>
+                  <option value="">Sélectionner une catégorie</option>
                   {categories.map((category) => (
                     <option key={category._id} value={category._id}>
                       {category.name}
@@ -459,7 +461,7 @@ export function ProductsManager({
               </div>
               <div>
                 <label className="mb-2 block text-sm font-medium text-slate-300">
-                  Platform
+                  Plateforme
                 </label>
                 <Select
                   value={form.platformId}
@@ -471,7 +473,7 @@ export function ProductsManager({
                   }
                   required
                 >
-                  <option value="">Select platform</option>
+                  <option value="">Sélectionner une plateforme</option>
                   {platforms.map((platform) => (
                     <option key={platform._id} value={platform._id}>
                       {platform.name}
@@ -481,7 +483,7 @@ export function ProductsManager({
               </div>
               <div>
                 <label className="mb-2 block text-sm font-medium text-slate-300">
-                  Region
+                  Région
                 </label>
                 <Select
                   value={form.regionId}
@@ -493,7 +495,7 @@ export function ProductsManager({
                   }
                   required
                 >
-                  <option value="">Select region</option>
+                  <option value="">Sélectionner une région</option>
                   {regions.map((region) => (
                     <option key={region._id} value={region._id}>
                       {region.name}
@@ -503,7 +505,7 @@ export function ProductsManager({
               </div>
               <div>
                 <label className="mb-2 block text-sm font-medium text-slate-300">
-                  Product type
+                  Type de produit
                 </label>
                 <Select
                   value={form.productType}
@@ -523,7 +525,7 @@ export function ProductsManager({
               </div>
               <div>
                 <label className="mb-2 block text-sm font-medium text-slate-300">
-                  Face value
+                  Valeur faciale
                 </label>
                 <Input
                   type="number"
@@ -541,7 +543,7 @@ export function ProductsManager({
               </div>
               <div>
                 <label className="mb-2 block text-sm font-medium text-slate-300">
-                  Currency
+                  Devise
                 </label>
                 <Input
                   value={form.currency}
@@ -557,7 +559,7 @@ export function ProductsManager({
               </div>
               <div>
                 <label className="mb-2 block text-sm font-medium text-slate-300">
-                  Price
+                  Prix
                 </label>
                 <Input
                   type="number"
@@ -575,7 +577,7 @@ export function ProductsManager({
               </div>
               <div>
                 <label className="mb-2 block text-sm font-medium text-slate-300">
-                  Discount %
+                  Remise %
                 </label>
                 <Input
                   type="number"
@@ -592,14 +594,14 @@ export function ProductsManager({
                 />
               </div>
               <div className="rounded-2xl border border-sky-400/12 bg-sky-400/8 px-4 py-3 text-sm text-slate-300">
-                Final price preview
+                Aperçu du prix final
                 <div className="mt-2 text-lg font-semibold text-white">
                   {formatCurrency(pricePreview, form.currency || "USD")}
                 </div>
               </div>
               <div className="md:col-span-2">
                 <label className="mb-2 block text-sm font-medium text-slate-300">
-                  SEO title
+                  Titre SEO
                 </label>
                 <Input
                   value={form.seoTitle}
@@ -609,12 +611,12 @@ export function ProductsManager({
                       seoTitle: event.target.value,
                     }))
                   }
-                  placeholder="Optional SEO title"
+                  placeholder="Titre SEO optionnel"
                 />
               </div>
               <div className="md:col-span-2">
                 <label className="mb-2 block text-sm font-medium text-slate-300">
-                  SEO description
+                  Description SEO
                 </label>
                 <Textarea
                   value={form.seoDescription}
@@ -624,7 +626,7 @@ export function ProductsManager({
                       seoDescription: event.target.value,
                     }))
                   }
-                  placeholder="Optional SEO description"
+                  placeholder="Description SEO optionnelle"
                 />
               </div>
             </div>
@@ -640,7 +642,7 @@ export function ProductsManager({
                     }))
                   }
                 />
-                Featured placement
+                Mise en avant
               </label>
               <label className="flex items-center gap-3 rounded-2xl border border-white/8 bg-slate-950/40 px-4 py-3 text-sm text-slate-300">
                 <Checkbox
@@ -652,7 +654,7 @@ export function ProductsManager({
                     }))
                   }
                 />
-                Product is active
+                Le produit est actif
               </label>
             </div>
 
@@ -665,10 +667,10 @@ export function ProductsManager({
             <div className="flex gap-3">
               <Button type="submit" disabled={isSubmitting} className="flex-1">
                 {isSubmitting
-                  ? "Saving..."
+                  ? "Enregistrement..."
                   : editingId
-                    ? "Update product"
-                    : "Create product"}
+                    ? "Mettre à jour le produit"
+                    : "Créer le produit"}
               </Button>
               <Button
                 type="button"
@@ -676,7 +678,7 @@ export function ProductsManager({
                 onClick={resetForm}
                 className="flex-1"
               >
-                Reset
+                Réinitialiser
               </Button>
             </div>
           </form>

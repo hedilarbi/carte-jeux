@@ -19,7 +19,7 @@ function getMongoDbName() {
 
   if (/[\\/]/.test(dbName)) {
     throw new Error(
-      "MONGODB_DB_NAME contains invalid characters. Remove any trailing slash or backslash.",
+      "MONGODB_DB_NAME contient des caractères invalides. Supprimez tout slash ou antislash final.",
     );
   }
 

@@ -115,7 +115,7 @@ export function CategoriesManager({
       setError(
         submissionError instanceof Error
           ? submissionError.message
-          : "Unable to save category.",
+          : "Impossible d'enregistrer la catégorie.",
       );
     } finally {
       setIsSubmitting(false);
@@ -123,7 +123,7 @@ export function CategoriesManager({
   }
 
   async function handleDelete(id: string) {
-    if (!window.confirm("Delete this category?")) {
+    if (!window.confirm("Supprimer cette catégorie ?")) {
       return;
     }
 
@@ -146,7 +146,7 @@ export function CategoriesManager({
       setError(
         deleteError instanceof Error
           ? deleteError.message
-          : "Unable to delete category.",
+          : "Impossible de supprimer la catégorie.",
       );
     }
   }
@@ -156,21 +156,21 @@ export function CategoriesManager({
       <Card>
         <CardHeader className="flex flex-col gap-4 border-b border-white/8 pb-6 md:flex-row md:items-center md:justify-between">
           <div>
-            <CardTitle>Category catalog</CardTitle>
+            <CardTitle>Catalogue des catégories</CardTitle>
             <CardDescription className="mt-2">
-              Organize products by vertical, brand family, or business segment.
+              Organisez les produits par univers, famille de marque ou segment métier.
             </CardDescription>
           </div>
           <div className="flex w-full gap-3 md:w-auto">
             <Input
               value={search}
               onChange={(event) => setSearch(event.target.value)}
-              placeholder="Search categories"
+              placeholder="Rechercher des catégories"
               className="md:w-64"
             />
             <Button onClick={startCreate}>
               <Plus className="size-4" />
-              New
+              Nouveau
             </Button>
           </div>
         </CardHeader>
@@ -178,9 +178,9 @@ export function CategoriesManager({
           <table className="min-w-full text-left text-sm">
             <thead className="border-b border-white/8 bg-slate-950/30 text-xs uppercase tracking-[0.24em] text-slate-500">
               <tr>
-                <th className="px-6 py-4">Name</th>
+                <th className="px-6 py-4">Nom</th>
                 <th className="px-6 py-4">Slug</th>
-                <th className="px-6 py-4">Status</th>
+                <th className="px-6 py-4">Statut</th>
                 <th className="px-6 py-4 text-right">Actions</th>
               </tr>
             </thead>
@@ -203,7 +203,7 @@ export function CategoriesManager({
                   </td>
                   <td className="px-6 py-4">
                     <Badge variant={category.isActive ? "success" : "muted"}>
-                      {category.isActive ? "Active" : "Hidden"}
+                      {category.isActive ? "Active" : "Inactive"}
                     </Badge>
                   </td>
                   <td className="px-6 py-4">
@@ -232,7 +232,7 @@ export function CategoriesManager({
                     className="px-6 py-10 text-center text-sm text-slate-500"
                     colSpan={4}
                   >
-                    No categories match the current filter.
+                    Aucune catégorie ne correspond au filtre actuel.
                   </td>
                 </tr>
               ) : null}
@@ -243,23 +243,25 @@ export function CategoriesManager({
 
       <Card>
         <CardHeader>
-          <CardTitle>{editingId ? "Edit category" : "Create category"}</CardTitle>
+          <CardTitle>
+            {editingId ? "Modifier la catégorie" : "Créer une catégorie"}
+          </CardTitle>
           <CardDescription className="mt-2">
-            Slug can be left empty to auto-generate it from the category name.
+            Le slug peut être laissé vide pour être généré automatiquement à partir du nom.
           </CardDescription>
         </CardHeader>
         <CardContent>
           <form className="space-y-4" onSubmit={handleSubmit}>
             <div>
               <label className="mb-2 block text-sm font-medium text-slate-300">
-                Name
+                Nom
               </label>
               <Input
                 value={form.name}
                 onChange={(event) =>
                   setForm((current) => ({ ...current, name: event.target.value }))
                 }
-                placeholder="Game gift cards"
+                placeholder="Cartes cadeaux gaming"
                 required
               />
             </div>
@@ -287,7 +289,7 @@ export function CategoriesManager({
                     description: event.target.value,
                   }))
                 }
-                placeholder="Optional category description"
+                placeholder="Description optionnelle de la catégorie"
               />
             </div>
             <label className="flex items-center gap-3 rounded-2xl border border-white/8 bg-slate-950/40 px-4 py-3 text-sm text-slate-300">
@@ -300,7 +302,7 @@ export function CategoriesManager({
                   }))
                 }
               />
-              Category is active
+              La catégorie est active
             </label>
             {error ? (
               <div className="rounded-2xl border border-rose-500/20 bg-rose-500/10 px-4 py-3 text-sm text-rose-200">
@@ -310,10 +312,10 @@ export function CategoriesManager({
             <div className="flex gap-3">
               <Button type="submit" disabled={isSubmitting} className="flex-1">
                 {isSubmitting
-                  ? "Saving..."
+                  ? "Enregistrement..."
                   : editingId
-                    ? "Update category"
-                    : "Create category"}
+                    ? "Mettre à jour la catégorie"
+                    : "Créer la catégorie"}
               </Button>
               <Button
                 type="button"
@@ -321,7 +323,7 @@ export function CategoriesManager({
                 onClick={startCreate}
                 className="flex-1"
               >
-                Reset
+                Réinitialiser
               </Button>
             </div>
           </form>

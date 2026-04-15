@@ -12,14 +12,14 @@ export default function Home() {
               Eneba Marketplace OS
             </p>
             <h1 className="mt-3 max-w-2xl text-4xl font-semibold tracking-tight text-white md:text-6xl">
-              Dark admin infrastructure for manual digital goods fulfillment.
+              Infrastructure admin sombre pour la gestion manuelle de produits digitaux.
             </h1>
           </div>
           <Link
             href="/admin"
             className="hidden items-center gap-2 rounded-full border border-white/15 bg-white/10 px-5 py-3 text-sm font-semibold text-white transition hover:bg-white/15 md:inline-flex"
           >
-            Open Admin
+            Ouvrir l’administration
             <ArrowRight className="size-4" />
           </Link>
         </div>
@@ -27,21 +27,21 @@ export default function Home() {
         <div className="grid gap-4 py-12 md:grid-cols-3">
           {[
             {
-              title: "Product catalog",
+              title: "Catalogue produits",
               description:
-                "Manage gift cards, subscriptions, recharge cards, and game credits in one catalog.",
+                "Gérez cartes cadeaux, abonnements, cartes de recharge et crédits de jeu dans un seul catalogue.",
               icon: Ticket,
             },
             {
-              title: "Manual sourcing workflow",
+              title: "Processus d'achat manuel",
               description:
-                "Track paid orders, supplier purchases, and manual code delivery from a single backoffice.",
+                "Suivez les commandes payées, les achats fournisseurs et l'envoi manuel des codes depuis un seul backoffice.",
               icon: ShoppingCart,
             },
             {
-              title: "Admin-first operations",
+              title: "Opérations orientées admin",
               description:
-                "Shared route handlers, typed services, and scaffolded admin auth prepared for production hardening.",
+                "Des route handlers partagés, des services typés et une auth admin préparée pour un durcissement production.",
               icon: ShieldCheck,
             },
           ].map((item) => (
@@ -63,19 +63,18 @@ export default function Home() {
         <div className="flex flex-col gap-4 rounded-3xl border border-sky-400/20 bg-slate-950/70 p-6 md:flex-row md:items-center md:justify-between">
           <div>
             <p className="text-sm font-medium text-slate-200">
-              Admin auth scaffold
+              Connexion administrateur
             </p>
             <p className="mt-1 max-w-2xl text-sm leading-6 text-slate-400">
-              Configure `ADMIN_SESSION_TOKEN` with an `admin_session` cookie or
-              enable `ADMIN_DEV_BYPASS=true` in local development to access the
-              backoffice.
+              Utilisez `/admin/login` avec un compte administrateur MongoDB actif.
+              La signature de session locale est configurée via `ADMIN_SESSION_SECRET`.
             </p>
           </div>
           <Link
             href="/admin"
             className="inline-flex items-center justify-center gap-2 rounded-2xl bg-sky-400 px-5 py-3 text-sm font-semibold text-slate-950 transition hover:bg-sky-300"
           >
-            Continue to Admin
+            Continuer vers l’administration
             <ArrowRight className="size-4" />
           </Link>
         </div>

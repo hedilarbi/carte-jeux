@@ -127,6 +127,7 @@ export interface DashboardStats {
 }
 
 export interface AdminSession {
+  userId?: string;
   email: string;
   role: "admin";
   source: "cookie" | "header" | "dev-bypass";

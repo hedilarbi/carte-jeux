@@ -106,7 +106,7 @@ export function RegionsManager({ initialRegions }: RegionsManagerProps) {
       setError(
         submissionError instanceof Error
           ? submissionError.message
-          : "Unable to save region.",
+          : "Impossible d'enregistrer la région.",
       );
     } finally {
       setIsSubmitting(false);
@@ -114,7 +114,7 @@ export function RegionsManager({ initialRegions }: RegionsManagerProps) {
   }
 
   async function handleDelete(id: string) {
-    if (!window.confirm("Delete this region?")) {
+    if (!window.confirm("Supprimer cette région ?")) {
       return;
     }
 
@@ -131,7 +131,7 @@ export function RegionsManager({ initialRegions }: RegionsManagerProps) {
       setError(
         deleteError instanceof Error
           ? deleteError.message
-          : "Unable to delete region.",
+          : "Impossible de supprimer la région.",
       );
     }
   }
@@ -141,22 +141,22 @@ export function RegionsManager({ initialRegions }: RegionsManagerProps) {
       <Card>
         <CardHeader className="flex flex-col gap-4 border-b border-white/8 pb-6 md:flex-row md:items-center md:justify-between">
           <div>
-            <CardTitle>Regions</CardTitle>
+            <CardTitle>Régions</CardTitle>
             <CardDescription className="mt-2">
-              Match product availability and price positioning to supplier
-              geographies.
+              Alignez la disponibilité produit et le positionnement prix avec les
+              zones géographiques fournisseurs.
             </CardDescription>
           </div>
           <div className="flex w-full gap-3 md:w-auto">
             <Input
               value={search}
               onChange={(event) => setSearch(event.target.value)}
-              placeholder="Search regions"
+              placeholder="Rechercher des régions"
               className="md:w-64"
             />
             <Button onClick={resetForm}>
               <Plus className="size-4" />
-              New
+              Nouveau
             </Button>
           </div>
         </CardHeader>
@@ -164,9 +164,9 @@ export function RegionsManager({ initialRegions }: RegionsManagerProps) {
           <table className="min-w-full text-left text-sm">
             <thead className="border-b border-white/8 bg-slate-950/30 text-xs uppercase tracking-[0.24em] text-slate-500">
               <tr>
-                <th className="px-6 py-4">Region</th>
+                <th className="px-6 py-4">Région</th>
                 <th className="px-6 py-4">Code</th>
-                <th className="px-6 py-4">Status</th>
+                <th className="px-6 py-4">Statut</th>
                 <th className="px-6 py-4 text-right">Actions</th>
               </tr>
             </thead>
@@ -188,7 +188,7 @@ export function RegionsManager({ initialRegions }: RegionsManagerProps) {
                   </td>
                   <td className="px-6 py-4">
                     <Badge variant={region.isActive ? "success" : "muted"}>
-                      {region.isActive ? "Active" : "Hidden"}
+                      {region.isActive ? "Active" : "Inactive"}
                     </Badge>
                   </td>
                   <td className="px-6 py-4">
@@ -217,7 +217,7 @@ export function RegionsManager({ initialRegions }: RegionsManagerProps) {
                     className="px-6 py-10 text-center text-sm text-slate-500"
                     colSpan={4}
                   >
-                    No regions match the current filter.
+                    Aucune région ne correspond au filtre actuel.
                   </td>
                 </tr>
               ) : null}
@@ -228,24 +228,26 @@ export function RegionsManager({ initialRegions }: RegionsManagerProps) {
 
       <Card>
         <CardHeader>
-          <CardTitle>{editingId ? "Edit region" : "Create region"}</CardTitle>
+          <CardTitle>
+            {editingId ? "Modifier la région" : "Créer une région"}
+          </CardTitle>
           <CardDescription className="mt-2">
-            Region codes can be marketplace friendly, supplier friendly, or ISO
-            aligned depending on your operating model.
+            Les codes région peuvent suivre la logique marketplace, fournisseur
+            ou ISO selon votre modèle opérationnel.
           </CardDescription>
         </CardHeader>
         <CardContent>
           <form className="space-y-4" onSubmit={handleSubmit}>
             <div>
               <label className="mb-2 block text-sm font-medium text-slate-300">
-                Name
+                Nom
               </label>
               <Input
                 value={form.name}
                 onChange={(event) =>
                   setForm((current) => ({ ...current, name: event.target.value }))
                 }
-                placeholder="United States"
+                placeholder="États-Unis"
                 required
               />
             </div>
@@ -274,7 +276,7 @@ export function RegionsManager({ initialRegions }: RegionsManagerProps) {
                     description: event.target.value,
                   }))
                 }
-                placeholder="Optional region notes"
+                placeholder="Notes optionnelles sur la région"
               />
             </div>
             <label className="flex items-center gap-3 rounded-2xl border border-white/8 bg-slate-950/40 px-4 py-3 text-sm text-slate-300">
@@ -287,7 +289,7 @@ export function RegionsManager({ initialRegions }: RegionsManagerProps) {
                   }))
                 }
               />
-              Region is active
+              La région est active
             </label>
             {error ? (
               <div className="rounded-2xl border border-rose-500/20 bg-rose-500/10 px-4 py-3 text-sm text-rose-200">
@@ -297,10 +299,10 @@ export function RegionsManager({ initialRegions }: RegionsManagerProps) {
             <div className="flex gap-3">
               <Button type="submit" disabled={isSubmitting} className="flex-1">
                 {isSubmitting
-                  ? "Saving..."
+                  ? "Enregistrement..."
                   : editingId
-                    ? "Update region"
-                    : "Create region"}
+                    ? "Mettre à jour la région"
+                    : "Créer la région"}
               </Button>
               <Button
                 type="button"
@@ -308,7 +310,7 @@ export function RegionsManager({ initialRegions }: RegionsManagerProps) {
                 onClick={resetForm}
                 className="flex-1"
               >
-                Reset
+                Réinitialiser
               </Button>
             </div>
           </form>

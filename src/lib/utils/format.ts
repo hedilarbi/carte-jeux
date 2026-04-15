@@ -1,5 +1,5 @@
 export function formatCurrency(value: number, currency = "USD") {
-  return new Intl.NumberFormat("en-US", {
+  return new Intl.NumberFormat("fr-FR", {
     style: "currency",
     currency,
     minimumFractionDigits: 2,
@@ -18,7 +18,7 @@ export function formatDateTime(value?: string | Date | null) {
     return "—";
   }
 
-  return new Intl.DateTimeFormat("en-US", {
+  return new Intl.DateTimeFormat("fr-FR", {
     dateStyle: "medium",
     timeStyle: "short",
   }).format(date);

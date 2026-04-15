@@ -6,9 +6,9 @@ export function isObjectId(value: string) {
   return Types.ObjectId.isValid(value);
 }
 
-export function assertObjectId(value: string, label = "Resource id") {
+export function assertObjectId(value: string, label = "Identifiant de ressource") {
   if (!isObjectId(value)) {
-    throw new AppError(`${label} is invalid.`, 400);
+    throw new AppError(`${label} est invalide.`, 400);
   }
 
   return value;

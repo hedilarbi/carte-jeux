@@ -13,8 +13,8 @@ export async function GET(
   request: NextRequest,
   context: { params: Promise<{ id: string }> },
 ) {
-  if (!getAdminApiSession(request)) {
-    return errorResponse("Unauthorized.", 401);
+  if (!(await getAdminApiSession(request))) {
+    return errorResponse("Non autorisé.", 401);
   }
 
   try {
@@ -30,8 +30,8 @@ export async function PUT(
   request: NextRequest,
   context: { params: Promise<{ id: string }> },
 ) {
-  if (!getAdminApiSession(request)) {
-    return errorResponse("Unauthorized.", 401);
+  if (!(await getAdminApiSession(request))) {
+    return errorResponse("Non autorisé.", 401);
   }
 
   try {
@@ -52,8 +52,8 @@ export async function DELETE(
   request: NextRequest,
   context: { params: Promise<{ id: string }> },
 ) {
-  if (!getAdminApiSession(request)) {
-    return errorResponse("Unauthorized.", 401);
+  if (!(await getAdminApiSession(request))) {
+    return errorResponse("Non autorisé.", 401);
   }
 
   try {

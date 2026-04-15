@@ -107,7 +107,7 @@ export function PlatformsManager({ initialPlatforms }: PlatformsManagerProps) {
       setError(
         submissionError instanceof Error
           ? submissionError.message
-          : "Unable to save platform.",
+          : "Impossible d'enregistrer la plateforme.",
       );
     } finally {
       setIsSubmitting(false);
@@ -115,7 +115,7 @@ export function PlatformsManager({ initialPlatforms }: PlatformsManagerProps) {
   }
 
   async function handleDelete(id: string) {
-    if (!window.confirm("Delete this platform?")) {
+    if (!window.confirm("Supprimer cette plateforme ?")) {
       return;
     }
 
@@ -134,7 +134,7 @@ export function PlatformsManager({ initialPlatforms }: PlatformsManagerProps) {
       setError(
         deleteError instanceof Error
           ? deleteError.message
-          : "Unable to delete platform.",
+          : "Impossible de supprimer la plateforme.",
       );
     }
   }
@@ -144,21 +144,21 @@ export function PlatformsManager({ initialPlatforms }: PlatformsManagerProps) {
       <Card>
         <CardHeader className="flex flex-col gap-4 border-b border-white/8 pb-6 md:flex-row md:items-center md:justify-between">
           <div>
-            <CardTitle>Platforms</CardTitle>
+            <CardTitle>Plateformes</CardTitle>
             <CardDescription className="mt-2">
-              Keep storefront platform targeting consistent across product lines.
+              Gardez un ciblage plateforme cohérent sur l’ensemble des lignes produits.
             </CardDescription>
           </div>
           <div className="flex w-full gap-3 md:w-auto">
             <Input
               value={search}
               onChange={(event) => setSearch(event.target.value)}
-              placeholder="Search platforms"
+              placeholder="Rechercher des plateformes"
               className="md:w-64"
             />
             <Button onClick={resetForm}>
               <Plus className="size-4" />
-              New
+              Nouveau
             </Button>
           </div>
         </CardHeader>
@@ -166,9 +166,9 @@ export function PlatformsManager({ initialPlatforms }: PlatformsManagerProps) {
           <table className="min-w-full text-left text-sm">
             <thead className="border-b border-white/8 bg-slate-950/30 text-xs uppercase tracking-[0.24em] text-slate-500">
               <tr>
-                <th className="px-6 py-4">Name</th>
+                <th className="px-6 py-4">Nom</th>
                 <th className="px-6 py-4">Slug</th>
-                <th className="px-6 py-4">Status</th>
+                <th className="px-6 py-4">Statut</th>
                 <th className="px-6 py-4 text-right">Actions</th>
               </tr>
             </thead>
@@ -191,7 +191,7 @@ export function PlatformsManager({ initialPlatforms }: PlatformsManagerProps) {
                   </td>
                   <td className="px-6 py-4">
                     <Badge variant={platform.isActive ? "success" : "muted"}>
-                      {platform.isActive ? "Active" : "Hidden"}
+                      {platform.isActive ? "Active" : "Inactive"}
                     </Badge>
                   </td>
                   <td className="px-6 py-4">
@@ -220,7 +220,7 @@ export function PlatformsManager({ initialPlatforms }: PlatformsManagerProps) {
                     className="px-6 py-10 text-center text-sm text-slate-500"
                     colSpan={4}
                   >
-                    No platforms match the current filter.
+                    Aucune plateforme ne correspond au filtre actuel.
                   </td>
                 </tr>
               ) : null}
@@ -231,17 +231,19 @@ export function PlatformsManager({ initialPlatforms }: PlatformsManagerProps) {
 
       <Card>
         <CardHeader>
-          <CardTitle>{editingId ? "Edit platform" : "Create platform"}</CardTitle>
+          <CardTitle>
+            {editingId ? "Modifier la plateforme" : "Créer une plateforme"}
+          </CardTitle>
           <CardDescription className="mt-2">
-            Logo should point to a CDN or storage URL already available in the
-            frontend stack.
+            Le logo doit pointer vers une URL CDN ou de stockage déjà disponible
+            dans la stack frontend.
           </CardDescription>
         </CardHeader>
         <CardContent>
           <form className="space-y-4" onSubmit={handleSubmit}>
             <div>
               <label className="mb-2 block text-sm font-medium text-slate-300">
-                Name
+                Nom
               </label>
               <Input
                 value={form.name}
@@ -266,7 +268,7 @@ export function PlatformsManager({ initialPlatforms }: PlatformsManagerProps) {
             </div>
             <div>
               <label className="mb-2 block text-sm font-medium text-slate-300">
-                Logo URL
+                URL du logo
               </label>
               <Input
                 value={form.logo}
@@ -286,7 +288,7 @@ export function PlatformsManager({ initialPlatforms }: PlatformsManagerProps) {
                   }))
                 }
               />
-              Platform is active
+              La plateforme est active
             </label>
             {error ? (
               <div className="rounded-2xl border border-rose-500/20 bg-rose-500/10 px-4 py-3 text-sm text-rose-200">
@@ -296,10 +298,10 @@ export function PlatformsManager({ initialPlatforms }: PlatformsManagerProps) {
             <div className="flex gap-3">
               <Button type="submit" disabled={isSubmitting} className="flex-1">
                 {isSubmitting
-                  ? "Saving..."
+                  ? "Enregistrement..."
                   : editingId
-                    ? "Update platform"
-                    : "Create platform"}
+                    ? "Mettre à jour la plateforme"
+                    : "Créer la plateforme"}
               </Button>
               <Button
                 type="button"
@@ -307,7 +309,7 @@ export function PlatformsManager({ initialPlatforms }: PlatformsManagerProps) {
                 onClick={resetForm}
                 className="flex-1"
               >
-                Reset
+                Réinitialiser
               </Button>
             </div>
           </form>

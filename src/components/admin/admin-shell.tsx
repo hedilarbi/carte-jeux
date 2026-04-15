@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import { useState } from "react";
 import {
   LayoutDashboard,
+  LogOut,
   Menu,
   Package2,
   PanelsTopLeft,
@@ -26,19 +27,39 @@ interface AdminShellProps {
 }
 
 const navigation = [
-  { href: "/admin", label: "Dashboard", icon: LayoutDashboard },
-  { href: "/admin/products", label: "Products", icon: Package2 },
-  { href: "/admin/categories", label: "Categories", icon: PanelsTopLeft },
-  { href: "/admin/platforms", label: "Platforms", icon: SmartphoneCharging },
-  { href: "/admin/regions", label: "Regions", icon: PanelsTopLeft },
-  { href: "/admin/orders", label: "Orders", icon: ShoppingCart },
-  { href: "/admin/users", label: "Users", icon: Users },
-  { href: "/admin/promos", label: "Promos", icon: Percent },
+  { href: "/admin", label: "Tableau de bord", icon: LayoutDashboard },
+  { href: "/admin/products", label: "Produits", icon: Package2 },
+  { href: "/admin/categories", label: "Catégories", icon: PanelsTopLeft },
+  { href: "/admin/platforms", label: "Plateformes", icon: SmartphoneCharging },
+  { href: "/admin/regions", label: "Régions", icon: PanelsTopLeft },
+  { href: "/admin/orders", label: "Commandes", icon: ShoppingCart },
+  { href: "/admin/users", label: "Utilisateurs", icon: Users },
+  { href: "/admin/promos", label: "Promotions", icon: Percent },
 ];
+
+const sessionSourceLabels: Record<AdminSession["source"], string> = {
+  cookie: "cookie",
+  header: "en-tête",
+  "dev-bypass": "contournement local",
+};
 
 export function AdminShell({ session, children }: AdminShellProps) {
   const pathname = usePathname();
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
+
+  async function handleLogout() {
+    setIsLoggingOut(true);
+
+    try {
+      await fetch("/api/admin/auth/logout", {
+        method: "POST",
+      });
+      window.location.href = "/admin/login";
+    } finally {
+      setIsLoggingOut(false);
+    }
+  }
 
   return (
     <div className="admin-grid min-h-screen bg-background">
@@ -46,7 +67,7 @@ export function AdminShell({ session, children }: AdminShellProps) {
 
       {sidebarOpen ? (
         <button
-          aria-label="Close sidebar overlay"
+          aria-label="Fermer le voile de la barre latérale"
           className="fixed inset-0 z-30 bg-slate-950/60 backdrop-blur-sm lg:hidden"
           onClick={() => setSidebarOpen(false)}
         />
@@ -64,7 +85,7 @@ export function AdminShell({ session, children }: AdminShellProps) {
               Eneba Admin
             </p>
             <p className="mt-2 text-lg font-semibold text-white">
-              Digital Marketplace
+              Marketplace digital
             </p>
           </Link>
           <Button
@@ -82,7 +103,7 @@ export function AdminShell({ session, children }: AdminShellProps) {
           </p>
           <p className="mt-2 text-sm font-semibold text-white">{session.email}</p>
           <Badge className="mt-3" variant="muted">
-            {session.source.replace("-", " ")}
+            {sessionSourceLabels[session.source]}
           </Badge>
         </div>
 
@@ -126,14 +147,24 @@ export function AdminShell({ session, children }: AdminShellProps) {
               </Button>
               <div>
                 <p className="text-xs uppercase tracking-[0.26em] text-slate-500">
-                  Operations
+                  Opérations
                 </p>
                 <p className="text-sm font-medium text-slate-200">
-                  Manual fulfillment backoffice
+                  Backoffice de livraison manuelle
                 </p>
               </div>
             </div>
-            <Badge variant="default">Admin routes protected</Badge>
+            <div className="flex items-center gap-3">
+              <Badge variant="default">Routes admin protégées</Badge>
+              <Button
+                variant="ghost"
+                onClick={handleLogout}
+                disabled={isLoggingOut}
+              >
+                <LogOut className="size-4" />
+                {isLoggingOut ? "Déconnexion..." : "Se déconnecter"}
+              </Button>
+            </div>
           </div>
         </header>
 

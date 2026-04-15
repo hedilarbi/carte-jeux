@@ -15,7 +15,7 @@ export async function fetchJson<T>(
     | null;
 
   if (!response.ok) {
-    throw new Error(payload?.error?.message ?? "Request failed.");
+    throw new Error(payload?.error?.message ?? "La requête a échoué.");
   }
 
   return payload?.data as T;

@@ -49,7 +49,7 @@ export function parseBooleanParam(value: string | null) {
 export function handleRouteError(error: unknown) {
   if (error instanceof ZodError) {
     return errorResponse(
-      error.issues[0]?.message ?? "Validation failed.",
+      error.issues[0]?.message ?? "Validation échouée.",
       422,
       error.issues,
     );
@@ -60,5 +60,5 @@ export function handleRouteError(error: unknown) {
   }
 
   console.error(error);
-  return errorResponse("Internal server error.", 500);
+  return errorResponse("Erreur interne du serveur.", 500);
 }

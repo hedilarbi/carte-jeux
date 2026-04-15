@@ -15,11 +15,11 @@ const plexMono = IBM_Plex_Mono({
 
 export const metadata: Metadata = {
   title: {
-    default: "Eneba Digital Marketplace",
-    template: "%s | Eneba Digital Marketplace",
+    default: "Eneba Marketplace Digital",
+    template: "%s | Eneba Marketplace Digital",
   },
   description:
-    "Production-ready admin backoffice for a digital goods marketplace workflow.",
+    "Backoffice d'administration prêt pour la production pour un workflow de marketplace de produits digitaux.",
 };
 
 export default function RootLayout({
@@ -29,7 +29,7 @@ export default function RootLayout({
 }>) {
   return (
     <html
-      lang="en"
+      lang="fr"
       className={`${manrope.variable} ${plexMono.variable} h-full antialiased`}
     >
       <body className="min-h-full bg-background text-foreground font-sans">

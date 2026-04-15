@@ -19,27 +19,27 @@ export default async function AdminOrdersPage() {
   return (
     <>
       <AdminPageHeader
-        eyebrow="Operations"
-        title="Orders"
-        description="Track paid orders through sourcing, manual fulfillment, and customer delivery."
+        eyebrow="Opérations"
+        title="Commandes"
+        description="Suivez les commandes payées jusqu’à l’achat fournisseur, la préparation manuelle et la livraison au client."
       />
 
       <Card>
         <CardHeader>
-          <CardTitle>Order queue</CardTitle>
+          <CardTitle>File de commandes</CardTitle>
           <CardDescription className="mt-2">
-            Manage operational progression from payment confirmation to manual
-            code delivery by email.
+            Gérez la progression opérationnelle de la confirmation de paiement
+            jusqu’à l’envoi manuel du code par e-mail.
           </CardDescription>
         </CardHeader>
         <CardContent className="overflow-x-auto p-0">
           <table className="min-w-full text-left text-sm">
             <thead className="border-b border-white/8 bg-slate-950/30 text-xs uppercase tracking-[0.24em] text-slate-500">
               <tr>
-                <th className="px-6 py-4">Order</th>
-                <th className="px-6 py-4">Customer</th>
-                <th className="px-6 py-4">Payment</th>
-                <th className="px-6 py-4">Supplier</th>
+                <th className="px-6 py-4">Commande</th>
+                <th className="px-6 py-4">Client</th>
+                <th className="px-6 py-4">Paiement</th>
+                <th className="px-6 py-4">Fournisseur</th>
                 <th className="px-6 py-4 text-right">Actions</th>
               </tr>
             </thead>
@@ -62,13 +62,13 @@ export default async function AdminOrdersPage() {
                       {formatCurrency(order.total, order.currency)}
                     </div>
                     <div className="mt-1 text-slate-500">
-                      {order.paymentProvider || "Provider pending"}
+                      {order.paymentProvider || "Fournisseur de paiement en attente"}
                     </div>
                   </td>
                   <td className="px-6 py-4 text-xs text-slate-400">
-                    <div>{order.supplierPlatform || "Not purchased yet"}</div>
+                    <div>{order.supplierPlatform || "Pas encore acheté"}</div>
                     <div className="mt-1">
-                      {order.supplierPurchaseReference || "No reference"}
+                      {order.supplierPurchaseReference || "Aucune référence"}
                     </div>
                   </td>
                   <td className="px-6 py-4 text-right">
@@ -76,7 +76,7 @@ export default async function AdminOrdersPage() {
                       href={`/admin/orders/${order._id}`}
                       className="inline-flex items-center justify-center rounded-2xl border border-white/15 px-4 py-2.5 text-sm font-semibold text-slate-100 transition hover:bg-white/6"
                     >
-                      Open order
+                      Ouvrir la commande
                     </Link>
                   </td>
                 </tr>
@@ -87,7 +87,7 @@ export default async function AdminOrdersPage() {
                     className="px-6 py-10 text-center text-sm text-slate-500"
                     colSpan={5}
                   >
-                    No orders are available yet.
+                    Aucune commande n’est disponible pour le moment.
                   </td>
                 </tr>
               ) : null}
