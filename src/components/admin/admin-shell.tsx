@@ -1,0 +1,146 @@
+"use client";
+
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { useState } from "react";
+import {
+  LayoutDashboard,
+  Menu,
+  Package2,
+  PanelsTopLeft,
+  Percent,
+  ShoppingCart,
+  SmartphoneCharging,
+  Users,
+  X,
+} from "lucide-react";
+
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils/cn";
+import type { AdminSession } from "@/types/entities";
+
+interface AdminShellProps {
+  session: AdminSession;
+  children: React.ReactNode;
+}
+
+const navigation = [
+  { href: "/admin", label: "Dashboard", icon: LayoutDashboard },
+  { href: "/admin/products", label: "Products", icon: Package2 },
+  { href: "/admin/categories", label: "Categories", icon: PanelsTopLeft },
+  { href: "/admin/platforms", label: "Platforms", icon: SmartphoneCharging },
+  { href: "/admin/regions", label: "Regions", icon: PanelsTopLeft },
+  { href: "/admin/orders", label: "Orders", icon: ShoppingCart },
+  { href: "/admin/users", label: "Users", icon: Users },
+  { href: "/admin/promos", label: "Promos", icon: Percent },
+];
+
+export function AdminShell({ session, children }: AdminShellProps) {
+  const pathname = usePathname();
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+
+  return (
+    <div className="admin-grid min-h-screen bg-background">
+      <div className="absolute inset-x-0 top-0 h-64 bg-[radial-gradient(circle_at_top,_rgba(103,208,255,0.12),_transparent_38%)]" />
+
+      {sidebarOpen ? (
+        <button
+          aria-label="Close sidebar overlay"
+          className="fixed inset-0 z-30 bg-slate-950/60 backdrop-blur-sm lg:hidden"
+          onClick={() => setSidebarOpen(false)}
+        />
+      ) : null}
+
+      <aside
+        className={cn(
+          "fixed inset-y-0 left-0 z-40 w-72 border-r border-white/10 bg-slate-950/90 p-5 backdrop-blur-xl transition-transform lg:translate-x-0",
+          sidebarOpen ? "translate-x-0" : "-translate-x-full",
+        )}
+      >
+        <div className="flex items-center justify-between">
+          <Link href="/" className="block">
+            <p className="text-xs font-semibold uppercase tracking-[0.32em] text-sky-300/80">
+              Eneba Admin
+            </p>
+            <p className="mt-2 text-lg font-semibold text-white">
+              Digital Marketplace
+            </p>
+          </Link>
+          <Button
+            variant="ghost"
+            className="lg:hidden"
+            onClick={() => setSidebarOpen(false)}
+          >
+            <X className="size-4" />
+          </Button>
+        </div>
+
+        <div className="mt-8 rounded-[1.6rem] border border-white/10 bg-white/5 p-4">
+          <p className="text-xs uppercase tracking-[0.24em] text-slate-500">
+            Session
+          </p>
+          <p className="mt-2 text-sm font-semibold text-white">{session.email}</p>
+          <Badge className="mt-3" variant="muted">
+            {session.source.replace("-", " ")}
+          </Badge>
+        </div>
+
+        <nav className="mt-8 space-y-2">
+          {navigation.map((item) => {
+            const isActive =
+              item.href === "/admin"
+                ? pathname === item.href
+                : pathname.startsWith(item.href);
+
+            return (
+              <Link
+                key={item.href}
+                href={item.href}
+                onClick={() => setSidebarOpen(false)}
+                className={cn(
+                  "flex items-center gap-3 rounded-2xl px-4 py-3 text-sm font-medium transition",
+                  isActive
+                    ? "bg-sky-400/12 text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.05)]"
+                    : "text-slate-400 hover:bg-white/5 hover:text-white",
+                )}
+              >
+                <item.icon className="size-4" />
+                {item.label}
+              </Link>
+            );
+          })}
+        </nav>
+      </aside>
+
+      <div className="relative lg:pl-72">
+        <header className="sticky top-0 z-20 border-b border-white/8 bg-background/85 backdrop-blur-xl">
+          <div className="mx-auto flex max-w-[1600px] items-center justify-between gap-4 px-6 py-4">
+            <div className="flex items-center gap-3">
+              <Button
+                variant="outline"
+                className="lg:hidden"
+                onClick={() => setSidebarOpen(true)}
+              >
+                <Menu className="size-4" />
+              </Button>
+              <div>
+                <p className="text-xs uppercase tracking-[0.26em] text-slate-500">
+                  Operations
+                </p>
+                <p className="text-sm font-medium text-slate-200">
+                  Manual fulfillment backoffice
+                </p>
+              </div>
+            </div>
+            <Badge variant="default">Admin routes protected</Badge>
+          </div>
+        </header>
+
+        <main className="mx-auto flex w-full max-w-[1600px] flex-col gap-8 px-6 py-8">
+          {children}
+        </main>
+      </div>
+    </div>
+  );
+}
