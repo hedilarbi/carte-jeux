@@ -1,9 +1,11 @@
-import { type FilterQuery, Types } from "mongoose";
+import { type mongo, Types } from "mongoose";
 
 import { connectToDatabase } from "@/lib/db/mongoose";
 import { resolvePagination } from "@/lib/utils/pagination";
 import { CategoryModel, type CategoryRecord } from "@/models/category.model";
 import type { SearchablePaginationInput } from "@/types/common";
+
+type CategoryQuery = mongo.Filter<CategoryRecord>;
 
 export interface CategoryListFilters extends SearchablePaginationInput {
   isActive?: boolean;
@@ -13,7 +15,7 @@ export async function listCategories(filters: CategoryListFilters = {}) {
   await connectToDatabase();
 
   const pagination = resolvePagination(filters);
-  const query: FilterQuery<CategoryRecord> = {};
+  const query: CategoryQuery = {};
 
   if (typeof filters.isActive === "boolean") {
     query.isActive = filters.isActive;
@@ -81,7 +83,7 @@ export async function countCategories() {
 export async function existsCategorySlug(slug: string, excludeId?: string) {
   await connectToDatabase();
 
-  const query: FilterQuery<CategoryRecord> = { slug };
+  const query: CategoryQuery = { slug };
 
   if (excludeId) {
     query._id = { $ne: new Types.ObjectId(excludeId) };

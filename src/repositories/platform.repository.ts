@@ -1,9 +1,11 @@
-import { type FilterQuery, Types } from "mongoose";
+import { type mongo, Types } from "mongoose";
 
 import { connectToDatabase } from "@/lib/db/mongoose";
 import { resolvePagination } from "@/lib/utils/pagination";
 import { PlatformModel, type PlatformRecord } from "@/models/platform.model";
 import type { SearchablePaginationInput } from "@/types/common";
+
+type PlatformQuery = mongo.Filter<PlatformRecord>;
 
 export interface PlatformListFilters extends SearchablePaginationInput {
   isActive?: boolean;
@@ -13,7 +15,7 @@ export async function listPlatforms(filters: PlatformListFilters = {}) {
   await connectToDatabase();
 
   const pagination = resolvePagination(filters);
-  const query: FilterQuery<PlatformRecord> = {};
+  const query: PlatformQuery = {};
 
   if (typeof filters.isActive === "boolean") {
     query.isActive = filters.isActive;
@@ -76,7 +78,7 @@ export async function deletePlatformById(id: string) {
 export async function existsPlatformSlug(slug: string, excludeId?: string) {
   await connectToDatabase();
 
-  const query: FilterQuery<PlatformRecord> = { slug };
+  const query: PlatformQuery = { slug };
 
   if (excludeId) {
     query._id = { $ne: new Types.ObjectId(excludeId) };

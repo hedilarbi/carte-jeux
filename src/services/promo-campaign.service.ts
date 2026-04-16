@@ -52,11 +52,10 @@ export const promoCampaignService = {
     assertObjectId(id, "Identifiant de campagne promo");
 
     const parsed = promoCampaignUpdateSchema.parse(input);
+    const { productIds, ...campaignFields } = parsed;
     const updated = await updatePromoCampaignById(id, {
-      ...parsed,
-      ...(parsed.productIds
-        ? { productIds: normalizeProductIds(parsed.productIds) }
-        : {}),
+      ...campaignFields,
+      ...(productIds ? { productIds: normalizeProductIds(productIds) } : {}),
     });
 
     if (!updated) {

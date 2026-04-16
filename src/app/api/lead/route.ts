@@ -7,14 +7,21 @@ const HASOFFERS_POSTBACK_BASE =
 // ⚠️ en prod → utiliser DB
 const sentTransactions = new Set<string>();
 
+interface LeadRequestBody {
+  transaction_id?: unknown;
+  email?: unknown;
+}
+
 export async function POST(req: NextRequest) {
   try {
-    const body = await req.json();
+    const body = (await req.json()) as LeadRequestBody;
 
-    const { transaction_id, email } = body;
+    const transactionId =
+      typeof body.transaction_id === "string" ? body.transaction_id.trim() : "";
+    const email = typeof body.email === "string" ? body.email : undefined;
 
     // 1. Validation
-    if (!transaction_id) {
+    if (!transactionId) {
       return NextResponse.json(
         { success: false, message: "transaction_id manquant" },
         { status: 400 },
@@ -22,22 +29,22 @@ export async function POST(req: NextRequest) {
     }
 
     // 2. Anti-duplication
-    if (sentTransactions.has(transaction_id)) {
+    if (sentTransactions.has(transactionId)) {
       return NextResponse.json({
         success: true,
         message: "Déjà envoyé",
-        transaction_id,
+        transaction_id: transactionId,
       });
     }
 
     // 3. (Optionnel) Sauvegarde du lead
     console.log("Lead reçu:", {
       email,
-      transaction_id,
+      transaction_id: transactionId,
     });
 
     // 4. Construire URL postback
-    const postbackUrl = `${HASOFFERS_POSTBACK_BASE}&transaction_id=${encodeURIComponent(transaction_id)}`;
+    const postbackUrl = `${HASOFFERS_POSTBACK_BASE}&transaction_id=${encodeURIComponent(transactionId)}`;
 
     console.log("Postback URL:", postbackUrl);
 
@@ -53,21 +60,21 @@ export async function POST(req: NextRequest) {
     console.log("HasOffers response:", text);
 
     // 6. Marquer comme envoyé
-    sentTransactions.add(transaction_id);
+    sentTransactions.add(transactionId);
 
     return NextResponse.json({
       success: true,
-      transaction_id,
+      transaction_id: transactionId,
       hasoffers_status: response.status,
       hasoffers_response: text,
     });
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error("Erreur API:", error);
 
     return NextResponse.json(
       {
         success: false,
-        message: error.message || "Erreur serveur",
+        message: error instanceof Error ? error.message : "Erreur serveur",
       },
       { status: 500 },
     );

@@ -10,6 +10,7 @@ import {
 import { calculateDiscountedPrice } from "@/lib/utils/pricing";
 import { serializeDocument } from "@/lib/utils/serialization";
 import { generateSlug, generateUniqueSlug } from "@/lib/utils/slug";
+import type { ProductRecord } from "@/models/product.model";
 import {
   productCreateSchema,
   productUpdateSchema,
@@ -145,9 +146,21 @@ export const productService = {
     const slug = parsed.slug
       ? await resolveProductSlug(parsed.slug, id)
       : undefined;
-
-    const updated = await updateProductById(id, {
-      ...parsed,
+    const updatePayload: Partial<ProductRecord> = {
+      title: parsed.title,
+      shortDescription: parsed.shortDescription,
+      description: parsed.description,
+      image: parsed.image,
+      faceValue: parsed.faceValue,
+      currency: parsed.currency,
+      price: parsed.price,
+      discountPercent: parsed.discountPercent,
+      productType: parsed.productType,
+      deliveryMode: parsed.deliveryMode,
+      isFeatured: parsed.isFeatured,
+      isActive: parsed.isActive,
+      seoTitle: parsed.seoTitle,
+      seoDescription: parsed.seoDescription,
       ...(parsed.gallery ? { gallery: normalizeGallery(parsed.gallery) } : {}),
       ...(parsed.categoryId ? { categoryId: toObjectId(parsed.categoryId) } : {}),
       ...(parsed.platformId ? { platformId: toObjectId(parsed.platformId) } : {}),
@@ -155,7 +168,9 @@ export const productService = {
       ...(slug ? { slug } : {}),
       ...(normalizedSku ? { sku: normalizedSku } : {}),
       finalPrice: calculateDiscountedPrice(price, discountPercent),
-    });
+    };
+
+    const updated = await updateProductById(id, updatePayload);
 
     if (!updated) {
       throw new AppError("Produit introuvable.", 404);

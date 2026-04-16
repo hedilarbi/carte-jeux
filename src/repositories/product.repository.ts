@@ -1,9 +1,11 @@
-import { type FilterQuery, Types } from "mongoose";
+import { type mongo, Types } from "mongoose";
 
 import { connectToDatabase } from "@/lib/db/mongoose";
 import { resolvePagination } from "@/lib/utils/pagination";
 import { ProductModel, type ProductRecord } from "@/models/product.model";
 import type { SearchablePaginationInput } from "@/types/common";
+
+type ProductQuery = mongo.Filter<ProductRecord>;
 
 export interface ProductListFilters extends SearchablePaginationInput {
   categoryId?: string;
@@ -17,7 +19,7 @@ export async function listProducts(filters: ProductListFilters = {}) {
   await connectToDatabase();
 
   const pagination = resolvePagination(filters);
-  const query: FilterQuery<ProductRecord> = {};
+  const query: ProductQuery = {};
 
   if (filters.categoryId) {
     query.categoryId = new Types.ObjectId(filters.categoryId);
@@ -114,7 +116,7 @@ export async function deleteProductById(id: string) {
 export async function existsProductSlug(slug: string, excludeId?: string) {
   await connectToDatabase();
 
-  const query: FilterQuery<ProductRecord> = { slug };
+  const query: ProductQuery = { slug };
 
   if (excludeId) {
     query._id = { $ne: new Types.ObjectId(excludeId) };
@@ -127,7 +129,7 @@ export async function existsProductSlug(slug: string, excludeId?: string) {
 export async function existsProductSku(sku: string, excludeId?: string) {
   await connectToDatabase();
 
-  const query: FilterQuery<ProductRecord> = { sku };
+  const query: ProductQuery = { sku };
 
   if (excludeId) {
     query._id = { $ne: new Types.ObjectId(excludeId) };

@@ -164,9 +164,12 @@ const productSchema = new Schema<ProductRecord>(
   },
 );
 
-productSchema.pre("validate", function setFinalPrice(next) {
-  this.finalPrice = calculateDiscountedPrice(this.price, this.discountPercent);
-  next();
+productSchema.pre("validate", function setFinalPrice() {
+  const product = this as ProductRecord;
+  product.finalPrice = calculateDiscountedPrice(
+    product.price,
+    product.discountPercent,
+  );
 });
 
 export const ProductModel =

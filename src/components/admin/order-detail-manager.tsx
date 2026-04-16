@@ -49,6 +49,12 @@ interface DeliveryFormState {
   deliveryNote: string;
 }
 
+type OrderPatchPayload = Partial<StatusFormState> &
+  Partial<Omit<SupplierFormState, "supplierCost">> &
+  Partial<DeliveryFormState> & {
+    supplierCost?: number;
+  };
+
 export function OrderDetailManager({
   initialOrder,
 }: OrderDetailManagerProps) {
@@ -100,7 +106,7 @@ export function OrderDetailManager({
   }
 
   async function applyPatch(
-    payload: Record<string, unknown>,
+    payload: OrderPatchPayload,
     panel: "status" | "supplier" | "delivery",
   ) {
     const nextOrder = await fetchJson<Order>(`/api/admin/orders/${order._id}`, {

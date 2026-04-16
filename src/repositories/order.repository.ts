@@ -1,10 +1,11 @@
-import { type FilterQuery } from "mongoose";
-
 import { connectToDatabase } from "@/lib/db/mongoose";
 import { resolvePagination } from "@/lib/utils/pagination";
 import { OrderModel, type OrderRecord } from "@/models/order.model";
 import type { SearchablePaginationInput } from "@/types/common";
 import type { OrderStatus, PaymentStatus } from "@/types/entities";
+import type { mongo } from "mongoose";
+
+type OrderQuery = mongo.Filter<OrderRecord>;
 
 export interface OrderListFilters extends SearchablePaginationInput {
   status?: OrderStatus;
@@ -15,7 +16,7 @@ export async function listOrders(filters: OrderListFilters = {}) {
   await connectToDatabase();
 
   const pagination = resolvePagination(filters);
-  const query: FilterQuery<OrderRecord> = {};
+  const query: OrderQuery = {};
 
   if (filters.status) {
     query.status = filters.status;

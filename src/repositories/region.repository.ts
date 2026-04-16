@@ -1,9 +1,11 @@
-import { type FilterQuery, Types } from "mongoose";
+import { type mongo, Types } from "mongoose";
 
 import { connectToDatabase } from "@/lib/db/mongoose";
 import { resolvePagination } from "@/lib/utils/pagination";
 import { RegionModel, type RegionRecord } from "@/models/region.model";
 import type { SearchablePaginationInput } from "@/types/common";
+
+type RegionQuery = mongo.Filter<RegionRecord>;
 
 export interface RegionListFilters extends SearchablePaginationInput {
   isActive?: boolean;
@@ -13,7 +15,7 @@ export async function listRegions(filters: RegionListFilters = {}) {
   await connectToDatabase();
 
   const pagination = resolvePagination(filters);
-  const query: FilterQuery<RegionRecord> = {};
+  const query: RegionQuery = {};
 
   if (typeof filters.isActive === "boolean") {
     query.isActive = filters.isActive;
@@ -78,7 +80,7 @@ export async function deleteRegionById(id: string) {
 export async function existsRegionCode(code: string, excludeId?: string) {
   await connectToDatabase();
 
-  const query: FilterQuery<RegionRecord> = { code };
+  const query: RegionQuery = { code };
 
   if (excludeId) {
     query._id = { $ne: new Types.ObjectId(excludeId) };
