@@ -16,7 +16,6 @@ import {
   X,
 } from "lucide-react";
 
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils/cn";
 import type { AdminSession } from "@/types/entities";
@@ -36,12 +35,6 @@ const navigation = [
   { href: "/admin/users", label: "Utilisateurs", icon: Users },
   { href: "/admin/promos", label: "Promotions", icon: Percent },
 ];
-
-const sessionSourceLabels: Record<AdminSession["source"], string> = {
-  cookie: "cookie",
-  header: "en-tête",
-  "dev-bypass": "contournement local",
-};
 
 export function AdminShell({ session, children }: AdminShellProps) {
   const pathname = usePathname();
@@ -82,10 +75,7 @@ export function AdminShell({ session, children }: AdminShellProps) {
         <div className="flex items-center justify-between">
           <Link href="/" className="block">
             <p className="text-xs font-semibold uppercase tracking-[0.32em] text-sky-300/80">
-              Eneba Admin
-            </p>
-            <p className="mt-2 text-lg font-semibold text-white">
-              Marketplace digital
+              Playsdepot Admin
             </p>
           </Link>
           <Button
@@ -95,16 +85,6 @@ export function AdminShell({ session, children }: AdminShellProps) {
           >
             <X className="size-4" />
           </Button>
-        </div>
-
-        <div className="mt-8 rounded-[1.6rem] border border-white/10 bg-white/5 p-4">
-          <p className="text-xs uppercase tracking-[0.24em] text-slate-500">
-            Session
-          </p>
-          <p className="mt-2 text-sm font-semibold text-white">{session.email}</p>
-          <Badge className="mt-3" variant="muted">
-            {sessionSourceLabels[session.source]}
-          </Badge>
         </div>
 
         <nav className="mt-8 space-y-2">
@@ -145,17 +125,8 @@ export function AdminShell({ session, children }: AdminShellProps) {
               >
                 <Menu className="size-4" />
               </Button>
-              <div>
-                <p className="text-xs uppercase tracking-[0.26em] text-slate-500">
-                  Opérations
-                </p>
-                <p className="text-sm font-medium text-slate-200">
-                  Backoffice de livraison manuelle
-                </p>
-              </div>
             </div>
             <div className="flex items-center gap-3">
-              <Badge variant="default">Routes admin protégées</Badge>
               <Button
                 variant="ghost"
                 onClick={handleLogout}

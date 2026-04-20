@@ -14,7 +14,9 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
+import { ImagePreview } from "@/components/ui/image-preview";
 import { Input } from "@/components/ui/input";
+import { Modal } from "@/components/ui/modal";
 import { fetchJson } from "@/lib/utils/fetch-json";
 import type { Platform } from "@/types/entities";
 
@@ -25,14 +27,12 @@ interface PlatformsManagerProps {
 interface PlatformFormState {
   name: string;
   slug: string;
-  logo: string;
   isActive: boolean;
 }
 
 const defaultFormState: PlatformFormState = {
   name: "",
   slug: "",
-  logo: "",
   isActive: true,
 };
 
@@ -41,6 +41,9 @@ export function PlatformsManager({ initialPlatforms }: PlatformsManagerProps) {
   const [platforms, setPlatforms] = useState(initialPlatforms);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [form, setForm] = useState<PlatformFormState>(defaultFormState);
+  const [logoFile, setLogoFile] = useState<File | null>(null);
+  const [logoPreview, setLogoPreview] = useState<string | null>(null);
+  const [isFormOpen, setIsFormOpen] = useState(false);
   const [search, setSearch] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -63,7 +66,19 @@ export function PlatformsManager({ initialPlatforms }: PlatformsManagerProps) {
   function resetForm() {
     setEditingId(null);
     setForm(defaultFormState);
+    setLogoFile(null);
+    setLogoPreview(null);
     setError(null);
+    setIsFormOpen(false);
+  }
+
+  function startCreate() {
+    setEditingId(null);
+    setForm(defaultFormState);
+    setLogoFile(null);
+    setLogoPreview(null);
+    setError(null);
+    setIsFormOpen(true);
   }
 
   function startEdit(platform: Platform) {
@@ -71,10 +86,32 @@ export function PlatformsManager({ initialPlatforms }: PlatformsManagerProps) {
     setForm({
       name: platform.name,
       slug: platform.slug,
-      logo: platform.logo ?? "",
       isActive: platform.isActive,
     });
+    setLogoFile(null);
+    setLogoPreview(platform.logo ?? null);
     setError(null);
+    setIsFormOpen(true);
+  }
+
+  function handleLogoChange(event: React.ChangeEvent<HTMLInputElement>) {
+    const file = event.target.files?.[0];
+
+    if (!file) {
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onerror = () => {
+      setError("Impossible de lire le logo sélectionné.");
+    };
+    reader.onload = () => {
+      if (typeof reader.result === "string") {
+        setLogoPreview(reader.result);
+      }
+    };
+    reader.readAsDataURL(file);
+    setLogoFile(file);
   }
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
@@ -83,13 +120,22 @@ export function PlatformsManager({ initialPlatforms }: PlatformsManagerProps) {
     setIsSubmitting(true);
 
     try {
+      const payload = new FormData();
+      payload.set("name", form.name);
+      payload.set("slug", form.slug);
+      payload.set("isActive", String(form.isActive));
+
+      if (logoFile) {
+        payload.set("logo", logoFile);
+      }
+
       const nextPlatform = await fetchJson<Platform>(
         editingId
           ? `/api/admin/platforms/${editingId}`
           : "/api/admin/platforms",
         {
           method: editingId ? "PUT" : "POST",
-          body: JSON.stringify(form),
+          body: payload,
         },
       );
 
@@ -140,7 +186,7 @@ export function PlatformsManager({ initialPlatforms }: PlatformsManagerProps) {
   }
 
   return (
-    <div className="grid gap-6 xl:grid-cols-[1.3fr_0.8fr]">
+    <>
       <Card>
         <CardHeader className="flex flex-col gap-4 border-b border-white/8 pb-6 md:flex-row md:items-center md:justify-between">
           <div>
@@ -156,9 +202,9 @@ export function PlatformsManager({ initialPlatforms }: PlatformsManagerProps) {
               placeholder="Rechercher des plateformes"
               className="md:w-64"
             />
-            <Button onClick={resetForm}>
+            <Button onClick={startCreate}>
               <Plus className="size-4" />
-              Nouveau
+              Ajouter
             </Button>
           </div>
         </CardHeader>
@@ -179,12 +225,24 @@ export function PlatformsManager({ initialPlatforms }: PlatformsManagerProps) {
                   className="border-b border-white/6 text-slate-300"
                 >
                   <td className="px-6 py-4">
-                    <div className="font-medium text-white">{platform.name}</div>
-                    {platform.logo ? (
-                      <div className="mt-1 truncate text-xs text-slate-500">
-                        {platform.logo}
+                    <div className="flex items-center gap-3">
+                      <ImagePreview
+                        alt={`Logo ${platform.name}`}
+                        className="size-11 shrink-0 rounded-xl"
+                        emptyLabel="—"
+                        src={platform.logo}
+                      />
+                      <div>
+                        <div className="font-medium text-white">
+                          {platform.name}
+                        </div>
+                        {platform.logo ? (
+                          <div className="mt-1 max-w-xs truncate text-xs text-slate-500">
+                            Image Firebase Storage
+                          </div>
+                        ) : null}
                       </div>
-                    ) : null}
+                    </div>
                   </td>
                   <td className="px-6 py-4 font-mono text-xs text-slate-400">
                     {platform.slug}
@@ -229,92 +287,107 @@ export function PlatformsManager({ initialPlatforms }: PlatformsManagerProps) {
         </CardContent>
       </Card>
 
-      <Card>
-        <CardHeader>
-          <CardTitle>
-            {editingId ? "Modifier la plateforme" : "Créer une plateforme"}
-          </CardTitle>
-          <CardDescription className="mt-2">
-            Le logo doit pointer vers une URL CDN ou de stockage déjà disponible
-            dans la stack frontend.
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <form className="space-y-4" onSubmit={handleSubmit}>
+      <Modal
+        description="Sélectionnez une image locale. Elle sera uploadée dans Firebase Storage au moment de l'enregistrement."
+        isOpen={isFormOpen}
+        onClose={resetForm}
+        title={editingId ? "Modifier la plateforme" : "Créer une plateforme"}
+      >
+        <form className="space-y-5" onSubmit={handleSubmit}>
+          <div className="grid gap-6 md:grid-cols-[0.9fr_1.1fr]">
             <div>
               <label className="mb-2 block text-sm font-medium text-slate-300">
-                Nom
+                Logo
               </label>
+              <ImagePreview
+                alt="Aperçu du logo"
+                className="mb-3 aspect-[4/5]"
+                emptyLabel="Aucun logo sélectionné"
+                src={logoPreview}
+              />
               <Input
-                value={form.name}
-                onChange={(event) =>
-                  setForm((current) => ({ ...current, name: event.target.value }))
-                }
-                placeholder="PlayStation"
-                required
+                accept="image/*"
+                className="cursor-pointer file:mr-4 file:rounded-xl file:border-0 file:bg-sky-400/15 file:px-3 file:py-2 file:text-sm file:font-medium file:text-sky-200"
+                name="logo"
+                onChange={handleLogoChange}
+                type="file"
               />
+              <p className="mt-2 text-xs text-slate-500">
+                Formats acceptés : JPG, PNG, WebP, GIF, SVG. Taille max : 5 Mo.
+              </p>
             </div>
-            <div>
-              <label className="mb-2 block text-sm font-medium text-slate-300">
-                Slug
-              </label>
-              <Input
-                value={form.slug}
-                onChange={(event) =>
-                  setForm((current) => ({ ...current, slug: event.target.value }))
-                }
-                placeholder="playstation"
-              />
-            </div>
-            <div>
-              <label className="mb-2 block text-sm font-medium text-slate-300">
-                URL du logo
-              </label>
-              <Input
-                value={form.logo}
-                onChange={(event) =>
-                  setForm((current) => ({ ...current, logo: event.target.value }))
-                }
-                placeholder="https://cdn.example.com/platforms/playstation.svg"
-              />
-            </div>
-            <label className="flex items-center gap-3 rounded-2xl border border-white/8 bg-slate-950/40 px-4 py-3 text-sm text-slate-300">
-              <Checkbox
-                checked={form.isActive}
-                onChange={(event) =>
-                  setForm((current) => ({
-                    ...current,
-                    isActive: event.target.checked,
-                  }))
-                }
-              />
-              La plateforme est active
-            </label>
-            {error ? (
-              <div className="rounded-2xl border border-rose-500/20 bg-rose-500/10 px-4 py-3 text-sm text-rose-200">
-                {error}
+
+            <div className="grid content-start gap-4">
+              <div>
+                <label className="mb-2 block text-sm font-medium text-slate-300">
+                  Nom
+                </label>
+                <Input
+                  value={form.name}
+                  onChange={(event) =>
+                    setForm((current) => ({
+                      ...current,
+                      name: event.target.value,
+                    }))
+                  }
+                  placeholder="PlayStation"
+                  required
+                />
               </div>
-            ) : null}
-            <div className="flex gap-3">
-              <Button type="submit" disabled={isSubmitting} className="flex-1">
-                {isSubmitting
-                  ? "Enregistrement..."
-                  : editingId
-                    ? "Mettre à jour la plateforme"
-                    : "Créer la plateforme"}
-              </Button>
-              <Button
-                type="button"
-                variant="outline"
-                onClick={resetForm}
-                className="flex-1"
-              >
-                Réinitialiser
-              </Button>
+              <div>
+                <label className="mb-2 block text-sm font-medium text-slate-300">
+                  Slug
+                </label>
+                <Input
+                  value={form.slug}
+                  onChange={(event) =>
+                    setForm((current) => ({
+                      ...current,
+                      slug: event.target.value,
+                    }))
+                  }
+                  placeholder="playstation"
+                />
+              </div>
+              <label className="flex items-center gap-3 rounded-2xl border border-white/8 bg-slate-950/40 px-4 py-3 text-sm text-slate-300">
+                <Checkbox
+                  checked={form.isActive}
+                  onChange={(event) =>
+                    setForm((current) => ({
+                      ...current,
+                      isActive: event.target.checked,
+                    }))
+                  }
+                />
+                La plateforme est active
+              </label>
             </div>
-          </form>
-        </CardContent>
-      </Card>
-    </div>
+          </div>
+
+          {error ? (
+            <div className="rounded-2xl border border-rose-500/20 bg-rose-500/10 px-4 py-3 text-sm text-rose-200">
+              {error}
+            </div>
+          ) : null}
+          <div className="flex gap-3">
+            <Button type="submit" disabled={isSubmitting} className="flex-1">
+              {isSubmitting
+                ? "Enregistrement..."
+                : editingId
+                  ? "Mettre à jour la plateforme"
+                  : "Créer la plateforme"}
+            </Button>
+            <Button
+              type="button"
+              variant="outline"
+              onClick={resetForm}
+              className="flex-1"
+            >
+              Annuler
+            </Button>
+          </div>
+        </form>
+      </Modal>
+    </>
   );
 }

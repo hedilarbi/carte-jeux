@@ -6,6 +6,9 @@ import { ProductModel, type ProductRecord } from "@/models/product.model";
 import type { SearchablePaginationInput } from "@/types/common";
 
 type ProductQuery = mongo.Filter<ProductRecord>;
+type ProductFindQuery = Parameters<typeof ProductModel.find>[0];
+type ProductCountQuery = Parameters<typeof ProductModel.countDocuments>[0];
+type ProductExistsQuery = Parameters<typeof ProductModel.exists>[0];
 
 export interface ProductListFilters extends SearchablePaginationInput {
   categoryId?: string;
@@ -20,6 +23,7 @@ export async function listProducts(filters: ProductListFilters = {}) {
 
   const pagination = resolvePagination(filters);
   const query: ProductQuery = {};
+  const andFilters: ProductQuery[] = [];
 
   if (filters.categoryId) {
     query.categoryId = new Types.ObjectId(filters.categoryId);
@@ -30,7 +34,10 @@ export async function listProducts(filters: ProductListFilters = {}) {
   }
 
   if (filters.regionId) {
-    query.regionId = new Types.ObjectId(filters.regionId);
+    const regionObjectId = new Types.ObjectId(filters.regionId);
+    andFilters.push({
+      $or: [{ regionIds: regionObjectId }, { regionId: regionObjectId }],
+    });
   }
 
   if (typeof filters.isActive === "boolean") {
@@ -43,22 +50,31 @@ export async function listProducts(filters: ProductListFilters = {}) {
 
   if (filters.search?.trim()) {
     const searchRegex = new RegExp(filters.search.trim(), "i");
-    query.$or = [
-      { title: searchRegex },
-      { slug: searchRegex },
-      { sku: searchRegex },
-      { shortDescription: searchRegex },
-    ];
+    andFilters.push({
+      $or: [
+        { title: searchRegex },
+        { slug: searchRegex },
+        { sku: searchRegex },
+        { shortDescription: searchRegex },
+      ],
+    });
   }
 
+  if (andFilters.length > 0) {
+    query.$and = andFilters;
+  }
+
+  const findQuery = query as unknown as ProductFindQuery;
+  const countQuery = query as unknown as ProductCountQuery;
+
   const [items, totalItems] = await Promise.all([
-    ProductModel.find(query)
+    ProductModel.find(findQuery)
       .sort({ createdAt: -1 })
       .skip(pagination.skip)
       .limit(pagination.limit)
       .lean()
       .exec(),
-    ProductModel.countDocuments(query),
+    ProductModel.countDocuments(countQuery),
   ]);
 
   return {
@@ -85,7 +101,11 @@ export async function countProductsByPlatformId(platformId: string) {
 
 export async function countProductsByRegionId(regionId: string) {
   await connectToDatabase();
-  return ProductModel.countDocuments({ regionId: new Types.ObjectId(regionId) });
+  const regionObjectId = new Types.ObjectId(regionId);
+
+  return ProductModel.countDocuments({
+    $or: [{ regionIds: regionObjectId }, { regionId: regionObjectId }],
+  });
 }
 
 export async function getProductById(id: string) {
@@ -122,7 +142,9 @@ export async function existsProductSlug(slug: string, excludeId?: string) {
     query._id = { $ne: new Types.ObjectId(excludeId) };
   }
 
-  const existing = await ProductModel.exists(query);
+  const existing = await ProductModel.exists(
+    query as unknown as ProductExistsQuery,
+  );
   return Boolean(existing);
 }
 
@@ -135,6 +157,8 @@ export async function existsProductSku(sku: string, excludeId?: string) {
     query._id = { $ne: new Types.ObjectId(excludeId) };
   }
 
-  const existing = await ProductModel.exists(query);
+  const existing = await ProductModel.exists(
+    query as unknown as ProductExistsQuery,
+  );
   return Boolean(existing);
 }

@@ -15,6 +15,7 @@ import {
 } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
+import { Modal } from "@/components/ui/modal";
 import { Textarea } from "@/components/ui/textarea";
 import { fetchJson } from "@/lib/utils/fetch-json";
 import type { Region } from "@/types/entities";
@@ -42,6 +43,7 @@ export function RegionsManager({ initialRegions }: RegionsManagerProps) {
   const [regions, setRegions] = useState(initialRegions);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [form, setForm] = useState<RegionFormState>(defaultFormState);
+  const [isFormOpen, setIsFormOpen] = useState(false);
   const [search, setSearch] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -65,6 +67,14 @@ export function RegionsManager({ initialRegions }: RegionsManagerProps) {
     setEditingId(null);
     setForm(defaultFormState);
     setError(null);
+    setIsFormOpen(false);
+  }
+
+  function startCreate() {
+    setEditingId(null);
+    setForm(defaultFormState);
+    setError(null);
+    setIsFormOpen(true);
   }
 
   function startEdit(region: Region) {
@@ -76,6 +86,7 @@ export function RegionsManager({ initialRegions }: RegionsManagerProps) {
       isActive: region.isActive,
     });
     setError(null);
+    setIsFormOpen(true);
   }
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
@@ -137,7 +148,7 @@ export function RegionsManager({ initialRegions }: RegionsManagerProps) {
   }
 
   return (
-    <div className="grid gap-6 xl:grid-cols-[1.3fr_0.8fr]">
+    <>
       <Card>
         <CardHeader className="flex flex-col gap-4 border-b border-white/8 pb-6 md:flex-row md:items-center md:justify-between">
           <div>
@@ -154,9 +165,9 @@ export function RegionsManager({ initialRegions }: RegionsManagerProps) {
               placeholder="Rechercher des régions"
               className="md:w-64"
             />
-            <Button onClick={resetForm}>
+            <Button onClick={startCreate}>
               <Plus className="size-4" />
-              Nouveau
+              Ajouter
             </Button>
           </div>
         </CardHeader>
@@ -226,18 +237,13 @@ export function RegionsManager({ initialRegions }: RegionsManagerProps) {
         </CardContent>
       </Card>
 
-      <Card>
-        <CardHeader>
-          <CardTitle>
-            {editingId ? "Modifier la région" : "Créer une région"}
-          </CardTitle>
-          <CardDescription className="mt-2">
-            Les codes région peuvent suivre la logique marketplace, fournisseur
-            ou ISO selon votre modèle opérationnel.
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <form className="space-y-4" onSubmit={handleSubmit}>
+      <Modal
+        description="Les codes région peuvent suivre la logique marketplace, fournisseur ou ISO selon votre modèle opérationnel."
+        isOpen={isFormOpen}
+        onClose={resetForm}
+        title={editingId ? "Modifier la région" : "Créer une région"}
+      >
+        <form className="space-y-4" onSubmit={handleSubmit}>
             <div>
               <label className="mb-2 block text-sm font-medium text-slate-300">
                 Nom
@@ -310,12 +316,11 @@ export function RegionsManager({ initialRegions }: RegionsManagerProps) {
                 onClick={resetForm}
                 className="flex-1"
               >
-                Réinitialiser
+                Annuler
               </Button>
             </div>
           </form>
-        </CardContent>
-      </Card>
-    </div>
+      </Modal>
+    </>
   );
 }

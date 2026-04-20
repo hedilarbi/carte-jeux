@@ -14,6 +14,10 @@ import {
   percentageSchema,
 } from "@/lib/validation/common";
 
+const regionIdsSchema = z
+  .array(objectIdSchema)
+  .min(1, "Sélectionnez au moins une région.");
+
 const productCreateShape = {
   title: z.string().trim().min(2).max(180),
   slug: optionalSlugSchema,
@@ -23,7 +27,7 @@ const productCreateShape = {
   gallery: z.array(z.string().trim().url()).optional().default([]),
   categoryId: objectIdSchema,
   platformId: objectIdSchema,
-  regionId: objectIdSchema,
+  regionIds: regionIdsSchema,
   faceValue: nonNegativeNumberSchema,
   currency: currencySchema,
   price: nonNegativeNumberSchema,
@@ -46,7 +50,7 @@ const productUpdateShape = {
   gallery: z.array(z.string().trim().url()).optional(),
   categoryId: objectIdSchema,
   platformId: objectIdSchema,
-  regionId: objectIdSchema,
+  regionIds: regionIdsSchema,
   faceValue: nonNegativeNumberSchema,
   currency: currencySchema,
   price: nonNegativeNumberSchema,

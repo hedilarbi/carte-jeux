@@ -7,6 +7,7 @@ import {
   createPaginatedResult,
   resolvePagination,
 } from "@/lib/utils/pagination";
+import { omitUndefined } from "@/lib/utils/object";
 import { calculateDiscountedPrice } from "@/lib/utils/pricing";
 import { serializeDocument } from "@/lib/utils/serialization";
 import { generateSlug, generateUniqueSlug } from "@/lib/utils/slug";
@@ -33,12 +34,14 @@ import type { Product } from "@/types/entities";
 async function ensureProductRelations(input: {
   categoryId?: string;
   platformId?: string;
-  regionId?: string;
+  regionIds?: string[];
 }) {
   const checks = await Promise.all([
     input.categoryId ? getCategoryById(input.categoryId) : Promise.resolve(true),
     input.platformId ? getPlatformById(input.platformId) : Promise.resolve(true),
-    input.regionId ? getRegionById(input.regionId) : Promise.resolve(true),
+    input.regionIds?.length
+      ? Promise.all(input.regionIds.map((regionId) => getRegionById(regionId)))
+      : Promise.resolve(true),
   ]);
 
   if (!checks[0]) {
@@ -49,7 +52,7 @@ async function ensureProductRelations(input: {
     throw new AppError("La référence de plateforme est invalide.", 400);
   }
 
-  if (!checks[2]) {
+  if (Array.isArray(checks[2]) && checks[2].some((region) => !region)) {
     throw new AppError("La référence de région est invalide.", 400);
   }
 }
@@ -72,6 +75,10 @@ function normalizeGallery(gallery: string[] | undefined) {
 
 function toObjectId(value: string) {
   return new Types.ObjectId(value);
+}
+
+function normalizeRegionIds(regionIds: string[] | undefined) {
+  return [...new Set(regionIds ?? [])];
 }
 
 export const productService = {
@@ -100,7 +107,8 @@ export const productService = {
 
   async create(input: z.input<typeof productCreateSchema>) {
     const parsed = productCreateSchema.parse(input);
-    await ensureProductRelations(parsed);
+    const regionIds = normalizeRegionIds(parsed.regionIds);
+    await ensureProductRelations({ ...parsed, regionIds });
 
     const normalizedSku = parsed.sku.toUpperCase();
 
@@ -109,12 +117,14 @@ export const productService = {
     }
 
     const slug = await resolveProductSlug(parsed.slug ?? parsed.title);
+    const primaryRegionId = toObjectId(regionIds[0]);
     const created = await createProduct({
       ...parsed,
       gallery: normalizeGallery(parsed.gallery),
       categoryId: toObjectId(parsed.categoryId),
       platformId: toObjectId(parsed.platformId),
-      regionId: toObjectId(parsed.regionId),
+      regionId: primaryRegionId,
+      regionIds: regionIds.map(toObjectId),
       slug,
       sku: normalizedSku,
       finalPrice: calculateDiscountedPrice(parsed.price, parsed.discountPercent),
@@ -133,7 +143,10 @@ export const productService = {
     }
 
     const parsed = productUpdateSchema.parse(input);
-    await ensureProductRelations(parsed);
+    const regionIds = parsed.regionIds
+      ? normalizeRegionIds(parsed.regionIds)
+      : undefined;
+    await ensureProductRelations({ ...parsed, regionIds });
 
     const normalizedSku = parsed.sku?.toUpperCase();
 
@@ -146,7 +159,7 @@ export const productService = {
     const slug = parsed.slug
       ? await resolveProductSlug(parsed.slug, id)
       : undefined;
-    const updatePayload: Partial<ProductRecord> = {
+    const updatePayload: Partial<ProductRecord> = omitUndefined({
       title: parsed.title,
       shortDescription: parsed.shortDescription,
       description: parsed.description,
@@ -164,11 +177,16 @@ export const productService = {
       ...(parsed.gallery ? { gallery: normalizeGallery(parsed.gallery) } : {}),
       ...(parsed.categoryId ? { categoryId: toObjectId(parsed.categoryId) } : {}),
       ...(parsed.platformId ? { platformId: toObjectId(parsed.platformId) } : {}),
-      ...(parsed.regionId ? { regionId: toObjectId(parsed.regionId) } : {}),
+      ...(regionIds
+        ? {
+            regionId: toObjectId(regionIds[0]),
+            regionIds: regionIds.map(toObjectId),
+          }
+        : {}),
       ...(slug ? { slug } : {}),
       ...(normalizedSku ? { sku: normalizedSku } : {}),
       finalPrice: calculateDiscountedPrice(price, discountPercent),
-    };
+    }) as Partial<ProductRecord>;
 
     const updated = await updateProductById(id, updatePayload);
 

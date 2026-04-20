@@ -15,6 +15,7 @@ import {
 } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
+import { Modal } from "@/components/ui/modal";
 import { Textarea } from "@/components/ui/textarea";
 import { fetchJson } from "@/lib/utils/fetch-json";
 import type { Category } from "@/types/entities";
@@ -44,6 +45,7 @@ export function CategoriesManager({
   const [categories, setCategories] = useState(initialCategories);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [form, setForm] = useState<CategoryFormState>(defaultFormState);
+  const [isFormOpen, setIsFormOpen] = useState(false);
   const [search, setSearch] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -67,6 +69,7 @@ export function CategoriesManager({
     setEditingId(null);
     setForm(defaultFormState);
     setError(null);
+    setIsFormOpen(true);
   }
 
   function startEdit(category: Category) {
@@ -78,6 +81,14 @@ export function CategoriesManager({
       isActive: category.isActive,
     });
     setError(null);
+    setIsFormOpen(true);
+  }
+
+  function closeForm() {
+    setEditingId(null);
+    setForm(defaultFormState);
+    setError(null);
+    setIsFormOpen(false);
   }
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
@@ -109,7 +120,7 @@ export function CategoriesManager({
           : [nextCategory, ...current],
       );
 
-      startCreate();
+      closeForm();
       router.refresh();
     } catch (submissionError) {
       setError(
@@ -138,7 +149,7 @@ export function CategoriesManager({
       );
 
       if (editingId === id) {
-        startCreate();
+        closeForm();
       }
 
       router.refresh();
@@ -152,7 +163,7 @@ export function CategoriesManager({
   }
 
   return (
-    <div className="grid gap-6 xl:grid-cols-[1.3fr_0.8fr]">
+    <>
       <Card>
         <CardHeader className="flex flex-col gap-4 border-b border-white/8 pb-6 md:flex-row md:items-center md:justify-between">
           <div>
@@ -170,7 +181,7 @@ export function CategoriesManager({
             />
             <Button onClick={startCreate}>
               <Plus className="size-4" />
-              Nouveau
+              Ajouter
             </Button>
           </div>
         </CardHeader>
@@ -241,17 +252,13 @@ export function CategoriesManager({
         </CardContent>
       </Card>
 
-      <Card>
-        <CardHeader>
-          <CardTitle>
-            {editingId ? "Modifier la catégorie" : "Créer une catégorie"}
-          </CardTitle>
-          <CardDescription className="mt-2">
-            Le slug peut être laissé vide pour être généré automatiquement à partir du nom.
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <form className="space-y-4" onSubmit={handleSubmit}>
+      <Modal
+        description="Le slug peut être laissé vide pour être généré automatiquement à partir du nom."
+        isOpen={isFormOpen}
+        onClose={closeForm}
+        title={editingId ? "Modifier la catégorie" : "Créer une catégorie"}
+      >
+        <form className="space-y-4" onSubmit={handleSubmit}>
             <div>
               <label className="mb-2 block text-sm font-medium text-slate-300">
                 Nom
@@ -320,15 +327,14 @@ export function CategoriesManager({
               <Button
                 type="button"
                 variant="outline"
-                onClick={startCreate}
+                onClick={closeForm}
                 className="flex-1"
               >
-                Réinitialiser
+                Annuler
               </Button>
             </div>
-          </form>
-        </CardContent>
-      </Card>
-    </div>
+        </form>
+      </Modal>
+    </>
   );
 }

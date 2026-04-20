@@ -14,13 +14,12 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
+import { ImagePreview } from "@/components/ui/image-preview";
 import { Input } from "@/components/ui/input";
+import { Modal } from "@/components/ui/modal";
 import { Select } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
-import {
-  PRODUCT_TYPE_LABELS,
-  PRODUCT_TYPE_OPTIONS,
-} from "@/constants/admin";
+import { PRODUCT_TYPE_LABELS } from "@/constants/admin";
 import { calculateDiscountedPrice } from "@/lib/utils/pricing";
 import { formatCurrency } from "@/lib/utils/format";
 import { fetchJson } from "@/lib/utils/fetch-json";
@@ -36,19 +35,12 @@ interface ProductsManagerProps {
 interface ProductFormState {
   title: string;
   slug: string;
-  shortDescription: string;
-  description: string;
-  image: string;
-  galleryText: string;
   categoryId: string;
   platformId: string;
-  regionId: string;
-  faceValue: string;
-  currency: string;
+  regionIds: string[];
   price: string;
   discountPercent: string;
   sku: string;
-  productType: Product["productType"];
   isFeatured: boolean;
   isActive: boolean;
   seoTitle: string;
@@ -58,31 +50,43 @@ interface ProductFormState {
 const defaultFormState: ProductFormState = {
   title: "",
   slug: "",
-  shortDescription: "",
-  description: "",
-  image: "",
-  galleryText: "",
   categoryId: "",
   platformId: "",
-  regionId: "",
-  faceValue: "0",
-  currency: "USD",
+  regionIds: [],
   price: "0",
   discountPercent: "0",
   sku: "",
-  productType: "gift_card",
   isFeatured: false,
   isActive: true,
   seoTitle: "",
   seoDescription: "",
 };
 
-function parseGalleryText(value: string) {
-  return [...new Set(value.split(/\n|,/).map((item) => item.trim()).filter(Boolean))];
+const PRODUCT_CURRENCY = "DTN";
+const DEFAULT_PRODUCT_TYPE: Product["productType"] = "gift_card";
+
+function getProductRegionIds(product: Product) {
+  if (product.regionIds?.length) {
+    return product.regionIds;
+  }
+
+  return product.regionId ? [product.regionId] : [];
 }
 
-function buildGalleryText(gallery: string[]) {
-  return gallery.join("\n");
+function readImagePreview(file: File) {
+  return new Promise<string>((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onerror = () => reject(reader.error);
+    reader.onload = () => {
+      if (typeof reader.result === "string") {
+        resolve(reader.result);
+        return;
+      }
+
+      reject(new Error("Impossible de lire l'image sélectionnée."));
+    };
+    reader.readAsDataURL(file);
+  });
 }
 
 export function ProductsManager({
@@ -95,6 +99,9 @@ export function ProductsManager({
   const [products, setProducts] = useState(initialProducts);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [form, setForm] = useState<ProductFormState>(defaultFormState);
+  const [imageFile, setImageFile] = useState<File | null>(null);
+  const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const [isFormOpen, setIsFormOpen] = useState(false);
   const [search, setSearch] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -132,7 +139,19 @@ export function ProductsManager({
   function resetForm() {
     setEditingId(null);
     setForm(defaultFormState);
+    setImageFile(null);
+    setImagePreview(null);
     setError(null);
+    setIsFormOpen(false);
+  }
+
+  function startCreate() {
+    setEditingId(null);
+    setForm(defaultFormState);
+    setImageFile(null);
+    setImagePreview(null);
+    setError(null);
+    setIsFormOpen(true);
   }
 
   function startEdit(product: Product) {
@@ -140,46 +159,81 @@ export function ProductsManager({
     setForm({
       title: product.title,
       slug: product.slug,
-      shortDescription: product.shortDescription ?? "",
-      description: product.description ?? "",
-      image: product.image ?? "",
-      galleryText: buildGalleryText(product.gallery),
       categoryId: product.categoryId,
       platformId: product.platformId,
-      regionId: product.regionId,
-      faceValue: String(product.faceValue),
-      currency: product.currency,
+      regionIds: getProductRegionIds(product),
       price: String(product.price),
       discountPercent: String(product.discountPercent),
       sku: product.sku,
-      productType: product.productType,
       isFeatured: product.isFeatured,
       isActive: product.isActive,
       seoTitle: product.seoTitle ?? "",
       seoDescription: product.seoDescription ?? "",
     });
+    setImageFile(null);
+    setImagePreview(product.image ?? null);
     setError(null);
+    setIsFormOpen(true);
+  }
+
+  async function handleImageChange(event: React.ChangeEvent<HTMLInputElement>) {
+    const file = event.target.files?.[0];
+
+    if (!file) {
+      return;
+    }
+
+    try {
+      setImageFile(file);
+      setImagePreview(await readImagePreview(file));
+    } catch {
+      setError("Impossible de lire l'image principale sélectionnée.");
+    }
   }
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setError(null);
+
+    if (form.regionIds.length === 0) {
+      setError("Sélectionnez au moins une région.");
+      return;
+    }
+
     setIsSubmitting(true);
 
     try {
-      const payload = {
-        ...form,
-        gallery: parseGalleryText(form.galleryText),
-        faceValue: Number(form.faceValue),
-        price: Number(form.price),
-        discountPercent: Number(form.discountPercent),
-      };
+      const payload = new FormData();
+      payload.set("title", form.title);
+      payload.set("slug", form.slug);
+      payload.set("categoryId", form.categoryId);
+      payload.set("platformId", form.platformId);
+      form.regionIds.forEach((regionId) => {
+        payload.append("regionIds", regionId);
+      });
+      payload.set("currency", PRODUCT_CURRENCY);
+      payload.set("price", form.price);
+      payload.set("discountPercent", form.discountPercent);
+      payload.set("sku", form.sku);
+      payload.set("isFeatured", String(form.isFeatured));
+      payload.set("isActive", String(form.isActive));
+      payload.set("seoTitle", form.seoTitle);
+      payload.set("seoDescription", form.seoDescription);
+
+      if (!editingId) {
+        payload.set("faceValue", form.price || "0");
+        payload.set("productType", DEFAULT_PRODUCT_TYPE);
+      }
+
+      if (imageFile) {
+        payload.set("image", imageFile);
+      }
 
       const nextProduct = await fetchJson<Product>(
         editingId ? `/api/admin/products/${editingId}` : "/api/admin/products",
         {
           method: editingId ? "PUT" : "POST",
-          body: JSON.stringify(payload),
+          body: payload,
         },
       );
 
@@ -227,8 +281,23 @@ export function ProductsManager({
     }
   }
 
+  function toggleRegion(regionId: string) {
+    setForm((current) => {
+      const isSelected = current.regionIds.includes(regionId);
+
+      return {
+        ...current,
+        regionIds: isSelected
+          ? current.regionIds.filter(
+              (currentRegionId) => currentRegionId !== regionId,
+            )
+          : [...current.regionIds, regionId],
+      };
+    });
+  }
+
   return (
-    <div className="grid gap-6 xl:grid-cols-[1.25fr_0.95fr]">
+    <>
       <Card>
         <CardHeader className="flex flex-col gap-4 border-b border-white/8 pb-6 md:flex-row md:items-center md:justify-between">
           <div>
@@ -244,9 +313,9 @@ export function ProductsManager({
               placeholder="Rechercher des produits"
               className="md:w-72"
             />
-            <Button onClick={resetForm}>
+            <Button onClick={startCreate}>
               <Plus className="size-4" />
-              Nouveau
+              Ajouter
             </Button>
           </div>
         </CardHeader>
@@ -265,16 +334,32 @@ export function ProductsManager({
               {filteredProducts.map((product) => (
                 <tr key={product._id} className="border-b border-white/6 text-slate-300">
                   <td className="px-6 py-4">
-                    <div className="font-medium text-white">{product.title}</div>
-                    <div className="mt-1 text-xs text-slate-500">
-                      {PRODUCT_TYPE_LABELS[product.productType]} · {product.sku}
+                    <div className="flex items-center gap-3">
+                      <ImagePreview
+                        alt={`Image ${product.title}`}
+                        className="size-12 shrink-0 rounded-xl"
+                        emptyLabel="—"
+                        src={product.image}
+                      />
+                      <div>
+                        <div className="font-medium text-white">
+                          {product.title}
+                        </div>
+                        <div className="mt-1 text-xs text-slate-500">
+                          {PRODUCT_TYPE_LABELS[product.productType]} ·{" "}
+                          {product.sku}
+                        </div>
+                      </div>
                     </div>
                   </td>
                   <td className="px-6 py-4 text-xs text-slate-400">
                     <div>{categoryNameMap[product.categoryId] ?? "—"}</div>
                     <div className="mt-1">
                       {platformNameMap[product.platformId] ?? "—"} ·{" "}
-                      {regionNameMap[product.regionId] ?? "—"}
+                      {getProductRegionIds(product)
+                        .map((regionId) => regionNameMap[regionId])
+                        .filter(Boolean)
+                        .join(", ") || "—"}
                     </div>
                   </td>
                   <td className="px-6 py-4 text-xs">
@@ -329,20 +414,40 @@ export function ProductsManager({
         </CardContent>
       </Card>
 
-      <Card>
-        <CardHeader>
-          <CardTitle>
-            {editingId ? "Modifier le produit" : "Créer un produit"}
-          </CardTitle>
-          <CardDescription className="mt-2">
-            Ce flux admin modélise un achat manuel chez le fournisseur et une
-            livraison manuelle par e-mail.
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <form className="space-y-4" onSubmit={handleSubmit}>
-            <div className="grid gap-4 md:grid-cols-2">
-              <div className="md:col-span-2">
+      <Modal
+        description="Ce flux admin modélise un achat manuel chez le fournisseur et une livraison manuelle par e-mail."
+        isOpen={isFormOpen}
+        onClose={resetForm}
+        size="wide"
+        title={editingId ? "Modifier le produit" : "Créer un produit"}
+      >
+        <form className="space-y-5" onSubmit={handleSubmit}>
+          <div className="grid gap-6 lg:grid-cols-[0.9fr_1.1fr]">
+            <div>
+              <label className="mb-2 block text-sm font-medium text-slate-300">
+                Image principale
+              </label>
+              <ImagePreview
+                alt="Aperçu de l'image principale"
+                className="mb-3 aspect-[4/5]"
+                emptyLabel="Aucune image principale sélectionnée"
+                src={imagePreview}
+              />
+              <Input
+                accept="image/*"
+                className="cursor-pointer file:mr-4 file:rounded-xl file:border-0 file:bg-sky-400/15 file:px-3 file:py-2 file:text-sm file:font-medium file:text-sky-200"
+                name="image"
+                onChange={handleImageChange}
+                type="file"
+              />
+              <p className="mt-2 text-xs text-slate-500">
+                Si aucune nouvelle image n&apos;est choisie en édition,
+                l&apos;image existante est conservée.
+              </p>
+            </div>
+
+            <div className="grid content-start gap-4">
+              <div>
                 <label className="mb-2 block text-sm font-medium text-slate-300">
                   Titre
                 </label>
@@ -351,339 +456,245 @@ export function ProductsManager({
                   onChange={(event) =>
                     setForm((current) => ({ ...current, title: event.target.value }))
                   }
-                placeholder="Carte cadeau PlayStation Store 50 $"
-                required
-              />
-              </div>
-              <div>
-                <label className="mb-2 block text-sm font-medium text-slate-300">
-                  Slug
-                </label>
-                <Input
-                  value={form.slug}
-                  onChange={(event) =>
-                    setForm((current) => ({ ...current, slug: event.target.value }))
-                  }
-                  placeholder="playstation-store-50-card"
-                />
-              </div>
-              <div>
-                <label className="mb-2 block text-sm font-medium text-slate-300">
-                  SKU
-                </label>
-                <Input
-                  value={form.sku}
-                  onChange={(event) =>
-                    setForm((current) => ({ ...current, sku: event.target.value }))
-                  }
-                  placeholder="PSN-US-50"
+                  placeholder="Carte cadeau PlayStation Store 50 $"
                   required
                 />
               </div>
-              <div className="md:col-span-2">
-                <label className="mb-2 block text-sm font-medium text-slate-300">
-                  Description courte
-                </label>
-                <Input
-                  value={form.shortDescription}
-                  onChange={(event) =>
-                    setForm((current) => ({
-                      ...current,
-                      shortDescription: event.target.value,
-                    }))
-                  }
-                  placeholder="Recharge wallet US livrée manuellement par e-mail"
-                />
-              </div>
-              <div className="md:col-span-2">
-                <label className="mb-2 block text-sm font-medium text-slate-300">
-                  Description
-                </label>
-                <Textarea
-                  value={form.description}
-                  onChange={(event) =>
-                    setForm((current) => ({
-                      ...current,
-                      description: event.target.value,
-                    }))
-                  }
-                  placeholder="Description longue du produit"
-                />
-              </div>
-              <div className="md:col-span-2">
-                <label className="mb-2 block text-sm font-medium text-slate-300">
-                  URL image principale
-                </label>
-                <Input
-                  value={form.image}
-                  onChange={(event) =>
-                    setForm((current) => ({ ...current, image: event.target.value }))
-                  }
-                  placeholder="https://cdn.example.com/products/psn-50.png"
-                />
-              </div>
-              <div className="md:col-span-2">
-                <label className="mb-2 block text-sm font-medium text-slate-300">
-                  URLs de la galerie
-                </label>
-                <Textarea
-                  value={form.galleryText}
-                  onChange={(event) =>
-                    setForm((current) => ({
-                      ...current,
-                      galleryText: event.target.value,
-                    }))
-                  }
-                  placeholder="Une URL par ligne"
-                />
-              </div>
-              <div>
-                <label className="mb-2 block text-sm font-medium text-slate-300">
-                  Catégorie
-                </label>
-                <Select
-                  value={form.categoryId}
-                  onChange={(event) =>
-                    setForm((current) => ({
-                      ...current,
-                      categoryId: event.target.value,
-                    }))
-                  }
-                  required
-                >
-                  <option value="">Sélectionner une catégorie</option>
-                  {categories.map((category) => (
-                    <option key={category._id} value={category._id}>
-                      {category.name}
-                    </option>
-                  ))}
-                </Select>
-              </div>
-              <div>
-                <label className="mb-2 block text-sm font-medium text-slate-300">
-                  Plateforme
-                </label>
-                <Select
-                  value={form.platformId}
-                  onChange={(event) =>
-                    setForm((current) => ({
-                      ...current,
-                      platformId: event.target.value,
-                    }))
-                  }
-                  required
-                >
-                  <option value="">Sélectionner une plateforme</option>
-                  {platforms.map((platform) => (
-                    <option key={platform._id} value={platform._id}>
-                      {platform.name}
-                    </option>
-                  ))}
-                </Select>
-              </div>
-              <div>
-                <label className="mb-2 block text-sm font-medium text-slate-300">
-                  Région
-                </label>
-                <Select
-                  value={form.regionId}
-                  onChange={(event) =>
-                    setForm((current) => ({
-                      ...current,
-                      regionId: event.target.value,
-                    }))
-                  }
-                  required
-                >
-                  <option value="">Sélectionner une région</option>
-                  {regions.map((region) => (
-                    <option key={region._id} value={region._id}>
-                      {region.name}
-                    </option>
-                  ))}
-                </Select>
-              </div>
-              <div>
-                <label className="mb-2 block text-sm font-medium text-slate-300">
-                  Type de produit
-                </label>
-                <Select
-                  value={form.productType}
-                  onChange={(event) =>
-                    setForm((current) => ({
-                      ...current,
-                      productType: event.target.value as Product["productType"],
-                    }))
-                  }
-                >
-                  {PRODUCT_TYPE_OPTIONS.map((option) => (
-                    <option key={option} value={option}>
-                      {PRODUCT_TYPE_LABELS[option]}
-                    </option>
-                  ))}
-                </Select>
-              </div>
-              <div>
-                <label className="mb-2 block text-sm font-medium text-slate-300">
-                  Valeur faciale
-                </label>
-                <Input
-                  type="number"
-                  min="0"
-                  step="0.01"
-                  value={form.faceValue}
-                  onChange={(event) =>
-                    setForm((current) => ({
-                      ...current,
-                      faceValue: event.target.value,
-                    }))
-                  }
-                  required
-                />
-              </div>
-              <div>
-                <label className="mb-2 block text-sm font-medium text-slate-300">
-                  Devise
-                </label>
-                <Input
-                  value={form.currency}
-                  onChange={(event) =>
-                    setForm((current) => ({
-                      ...current,
-                      currency: event.target.value.toUpperCase(),
-                    }))
-                  }
-                  maxLength={3}
-                  required
-                />
-              </div>
-              <div>
-                <label className="mb-2 block text-sm font-medium text-slate-300">
-                  Prix
-                </label>
-                <Input
-                  type="number"
-                  min="0"
-                  step="0.01"
-                  value={form.price}
-                  onChange={(event) =>
-                    setForm((current) => ({
-                      ...current,
-                      price: event.target.value,
-                    }))
-                  }
-                  required
-                />
-              </div>
-              <div>
-                <label className="mb-2 block text-sm font-medium text-slate-300">
-                  Remise %
-                </label>
-                <Input
-                  type="number"
-                  min="0"
-                  max="100"
-                  step="0.01"
-                  value={form.discountPercent}
-                  onChange={(event) =>
-                    setForm((current) => ({
-                      ...current,
-                      discountPercent: event.target.value,
-                    }))
-                  }
-                />
-              </div>
-              <div className="rounded-2xl border border-sky-400/12 bg-sky-400/8 px-4 py-3 text-sm text-slate-300">
-                Aperçu du prix final
-                <div className="mt-2 text-lg font-semibold text-white">
-                  {formatCurrency(pricePreview, form.currency || "USD")}
+
+              <div className="grid gap-4 md:grid-cols-2">
+                <div>
+                  <label className="mb-2 block text-sm font-medium text-slate-300">
+                    Slug
+                  </label>
+                  <Input
+                    value={form.slug}
+                    onChange={(event) =>
+                      setForm((current) => ({
+                        ...current,
+                        slug: event.target.value,
+                      }))
+                    }
+                    placeholder="playstation-store-50-card"
+                  />
+                </div>
+                <div>
+                  <label className="mb-2 block text-sm font-medium text-slate-300">
+                    SKU
+                  </label>
+                  <Input
+                    value={form.sku}
+                    onChange={(event) =>
+                      setForm((current) => ({
+                        ...current,
+                        sku: event.target.value,
+                      }))
+                    }
+                    placeholder="PSN-US-50"
+                    required
+                  />
                 </div>
               </div>
-              <div className="md:col-span-2">
-                <label className="mb-2 block text-sm font-medium text-slate-300">
-                  Titre SEO
+
+              <div className="grid gap-3 md:grid-cols-2">
+                <label className="flex items-center gap-3 rounded-2xl border border-white/8 bg-slate-950/40 px-4 py-3 text-sm text-slate-300">
+                  <Checkbox
+                    checked={form.isFeatured}
+                    onChange={(event) =>
+                      setForm((current) => ({
+                        ...current,
+                        isFeatured: event.target.checked,
+                      }))
+                    }
+                  />
+                  Mise en avant
                 </label>
-                <Input
-                  value={form.seoTitle}
-                  onChange={(event) =>
-                    setForm((current) => ({
-                      ...current,
-                      seoTitle: event.target.value,
-                    }))
-                  }
-                  placeholder="Titre SEO optionnel"
-                />
-              </div>
-              <div className="md:col-span-2">
-                <label className="mb-2 block text-sm font-medium text-slate-300">
-                  Description SEO
+                <label className="flex items-center gap-3 rounded-2xl border border-white/8 bg-slate-950/40 px-4 py-3 text-sm text-slate-300">
+                  <Checkbox
+                    checked={form.isActive}
+                    onChange={(event) =>
+                      setForm((current) => ({
+                        ...current,
+                        isActive: event.target.checked,
+                      }))
+                    }
+                  />
+                  Le produit est actif
                 </label>
-                <Textarea
-                  value={form.seoDescription}
-                  onChange={(event) =>
-                    setForm((current) => ({
-                      ...current,
-                      seoDescription: event.target.value,
-                    }))
-                  }
-                  placeholder="Description SEO optionnelle"
-                />
               </div>
             </div>
+          </div>
 
-            <div className="grid gap-3 md:grid-cols-2">
-              <label className="flex items-center gap-3 rounded-2xl border border-white/8 bg-slate-950/40 px-4 py-3 text-sm text-slate-300">
-                <Checkbox
-                  checked={form.isFeatured}
-                  onChange={(event) =>
-                    setForm((current) => ({
-                      ...current,
-                      isFeatured: event.target.checked,
-                    }))
-                  }
-                />
-                Mise en avant
+          <div className="grid gap-4 xl:grid-cols-5">
+            <div>
+              <label className="mb-2 block text-sm font-medium text-slate-300">
+                Catégorie
               </label>
-              <label className="flex items-center gap-3 rounded-2xl border border-white/8 bg-slate-950/40 px-4 py-3 text-sm text-slate-300">
-                <Checkbox
-                  checked={form.isActive}
-                  onChange={(event) =>
-                    setForm((current) => ({
-                      ...current,
-                      isActive: event.target.checked,
-                    }))
-                  }
-                />
-                Le produit est actif
-              </label>
-            </div>
-
-            {error ? (
-              <div className="rounded-2xl border border-rose-500/20 bg-rose-500/10 px-4 py-3 text-sm text-rose-200">
-                {error}
-              </div>
-            ) : null}
-
-            <div className="flex gap-3">
-              <Button type="submit" disabled={isSubmitting} className="flex-1">
-                {isSubmitting
-                  ? "Enregistrement..."
-                  : editingId
-                    ? "Mettre à jour le produit"
-                    : "Créer le produit"}
-              </Button>
-              <Button
-                type="button"
-                variant="outline"
-                onClick={resetForm}
-                className="flex-1"
+              <Select
+                value={form.categoryId}
+                onChange={(event) =>
+                  setForm((current) => ({
+                    ...current,
+                    categoryId: event.target.value,
+                  }))
+                }
+                required
               >
-                Réinitialiser
-              </Button>
+                <option value="">Sélectionner une catégorie</option>
+                {categories.map((category) => (
+                  <option key={category._id} value={category._id}>
+                    {category.name}
+                  </option>
+                ))}
+              </Select>
             </div>
-          </form>
-        </CardContent>
-      </Card>
-    </div>
+            <div>
+              <label className="mb-2 block text-sm font-medium text-slate-300">
+                Plateforme
+              </label>
+              <Select
+                value={form.platformId}
+                onChange={(event) =>
+                  setForm((current) => ({
+                    ...current,
+                    platformId: event.target.value,
+                  }))
+                }
+                required
+              >
+                <option value="">Sélectionner une plateforme</option>
+                {platforms.map((platform) => (
+                  <option key={platform._id} value={platform._id}>
+                    {platform.name}
+                  </option>
+                ))}
+              </Select>
+            </div>
+            <div>
+              <label className="mb-2 block text-sm font-medium text-slate-300">
+                Prix
+              </label>
+              <Input
+                type="number"
+                min="0"
+                step="0.01"
+                value={form.price}
+                onChange={(event) =>
+                  setForm((current) => ({
+                    ...current,
+                    price: event.target.value,
+                  }))
+                }
+                required
+              />
+            </div>
+            <div>
+              <label className="mb-2 block text-sm font-medium text-slate-300">
+                Remise %
+              </label>
+              <Input
+                type="number"
+                min="0"
+                max="100"
+                step="0.01"
+                value={form.discountPercent}
+                onChange={(event) =>
+                  setForm((current) => ({
+                    ...current,
+                    discountPercent: event.target.value,
+                  }))
+                }
+              />
+            </div>
+            <div className="rounded-2xl border border-sky-400/12 bg-sky-400/8 px-4 py-3 text-sm text-slate-300">
+              Aperçu du prix final · DTN
+              <div className="mt-2 text-lg font-semibold text-white">
+                {formatCurrency(pricePreview, PRODUCT_CURRENCY)}
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <label className="mb-2 block text-sm font-medium text-slate-300">
+              Régions
+            </label>
+            <div className="grid gap-2 rounded-2xl border border-white/8 bg-slate-950/40 p-3 sm:grid-cols-2 lg:grid-cols-3">
+              {regions.map((region) => (
+                <label
+                  key={region._id}
+                  className="flex cursor-pointer items-center gap-3 rounded-xl px-3 py-2 text-sm text-slate-300 transition hover:bg-white/5"
+                >
+                  <Checkbox
+                    checked={form.regionIds.includes(region._id)}
+                    onChange={() => toggleRegion(region._id)}
+                  />
+                  <span>{region.name}</span>
+                </label>
+              ))}
+            </div>
+            <p className="mt-2 text-xs text-slate-500">
+              Sélectionnez une ou plusieurs régions où ce produit peut être
+              vendu.
+            </p>
+          </div>
+
+          <div className="grid gap-4 md:grid-cols-2">
+            <div>
+              <label className="mb-2 block text-sm font-medium text-slate-300">
+                Titre SEO
+              </label>
+              <Input
+                value={form.seoTitle}
+                onChange={(event) =>
+                  setForm((current) => ({
+                    ...current,
+                    seoTitle: event.target.value,
+                  }))
+                }
+                placeholder="Titre SEO optionnel"
+              />
+            </div>
+            <div>
+              <label className="mb-2 block text-sm font-medium text-slate-300">
+                Description SEO
+              </label>
+              <Textarea
+                value={form.seoDescription}
+                onChange={(event) =>
+                  setForm((current) => ({
+                    ...current,
+                    seoDescription: event.target.value,
+                  }))
+                }
+                placeholder="Description SEO optionnelle"
+              />
+            </div>
+          </div>
+
+          {error ? (
+            <div className="rounded-2xl border border-rose-500/20 bg-rose-500/10 px-4 py-3 text-sm text-rose-200">
+              {error}
+            </div>
+          ) : null}
+
+          <div className="flex gap-3">
+            <Button type="submit" disabled={isSubmitting} className="flex-1">
+              {isSubmitting
+                ? "Enregistrement..."
+                : editingId
+                  ? "Mettre à jour le produit"
+                  : "Créer le produit"}
+            </Button>
+            <Button
+              type="button"
+              variant="outline"
+              onClick={resetForm}
+              className="flex-1"
+            >
+              Annuler
+            </Button>
+          </div>
+        </form>
+      </Modal>
+    </>
   );
 }

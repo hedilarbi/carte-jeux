@@ -6,6 +6,7 @@ import {
   createPaginatedResult,
   resolvePagination,
 } from "@/lib/utils/pagination";
+import { omitUndefined } from "@/lib/utils/object";
 import { serializeDocument } from "@/lib/utils/serialization";
 import { generateSlug, generateUniqueSlug } from "@/lib/utils/slug";
 import {
@@ -92,10 +93,13 @@ export const platformService = {
       ? await resolvePlatformSlug(parsed.slug, id)
       : undefined;
 
-    const updated = await updatePlatformById(id, {
-      ...parsed,
-      slug,
-    });
+    const updated = await updatePlatformById(
+      id,
+      omitUndefined({
+        ...parsed,
+        slug,
+      }),
+    );
 
     if (!updated) {
       throw new AppError("Plateforme introuvable.", 404);

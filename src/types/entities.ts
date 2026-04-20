@@ -58,7 +58,8 @@ export interface Product extends BaseEntity {
   gallery: string[];
   categoryId: string;
   platformId: string;
-  regionId: string;
+  regionId?: string;
+  regionIds: string[];
   faceValue: number;
   currency: string;
   price: number;

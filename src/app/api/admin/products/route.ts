@@ -8,7 +8,62 @@ import {
   parseBooleanParam,
   successResponse,
 } from "@/lib/utils/api-response";
+import {
+  getFormDataBoolean,
+  getFormDataFile,
+  getFormDataFiles,
+  getFormDataNumber,
+  getFormDataString,
+  getFormDataStrings,
+} from "@/lib/utils/form-data";
+import { mediaService } from "@/services/media.service";
 import { productService } from "@/services/product.service";
+
+async function resolveProductPayload(request: NextRequest) {
+  const contentType = request.headers.get("content-type") ?? "";
+
+  if (!contentType.includes("multipart/form-data")) {
+    return request.json();
+  }
+
+  const formData = await request.formData();
+  const imageFile = getFormDataFile(formData, "image");
+  const galleryFiles = getFormDataFiles(formData, "gallery");
+  const image = imageFile
+    ? await mediaService.uploadProductImage(imageFile)
+    : undefined;
+  const gallery = galleryFiles.length
+    ? await mediaService.uploadProductGallery(galleryFiles)
+    : undefined;
+  const regionIds = getFormDataStrings(formData, "regionIds");
+  const legacyRegionId = getFormDataString(formData, "regionId");
+
+  return {
+    title: getFormDataString(formData, "title"),
+    slug: getFormDataString(formData, "slug"),
+    shortDescription: getFormDataString(formData, "shortDescription"),
+    description: getFormDataString(formData, "description"),
+    ...(image ? { image } : {}),
+    ...(gallery ? { gallery } : {}),
+    categoryId: getFormDataString(formData, "categoryId"),
+    platformId: getFormDataString(formData, "platformId"),
+    regionIds: regionIds.length
+      ? regionIds
+      : legacyRegionId
+        ? [legacyRegionId]
+        : [],
+    faceValue: getFormDataNumber(formData, "faceValue"),
+    currency: getFormDataString(formData, "currency"),
+    price: getFormDataNumber(formData, "price"),
+    discountPercent: getFormDataNumber(formData, "discountPercent"),
+    sku: getFormDataString(formData, "sku"),
+    productType: getFormDataString(formData, "productType"),
+    isFeatured: getFormDataBoolean(formData, "isFeatured", false),
+    isActive: getFormDataBoolean(formData, "isActive", true),
+    seoTitle: getFormDataString(formData, "seoTitle"),
+    seoDescription: getFormDataString(formData, "seoDescription"),
+  };
+}
 
 export async function GET(request: NextRequest) {
   if (!(await getAdminApiSession(request))) {
@@ -41,7 +96,7 @@ export async function POST(request: NextRequest) {
   }
 
   try {
-    const body = await request.json();
+    const body = await resolveProductPayload(request);
     const data = await productService.create(body);
 
     revalidatePath("/admin");

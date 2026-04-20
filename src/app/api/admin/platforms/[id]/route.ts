@@ -7,7 +7,34 @@ import {
   handleRouteError,
   successResponse,
 } from "@/lib/utils/api-response";
+import {
+  getFormDataFile,
+  getFormDataString,
+  getOptionalFormDataBoolean,
+} from "@/lib/utils/form-data";
+import { mediaService } from "@/services/media.service";
 import { platformService } from "@/services/platform.service";
+
+async function resolvePlatformPayload(request: NextRequest) {
+  const contentType = request.headers.get("content-type") ?? "";
+
+  if (!contentType.includes("multipart/form-data")) {
+    return request.json();
+  }
+
+  const formData = await request.formData();
+  const logoFile = getFormDataFile(formData, "logo");
+  const logo = logoFile
+    ? await mediaService.uploadPlatformLogo(logoFile)
+    : undefined;
+
+  return {
+    name: getFormDataString(formData, "name"),
+    slug: getFormDataString(formData, "slug"),
+    ...(logo ? { logo } : {}),
+    isActive: getOptionalFormDataBoolean(formData, "isActive"),
+  };
+}
 
 export async function GET(
   request: NextRequest,
@@ -36,7 +63,7 @@ export async function PUT(
 
   try {
     const { id } = await context.params;
-    const body = await request.json();
+    const body = await resolvePlatformPayload(request);
     const data = await platformService.update(id, body);
 
     revalidatePath("/admin/platforms");

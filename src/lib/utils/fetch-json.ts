@@ -2,12 +2,17 @@ export async function fetchJson<T>(
   input: RequestInfo | URL,
   init?: RequestInit,
 ): Promise<T> {
+  const headers = new Headers(init?.headers);
+  const isFormDataBody =
+    typeof FormData !== "undefined" && init?.body instanceof FormData;
+
+  if (!isFormDataBody && !headers.has("Content-Type")) {
+    headers.set("Content-Type", "application/json");
+  }
+
   const response = await fetch(input, {
     ...init,
-    headers: {
-      "Content-Type": "application/json",
-      ...(init?.headers ?? {}),
-    },
+    headers,
   });
 
   const payload = (await response.json().catch(() => null)) as

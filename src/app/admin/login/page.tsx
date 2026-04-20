@@ -17,16 +17,11 @@ export default async function AdminLoginPage() {
         <div className="grid w-full items-center gap-10 lg:grid-cols-[1.1fr_0.9fr]">
           <div>
             <p className="text-xs font-semibold uppercase tracking-[0.3em] text-sky-200/80">
-              Eneba Admin
+              PlaysDepot Admin
             </p>
             <h1 className="mt-4 text-4xl font-semibold tracking-tight text-white md:text-6xl">
-              Accès au backoffice marketplace.
+              Accès au backoffice Admin.
             </h1>
-            <p className="mt-6 max-w-2xl text-sm leading-7 text-slate-300">
-              La zone d’administration utilise maintenant un cookie de session
-              signé. Connectez-vous avec un compte administrateur MongoDB actif
-              pour accéder au tableau de bord.
-            </p>
           </div>
           <div className="flex justify-center lg:justify-end">
             <AdminLoginForm />

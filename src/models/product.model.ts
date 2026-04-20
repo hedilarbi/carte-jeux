@@ -1,7 +1,7 @@
 import {
   type HydratedDocument,
+  type Model,
   model,
-  models,
   Schema,
   type Types,
 } from "mongoose";
@@ -18,7 +18,8 @@ export interface ProductRecord {
   gallery: string[];
   categoryId: Types.ObjectId;
   platformId: Types.ObjectId;
-  regionId: Types.ObjectId;
+  regionId?: Types.ObjectId;
+  regionIds: Types.ObjectId[];
   faceValue: number;
   currency: string;
   price: number;
@@ -87,8 +88,19 @@ const productSchema = new Schema<ProductRecord>(
     regionId: {
       type: Schema.Types.ObjectId,
       ref: "Region",
-      required: true,
       index: true,
+    },
+    regionIds: {
+      type: [Schema.Types.ObjectId],
+      ref: "Region",
+      default: [],
+      index: true,
+      validate: {
+        validator(value: Types.ObjectId[]) {
+          return value.length > 0;
+        },
+        message: "Au moins une région doit être sélectionnée.",
+      },
     },
     faceValue: {
       type: Number,
@@ -166,11 +178,24 @@ const productSchema = new Schema<ProductRecord>(
 
 productSchema.pre("validate", function setFinalPrice() {
   const product = this as ProductRecord;
+
+  if ((!product.regionIds || product.regionIds.length === 0) && product.regionId) {
+    product.regionIds = [product.regionId];
+  }
+
+  if (!product.regionId && product.regionIds?.[0]) {
+    product.regionId = product.regionIds[0];
+  }
+
   product.finalPrice = calculateDiscountedPrice(
     product.price,
     product.discountPercent,
   );
 });
 
-export const ProductModel =
-  models.Product || model<ProductRecord>("Product", productSchema);
+export const ProductModel = model<ProductRecord>(
+  "Product",
+  productSchema,
+  undefined,
+  { overwriteModels: true },
+) as Model<ProductRecord>;

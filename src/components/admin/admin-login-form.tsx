@@ -32,9 +32,9 @@ export function AdminLoginForm() {
         }),
       });
 
-      const payload = (await response.json().catch(() => null)) as
-        | { error?: { message?: string } }
-        | null;
+      const payload = (await response.json().catch(() => null)) as {
+        error?: { message?: string };
+      } | null;
 
       if (!response.ok) {
         throw new Error(payload?.error?.message ?? "Échec de la connexion.");
@@ -61,12 +61,7 @@ export function AdminLoginForm() {
             <LockKeyhole className="size-5" />
           </div>
           <div>
-            <h1 className="text-2xl font-semibold text-white">
-              Connexion admin
-            </h1>
-            <p className="mt-1 text-sm text-slate-400">
-              Connectez-vous pour accéder au backoffice marketplace.
-            </p>
+            <h1 className="text-2xl font-semibold text-white">Connexion</h1>
           </div>
         </div>
 

@@ -8,7 +8,34 @@ import {
   parseBooleanParam,
   successResponse,
 } from "@/lib/utils/api-response";
+import {
+  getFormDataBoolean,
+  getFormDataFile,
+  getFormDataString,
+} from "@/lib/utils/form-data";
+import { mediaService } from "@/services/media.service";
 import { platformService } from "@/services/platform.service";
+
+async function resolvePlatformPayload(request: NextRequest) {
+  const contentType = request.headers.get("content-type") ?? "";
+
+  if (!contentType.includes("multipart/form-data")) {
+    return request.json();
+  }
+
+  const formData = await request.formData();
+  const logoFile = getFormDataFile(formData, "logo");
+  const logo = logoFile
+    ? await mediaService.uploadPlatformLogo(logoFile)
+    : undefined;
+
+  return {
+    name: getFormDataString(formData, "name"),
+    slug: getFormDataString(formData, "slug"),
+    ...(logo ? { logo } : {}),
+    isActive: getFormDataBoolean(formData, "isActive", true),
+  };
+}
 
 export async function GET(request: NextRequest) {
   if (!(await getAdminApiSession(request))) {
@@ -37,7 +64,7 @@ export async function POST(request: NextRequest) {
   }
 
   try {
-    const body = await request.json();
+    const body = await resolvePlatformPayload(request);
     const data = await platformService.create(body);
 
     revalidatePath("/admin/platforms");
