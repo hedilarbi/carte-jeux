@@ -1,25 +1,27 @@
 import type { Metadata } from "next";
-import { IBM_Plex_Mono, Manrope } from "next/font/google";
+import { Exo_2, Orbitron } from "next/font/google";
+import { PublicShell } from "@/components/site/public-shell";
 import "./globals.css";
 
-const manrope = Manrope({
-  variable: "--font-manrope",
+const exo2 = Exo_2({
+  variable: "--font-exo-2",
   subsets: ["latin"],
+  display: "swap",
 });
 
-const plexMono = IBM_Plex_Mono({
-  variable: "--font-plex-mono",
+const orbitron = Orbitron({
+  variable: "--font-orbitron",
   subsets: ["latin"],
-  weight: ["400", "500", "600"],
+  display: "swap",
 });
 
 export const metadata: Metadata = {
   title: {
-    default: "Eneba Marketplace Digital",
-    template: "%s | Eneba Marketplace Digital",
+    default: "GameZone TN - Recharges & Gift Cards",
+    template: "%s | GameZone TN",
   },
   description:
-    "Backoffice d'administration prêt pour la production pour un workflow de marketplace de produits digitaux.",
+    "Plateforme tunisienne de recharges gaming, gift cards et abonnements avec paiement en TND.",
 };
 
 export default function RootLayout({
@@ -29,11 +31,12 @@ export default function RootLayout({
 }>) {
   return (
     <html
+      data-theme="dark"
       lang="fr"
-      className={`${manrope.variable} ${plexMono.variable} h-full antialiased`}
+      className={`${exo2.variable} ${orbitron.variable} h-full antialiased`}
     >
-      <body className="min-h-full bg-background text-foreground font-sans">
-        {children}
+      <body className="min-h-full bg-background text-foreground font-sans max-w-screen">
+        <PublicShell>{children}</PublicShell>
       </body>
     </html>
   );
