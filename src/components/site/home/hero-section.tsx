@@ -52,7 +52,7 @@ export function HeroSection() {
 
           <div className="mt-6 flex flex-wrap gap-3">
             <Link
-              className="inline-flex items-center justify-center gap-2 rounded-xl bg-[linear-gradient(90deg,var(--brand-orchid),var(--brand-blue-mist))] px-5 py-2 text-sm font-bold font-body uppercase text-black transition hover:bg-brand-blue-mist"
+              className="inline-flex items-center justify-center gap-2 rounded-xl bg-[linear-gradient(90deg,var(--brand-orchid),var(--brand-blue-mist))] px-5 py-2 text-sm font-bold font-body uppercase text-black transition hover:shadow-[0_8px_28px_rgba(243,252,255,0.58)]"
               href="#products"
             >
               <IoGameController size={24} />
@@ -60,7 +60,7 @@ export function HeroSection() {
 
             </Link>
             <Link
-              className="font-body inline-flex items-center justify-center gap-2 rounded-xl border border-brand-orchid px-5 py-2 text-sm font-bold uppercase text-brand-orchid transition hover:bg-brand-lavender/10"
+              className="font-body inline-flex items-center justify-center gap-2 rounded-xl border border-brand-orchid px-5 py-2 text-sm font-bold uppercase text-brand-orchid transition hover:bg-brand-lavender/30"
               href="https://wa.me/21600000000"
               target="_blank"
             >
@@ -69,28 +69,13 @@ export function HeroSection() {
             </Link>
           </div>
 
-          <div className="mt-6 grid max-w-[300px] grid-cols-3 gap-12">
-            {[
-              ["50K+", "Clients"],
-              ["99.9%", "Satisfaction"],
-              ["<2min", "Livraison"],
-            ].map(([value, label]) => (
-              <div key={label}>
-                <p className="font-heading text-2xl font-black text-brand-purple-strong">
-                  {value}
-                </p>
-                <p className=" font-body text-[11px] uppercase text-white">
-                  {label}
-                </p>
-              </div>
-            ))}
-          </div>
+
         </div>
 
 
 
       </div>
-      <div className="mx-auto grid  px-6 md:grid-cols-2  xl:grid-cols-4 bg-black/30 shadow-[inset_0_1px_0_rgba(255,255,255,0.08)] backdrop-blur-md">
+      <div className="mx-auto grid  px-6 md:grid-cols-2  xl:grid-cols-4 bg-black/30 shadow-[inset_0_1px_0_rgba(255,255,255,0.08)] mt-10 ">
         {trustItems.map((item) => (
           <div className="flex items-center gap-4 py-5 md:px-6" key={item.title}>
             <span className="flex size-11 shrink-0 items-center justify-center rounded-xl border border-brand-lavender/20 bg-brand-lavender text-black">
