@@ -1,31 +1,10 @@
 import Image from "next/image";
 import Link from "next/link";
-import {
-  Check,
-  CreditCard,
-  Landmark,
-  Smartphone,
-} from "lucide-react";
+import { Check, CheckCircle2, Mail, PackageCheck } from "lucide-react";
 
-const paymentMethods = [
-  {
-    name: "Carte Visa / Carte Mastercard",
-    description: "Paiement sécurisé par carte bancaire",
-    icon: CreditCard,
-  },
-  {
-    name: "D17 / E-dinar",
-    description: "Paiement local en dinars tunisiens",
-    icon: Landmark,
-  },
-  {
-    name: "Via Application Flousi",
-    description: "Validation rapide via application mobile",
-    icon: Smartphone,
-  },
-] as const;
+const steps = ["Panier", "Paiement", "Obtenir votre produit"] as const;
 
-const summaryItems = [
+const orderItems = [
   {
     name: "PUB G Mobile 60 UC",
     product: "PUBG Mobile 60 UC",
@@ -52,28 +31,26 @@ const summaryItems = [
   },
 ] as const;
 
-const steps = ["Panier", "Paiement", "Obtenir votre produit"] as const;
-
-export default function CheckoutPage() {
+export default function GetProductPage() {
   return (
     <main className="min-h-screen bg-[linear-gradient(90deg,#E3CDFF_0%,#D8E0FF_67.31%,#C9CAFF_100%)] text-[#00061E]">
-      <CheckoutProgress />
+      <GetProductProgress />
 
-      <section className="mx-auto grid max-w-[1200px] gap-7 px-6 py-10 lg:grid-cols-[minmax(0,1fr)_437px] lg:items-start">
-        <PaymentMethods />
-        <CheckoutSummary />
+      <section className="mx-auto grid max-w-[1200px] gap-8 px-6 py-11 lg:grid-cols-[minmax(0,1fr)_437px] lg:items-start">
+        <OrderConfirmation />
+        <OrderSummary />
       </section>
     </main>
   );
 }
 
-function CheckoutProgress() {
+function GetProductProgress() {
   return (
     <section className="bg-[#012D69] px-6 py-6 text-white shadow-[0_10px_30px_rgba(1,45,105,0.2)] mt-6">
       <div className="mx-auto flex max-w-[1200px] items-center justify-between gap-3">
         {steps.map((step, index) => {
-          const isDone = index === 0;
-          const isActive = index === 1;
+          const isDone = index < 2;
+          const isActive = index === 2;
 
           return (
             <div
@@ -104,6 +81,7 @@ function CheckoutProgress() {
                   {step}
                 </span>
               </div>
+
               {index < steps.length - 1 ? (
                 <span
                   className={
@@ -121,44 +99,37 @@ function CheckoutProgress() {
   );
 }
 
-function PaymentMethods() {
+function OrderConfirmation() {
   return (
-    <div className="grid gap-[15px]">
-      {paymentMethods.map((method, index) => (
-        <button
-          className="group grid min-h-[144px] w-full grid-cols-[116px_minmax(0,1fr)_59px] items-center gap-6 bg-white/37 px-8 text-left shadow-[0_4px_4px_#B1A3F5] transition hover:bg-white/55"
-          key={method.name}
-          type="button"
-        >
-          <span className="flex size-[116px] items-center justify-center rounded-3xl bg-white/48 text-[#012D69]">
-            <method.icon className="size-12" />
-          </span>
+    <section className="pt-6 lg:pt-14">
+      <div className="flex flex-col gap-6 sm:flex-row sm:items-start">
+        <CheckCircle2 className="size-16 shrink-0 text-[#39B54A]" />
 
-          <span className="min-w-0">
-            <span className="block font-body text-base font-bold leading-7 text-[#012D69]">
-              {method.name}
-            </span>
-            <span className="mt-2 block font-inter text-xs font-semibold leading-5 text-black/60">
-              {method.description}
-            </span>
-          </span>
+        <div className="max-w-[790px]">
+          <h1 className="font-heading text-2xl font-medium leading-tight tracking-[0.02em] text-black md:text-3xl">
+            Merci pour votre commande
+          </h1>
 
-          <span className="flex size-[59px] items-center justify-center rounded-full border-[3px] border-[#B0A4F5] bg-white/48">
-            {index === 0 ? (
-              <span className="size-6 rounded-full bg-[#B0A4F5]" />
-            ) : null}
-          </span>
-        </button>
-      ))}
-    </div>
+          <p className="mt-6 max-w-[760px] text-justify font-inter text-base font-medium leading-7 tracking-[0.02em] text-black md:text-lg">
+            Votre commande a été prise en compte et sera traitée dans les
+            meilleurs délais. Vous recevrez un e-mail de confirmation de
+            commande.
+          </p>
+
+
+
+
+        </div>
+      </div>
+    </section>
   );
 }
 
-function CheckoutSummary() {
+function OrderSummary() {
   return (
-    <aside className="rounded-2xl bg-white p-7 text-black shadow-[0_4px_4px_#B0A4F5] backdrop-blur-[2px] lg:min-h-[904px]">
+    <aside className="rounded-2xl bg-white p-7 text-black shadow-[0_4px_4px_#B0A4F5] backdrop-blur-[2px] lg:min-h-[753px]">
       <div className="grid gap-[10px]">
-        {summaryItems.map((item) => (
+        {orderItems.map((item) => (
           <SummaryLine item={item} key={item.name} />
         ))}
       </div>
@@ -182,30 +153,11 @@ function CheckoutSummary() {
           60,300
         </div>
       </div>
-
-      <Link
-        className="mt-4 flex h-[57px] w-full items-center justify-center rounded-[14px] bg-[#B0A4F5] px-6 text-center font-body text-sm font-bold uppercase leading-[1] text-black shadow-[0_4px_8.6px_-1px_rgba(1,45,105,0.63)]"
-        href="/obtenir-votre-produit"
-      >
-        Continuer
-      </Link>
-
-      <label className="mt-8 flex items-start gap-3 border-t-2 border-[#DADDFF] pt-8 font-inter text-xs font-medium leading-5 text-black/76">
-        <input
-          className="mt-1 size-[26px] shrink-0 accent-[#B0A4F5]"
-          defaultChecked
-          type="checkbox"
-        />
-        <span>
-          J&apos;accepte de recevoir une invitation par e-mail pour évaluer le
-          service sur Trustpilot
-        </span>
-      </label>
     </aside>
   );
 }
 
-function SummaryLine({ item }: { item: (typeof summaryItems)[number] }) {
+function SummaryLine({ item }: { item: (typeof orderItems)[number] }) {
   return (
     <article className="grid grid-cols-[87px_minmax(0,1fr)_26px] gap-5">
       <div className="relative h-[121px] overflow-hidden bg-white shadow-[0_4px_12px_rgba(1,45,105,0.12)]">
@@ -239,7 +191,7 @@ function SummaryLine({ item }: { item: (typeof summaryItems)[number] }) {
         </p>
       </div>
 
-      <span className="mt-2 flex size-[26px] items-center justify-center rounded-full bg-[#012D69] font-heading text-xs font-bold text-white/90">
+      <span className="mt-2 flex size-[26px] items-center justify-center rounded-full bg-[#012D69] font-heading text-[13px] font-bold text-white/90">
         {item.quantity}
       </span>
     </article>

@@ -70,7 +70,7 @@ export default function CartPage() {
 
 function CartProgress() {
   return (
-    <section className="bg-[#012D69] px-6 py-6 text-white shadow-[0_10px_30px_rgba(1,45,105,0.2)]">
+    <section className="bg-[#012D69] px-6 py-6 text-white shadow-[0_10px_30px_rgba(1,45,105,0.2)] mt-6">
       <div className="mx-auto flex max-w-[1200px] items-center justify-between gap-3">
         {steps.map((step, index) => (
           <div
