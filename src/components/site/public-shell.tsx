@@ -16,7 +16,7 @@ export function PublicShell({ children }: { children: React.ReactNode }) {
   return (
     <>
       <SiteHeader />
-      <div className="min-h-screen pt-[100px]">{children}</div>
+      <div className="min-h-screen pt-10">{children}</div>
       <SiteFooter />
     </>
   );

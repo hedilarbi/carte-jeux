@@ -38,13 +38,13 @@ export function SiteHeader() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   return (
-    <header className="fixed inset-x-0 top-0 z-50 max-w-screen">
-      <div className="flex h-9 items-center overflow-hidden bg-[linear-gradient(90deg,var(--brand-lilac-soft),var(--brand-ice),var(--brand-electric-blue),var(--brand-violet-mist))] bg-[length:300%_100%] ">
+    <header className="fixed inset-x-0 top-0 z-50 max-w-screen h-10">
+      {/* <div className="flex h-9 items-center overflow-hidden bg-[linear-gradient(90deg,var(--brand-lilac-soft),var(--brand-ice),var(--brand-electric-blue),var(--brand-violet-mist))] bg-[length:300%_100%] ">
         <div className="flex w-max max-w-none animate-[announcement-marquee_24s_linear_infinite] items-center md:mx-auto md:w-full md:max-w-[1400px] md:animate-none md:justify-center motion-reduce:animate-none">
           <AnnouncementGroup />
           <AnnouncementGroup isDuplicate />
         </div>
-      </div>
+      </div> */}
 
       <nav className="border-b border-brand-lavender/25 bg-brand-navy/88 backdrop-blur-2xl">
         <div className="mx-auto flex  max-w-[1200px] items-center gap-4 px-4 sm:px-6">
@@ -53,7 +53,7 @@ export function SiteHeader() {
 
             href="/"
           >
-            <Image src="/logo.png" alt="logo" width={100} height={100} className="" />
+            <Image src="/logo_white.webp" alt="logo" width={100} height={100} className="" />
           </Link>
 
           <form className="hidden max-w-md flex-1 items-center overflow-hidden rounded-full border border-brand-ice/15  bg-[#0D0D22] transition focus-within:border-brand-lavender focus-within:shadow-[0_0_0_3px_rgba(185,152,241,0.12)] md:flex">

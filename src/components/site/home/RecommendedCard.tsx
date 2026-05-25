@@ -15,7 +15,7 @@ export function RecommendedCard({
     return (
         <article
             className={cn(
-                "group relative z-0 h-[154px] w-[min(88vw,360px)] shrink-0 overflow-hidden rounded-xl border-2 border-[#A680F1] bg-[#0F0F28]/92 font-extrabold leading-none text-white md:h-[480px] md:w-[240px] md:bg-transparent",
+                "group relative z-0 h-[154px] w-[min(88vw,360px)] shrink-0 overflow-hidden rounded-xl border-2 border-[#A680F1] bg-[#0F0F28]/92 font-extrabold leading-none text-white md:h-[480px] md:w-[240px] md:bg-transparent lg:h-[590px]",
                 className,
             )}
         >
@@ -39,9 +39,15 @@ export function RecommendedCard({
                 </div>
 
                 <div className="relative z-[2] flex min-w-0 flex-col p-3 pr-14">
-                    <div className="mb-2 inline-flex w-fit items-center gap-1.5 rounded-full border border-white/10 bg-black/25 px-2 py-1 text-[10px] font-bold text-white backdrop-blur">
-                        <Image src="/xbox.png" width={13} height={13} alt="xbox live" />
-                        <span className="truncate">Xbox Live</span>
+                    <div className="mb-2 inline-flex h-8 w-fit items-center gap-2 bg-[linear-gradient(6.39deg,rgba(1,45,105,0.82)_5.02%,rgba(1,45,105,0.82)_123.09%)] px-2.5 text-xs font-bold uppercase leading-3 text-white">
+                        <Image
+                            alt="xbox live"
+                            className="size-5 brightness-0 invert"
+                            height={20}
+                            src="/xbox.png"
+                            width={20}
+                        />
+                        <span className="truncate">Global</span>
                     </div>
 
                     <h3 className="line-clamp-2 text-[13px] font-black leading-5 text-white">
@@ -74,13 +80,13 @@ export function RecommendedCard({
 
                 <div className="relative h-full [grid-area:img]">
 
-                    <div className="relative h-[308px] overflow-hidden transition-[clip-path] duration-500 ease-out [clip-path:inset(0_0_0_0)] group-hover:[clip-path:inset(0_0_112px_0)]">
+                    <div className="relative h-[308px] overflow-hidden transition-[clip-path] duration-500 ease-out [clip-path:inset(0_0_0_0)] group-hover:[clip-path:inset(0_0_112px_0)] lg:h-[420px]">
                         <Image
                             alt={product.name}
                             className="object-cover transition duration-500 "
                             fill
                             priority={product.id === 1}
-                            sizes="(max-width: 768px) 190px, 230px"
+                            sizes="(max-width: 768px) 190px, (max-width: 1024px) 230px, 25vw"
                             src="/jeu1.jpg"
                         />
                         <div className="absolute inset-x-0 bottom-0 h-24 bg-[linear-gradient(to_top,#1f0a4d,rgba(31,10,77,0))]" />
@@ -89,10 +95,16 @@ export function RecommendedCard({
                 </div>
 
                 <div className="absolute inset-x-0 bottom-0 z-20 grid translate-y-[112px] transition-transform duration-500 ease-out [grid-template-areas:'flag'_'top'_'bottom'] group-hover:translate-y-0">
-                    <div className="relative z-[2] border-y border-white/10 bg-black/10 px-4 py-2 text-center text-xs font-bold text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.08)] backdrop-blur-md [grid-area:flag]">
-                        <div className="flex justify-center gap-2 items-center">
-                            <Image src='/xbox.png' width={15} height={15} alt='xbox live' />
-                            <p>Xbox Live</p>
+                    <div className="relative z-[2] h-[38px] bg-[linear-gradient(6.39deg,rgba(1,45,105,0.82)_5.02%,rgba(1,45,105,0.82)_123.09%)] px-[13px] text-base font-bold uppercase leading-3 text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.08)] [grid-area:flag]">
+                        <div className="flex h-full items-center gap-2.5">
+                            <Image
+                                alt="xbox live"
+                                className="size-[27px] brightness-0 invert"
+                                height={27}
+                                src="/xbox.png"
+                                width={27}
+                            />
+                            <p>Global</p>
                         </div>
                     </div>
                     <Link

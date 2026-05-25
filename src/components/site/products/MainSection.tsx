@@ -129,13 +129,15 @@ function ProductResultCard({
             </div>
 
             <div className="flex min-h-0 flex-1 flex-col bg-white text-brand-dark">
-                <div className="flex h-[22px] shrink-0 items-center justify-center gap-[5px] bg-black/55 text-white/85 backdrop-blur-[2.5px]">
-                    <span className="flex size-4 items-center justify-center overflow-hidden rounded-full bg-[#107C10]">
-                        <Image alt="" height={16} src="/xbox.png" width={16} />
-                    </span>
-                    <span className="max-w-[191px] truncate text-[10px] font-bold leading-[10px]">
-                        {product.platform}
-                    </span>
+                <div className="flex h-[38px] shrink-0 items-center gap-2.5 bg-[linear-gradient(6.39deg,rgba(1,45,105,0.82)_5.02%,rgba(1,45,105,0.82)_123.09%)] px-[13px] text-base font-bold uppercase leading-3 text-white">
+                    <Image
+                        alt="xbox live"
+                        className="size-[27px] brightness-0 invert"
+                        height={27}
+                        src="/xbox.png"
+                        width={27}
+                    />
+                    <span className="truncate">Global</span>
                 </div>
 
                 <div className="flex min-h-0 flex-1 flex-col justify-between px-[15px] pb-[15px] pt-[15px]">

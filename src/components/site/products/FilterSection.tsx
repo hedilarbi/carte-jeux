@@ -34,7 +34,7 @@ export default function FilterSection() {
             <FilterGroup title="Genre" values={genres} />
 
             <div className="mt-5 border-t border-white/10 pt-4">
-                <p className="font-mono text-[10px] font-bold uppercase tracking-[0.12em] text-brand-lilac/70">
+                <p className="font-mono text-[14px] font-bold uppercase tracking-[0.12em] text-brand-lilac/70">
                     Région
                 </p>
                 <div className="mt-3 flex flex-wrap gap-2">
@@ -50,7 +50,7 @@ export default function FilterSection() {
             </div>
 
             <div className="mt-5 border-t border-white/10 pt-4">
-                <p className="font-mono text-[10px] font-bold uppercase tracking-[0.12em] text-brand-lilac/70">
+                <p className="font-mono text-[14px] font-bold uppercase tracking-[0.12em] text-brand-lilac/70">
                     Prix
                 </p>
                 <div className="mt-3 grid grid-cols-2 gap-2">
@@ -80,7 +80,7 @@ function FilterGroup({
     return (
         <details className="group mt-5 border-t border-white/10 pt-4" open>
             <summary className="flex cursor-pointer list-none items-center justify-between gap-3 [&::-webkit-details-marker]:hidden">
-                <span className="font-mono text-[10px] font-bold uppercase tracking-[0.12em] text-brand-lilac/70">
+                <span className="font-mono text-[14px] font-bold uppercase tracking-[0.12em] text-brand-lilac/70">
                     {title}
                 </span>
                 <ChevronDown className="size-4 text-brand-lilac/70 transition group-open:rotate-180" />

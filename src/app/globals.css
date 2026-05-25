@@ -71,6 +71,7 @@
   --color-danger: var(--danger);
   --font-sans: var(--font-exo-2);
   --font-body: var(--font-exo-2);
+  --font-inter: var(--font-inter-family);
   --font-heading: var(--font-orbitron);
   --font-cta: var(--font-orbitron);
   --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
@@ -177,7 +178,7 @@ textarea {
 }
 
 #home {
-  background-image: url(/banner_hero.png);
+  background-image: url(/hero.jpg);
   background-size: cover;
   background-position: center top;
 

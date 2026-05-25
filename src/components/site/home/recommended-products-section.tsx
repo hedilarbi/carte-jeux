@@ -1,8 +1,8 @@
 import { products } from "@/components/site/home/home-data";
-import { RecommendedCard } from "./RecommendedCard";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { IoGameController } from "react-icons/io5";
+import { RecommendedProductsCarousel } from "./recommended-products-carousel";
 
 export function RecommendedProductsSection() {
   return (
@@ -24,25 +24,11 @@ export function RecommendedProductsSection() {
 
           </div>
 
-          <Link
-            className="font-mono text-xs font-bold uppercase text-brand-lavender transition hover:text-brand-lilac"
-            href="#products"
-          >
-            <span className="inline-flex items-center gap-1">
-              Voir tout
-              <ArrowRight className="size-3" />
-            </span>
-          </Link>
+
 
         </div>
 
-        <div className="scrollbar-none -mx-6 mt-10 overflow-x-auto px-6 pb-3">
-          <div className="flex items-start gap-4">
-            {products.slice(0, 8).map((product) => (
-              <RecommendedCard key={product.id} product={product} />
-            ))}
-          </div>
-        </div>
+        <RecommendedProductsCarousel products={products} />
         <div className="mt-8 flex justify-center">
           <Link
             href="#products"

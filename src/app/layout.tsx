@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Exo_2, Orbitron } from "next/font/google";
+import { Exo_2, Inter, Orbitron } from "next/font/google";
 import { PublicShell } from "@/components/site/public-shell";
 import "./globals.css";
 
@@ -11,6 +11,12 @@ const exo2 = Exo_2({
 
 const orbitron = Orbitron({
   variable: "--font-orbitron",
+  subsets: ["latin"],
+  display: "swap",
+});
+
+const inter = Inter({
+  variable: "--font-inter-family",
   subsets: ["latin"],
   display: "swap",
 });
@@ -33,7 +39,7 @@ export default function RootLayout({
     <html
       data-theme="dark"
       lang="fr"
-      className={`${exo2.variable} ${orbitron.variable} h-full antialiased`}
+      className={`${exo2.variable} ${orbitron.variable} ${inter.variable} h-full antialiased`}
     >
       <body className="min-h-full bg-background text-foreground font-sans max-w-screen">
         <PublicShell>{children}</PublicShell>

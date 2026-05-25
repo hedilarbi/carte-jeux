@@ -8,6 +8,7 @@ import {
   ShieldCheck,
   Zap,
 } from "lucide-react";
+import Image from "next/image";
 
 const footerColumns = [
   {
@@ -30,13 +31,12 @@ export function SiteFooter() {
       <div className="mx-auto max-w-[1400px] px-6 py-12">
         <div className="grid gap-10 md:grid-cols-2 lg:grid-cols-[2fr_1fr_1fr_1fr]">
           <div>
-            <Link className="inline-flex items-center gap-3" href="/">
-              <span className="flex size-11 items-center justify-center rounded-xl bg-[linear-gradient(135deg,var(--brand-lavender),var(--brand-electric-blue))] text-brand-navy shadow-[0_0_24px_rgba(185,152,241,0.45)]">
-                <Gamepad2 className="size-5" />
-              </span>
-              <span className="font-heading text-lg font-black text-brand-lilac">
-                Game<span className="text-brand-lavender">Zone</span> TN
-              </span>
+            <Link
+              aria-label="Playsdepot TN"
+
+              href="/"
+            >
+              <Image src="/logo_white.webp" alt="logo" width={150} height={100} className="" />
             </Link>
             <p className="mt-4 max-w-sm text-sm leading-7 text-brand-periwinkle">
               La plateforme de recharges gaming en Tunisie. Codes officiels,

@@ -1,10 +1,10 @@
 import { Clock3 } from "lucide-react";
 
 import { products } from "@/components/site/home/home-data";
-import { ProductCard } from "@/components/site/home/product-card";
 import { SubscriptionsSection } from "./subscriptions-section";
+import { FlashDealsCarousel } from "./flash-deals-carousel";
 
-const flashProducts = products.filter((product) => product.originalPrice).slice(0, 4);
+const flashProducts = products.filter((product) => product.originalPrice);
 
 export function FlashDealsSection() {
   return (
@@ -37,17 +37,7 @@ export function FlashDealsSection() {
           </div>
         </div>
 
-        <div className="scrollbar-none -mx-6 overflow-x-auto px-6 pb-3">
-          <div className="flex gap-4">
-            {flashProducts.map((product) => (
-              <ProductCard
-                className="w-[230px] shrink-0"
-                key={product.id}
-                product={product}
-              />
-            ))}
-          </div>
-        </div>
+        <FlashDealsCarousel products={flashProducts} />
       </div>
       <SubscriptionsSection />
     </section>

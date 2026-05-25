@@ -1,7 +1,9 @@
 import { topGames } from "@/components/site/home/home-data";
-import { HomeIcon } from "@/components/site/home/home-icons";
-import { SectionHeading } from "@/components/site/home/section-heading";
-import { cn } from "@/lib/utils/cn";
+
+
+import { FlashDealsCarousel } from "./flash-deals-carousel";
+import Link from "next/link";
+import { IoGameController } from "react-icons/io5";
 
 const rankTone = {
   1: "text-warning",
@@ -13,43 +15,39 @@ export function TopGamesSection() {
   return (
     <section className="bg-[#E1D0FF]/65 py-16">
       <div className="mx-auto max-w-[1200px] px-6">
-        <SectionHeading
-          actionHref="#products"
-          actionLabel="Voir tout"
-          eyebrow="// Classement"
-          title="Meilleurs jeux"
-        />
+        <div className="mb-7 flex items-end justify-between gap-4">
+          <div>
+            <span className="font-mono text-[11px] font-bold uppercase text-brand-dark">
+              {"// XBOX"}
+            </span>
+            <h2 className="mt-2 font-heading text-2xl font-bold text-brand-dark">
+              Xbox Tunisie – Cartes Xbox Live & Game Pass
 
-        <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-3">
-          {topGames.map((game) => (
-            <article
-              className="group box-border flex min-h-[76px] w-full max-w-full items-center gap-2 overflow-hidden rounded-xl border border-white/7 bg-[#0F0F28] px-3 py-3 transition hover:-translate-y-0.5 hover:border-brand-lavender/45 sm:gap-3 sm:px-[14px]"
-              key={game.rank}
-            >
-              <span
-                className={cn(
-                  "w-9 shrink-0 text-center font-heading text-xl font-black text-brand-periwinkle/55 sm:w-12 sm:text-2xl",
-                  rankTone[game.rank as keyof typeof rankTone],
-                )}
-              >
-                {String(game.rank).padStart(2, "0")}
-              </span>
-              <span className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-brand-lavender/12 text-brand-lavender sm:size-12 sm:rounded-2xl">
-                <HomeIcon className="size-5 sm:size-6" name={game.icon} />
-              </span>
-              <div className="min-w-0 flex-1">
-                <h3 className="truncate text-sm font-bold text-brand-lilac">
-                  {game.name}
-                </h3>
-                <p className="mt-1 font-mono text-[11px] text-brand-periwinkle/55">
-                  {game.platform}
-                </p>
-              </div>
-              <p className="ml-auto max-w-[72px] shrink text-right font-heading text-xs font-bold leading-tight text-brand-lavender sm:max-w-none sm:shrink-0 sm:text-sm">
-                {game.price} TND
-              </p>
-            </article>
-          ))}
+
+            </h2>
+
+            <p className="text-brand-navy mt-4 whitespace-pre-line text-base">
+              {"Profitez du Xbox Game Pass en Tunisie et accédez à des centaines de jeux."}
+            </p>
+
+          </div>
+
+
+
+        </div>
+
+        <FlashDealsCarousel products={topGames} />
+        <div className="mt-8 flex justify-center">
+          <Link
+            href="#products"
+            className="inline-flex h-[53px] w-full max-w-[436px] items-center justify-center gap-2 rounded-[11px] bg-[linear-gradient(274.47deg,#B99CF1_-12.06%,#7FCCFF_110.42%)] px-[22px] pb-[14px] pt-[11px] text-center font-heading text-sm font-bold text-[#03030A]  transition hover:-translate-y-0.5 hover:shadow-[0_8px_28px_rgba(243,252,255,0.58)]"
+          >
+            <IoGameController className="size-6 shrink-0" />
+            <span>
+              Voir les offres Xbox
+
+            </span>
+          </Link>
         </div>
       </div>
     </section>
