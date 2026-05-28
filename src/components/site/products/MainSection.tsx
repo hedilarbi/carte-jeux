@@ -1,5 +1,5 @@
 import Image from "next/image";
-import { Heart } from "lucide-react";
+import { Heart, ShoppingCart } from "lucide-react";
 
 import { ProductPlatformBadge } from "@/components/site/product-platform-badge";
 import type { CatalogPageContent, CatalogProduct } from "@/types/catalog";
@@ -13,10 +13,25 @@ function addHiddenInputs(content: CatalogPageContent) {
 
     return (
         <>
-            {selected.q ? <input name="q" type="hidden" value={selected.q} /> : null}
-            {selected.region ? (
-                <input name="region" type="hidden" value={selected.region} />
-            ) : null}
+            {selected.types.map((type) => (
+                <input key={`type-${type}`} name="type" type="hidden" value={type} />
+            ))}
+            {selected.platforms.map((platform) => (
+                <input
+                    key={`platform-${platform}`}
+                    name="platform"
+                    type="hidden"
+                    value={platform}
+                />
+            ))}
+            {selected.regions.map((region) => (
+                <input
+                    key={`region-${region}`}
+                    name="region"
+                    type="hidden"
+                    value={region}
+                />
+            ))}
             {selected.search ? (
                 <input name="search" type="hidden" value={selected.search} />
             ) : null}
@@ -26,10 +41,25 @@ function addHiddenInputs(content: CatalogPageContent) {
     );
 }
 
+function resolvePageTitle(content: CatalogPageContent) {
+    const activeLabels = [
+        ...content.activeFilters.platforms.map((platform) => platform.label),
+        ...content.activeFilters.types.map((type) => type.label),
+    ];
+
+    if (content.activeCategory && activeLabels.length === 1) {
+        return `${content.activeCategory.label} Tunisie - Codes et recharges gaming`;
+    }
+
+    if (activeLabels.length > 0) {
+        return `${activeLabels.join(" + ")} - Produits gaming Tunisie`;
+    }
+
+    return "Produits gaming Tunisie - Cartes, jeux et recharges";
+}
+
 export default function MainSection({ content }: MainSectionProps) {
-    const title = content.activeCategory
-        ? `${content.activeCategory.label} Tunisie - Codes et recharges gaming`
-        : "Produits gaming Tunisie - Cartes, jeux et recharges";
+    const title = resolvePageTitle(content);
 
     return (
         <section className="min-w-0 flex-1">
@@ -85,7 +115,7 @@ export default function MainSection({ content }: MainSectionProps) {
             </div>
 
             {content.products.length > 0 ? (
-                <div className="mt-8 grid grid-cols-[repeat(auto-fill,minmax(222px,1fr))] gap-6">
+                <div className="mt-8 grid grid-cols-[repeat(auto-fill,minmax(240px,1fr))] gap-6">
                     {content.products.map((product) => (
                         <ProductResultCard key={product.id} product={product} />
                     ))}
@@ -110,13 +140,13 @@ function ProductResultCard({
     product: CatalogProduct;
 }) {
     return (
-        <article className="group flex h-[433px] w-full max-w-[224px] flex-col justify-self-center overflow-hidden rounded-[20px] border border-[#A582ED] bg-[#A582ED] shadow-[0_18px_38px_rgba(130,88,203,0.28)] transition hover:-translate-y-1 hover:shadow-[0_24px_50px_rgba(130,88,203,0.35)]">
-            <div className="relative h-[220px] shrink-0 overflow-hidden rounded-t-[19px]">
+        <article className="group flex min-h-[508px] w-full flex-col overflow-hidden rounded-[20px] border border-[#A582ED] bg-[#A582ED] shadow-[0_18px_38px_rgba(130,88,203,0.28)] transition hover:-translate-y-1 hover:shadow-[0_24px_50px_rgba(130,88,203,0.35)]">
+            <div className="relative h-[255px] shrink-0 overflow-hidden rounded-t-[19px]">
                 <Image
                     alt={product.title}
                     className="object-cover"
                     fill
-                    sizes="222px"
+                    sizes="(max-width: 768px) 100vw, 280px"
                     src={product.image ?? "/jeu1.jpg"}
                 />
 
@@ -137,7 +167,7 @@ function ProductResultCard({
                     name={product.platform}
                 />
 
-                <div className="flex min-h-0 flex-1 flex-col justify-between px-[15px] pb-[15px] pt-[15px]">
+                <div className="flex min-h-0 flex-1 flex-col justify-between gap-5 px-[15px] pb-[15px] pt-[15px]">
                     <div>
                         <h2 className="line-clamp-2 min-h-10 text-sm font-extrabold leading-5 text-[#1F0A4D]">
                             {product.title}
@@ -166,10 +196,11 @@ function ProductResultCard({
                         </div>
 
                         <button
-                            className="mx-auto flex h-[35px] min-h-[35px] w-[192px] items-center justify-center rounded-lg bg-[#B0A4F5] px-[31.87px] py-2.5 text-xs font-extrabold text-white transition hover:bg-[#A582ED]"
+                            className="flex h-11 min-h-11 w-full items-center justify-center gap-2 rounded-lg bg-[#B0A4F5] px-4 text-xs font-extrabold text-white transition hover:bg-[#A582ED]"
                             type="button"
                         >
-                            <span className="w-[128.25px] text-center leading-[15px]">
+                            <ShoppingCart className="size-4 shrink-0" />
+                            <span className="whitespace-nowrap leading-[15px]">
                                 Ajouter au panier
                             </span>
                         </button>

@@ -11,24 +11,44 @@ import type {
   CatalogSelectedFilters,
 } from "@/types/catalog";
 
+type CatalogQueryValue = string | string[] | undefined;
+
 interface CatalogQueryInput {
-  max?: string;
-  min?: string;
-  q?: string;
-  region?: string;
-  search?: string;
-  sort?: string;
+  max?: CatalogQueryValue;
+  min?: CatalogQueryValue;
+  platform?: CatalogQueryValue;
+  q?: CatalogQueryValue;
+  region?: CatalogQueryValue;
+  search?: CatalogQueryValue;
+  sort?: CatalogQueryValue;
+  type?: CatalogQueryValue;
 }
 
-function normalizeQueryValue(value?: string) {
-  const normalized = value?.trim();
+function readFirstQueryValue(value?: CatalogQueryValue) {
+  return Array.isArray(value) ? value[0] : value;
+}
+
+function normalizeQueryValue(value?: CatalogQueryValue) {
+  const normalized = readFirstQueryValue(value)?.trim();
 
   return normalized ? normalized : undefined;
 }
 
-function normalizeSort(value?: string): string {
-  return ["popular", "price-asc", "price-desc", "new"].includes(value ?? "")
-    ? (value as string)
+function normalizeQueryList(value?: CatalogQueryValue) {
+  const values = Array.isArray(value) ? value : value ? [value] : [];
+  const normalizedValues = values
+    .flatMap((item) => item.split(","))
+    .map((item) => item.trim().toLowerCase())
+    .filter(Boolean);
+
+  return Array.from(new Set(normalizedValues));
+}
+
+function normalizeSort(value?: CatalogQueryValue): string {
+  const sort = normalizeQueryValue(value);
+
+  return ["popular", "price-asc", "price-desc", "new"].includes(sort ?? "")
+    ? (sort as string)
     : "popular";
 }
 
@@ -98,15 +118,6 @@ export const catalogService = {
   async getProductsPageContent(
     input: CatalogQueryInput,
   ): Promise<CatalogPageContent> {
-    const selected: CatalogSelectedFilters = {
-      max: normalizeQueryValue(input.max),
-      min: normalizeQueryValue(input.min),
-      q: normalizeQueryValue(input.q),
-      region: normalizeQueryValue(input.region)?.toLowerCase(),
-      search: normalizeQueryValue(input.search),
-      sort: normalizeSort(input.sort),
-    };
-
     const [categoryResult, regions] = await Promise.all([
       listCategories({
         page: 1,
@@ -127,27 +138,53 @@ export const catalogService = {
     const regionMap = new Map(
       activeRegions.map((region) => [region._id, region]),
     );
-    const regionByCode = new Map(
-      activeRegions.map((region) => [region.code.toLowerCase(), region]),
+
+    const requestedTypeSlugs = new Set(normalizeQueryList(input.type));
+    const requestedPlatformSlugs = new Set(normalizeQueryList(input.platform));
+    const requestedRegionCodes = new Set(normalizeQueryList(input.region));
+    const legacyQueryCategory = categoryBySlug.get(
+      normalizeQueryList(input.q)[0] ?? "",
     );
-    const activeCategory = selected.q
-      ? categoryBySlug.get(selected.q)
-      : undefined;
-    const activeRegion = selected.region
-      ? regionByCode.get(selected.region)
-      : undefined;
+
+    if (legacyQueryCategory?.isPlateforme) {
+      requestedPlatformSlugs.add(legacyQueryCategory.slug);
+    } else if (legacyQueryCategory) {
+      requestedTypeSlugs.add(legacyQueryCategory.slug);
+    }
+
+    const selectedTypeCategories = categories.filter(
+      (category) =>
+        !category.isPlateforme && requestedTypeSlugs.has(category.slug),
+    );
+    const selectedPlatformCategories = categories.filter(
+      (category) =>
+        category.isPlateforme && requestedPlatformSlugs.has(category.slug),
+    );
+    const selectedRegions = activeRegions.filter((region) =>
+      requestedRegionCodes.has(region.code.toLowerCase()),
+    );
+
+    const selected: CatalogSelectedFilters = {
+      max: normalizeQueryValue(input.max),
+      min: normalizeQueryValue(input.min),
+      platforms: selectedPlatformCategories.map((category) => category.slug),
+      regions: selectedRegions.map((region) => region.code.toLowerCase()),
+      search: normalizeQueryValue(input.search),
+      sort: normalizeSort(input.sort),
+      types: selectedTypeCategories.map((category) => category.slug),
+    };
+    const activeCategories = [
+      ...selectedPlatformCategories,
+      ...selectedTypeCategories,
+    ];
     const productResult = await listProducts({
       page: 1,
       limit: 60,
       isActive: true,
       search: selected.search,
-      categoryId:
-        activeCategory && !activeCategory.isPlateforme
-          ? activeCategory._id
-          : undefined,
-      platformId:
-        activeCategory?.isPlateforme ? activeCategory._id : undefined,
-      regionId: activeRegion?._id,
+      categoryIds: selectedTypeCategories.map((category) => category._id),
+      platformIds: selectedPlatformCategories.map((category) => category._id),
+      regionIds: selectedRegions.map((region) => region._id),
       priceMin: selected.min,
       priceMax: selected.max,
       sort: selected.sort,
@@ -155,9 +192,14 @@ export const catalogService = {
     const products = serializeDocument<Product[]>(productResult.items);
 
     return {
-      activeCategory: activeCategory
-        ? toCategoryFilter(activeCategory)
+      activeCategory: activeCategories.length === 1
+        ? toCategoryFilter(activeCategories[0])
         : undefined,
+      activeFilters: {
+        platforms: selectedPlatformCategories.map(toCategoryFilter),
+        regions: selectedRegions.map(toRegionFilter),
+        types: selectedTypeCategories.map(toCategoryFilter),
+      },
       filters: {
         platforms: categories
           .filter((category) => category.isPlateforme)

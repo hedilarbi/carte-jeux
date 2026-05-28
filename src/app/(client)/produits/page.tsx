@@ -15,10 +15,12 @@ export default async function ProductsPage({
   const content = await catalogService.getProductsPageContent({
     max: readSearchParam(params.max),
     min: readSearchParam(params.min),
+    platform: params.platform,
     q: readSearchParam(params.q),
-    region: readSearchParam(params.region),
+    region: params.region,
     search: readSearchParam(params.search),
     sort: readSearchParam(params.sort),
+    type: params.type,
   });
 
   return (

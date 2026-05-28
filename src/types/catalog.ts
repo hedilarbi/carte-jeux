@@ -15,10 +15,11 @@ export interface CatalogRegionFilter {
 export interface CatalogSelectedFilters {
   max?: string;
   min?: string;
-  q?: string;
-  region?: string;
+  platforms: string[];
+  regions: string[];
   search?: string;
   sort: string;
+  types: string[];
 }
 
 export interface CatalogProduct {
@@ -36,6 +37,11 @@ export interface CatalogProduct {
 
 export interface CatalogPageContent {
   activeCategory?: CatalogCategoryFilter;
+  activeFilters: {
+    platforms: CatalogCategoryFilter[];
+    regions: CatalogRegionFilter[];
+    types: CatalogCategoryFilter[];
+  };
   filters: {
     platforms: CatalogCategoryFilter[];
     regions: CatalogRegionFilter[];

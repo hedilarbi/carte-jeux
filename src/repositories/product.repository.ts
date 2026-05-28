@@ -12,8 +12,11 @@ type ProductExistsQuery = Parameters<typeof ProductModel.exists>[0];
 
 export interface ProductListFilters extends SearchablePaginationInput {
   categoryId?: string;
+  categoryIds?: string[];
   platformId?: string;
+  platformIds?: string[];
   regionId?: string;
+  regionIds?: string[];
   isActive?: boolean;
   isFeatured?: boolean;
   priceMax?: number | string | null;
@@ -44,6 +47,12 @@ function resolveProductSort(sort?: string | null): Record<string, SortOrder> {
   }
 }
 
+function resolveObjectIds(ids: Array<string | undefined>) {
+  return ids
+    .filter((id): id is string => Boolean(id && Types.ObjectId.isValid(id)))
+    .map((id) => new Types.ObjectId(id));
+}
+
 export async function listProducts(filters: ProductListFilters = {}) {
   await connectToDatabase();
 
@@ -51,28 +60,46 @@ export async function listProducts(filters: ProductListFilters = {}) {
   const query: ProductQuery = {};
   const andFilters: ProductQuery[] = [];
 
-  if (filters.categoryId) {
-    const categoryObjectId = new Types.ObjectId(filters.categoryId);
-    andFilters.push({
-      $or: [{ categoryIds: categoryObjectId }, { categoryId: categoryObjectId }],
-    });
-  }
+  const categoryObjectIds = resolveObjectIds([
+    filters.categoryId,
+    ...(filters.categoryIds ?? []),
+  ]);
 
-  if (filters.platformId) {
-    const platformObjectId = new Types.ObjectId(filters.platformId);
+  if (categoryObjectIds.length > 0) {
     andFilters.push({
       $or: [
-        { platformId: platformObjectId },
-        { categoryIds: platformObjectId },
-        { categoryId: platformObjectId },
+        { categoryIds: { $in: categoryObjectIds } },
+        { categoryId: { $in: categoryObjectIds } },
       ],
     });
   }
 
-  if (filters.regionId) {
-    const regionObjectId = new Types.ObjectId(filters.regionId);
+  const platformObjectIds = resolveObjectIds([
+    filters.platformId,
+    ...(filters.platformIds ?? []),
+  ]);
+
+  if (platformObjectIds.length > 0) {
     andFilters.push({
-      $or: [{ regionIds: regionObjectId }, { regionId: regionObjectId }],
+      $or: [
+        { platformId: { $in: platformObjectIds } },
+        { categoryIds: { $in: platformObjectIds } },
+        { categoryId: { $in: platformObjectIds } },
+      ],
+    });
+  }
+
+  const regionObjectIds = resolveObjectIds([
+    filters.regionId,
+    ...(filters.regionIds ?? []),
+  ]);
+
+  if (regionObjectIds.length > 0) {
+    andFilters.push({
+      $or: [
+        { regionIds: { $in: regionObjectIds } },
+        { regionId: { $in: regionObjectIds } },
+      ],
     });
   }
 

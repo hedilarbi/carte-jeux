@@ -15,67 +15,139 @@ interface FilterSectionProps {
     types: CatalogCategoryFilter[];
 }
 
-function addHiddenInputs(selected: CatalogSelectedFilters) {
+type ToggleFilterKey = "platforms" | "regions" | "types";
+type HiddenInputName =
+    | "max"
+    | "min"
+    | "platforms"
+    | "regions"
+    | "search"
+    | "sort"
+    | "types";
+
+function isHidden(name: HiddenInputName, omit: HiddenInputName[]) {
+    return omit.includes(name);
+}
+
+function HiddenFilterInputs({
+    omit = [],
+    selected,
+}: {
+    omit?: HiddenInputName[];
+    selected: CatalogSelectedFilters;
+}) {
     return (
         <>
-            {selected.q ? <input name="q" type="hidden" value={selected.q} /> : null}
-            {selected.region ? (
-                <input name="region" type="hidden" value={selected.region} />
+            {!isHidden("types", omit)
+                ? selected.types.map((type) => (
+                      <input
+                          key={`type-${type}`}
+                          name="type"
+                          type="hidden"
+                          value={type}
+                      />
+                  ))
+                : null}
+            {!isHidden("platforms", omit)
+                ? selected.platforms.map((platform) => (
+                      <input
+                          key={`platform-${platform}`}
+                          name="platform"
+                          type="hidden"
+                          value={platform}
+                      />
+                  ))
+                : null}
+            {!isHidden("regions", omit)
+                ? selected.regions.map((region) => (
+                      <input
+                          key={`region-${region}`}
+                          name="region"
+                          type="hidden"
+                          value={region}
+                      />
+                  ))
+                : null}
+            {!isHidden("search", omit) && selected.search ? (
+                <input name="search" type="hidden" value={selected.search} />
             ) : null}
-            {selected.sort !== "popular" ? (
+            {!isHidden("sort", omit) && selected.sort !== "popular" ? (
                 <input name="sort" type="hidden" value={selected.sort} />
             ) : null}
-            {selected.min ? <input name="min" type="hidden" value={selected.min} /> : null}
-            {selected.max ? <input name="max" type="hidden" value={selected.max} /> : null}
+            {!isHidden("min", omit) && selected.min ? (
+                <input name="min" type="hidden" value={selected.min} />
+            ) : null}
+            {!isHidden("max", omit) && selected.max ? (
+                <input name="max" type="hidden" value={selected.max} />
+            ) : null}
         </>
     );
 }
 
-function buildProductsHref(
+function toggleValue(values: string[], value: string) {
+    return values.includes(value)
+        ? values.filter((item) => item !== value)
+        : [...values, value];
+}
+
+function appendSelectedParams(
+    params: URLSearchParams,
     selected: CatalogSelectedFilters,
-    changes: Partial<CatalogSelectedFilters>,
 ) {
+    selected.types.forEach((type) => params.append("type", type));
+    selected.platforms.forEach((platform) => params.append("platform", platform));
+    selected.regions.forEach((region) => params.append("region", region));
+
+    if (selected.search) {
+        params.set("search", selected.search);
+    }
+
+    if (selected.min) {
+        params.set("min", selected.min);
+    }
+
+    if (selected.max) {
+        params.set("max", selected.max);
+    }
+
+    if (selected.sort && selected.sort !== "popular") {
+        params.set("sort", selected.sort);
+    }
+}
+
+function buildProductsHref({
+    filterKey,
+    selected,
+    value,
+}: {
+    filterKey: ToggleFilterKey;
+    selected: CatalogSelectedFilters;
+    value: string;
+}) {
     const next = {
         ...selected,
-        ...changes,
+        platforms: [...selected.platforms],
+        regions: [...selected.regions],
+        types: [...selected.types],
     };
 
-    if (changes.q && changes.q === selected.q) {
-        next.q = undefined;
-    }
-
-    if (changes.region && changes.region === selected.region) {
-        next.region = undefined;
-    }
+    next[filterKey] = toggleValue(next[filterKey], value);
 
     const params = new URLSearchParams();
-
-    if (next.q) {
-        params.set("q", next.q);
-    }
-
-    if (next.search) {
-        params.set("search", next.search);
-    }
-
-    if (next.region) {
-        params.set("region", next.region);
-    }
-
-    if (next.min) {
-        params.set("min", next.min);
-    }
-
-    if (next.max) {
-        params.set("max", next.max);
-    }
-
-    if (next.sort && next.sort !== "popular") {
-        params.set("sort", next.sort);
-    }
+    appendSelectedParams(params, next);
 
     const query = params.toString();
     return query ? `/produits?${query}` : "/produits";
+}
+
+function hasActiveFilters(selected: CatalogSelectedFilters) {
+    return (
+        selected.types.length > 0 ||
+        selected.platforms.length > 0 ||
+        selected.regions.length > 0 ||
+        Boolean(selected.search || selected.min || selected.max) ||
+        selected.sort !== "popular"
+    );
 }
 
 export default function FilterSection({
@@ -103,7 +175,7 @@ export default function FilterSection({
                 className="mt-5 flex h-11 items-center gap-2 rounded-xl border border-white/12 bg-[#0F0F28]/55 px-3"
                 method="get"
             >
-                {addHiddenInputs(selected)}
+                <HiddenFilterInputs omit={["search"]} selected={selected} />
                 <Search className="size-4 shrink-0 text-brand-lilac/70" />
                 <input
                     className="min-w-0 flex-1 bg-transparent text-sm text-white outline-none placeholder:text-white/45"
@@ -114,12 +186,23 @@ export default function FilterSection({
                 />
             </form>
 
+            {hasActiveFilters(selected) ? (
+                <Link
+                    className="mt-3 flex h-9 items-center justify-center rounded-lg border border-white/12 bg-white/8 text-xs font-black uppercase tracking-[0.08em] text-white/86 transition hover:border-brand-lavender/45"
+                    href="/produits"
+                >
+                    Réinitialiser
+                </Link>
+            ) : null}
+
             <FilterGroup
+                filterKey="types"
                 options={types}
                 selected={selected}
                 title="Type"
             />
             <FilterGroup
+                filterKey="platforms"
                 options={platforms}
                 selected={selected}
                 title="Plateforme"
@@ -131,7 +214,7 @@ export default function FilterSection({
                 </p>
                 <div className="mt-3 flex flex-wrap gap-2">
                     {regions.map((region) => {
-                        const isActive = selected.region === region.code;
+                        const isActive = selected.regions.includes(region.code);
 
                         return (
                             <Link
@@ -141,8 +224,10 @@ export default function FilterSection({
                                         ? "border-brand-lavender bg-brand-lavender text-[#03030A]"
                                         : "border-white/12 bg-white/8 text-white/86 hover:border-brand-lavender/45",
                                 )}
-                                href={buildProductsHref(selected, {
-                                    region: region.code,
+                                href={buildProductsHref({
+                                    filterKey: "regions",
+                                    selected,
+                                    value: region.code,
                                 })}
                                 key={region.id}
                             >
@@ -158,16 +243,7 @@ export default function FilterSection({
                 className="mt-5 border-t border-white/10 pt-4"
                 method="get"
             >
-                {selected.q ? <input name="q" type="hidden" value={selected.q} /> : null}
-                {selected.region ? (
-                    <input name="region" type="hidden" value={selected.region} />
-                ) : null}
-                {selected.search ? (
-                    <input name="search" type="hidden" value={selected.search} />
-                ) : null}
-                {selected.sort !== "popular" ? (
-                    <input name="sort" type="hidden" value={selected.sort} />
-                ) : null}
+                <HiddenFilterInputs omit={["max", "min"]} selected={selected} />
                 <p className="font-mono text-[14px] font-bold uppercase tracking-[0.12em] text-brand-lilac/70">
                     Prix
                 </p>
@@ -199,10 +275,12 @@ export default function FilterSection({
 }
 
 function FilterGroup({
+    filterKey,
     options,
     selected,
     title,
 }: {
+    filterKey: "platforms" | "types";
     options: CatalogCategoryFilter[];
     selected: CatalogSelectedFilters;
     title: string;
@@ -217,7 +295,7 @@ function FilterGroup({
             </summary>
             <div className="mt-3 grid gap-2">
                 {options.map((option) => {
-                    const isActive = selected.q === option.slug;
+                    const isActive = selected[filterKey].includes(option.slug);
 
                     return (
                         <Link
@@ -227,7 +305,11 @@ function FilterGroup({
                                     ? "bg-brand-lavender text-[#03030A]"
                                     : "text-white/86 hover:bg-white/10",
                             )}
-                            href={buildProductsHref(selected, { q: option.slug })}
+                            href={buildProductsHref({
+                                filterKey,
+                                selected,
+                                value: option.slug,
+                            })}
                             key={option.id}
                         >
                             <span
