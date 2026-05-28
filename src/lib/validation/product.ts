@@ -18,6 +18,10 @@ const regionIdsSchema = z
   .array(objectIdSchema)
   .min(1, "Sélectionnez au moins une région.");
 
+const categoryIdsSchema = z
+  .array(objectIdSchema)
+  .min(1, "Sélectionnez au moins une catégorie.");
+
 const productCreateShape = {
   title: z.string().trim().min(2).max(180),
   slug: optionalSlugSchema,
@@ -25,7 +29,8 @@ const productCreateShape = {
   description: optionalString(4000),
   image: optionalUrlSchema,
   gallery: z.array(z.string().trim().url()).optional().default([]),
-  categoryId: objectIdSchema,
+  categoryId: objectIdSchema.optional(),
+  categoryIds: categoryIdsSchema.optional(),
   platformId: objectIdSchema,
   regionIds: regionIdsSchema,
   faceValue: nonNegativeNumberSchema,
@@ -48,7 +53,8 @@ const productUpdateShape = {
   description: optionalString(4000),
   image: optionalUrlSchema,
   gallery: z.array(z.string().trim().url()).optional(),
-  categoryId: objectIdSchema,
+  categoryId: objectIdSchema.optional(),
+  categoryIds: categoryIdsSchema,
   platformId: objectIdSchema,
   regionIds: regionIdsSchema,
   faceValue: nonNegativeNumberSchema,

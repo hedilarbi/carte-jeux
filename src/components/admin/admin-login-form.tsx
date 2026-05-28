@@ -54,20 +54,22 @@ export function AdminLoginForm() {
   }
 
   return (
-    <Card className="w-full max-w-md border-white/10 bg-slate-950/65">
+    <Card className="w-full max-w-md">
       <CardContent className="p-8">
         <div className="mb-8 flex items-center gap-3">
-          <div className="rounded-2xl border border-sky-400/12 bg-sky-400/8 p-3 text-sky-300">
+          <div className="rounded-2xl border border-sky-200 bg-sky-50 p-3 text-sky-700">
             <LockKeyhole className="size-5" />
           </div>
           <div>
-            <h1 className="text-2xl font-semibold text-white">Connexion</h1>
+            <h1 className="text-2xl font-semibold text-foreground">
+              Connexion
+            </h1>
           </div>
         </div>
 
         <form className="space-y-4" onSubmit={handleSubmit}>
           <div>
-            <label className="mb-2 block text-sm font-medium text-slate-300">
+            <label className="mb-2 block text-sm font-medium text-slate-700">
               E-mail
             </label>
             <Input
@@ -79,7 +81,7 @@ export function AdminLoginForm() {
             />
           </div>
           <div>
-            <label className="mb-2 block text-sm font-medium text-slate-300">
+            <label className="mb-2 block text-sm font-medium text-slate-700">
               Mot de passe
             </label>
             <Input
@@ -92,7 +94,7 @@ export function AdminLoginForm() {
           </div>
 
           {error ? (
-            <div className="rounded-2xl border border-rose-500/20 bg-rose-500/10 px-4 py-3 text-sm text-rose-200">
+            <div className="rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-700">
               {error}
             </div>
           ) : null}

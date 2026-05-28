@@ -6,22 +6,31 @@ import { useCallback, useEffect, useMemo, useRef } from "react";
 import { ChevronLeft, ChevronRight, ShoppingCart } from "lucide-react";
 
 import { cn } from "@/lib/utils/cn";
+import { buildProductsHref } from "@/lib/utils/catalog-links";
+import { ProductPlatformBadge } from "@/components/site/product-platform-badge";
 
 type FlashDealProduct = {
   id?: number | string;
+  image?: string;
   name: string;
   originalPrice?: string;
   platform?: string;
+  platformImage?: string;
+  platformSlug?: string;
   price: string;
 };
 
 function FlashDealCard({
+  categorySlug,
   className,
   product,
 }: {
+  categorySlug?: string;
   className?: string;
   product: FlashDealProduct;
 }) {
+  const productHref = buildProductsHref(categorySlug ?? product.platformSlug);
+
   return (
     <article
       className={cn(
@@ -33,7 +42,7 @@ function FlashDealCard({
         <Link
           aria-label={`Voir les offres - ${product.name}`}
           className="absolute inset-0 z-[1]"
-          href="#products"
+          href={productHref}
         />
 
         <div className="relative h-full overflow-hidden">
@@ -43,22 +52,18 @@ function FlashDealCard({
             fill
             priority={product.id === 1}
             sizes="116px"
-            src="/jeu1.jpg"
+            src={product.image ?? "/jeu1.jpg"}
           />
           <div className="absolute inset-0 bg-[linear-gradient(90deg,transparent_52%,rgba(255,255,255,0.94)_100%)]" />
         </div>
 
         <div className="relative z-[2] flex min-w-0 flex-col bg-white p-3 pr-14">
-          <div className="mb-2 inline-flex h-8 w-fit items-center gap-2 bg-[linear-gradient(6.39deg,rgba(1,45,105,0.82)_5.02%,rgba(1,45,105,0.82)_123.09%)] px-2.5 text-xs font-bold uppercase leading-3 text-white">
-            <Image
-              alt="xbox live"
-              className="size-5 brightness-0 invert"
-              height={20}
-              src="/xbox.png"
-              width={20}
-            />
-            <span className="truncate">Global</span>
-          </div>
+          <ProductPlatformBadge
+            className="mb-2 h-8 w-fit max-w-full px-2.5 text-xs"
+            iconClassName="size-5"
+            image={product.platformImage}
+            name={product.platform}
+          />
 
           <h3 className="line-clamp-2 text-[13px] font-black leading-5 text-[#00061E]">
             {product.name}
@@ -92,7 +97,7 @@ function FlashDealCard({
         <Link
           aria-label={`Voir les offres - ${product.name}`}
           className="absolute inset-0 z-[1] cursor-pointer"
-          href="#products"
+          href={productHref}
         />
 
         <div className="relative h-full [grid-area:img]">
@@ -103,29 +108,23 @@ function FlashDealCard({
               fill
               priority={product.id === 1}
               sizes="(max-width: 768px) 190px, (max-width: 1024px) 230px, 25vw"
-              src="/jeu1.jpg"
+              src={product.image ?? "/jeu1.jpg"}
             />
             <div className="absolute inset-x-0 bottom-0 h-24 bg-[linear-gradient(to_top,rgba(255,255,255,0.96),rgba(255,255,255,0))]" />
           </div>
         </div>
 
         <div className="absolute inset-x-0 bottom-0 z-20 grid translate-y-[112px] transition-transform duration-500 ease-out [grid-template-areas:'flag'_'top'_'bottom'] group-hover:translate-y-0">
-          <div className="relative z-[2] h-[38px] bg-[linear-gradient(6.39deg,rgba(1,45,105,0.82)_5.02%,rgba(1,45,105,0.82)_123.09%)] px-[13px] text-base font-bold uppercase leading-3 text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.18)] [grid-area:flag]">
-            <div className="flex h-full items-center gap-2.5">
-              <Image
-                alt="xbox live"
-                className="size-[27px] brightness-0 invert"
-                height={27}
-                src="/xbox.png"
-                width={27}
-              />
-              <p>Global</p>
-            </div>
-          </div>
+          <ProductPlatformBadge
+            className="relative z-[2] h-[38px] px-[13px] text-base shadow-[inset_0_1px_0_rgba(255,255,255,0.18)] [grid-area:flag]"
+            iconClassName="size-[27px]"
+            image={product.platformImage}
+            name={product.platform}
+          />
           <Link
             aria-label={`Voir les offres - ${product.name}`}
             className="absolute inset-0 z-[1]"
-            href="#products"
+            href={productHref}
             tabIndex={-1}
           />
 
@@ -170,7 +169,7 @@ function FlashDealCard({
               <Link
                 aria-label={`Voir les offres - ${product.name}`}
                 className="rounded-lg border border-[#B3B3B3] px-3 py-3 text-center text-xs font-black text-[#00061E] transition hover:border-[#A681F0] hover:text-[#1F0A4D]"
-                href="#products"
+                href={productHref}
               >
                 Voir les offres
               </Link>
@@ -183,8 +182,10 @@ function FlashDealCard({
 }
 
 export function FlashDealsCarousel({
+  categorySlug,
   products,
 }: {
+  categorySlug?: string;
   products: readonly FlashDealProduct[];
 }) {
   const carouselProducts = useMemo(() => products.slice(0, 8), [products]);
@@ -265,7 +266,11 @@ export function FlashDealsCarousel({
               data-carousel-card
               key={product.id ?? `${product.name}-${index}`}
             >
-              <FlashDealCard className="lg:w-full" product={product} />
+              <FlashDealCard
+                categorySlug={categorySlug}
+                className="lg:w-full"
+                product={product}
+              />
             </div>
           ))}
         </div>

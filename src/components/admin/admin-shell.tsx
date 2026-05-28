@@ -11,7 +11,6 @@ import {
   PanelsTopLeft,
   Percent,
   ShoppingCart,
-  SmartphoneCharging,
   Users,
   X,
 } from "lucide-react";
@@ -29,7 +28,6 @@ const navigation = [
   { href: "/admin", label: "Tableau de bord", icon: LayoutDashboard },
   { href: "/admin/products", label: "Produits", icon: Package2 },
   { href: "/admin/categories", label: "Catégories", icon: PanelsTopLeft },
-  { href: "/admin/platforms", label: "Plateformes", icon: SmartphoneCharging },
   { href: "/admin/regions", label: "Régions", icon: PanelsTopLeft },
   { href: "/admin/orders", label: "Commandes", icon: ShoppingCart },
   { href: "/admin/users", label: "Utilisateurs", icon: Users },
@@ -55,26 +53,26 @@ export function AdminShell({ session, children }: AdminShellProps) {
   }
 
   return (
-    <div className="admin-grid min-h-screen bg-background">
-      <div className="absolute inset-x-0 top-0 h-64 bg-[radial-gradient(circle_at_top,_rgba(103,208,255,0.12),_transparent_38%)]" />
+    <div className="admin-theme admin-grid min-h-screen bg-background text-foreground">
+      <div className="absolute inset-x-0 top-0 h-64 bg-[radial-gradient(circle_at_top,_rgba(99,146,255,0.14),_transparent_38%)]" />
 
       {sidebarOpen ? (
         <button
           aria-label="Fermer le voile de la barre latérale"
-          className="fixed inset-0 z-30 bg-slate-950/60 backdrop-blur-sm lg:hidden"
+          className="fixed inset-0 z-30 bg-slate-900/35 backdrop-blur-sm lg:hidden"
           onClick={() => setSidebarOpen(false)}
         />
       ) : null}
 
       <aside
         className={cn(
-          "fixed inset-y-0 left-0 z-40 w-72 border-r border-white/10 bg-slate-950/90 p-5 backdrop-blur-xl transition-transform lg:translate-x-0",
+          "fixed inset-y-0 left-0 z-40 w-72 border-r border-border bg-white/95 p-5 shadow-xl backdrop-blur-xl transition-transform lg:translate-x-0",
           sidebarOpen ? "translate-x-0" : "-translate-x-full",
         )}
       >
         <div className="flex items-center justify-between">
           <Link href="/" className="block">
-            <p className="text-xs font-semibold uppercase tracking-[0.32em] text-sky-300/80">
+            <p className="text-xs font-semibold uppercase tracking-[0.32em] text-primary">
               Playsdepot Admin
             </p>
           </Link>
@@ -102,8 +100,8 @@ export function AdminShell({ session, children }: AdminShellProps) {
                 className={cn(
                   "flex items-center gap-3 rounded-2xl px-4 py-3 text-sm font-medium transition",
                   isActive
-                    ? "bg-sky-400/12 text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.05)]"
-                    : "text-slate-400 hover:bg-white/5 hover:text-white",
+                    ? "bg-primary text-primary-foreground shadow-sm"
+                    : "text-slate-600 hover:bg-slate-100 hover:text-slate-950",
                 )}
               >
                 <item.icon className="size-4" />
@@ -115,7 +113,7 @@ export function AdminShell({ session, children }: AdminShellProps) {
       </aside>
 
       <div className="relative lg:pl-72">
-        <header className="sticky top-0 z-20 border-b border-white/8 bg-background/85 backdrop-blur-xl">
+        <header className="sticky top-0 z-20 border-b border-border bg-white/85 backdrop-blur-xl">
           <div className="mx-auto flex max-w-[1600px] items-center justify-between gap-4 px-6 py-4">
             <div className="flex items-center gap-3">
               <Button
@@ -127,6 +125,12 @@ export function AdminShell({ session, children }: AdminShellProps) {
               </Button>
             </div>
             <div className="flex items-center gap-3">
+              <div className="hidden text-right text-xs text-slate-500 md:block">
+                <p className="font-semibold text-slate-700">{session.email}</p>
+                <p className="mt-0.5 uppercase tracking-[0.18em]">
+                  {session.source}
+                </p>
+              </div>
               <Button
                 variant="ghost"
                 onClick={handleLogout}

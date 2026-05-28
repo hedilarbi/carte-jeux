@@ -150,7 +150,7 @@ export function RegionsManager({ initialRegions }: RegionsManagerProps) {
   return (
     <>
       <Card>
-        <CardHeader className="flex flex-col gap-4 border-b border-white/8 pb-6 md:flex-row md:items-center md:justify-between">
+        <CardHeader className="flex flex-col gap-4 border-b border-border pb-6 md:flex-row md:items-center md:justify-between">
           <div>
             <CardTitle>Régions</CardTitle>
             <CardDescription className="mt-2">
@@ -173,7 +173,7 @@ export function RegionsManager({ initialRegions }: RegionsManagerProps) {
         </CardHeader>
         <CardContent className="overflow-x-auto p-0">
           <table className="min-w-full text-left text-sm">
-            <thead className="border-b border-white/8 bg-slate-950/30 text-xs uppercase tracking-[0.24em] text-slate-500">
+            <thead className="border-b border-border bg-slate-50 text-xs uppercase tracking-[0.24em] text-slate-500">
               <tr>
                 <th className="px-6 py-4">Région</th>
                 <th className="px-6 py-4">Code</th>
@@ -183,9 +183,9 @@ export function RegionsManager({ initialRegions }: RegionsManagerProps) {
             </thead>
             <tbody>
               {filteredRegions.map((region) => (
-                <tr key={region._id} className="border-b border-white/6 text-slate-300">
+                <tr key={region._id} className="border-b border-border text-slate-700">
                   <td className="px-6 py-4">
-                    <div className="font-medium text-white">{region.name}</div>
+                    <div className="font-medium text-foreground">{region.name}</div>
                     {region.description ? (
                       <div className="mt-1 text-xs text-slate-500">
                         {region.description}
@@ -214,7 +214,7 @@ export function RegionsManager({ initialRegions }: RegionsManagerProps) {
                       <Button
                         variant="ghost"
                         onClick={() => handleDelete(region._id)}
-                        className="px-3 text-rose-300 hover:text-rose-200"
+                        className="px-3 text-rose-600 hover:text-rose-700"
                       >
                         <Trash2 className="size-4" />
                       </Button>
@@ -245,7 +245,7 @@ export function RegionsManager({ initialRegions }: RegionsManagerProps) {
       >
         <form className="space-y-4" onSubmit={handleSubmit}>
             <div>
-              <label className="mb-2 block text-sm font-medium text-slate-300">
+              <label className="mb-2 block text-sm font-medium text-slate-700">
                 Nom
               </label>
               <Input
@@ -258,7 +258,7 @@ export function RegionsManager({ initialRegions }: RegionsManagerProps) {
               />
             </div>
             <div>
-              <label className="mb-2 block text-sm font-medium text-slate-300">
+              <label className="mb-2 block text-sm font-medium text-slate-700">
                 Code
               </label>
               <Input
@@ -271,7 +271,7 @@ export function RegionsManager({ initialRegions }: RegionsManagerProps) {
               />
             </div>
             <div>
-              <label className="mb-2 block text-sm font-medium text-slate-300">
+              <label className="mb-2 block text-sm font-medium text-slate-700">
                 Description
               </label>
               <Textarea
@@ -285,7 +285,7 @@ export function RegionsManager({ initialRegions }: RegionsManagerProps) {
                 placeholder="Notes optionnelles sur la région"
               />
             </div>
-            <label className="flex items-center gap-3 rounded-2xl border border-white/8 bg-slate-950/40 px-4 py-3 text-sm text-slate-300">
+            <label className="flex items-center gap-3 rounded-2xl border border-border bg-slate-50 px-4 py-3 text-sm text-slate-700">
               <Checkbox
                 checked={form.isActive}
                 onChange={(event) =>
@@ -298,7 +298,7 @@ export function RegionsManager({ initialRegions }: RegionsManagerProps) {
               La région est active
             </label>
             {error ? (
-              <div className="rounded-2xl border border-rose-500/20 bg-rose-500/10 px-4 py-3 text-sm text-rose-200">
+              <div className="rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-700">
                 {error}
               </div>
             ) : null}

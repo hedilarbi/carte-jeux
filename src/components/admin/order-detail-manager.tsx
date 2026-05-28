@@ -192,7 +192,7 @@ export function OrderDetailManager({
     <div className="grid gap-6 xl:grid-cols-[1.05fr_0.95fr]">
       <div className="space-y-6">
         <Card>
-          <CardHeader className="border-b border-white/8 pb-6">
+          <CardHeader className="border-b border-border pb-6">
             <div className="flex flex-wrap items-center gap-3">
               <OrderStatusBadge status={order.status} />
               <PaymentStatusBadge status={order.paymentStatus} />
@@ -205,29 +205,29 @@ export function OrderDetailManager({
             </CardDescription>
           </CardHeader>
           <CardContent className="grid gap-4 md:grid-cols-2">
-            <div className="rounded-2xl border border-white/8 bg-slate-950/40 p-4">
+            <div className="rounded-2xl border border-border bg-slate-50 p-4">
               <div className="text-xs uppercase tracking-[0.24em] text-slate-500">
                 Total
               </div>
-              <div className="mt-2 text-2xl font-semibold text-white">
+              <div className="mt-2 text-2xl font-semibold text-foreground">
                 {formatCurrency(order.total, order.currency)}
               </div>
-              <div className="mt-2 text-sm text-slate-400">
+              <div className="mt-2 text-sm text-slate-600">
                 Sous-total {formatCurrency(order.subtotal, order.currency)} ·
                 Remise {formatCurrency(order.totalDiscount, order.currency)}
               </div>
             </div>
-            <div className="rounded-2xl border border-white/8 bg-slate-950/40 p-4">
+            <div className="rounded-2xl border border-border bg-slate-50 p-4">
               <div className="text-xs uppercase tracking-[0.24em] text-slate-500">
                 Livraison
               </div>
-              <div className="mt-2 text-sm text-slate-200">
+              <div className="mt-2 text-sm text-slate-700">
                 Méthode : {order.deliveryMethod}
               </div>
-              <div className="mt-2 text-sm text-slate-400">
+              <div className="mt-2 text-sm text-slate-600">
                 Livrée le {formatDateTime(order.deliveredAt)}
               </div>
-              <div className="mt-2 text-sm text-slate-400">
+              <div className="mt-2 text-sm text-slate-600">
                 Payée le {formatDateTime(order.paidAt)}
               </div>
             </div>
@@ -246,17 +246,17 @@ export function OrderDetailManager({
             {order.items.map((item, index) => (
               <div
                 key={`${item.sku}-${index}`}
-                className="rounded-2xl border border-white/8 bg-slate-950/40 p-4"
+                className="rounded-2xl border border-border bg-slate-50 p-4"
               >
                 <div className="flex items-start justify-between gap-4">
                   <div>
-                    <div className="font-medium text-white">{item.productTitle}</div>
+                    <div className="font-medium text-foreground">{item.productTitle}</div>
                     <div className="mt-1 text-xs text-slate-500">
                       {item.sku} · Qté {item.quantity}
                     </div>
                   </div>
                   <div className="text-right text-sm">
-                    <div className="font-semibold text-white">
+                    <div className="font-semibold text-foreground">
                       {formatCurrency(item.lineTotal, item.currency)}
                     </div>
                     <div className="mt-1 text-xs text-slate-500">
@@ -274,7 +274,7 @@ export function OrderDetailManager({
         <Card>
           <CardHeader>
             <div className="flex items-center gap-3">
-              <div className="rounded-2xl border border-sky-400/12 bg-sky-400/8 p-3 text-sky-300">
+              <div className="rounded-2xl border border-sky-400/12 bg-sky-400/8 p-3 text-sky-700">
                 <PackageCheck className="size-5" />
               </div>
               <div>
@@ -289,7 +289,7 @@ export function OrderDetailManager({
             <form className="space-y-4" onSubmit={handleStatusSubmit}>
               <div className="grid gap-4 md:grid-cols-2">
                 <div>
-                  <label className="mb-2 block text-sm font-medium text-slate-300">
+                  <label className="mb-2 block text-sm font-medium text-slate-700">
                     Statut de la commande
                   </label>
                   <Select
@@ -309,7 +309,7 @@ export function OrderDetailManager({
                   </Select>
                 </div>
                 <div>
-                  <label className="mb-2 block text-sm font-medium text-slate-300">
+                  <label className="mb-2 block text-sm font-medium text-slate-700">
                     Statut du paiement
                   </label>
                   <Select
@@ -329,7 +329,7 @@ export function OrderDetailManager({
                   </Select>
                 </div>
                 <div>
-                  <label className="mb-2 block text-sm font-medium text-slate-300">
+                  <label className="mb-2 block text-sm font-medium text-slate-700">
                     Fournisseur de paiement
                   </label>
                   <Input
@@ -344,7 +344,7 @@ export function OrderDetailManager({
                   />
                 </div>
                 <div>
-                  <label className="mb-2 block text-sm font-medium text-slate-300">
+                  <label className="mb-2 block text-sm font-medium text-slate-700">
                     Référence de paiement
                   </label>
                   <Input
@@ -360,7 +360,7 @@ export function OrderDetailManager({
                 </div>
               </div>
               {statusError ? (
-                <div className="rounded-2xl border border-rose-500/20 bg-rose-500/10 px-4 py-3 text-sm text-rose-200">
+                <div className="rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-700">
                   {statusError}
                 </div>
               ) : null}
@@ -378,7 +378,7 @@ export function OrderDetailManager({
         <Card>
           <CardHeader>
             <div className="flex items-center gap-3">
-              <div className="rounded-2xl border border-emerald-500/12 bg-emerald-500/8 p-3 text-emerald-300">
+              <div className="rounded-2xl border border-emerald-500/12 bg-emerald-500/8 p-3 text-emerald-700">
                 <Truck className="size-5" />
               </div>
               <div>
@@ -393,7 +393,7 @@ export function OrderDetailManager({
             <form className="space-y-4" onSubmit={handleSupplierSubmit}>
               <div className="grid gap-4 md:grid-cols-2">
                 <div>
-                  <label className="mb-2 block text-sm font-medium text-slate-300">
+                  <label className="mb-2 block text-sm font-medium text-slate-700">
                     Plateforme fournisseur
                   </label>
                   <Input
@@ -408,7 +408,7 @@ export function OrderDetailManager({
                   />
                 </div>
                 <div>
-                  <label className="mb-2 block text-sm font-medium text-slate-300">
+                  <label className="mb-2 block text-sm font-medium text-slate-700">
                     Référence fournisseur
                   </label>
                   <Input
@@ -423,7 +423,7 @@ export function OrderDetailManager({
                   />
                 </div>
                 <div className="md:col-span-2">
-                  <label className="mb-2 block text-sm font-medium text-slate-300">
+                  <label className="mb-2 block text-sm font-medium text-slate-700">
                     Coût fournisseur
                   </label>
                   <Input
@@ -441,7 +441,7 @@ export function OrderDetailManager({
                   />
                 </div>
                 <div className="md:col-span-2">
-                  <label className="mb-2 block text-sm font-medium text-slate-300">
+                  <label className="mb-2 block text-sm font-medium text-slate-700">
                     Note interne
                   </label>
                   <Textarea
@@ -457,7 +457,7 @@ export function OrderDetailManager({
                 </div>
               </div>
               {supplierError ? (
-                <div className="rounded-2xl border border-rose-500/20 bg-rose-500/10 px-4 py-3 text-sm text-rose-200">
+                <div className="rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-700">
                   {supplierError}
                 </div>
               ) : null}
@@ -475,7 +475,7 @@ export function OrderDetailManager({
         <Card>
           <CardHeader>
             <div className="flex items-center gap-3">
-              <div className="rounded-2xl border border-amber-500/12 bg-amber-500/8 p-3 text-amber-300">
+              <div className="rounded-2xl border border-amber-500/12 bg-amber-500/8 p-3 text-amber-700">
                 <Mail className="size-5" />
               </div>
               <div>
@@ -490,7 +490,7 @@ export function OrderDetailManager({
           <CardContent>
             <form className="space-y-4" onSubmit={handleDeliverySubmit}>
               <div>
-                <label className="mb-2 block text-sm font-medium text-slate-300">
+                <label className="mb-2 block text-sm font-medium text-slate-700">
                   Code livré
                 </label>
                 <Textarea
@@ -505,7 +505,7 @@ export function OrderDetailManager({
                 />
               </div>
               <div>
-                <label className="mb-2 block text-sm font-medium text-slate-300">
+                <label className="mb-2 block text-sm font-medium text-slate-700">
                   Note de livraison
                 </label>
                 <Textarea
@@ -520,7 +520,7 @@ export function OrderDetailManager({
                   />
               </div>
               {deliveryError ? (
-                <div className="rounded-2xl border border-rose-500/20 bg-rose-500/10 px-4 py-3 text-sm text-rose-200">
+                <div className="rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-700">
                   {deliveryError}
                 </div>
               ) : null}
@@ -538,7 +538,7 @@ export function OrderDetailManager({
         <Card>
           <CardHeader>
             <div className="flex items-center gap-3">
-              <div className="rounded-2xl border border-white/8 bg-white/5 p-3 text-slate-300">
+              <div className="rounded-2xl border border-border bg-slate-50 p-3 text-slate-700">
                 <ReceiptText className="size-5" />
               </div>
               <div>
@@ -549,14 +549,14 @@ export function OrderDetailManager({
               </div>
             </div>
           </CardHeader>
-          <CardContent className="space-y-3 text-sm text-slate-300">
-            <div className="rounded-2xl border border-white/8 bg-slate-950/40 p-4">
+          <CardContent className="space-y-3 text-sm text-slate-700">
+            <div className="rounded-2xl border border-border bg-slate-50 p-4">
               Référence de paiement : {order.paymentReference || "—"}
             </div>
-            <div className="rounded-2xl border border-white/8 bg-slate-950/40 p-4">
+            <div className="rounded-2xl border border-border bg-slate-50 p-4">
               Référence fournisseur : {order.supplierPurchaseReference || "—"}
             </div>
-            <div className="rounded-2xl border border-white/8 bg-slate-950/40 p-4">
+            <div className="rounded-2xl border border-border bg-slate-50 p-4">
               Code livré enregistré : {order.deliveredCode ? "Oui" : "Non"}
             </div>
           </CardContent>

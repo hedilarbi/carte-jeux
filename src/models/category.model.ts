@@ -4,7 +4,10 @@ export interface CategoryRecord {
   name: string;
   slug: string;
   description?: string;
+  image?: string;
+  isPlateforme: boolean;
   isActive: boolean;
+  sortOrder: number;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -32,10 +35,26 @@ const categorySchema = new Schema<CategoryRecord>(
       trim: true,
       maxlength: 600,
     },
+    image: {
+      type: String,
+      trim: true,
+      maxlength: 500,
+    },
+    isPlateforme: {
+      type: Boolean,
+      default: false,
+      index: true,
+    },
     isActive: {
       type: Boolean,
       default: true,
       index: true,
+    },
+    sortOrder: {
+      type: Number,
+      default: 0,
+      index: true,
+      min: 0,
     },
   },
   {

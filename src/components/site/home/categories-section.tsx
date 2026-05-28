@@ -1,8 +1,22 @@
-import { categories } from "@/components/site/home/home-data";
+import Image from "next/image";
+
+import { categories as fallbackCategories } from "@/components/site/home/home-data";
 import { HomeIcon } from "@/components/site/home/home-icons";
 import { cn } from "@/lib/utils/cn";
+import { buildProductsHref } from "@/lib/utils/catalog-links";
+import type { HomeCategoryPreview } from "@/types/home";
 
-export function CategoriesSection() {
+export function CategoriesSection({
+  categories = fallbackCategories.map((category, index) => ({
+    id: category.label,
+    label: category.label,
+    slug: category.label.toLowerCase(),
+    isPlateforme: index > 0,
+    sortOrder: index + 1,
+  })),
+}: {
+  categories?: HomeCategoryPreview[];
+}) {
   return (
     <section className="bg-brand-light py-8" id="categories">
       <div className="mx-auto max-w-[1200px] px-6">
@@ -23,13 +37,31 @@ export function CategoriesSection() {
                   "flex min-w-[82px] shrink-0 flex-col items-center gap-2 text-center",
                   index === 0 && "text-brand-purple-deep",
                 )}
-                href="#products"
-                key={category.label}
+                href={buildProductsHref(category.slug)}
+                key={category.id}
               >
-                <HomeIcon
-                  className="size-8 text-brand-dark transition group-hover:scale-110"
-                  name={category.icon}
-                />
+                {category.image ? (
+                  <span className="relative size-10 overflow-hidden">
+                    <Image
+                      alt={category.label}
+                      className="object-contain"
+                      fill
+                      sizes="40px"
+                      src={category.image}
+                    />
+                  </span>
+                ) : (
+                  <HomeIcon
+                    className="size-8 text-brand-dark transition group-hover:scale-110"
+                    name={
+                      fallbackCategories.find(
+                        (fallbackCategory) =>
+                          fallbackCategory.label.toLowerCase() ===
+                          category.label.toLowerCase(),
+                      )?.icon ?? "Gamepad2"
+                    }
+                  />
+                )}
                 <span className="font-heading text-xs font-bold text-brand-dark">
                   {category.label}
                 </span>

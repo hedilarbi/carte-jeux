@@ -1,4 +1,4 @@
-import { type mongo, Types } from "mongoose";
+import { type mongo, type SortOrder, Types } from "mongoose";
 
 import { connectToDatabase } from "@/lib/db/mongoose";
 import { resolvePagination } from "@/lib/utils/pagination";
@@ -16,6 +16,32 @@ export interface ProductListFilters extends SearchablePaginationInput {
   regionId?: string;
   isActive?: boolean;
   isFeatured?: boolean;
+  priceMax?: number | string | null;
+  priceMin?: number | string | null;
+  sort?: string | null;
+}
+
+function resolveNumericFilter(value: number | string | null | undefined) {
+  const numberValue = Number(value);
+
+  return Number.isFinite(numberValue) && numberValue >= 0
+    ? numberValue
+    : undefined;
+}
+
+function resolveProductSort(sort?: string | null): Record<string, SortOrder> {
+  switch (sort) {
+    case "price-asc":
+      return { finalPrice: 1, createdAt: -1 };
+    case "price-desc":
+      return { finalPrice: -1, createdAt: -1 };
+    case "new":
+      return { createdAt: -1 };
+    case "popular":
+      return { isFeatured: -1, createdAt: -1 };
+    default:
+      return { createdAt: -1 };
+  }
 }
 
 export async function listProducts(filters: ProductListFilters = {}) {
@@ -26,11 +52,21 @@ export async function listProducts(filters: ProductListFilters = {}) {
   const andFilters: ProductQuery[] = [];
 
   if (filters.categoryId) {
-    query.categoryId = new Types.ObjectId(filters.categoryId);
+    const categoryObjectId = new Types.ObjectId(filters.categoryId);
+    andFilters.push({
+      $or: [{ categoryIds: categoryObjectId }, { categoryId: categoryObjectId }],
+    });
   }
 
   if (filters.platformId) {
-    query.platformId = new Types.ObjectId(filters.platformId);
+    const platformObjectId = new Types.ObjectId(filters.platformId);
+    andFilters.push({
+      $or: [
+        { platformId: platformObjectId },
+        { categoryIds: platformObjectId },
+        { categoryId: platformObjectId },
+      ],
+    });
   }
 
   if (filters.regionId) {
@@ -46,6 +82,16 @@ export async function listProducts(filters: ProductListFilters = {}) {
 
   if (typeof filters.isFeatured === "boolean") {
     query.isFeatured = filters.isFeatured;
+  }
+
+  const priceMin = resolveNumericFilter(filters.priceMin);
+  const priceMax = resolveNumericFilter(filters.priceMax);
+
+  if (typeof priceMin === "number" || typeof priceMax === "number") {
+    query.finalPrice = {
+      ...(typeof priceMin === "number" ? { $gte: priceMin } : {}),
+      ...(typeof priceMax === "number" ? { $lte: priceMax } : {}),
+    };
   }
 
   if (filters.search?.trim()) {
@@ -69,7 +115,7 @@ export async function listProducts(filters: ProductListFilters = {}) {
 
   const [items, totalItems] = await Promise.all([
     ProductModel.find(findQuery)
-      .sort({ createdAt: -1 })
+      .sort(resolveProductSort(filters.sort))
       .skip(pagination.skip)
       .limit(pagination.limit)
       .lean()
@@ -84,6 +130,28 @@ export async function listProducts(filters: ProductListFilters = {}) {
   };
 }
 
+export async function listActiveProductsByCategoryOrPlatformId(
+  categoryId: string,
+  limit = 8,
+) {
+  await connectToDatabase();
+
+  const categoryObjectId = new Types.ObjectId(categoryId);
+
+  return ProductModel.find({
+    isActive: true,
+    $or: [
+      { categoryIds: categoryObjectId },
+      { categoryId: categoryObjectId },
+      { platformId: categoryObjectId },
+    ],
+  } as unknown as ProductFindQuery)
+    .sort({ isFeatured: -1, createdAt: -1 })
+    .limit(limit)
+    .lean()
+    .exec();
+}
+
 export async function countProducts() {
   await connectToDatabase();
   return ProductModel.countDocuments();
@@ -91,12 +159,15 @@ export async function countProducts() {
 
 export async function countProductsByCategoryId(categoryId: string) {
   await connectToDatabase();
-  return ProductModel.countDocuments({ categoryId: new Types.ObjectId(categoryId) });
-}
+  const categoryObjectId = new Types.ObjectId(categoryId);
 
-export async function countProductsByPlatformId(platformId: string) {
-  await connectToDatabase();
-  return ProductModel.countDocuments({ platformId: new Types.ObjectId(platformId) });
+  return ProductModel.countDocuments({
+    $or: [
+      { categoryIds: categoryObjectId },
+      { categoryId: categoryObjectId },
+      { platformId: categoryObjectId },
+    ],
+  });
 }
 
 export async function countProductsByRegionId(regionId: string) {

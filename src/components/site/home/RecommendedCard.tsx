@@ -2,16 +2,22 @@ import Image from "next/image";
 import Link from "next/link";
 import { ShoppingCart } from "lucide-react";
 
-import type { ProductPreview } from "@/components/site/home/home-data";
 import { cn } from "@/lib/utils/cn";
+import { buildProductsHref } from "@/lib/utils/catalog-links";
+import { ProductPlatformBadge } from "@/components/site/product-platform-badge";
+import type { ProductPreview } from "@/types/home";
 
 export function RecommendedCard({
+    categorySlug,
     className,
     product,
 }: {
+    categorySlug?: string;
     className?: string;
     product: ProductPreview;
 }) {
+    const productHref = buildProductsHref(categorySlug ?? product.platformSlug);
+
     return (
         <article
             className={cn(
@@ -23,7 +29,7 @@ export function RecommendedCard({
                 <Link
                     aria-label={`Voir les offres - ${product.name}`}
                     className="absolute inset-0 z-[1]"
-                    href="#products"
+                    href={productHref}
                 />
 
                 <div className="relative h-full overflow-hidden">
@@ -33,22 +39,18 @@ export function RecommendedCard({
                         fill
                         priority={product.id === 1}
                         sizes="116px"
-                        src="/jeu1.jpg"
+                        src={product.image ?? "/jeu1.jpg"}
                     />
                     <div className="absolute inset-0 bg-[linear-gradient(90deg,transparent_58%,rgba(15,15,40,0.86)_100%)]" />
                 </div>
 
                 <div className="relative z-[2] flex min-w-0 flex-col p-3 pr-14">
-                    <div className="mb-2 inline-flex h-8 w-fit items-center gap-2 bg-[linear-gradient(6.39deg,rgba(1,45,105,0.82)_5.02%,rgba(1,45,105,0.82)_123.09%)] px-2.5 text-xs font-bold uppercase leading-3 text-white">
-                        <Image
-                            alt="xbox live"
-                            className="size-5 brightness-0 invert"
-                            height={20}
-                            src="/xbox.png"
-                            width={20}
-                        />
-                        <span className="truncate">Global</span>
-                    </div>
+                    <ProductPlatformBadge
+                        className="mb-2 h-8 w-fit max-w-full px-2.5 text-xs"
+                        iconClassName="size-5"
+                        image={product.platformImage}
+                        name={product.platform}
+                    />
 
                     <h3 className="line-clamp-2 text-[13px] font-black leading-5 text-white">
                         {product.name}
@@ -75,7 +77,7 @@ export function RecommendedCard({
                 <Link
                     aria-label={`Voir les offres - ${product.name}`}
                     className="absolute inset-0 z-[1] cursor-pointer"
-                    href="#products"
+                    href={productHref}
                 />
 
                 <div className="relative h-full [grid-area:img]">
@@ -87,7 +89,7 @@ export function RecommendedCard({
                             fill
                             priority={product.id === 1}
                             sizes="(max-width: 768px) 190px, (max-width: 1024px) 230px, 25vw"
-                            src="/jeu1.jpg"
+                            src={product.image ?? "/jeu1.jpg"}
                         />
                         <div className="absolute inset-x-0 bottom-0 h-24 bg-[linear-gradient(to_top,#1f0a4d,rgba(31,10,77,0))]" />
                     </div>
@@ -95,22 +97,16 @@ export function RecommendedCard({
                 </div>
 
                 <div className="absolute inset-x-0 bottom-0 z-20 grid translate-y-[112px] transition-transform duration-500 ease-out [grid-template-areas:'flag'_'top'_'bottom'] group-hover:translate-y-0">
-                    <div className="relative z-[2] h-[38px] bg-[linear-gradient(6.39deg,rgba(1,45,105,0.82)_5.02%,rgba(1,45,105,0.82)_123.09%)] px-[13px] text-base font-bold uppercase leading-3 text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.08)] [grid-area:flag]">
-                        <div className="flex h-full items-center gap-2.5">
-                            <Image
-                                alt="xbox live"
-                                className="size-[27px] brightness-0 invert"
-                                height={27}
-                                src="/xbox.png"
-                                width={27}
-                            />
-                            <p>Global</p>
-                        </div>
-                    </div>
+                    <ProductPlatformBadge
+                        className="relative z-[2] h-[38px] px-[13px] text-base shadow-[inset_0_1px_0_rgba(255,255,255,0.08)] [grid-area:flag]"
+                        iconClassName="size-[27px]"
+                        image={product.platformImage}
+                        name={product.platform}
+                    />
                     <Link
                         aria-label={`Voir les offres - ${product.name}`}
                         className="absolute inset-0 z-[1]"
-                        href="#products"
+                        href={productHref}
                         tabIndex={-1}
                     />
 
@@ -120,7 +116,7 @@ export function RecommendedCard({
                                 {product.name}
                             </h3>
                             <p className="mt-2 truncate text-xs font-bold text-[#b3aac9]">
-                                Global
+                                {product.platform}
                             </p>
                         </div>
                     </div>
@@ -165,7 +161,7 @@ export function RecommendedCard({
                             <Link
                                 aria-label={`Voir les offres - ${product.name}`}
                                 className="rounded-md border border-white/18 px-3 py-3 text-center text-xs font-black text-white transition hover:border-brand-lavender hover:text-brand-lavender"
-                                href="#products"
+                                href={productHref}
                             >
                                 Voir les offres
                             </Link>

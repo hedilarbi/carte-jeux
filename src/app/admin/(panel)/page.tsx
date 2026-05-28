@@ -58,14 +58,14 @@ export default async function AdminDashboardPage() {
               commande livrée est sourcée après achat puis envoyée manuellement.
             </CardDescription>
           </CardHeader>
-          <CardContent className="space-y-3 text-sm leading-6 text-slate-300">
-            <div className="rounded-2xl border border-white/8 bg-slate-950/40 p-4">
+          <CardContent className="space-y-3 text-sm leading-6 text-slate-700">
+            <div className="rounded-2xl border border-border bg-slate-50 p-4">
               1. Le client passe commande et le paiement est confirmé.
             </div>
-            <div className="rounded-2xl border border-white/8 bg-slate-950/40 p-4">
+            <div className="rounded-2xl border border-border bg-slate-50 p-4">
               2. L’admin achète le code correspondant chez un fournisseur externe.
             </div>
-            <div className="rounded-2xl border border-white/8 bg-slate-950/40 p-4">
+            <div className="rounded-2xl border border-border bg-slate-50 p-4">
               3. L’admin enregistre les détails fournisseur et envoie le code par e-mail au client.
             </div>
           </CardContent>
@@ -80,16 +80,16 @@ export default async function AdminDashboardPage() {
               une interface admin typée.
             </CardDescription>
           </CardHeader>
-          <CardContent className="space-y-4 text-sm text-slate-300">
+          <CardContent className="space-y-4 text-sm text-slate-700">
             <div className="rounded-2xl border border-sky-400/12 bg-sky-400/8 p-4">
-              Le CRUD catalogue est prêt pour les catégories, plateformes,
-              régions et produits.
+              Le CRUD catalogue est prêt pour les catégories, les catégories
+              marquées plateforme, les régions et les produits.
             </div>
             <div className="rounded-2xl border border-emerald-500/12 bg-emerald-500/8 p-4">
               Les vues commandes sont prêtes pour les mises à jour de statut,
               les métadonnées fournisseur et le suivi des codes livrés.
             </div>
-            <div className="rounded-2xl border border-white/8 bg-slate-950/40 p-4">
+            <div className="rounded-2xl border border-border bg-slate-50 p-4">
               Les utilisateurs et promotions restent des placeholders pour la
               prochaine phase.
             </div>

@@ -11,18 +11,18 @@ interface KpiCardProps {
 
 export function KpiCard({ label, value, hint, icon: Icon }: KpiCardProps) {
   return (
-    <Card className="border-white/8 bg-[linear-gradient(180deg,rgba(255,255,255,0.06),rgba(255,255,255,0.02))]">
+    <Card className="bg-[linear-gradient(180deg,#ffffff,#f8fbff)]">
       <CardContent className="flex items-start justify-between gap-4">
         <div>
-          <p className="text-sm text-slate-400">{label}</p>
-          <p className="mt-3 text-3xl font-semibold tracking-tight text-white">
+          <p className="text-sm text-muted-foreground">{label}</p>
+          <p className="mt-3 text-3xl font-semibold tracking-tight text-foreground">
             {value}
           </p>
-          <p className="mt-2 text-xs uppercase tracking-[0.2em] text-sky-300/80">
+          <p className="mt-2 text-xs uppercase tracking-[0.2em] text-primary/70">
             {hint}
           </p>
         </div>
-        <div className="rounded-2xl border border-sky-400/10 bg-sky-400/10 p-3 text-sky-300">
+        <div className="rounded-2xl border border-sky-200 bg-sky-50 p-3 text-sky-700">
           <Icon className="size-5" />
         </div>
       </CardContent>

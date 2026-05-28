@@ -10,15 +10,15 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 
 const variantClasses: Record<ButtonVariant, string> = {
   primary:
-    "bg-sky-400 text-slate-950 hover:bg-sky-300 disabled:bg-slate-700 disabled:text-slate-400",
+    "bg-primary text-primary-foreground hover:bg-[#064FB1] disabled:bg-slate-200 disabled:text-slate-400",
   secondary:
-    "bg-slate-800 text-slate-100 hover:bg-slate-700 disabled:bg-slate-900 disabled:text-slate-500",
+    "bg-secondary text-secondary-foreground hover:bg-slate-200 disabled:bg-slate-100 disabled:text-slate-400",
   outline:
-    "border border-white/15 bg-transparent text-slate-100 hover:bg-white/6 disabled:border-white/8 disabled:text-slate-500",
+    "border border-border bg-white text-slate-700 hover:bg-slate-50 hover:text-slate-950 disabled:bg-slate-50 disabled:text-slate-400",
   ghost:
-    "bg-transparent text-slate-300 hover:bg-white/6 hover:text-white disabled:text-slate-500",
+    "bg-transparent text-slate-600 hover:bg-slate-100 hover:text-slate-950 disabled:text-slate-400",
   danger:
-    "bg-rose-500/90 text-white hover:bg-rose-500 disabled:bg-slate-800 disabled:text-slate-500",
+    "bg-rose-500 text-white hover:bg-rose-600 disabled:bg-slate-100 disabled:text-slate-400",
 };
 
 export function Button({
@@ -31,7 +31,7 @@ export function Button({
     <button
       type={type}
       className={cn(
-        "inline-flex items-center justify-center gap-2 rounded-2xl px-4 py-2.5 text-sm font-semibold shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] transition disabled:cursor-not-allowed",
+        "inline-flex items-center justify-center gap-2 rounded-2xl px-4 py-2.5 text-sm font-semibold shadow-sm transition disabled:cursor-not-allowed",
         variantClasses[variant],
         className,
       )}

@@ -1,14 +1,6 @@
-export interface ProductPreview {
-  id: number;
-  platform: string;
-  name: string;
-  price: string;
-  originalPrice?: string;
-  icon: string;
-  gradient: string;
-  badges: Array<"instant" | "hot" | "sale" | "new">;
-  reviews: string;
-}
+import type { ProductPreview } from "@/types/home";
+
+export type { ProductPreview } from "@/types/home";
 
 export const categories = [
   { label: "Tout", count: 28, icon: "Gamepad2" },

@@ -24,7 +24,7 @@ export default function AdminUsersPage() {
             l’itération dédiée à l’authentification et aux permissions.
           </CardDescription>
         </CardHeader>
-        <CardContent className="text-sm leading-6 text-slate-300">
+        <CardContent className="text-sm leading-6 text-slate-700">
           Périmètre prévu : liste des utilisateurs, activation/désactivation,
           changement de rôle, métadonnées d’audit et intégration fournisseur
           d’auth.

@@ -17,14 +17,14 @@ export function AdminPageHeader({
     <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
       <div>
         {eyebrow ? (
-          <p className="text-xs font-semibold uppercase tracking-[0.26em] text-sky-300/80">
+          <p className="text-xs font-semibold uppercase tracking-[0.26em] text-primary">
             {eyebrow}
           </p>
         ) : null}
-        <h1 className="mt-2 text-3xl font-semibold tracking-tight text-white">
+        <h1 className="mt-2 text-3xl font-semibold tracking-tight text-foreground">
           {title}
         </h1>
-        <p className="mt-3 max-w-3xl text-sm leading-6 text-slate-400">
+        <p className="mt-3 max-w-3xl text-sm leading-6 text-muted-foreground">
           {description}
         </p>
       </div>

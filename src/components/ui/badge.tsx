@@ -9,11 +9,11 @@ interface BadgeProps extends HTMLAttributes<HTMLSpanElement> {
 }
 
 const variantClasses: Record<BadgeVariant, string> = {
-  default: "bg-sky-400/15 text-sky-300 border-sky-400/15",
-  success: "bg-emerald-500/15 text-emerald-300 border-emerald-500/20",
-  warning: "bg-amber-500/15 text-amber-300 border-amber-500/20",
-  danger: "bg-rose-500/15 text-rose-300 border-rose-500/20",
-  muted: "bg-slate-700/40 text-slate-300 border-white/10",
+  default: "bg-sky-50 text-sky-700 border-sky-200",
+  success: "bg-emerald-50 text-emerald-700 border-emerald-200",
+  warning: "bg-amber-50 text-amber-700 border-amber-200",
+  danger: "bg-rose-50 text-rose-700 border-rose-200",
+  muted: "bg-slate-100 text-slate-600 border-slate-200",
 };
 
 export function Badge({

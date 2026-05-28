@@ -56,7 +56,7 @@ export function HeroSection() {
             <div className="mt-6 flex flex-wrap gap-3">
               <Link
                 className="inline-flex items-center justify-center gap-2 rounded-xl bg-[linear-gradient(90deg,var(--brand-orchid),var(--brand-blue-mist))] px-5 py-2 text-sm font-bold font-body uppercase text-black transition hover:shadow-[0_8px_28px_rgba(243,252,255,0.58)]"
-                href="#products"
+                href="/produits"
               >
                 <IoGameController size={24} />
                 Voir les produits

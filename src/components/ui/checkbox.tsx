@@ -10,7 +10,7 @@ export function Checkbox({
     <input
       type="checkbox"
       className={cn(
-        "size-4 rounded border border-white/15 bg-slate-950/60 text-sky-400 focus:ring-2 focus:ring-sky-400/30",
+        "size-4 rounded border border-border bg-white text-primary focus:ring-2 focus:ring-primary/20",
         className,
       )}
       {...props}

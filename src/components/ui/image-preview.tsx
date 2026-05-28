@@ -17,7 +17,7 @@ export function ImagePreview({
     return (
       <div
         className={cn(
-          "flex items-center justify-center rounded-2xl border border-dashed border-white/10 bg-slate-950/45 px-4 py-8 text-sm text-slate-500",
+          "flex items-center justify-center rounded-2xl border border-dashed border-border bg-slate-50 px-4 py-8 text-sm text-slate-500",
           className,
         )}
       >
@@ -29,7 +29,7 @@ export function ImagePreview({
   return (
     <div
       className={cn(
-        "overflow-hidden rounded-2xl border border-white/10 bg-slate-950/50",
+        "overflow-hidden rounded-2xl border border-border bg-slate-50",
         className,
       )}
     >

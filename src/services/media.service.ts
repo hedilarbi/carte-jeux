@@ -1,8 +1,8 @@
 import { uploadImageToFirebaseStorage } from "@/lib/firebase/storage";
 
 export const mediaService = {
-  uploadPlatformLogo(file: File) {
-    return uploadImageToFirebaseStorage(file, "platforms");
+  uploadCategoryImage(file: File) {
+    return uploadImageToFirebaseStorage(file, "categories");
   },
 
   uploadProductImage(file: File) {

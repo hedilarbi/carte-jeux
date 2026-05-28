@@ -1,63 +1,41 @@
 import Image from "next/image";
 import { Heart } from "lucide-react";
 
-const products = [
-    {
-        id: 1,
-        image: "/jeu1.jpg",
-        platform: "PlayStation Store",
-        region: "Europe",
-        title: "Carte PSN 10 EUR - Recharges PlayStation Store Europe",
-        price: "38.500",
-    },
-    {
-        id: 2,
-        image: "/jeu1.jpg",
-        platform: "PlayStation Plus",
-        region: "Global",
-        title: "PlayStation Plus Essential - 1 mois Abonnement PS4 / PS5",
-        price: "28.900",
-    },
-    {
-        id: 3,
-        image: "/jeu1.jpg",
-        platform: "Xbox Live",
-        region: "Global",
-        title: "Xbox Game Pass Ultimate - 1 Month Subscription Key",
-        price: "24.900",
-    },
-    {
-        id: 4,
-        image: "/jeu1.jpg",
-        platform: "PlayStation Store",
-        region: "Europe",
-        title: "Carte PSN 20 EUR - Code digital PlayStation Network",
-        price: "72.900",
-    },
-    {
-        id: 5,
-        image: "/jeu1.jpg",
-        platform: "PlayStation Store",
-        region: "USA",
-        title: "PSN Gift Card 25 USD - Compte PlayStation USA",
-        price: "82.500",
-    },
-    {
-        id: 6,
-        image: "/jeu1.jpg",
-        platform: "PlayStation Store",
-        region: "Europe",
-        title: "Carte PSN 50 EUR - Jeux PS4 / PS5 et extensions",
-        price: "169.900",
-    },
-] as const;
+import { ProductPlatformBadge } from "@/components/site/product-platform-badge";
+import type { CatalogPageContent, CatalogProduct } from "@/types/catalog";
 
-export default function MainSection() {
+interface MainSectionProps {
+    content: CatalogPageContent;
+}
+
+function addHiddenInputs(content: CatalogPageContent) {
+    const { selected } = content;
+
+    return (
+        <>
+            {selected.q ? <input name="q" type="hidden" value={selected.q} /> : null}
+            {selected.region ? (
+                <input name="region" type="hidden" value={selected.region} />
+            ) : null}
+            {selected.search ? (
+                <input name="search" type="hidden" value={selected.search} />
+            ) : null}
+            {selected.min ? <input name="min" type="hidden" value={selected.min} /> : null}
+            {selected.max ? <input name="max" type="hidden" value={selected.max} /> : null}
+        </>
+    );
+}
+
+export default function MainSection({ content }: MainSectionProps) {
+    const title = content.activeCategory
+        ? `${content.activeCategory.label} Tunisie - Codes et recharges gaming`
+        : "Produits gaming Tunisie - Cartes, jeux et recharges";
+
     return (
         <section className="min-w-0 flex-1">
-            <div className="relative h-[180px] overflow-hidden  border border-brand-ice/20 bg-brand-navy shadow-[0_18px_44px_rgba(1,45,105,0.22)] sm:h-[240px] lg:h-[284px]">
+            <div className="relative h-[180px] overflow-hidden border border-brand-ice/20 bg-brand-navy shadow-[0_18px_44px_rgba(1,45,105,0.22)] sm:h-[240px] lg:h-[284px]">
                 <Image
-                    alt="Catalogue de cartes PlayStation et recharges gaming"
+                    alt="Catalogue de cartes et recharges gaming"
                     className="object-cover"
                     fill
                     priority
@@ -68,37 +46,60 @@ export default function MainSection() {
 
             <div className="mt-8">
                 <h1 className="font-heading text-2xl font-black leading-tight text-brand-dark sm:text-3xl">
-                    Cartes PSN Tunisie - Recharges PlayStation & jeux PS4 / PS5
+                    {title}
                 </h1>
 
                 <div className="mt-5 flex flex-col gap-4 rounded-[18px] border border-brand-ice/18 bg-white/72 p-4 shadow-[0_12px_34px_rgba(1,45,105,0.08)] backdrop-blur md:flex-row md:items-center md:justify-between">
                     <p className="font-mono text-xs font-bold uppercase tracking-[0.08em] text-brand-navy/72">
                         Résultats trouvés :{" "}
-                        <span className="text-brand-dark">3371</span>
+                        <span className="text-brand-dark">{content.totalItems}</span>
                     </p>
 
-                    <label className="flex w-full items-center justify-between gap-3 rounded-xl border border-brand-navy/10 bg-white px-4 py-3 text-sm font-semibold text-brand-dark md:w-auto">
+                    <form
+                        action="/produits"
+                        className="flex w-full items-center justify-between gap-3 rounded-xl border border-brand-navy/10 bg-white px-4 py-3 text-sm font-semibold text-brand-dark md:w-auto"
+                        method="get"
+                    >
+                        {addHiddenInputs(content)}
                         <span className="shrink-0 font-mono text-xs uppercase text-brand-navy/55">
                             Popularité :
                         </span>
                         <select
                             className="min-w-0 bg-transparent font-semibold outline-none"
-                            defaultValue="popular"
+                            defaultValue={content.selected.sort}
+                            name="sort"
                         >
                             <option value="popular">Les plus populaires</option>
                             <option value="price-asc">Prix croissant</option>
                             <option value="price-desc">Prix décroissant</option>
                             <option value="new">Nouveautés</option>
                         </select>
-                    </label>
+                        <button
+                            className="rounded-lg bg-brand-lavender px-3 py-2 text-xs font-black text-[#03030A]"
+                            type="submit"
+                        >
+                            OK
+                        </button>
+                    </form>
                 </div>
             </div>
 
-            <div className="mt-8 grid grid-cols-[repeat(auto-fill,minmax(222px,1fr))] gap-6">
-                {products.map((product) => (
-                    <ProductResultCard key={product.id} product={product} />
-                ))}
-            </div>
+            {content.products.length > 0 ? (
+                <div className="mt-8 grid grid-cols-[repeat(auto-fill,minmax(222px,1fr))] gap-6">
+                    {content.products.map((product) => (
+                        <ProductResultCard key={product.id} product={product} />
+                    ))}
+                </div>
+            ) : (
+                <div className="mt-8 rounded-[18px] border border-brand-ice/18 bg-white/72 p-8 text-center text-brand-dark shadow-[0_12px_34px_rgba(1,45,105,0.08)]">
+                    <h2 className="font-heading text-xl font-black">
+                        Aucun produit trouvé
+                    </h2>
+                    <p className="mt-2 text-sm text-brand-navy/70">
+                        Essayez une autre catégorie, plateforme ou recherche.
+                    </p>
+                </div>
+            )}
         </section>
     );
 }
@@ -106,7 +107,7 @@ export default function MainSection() {
 function ProductResultCard({
     product,
 }: {
-    product: (typeof products)[number];
+    product: CatalogProduct;
 }) {
     return (
         <article className="group flex h-[433px] w-full max-w-[224px] flex-col justify-self-center overflow-hidden rounded-[20px] border border-[#A582ED] bg-[#A582ED] shadow-[0_18px_38px_rgba(130,88,203,0.28)] transition hover:-translate-y-1 hover:shadow-[0_24px_50px_rgba(130,88,203,0.35)]">
@@ -116,7 +117,7 @@ function ProductResultCard({
                     className="object-cover"
                     fill
                     sizes="222px"
-                    src={product.image}
+                    src={product.image ?? "/jeu1.jpg"}
                 />
 
                 <button
@@ -129,16 +130,12 @@ function ProductResultCard({
             </div>
 
             <div className="flex min-h-0 flex-1 flex-col bg-white text-brand-dark">
-                <div className="flex h-[38px] shrink-0 items-center gap-2.5 bg-[linear-gradient(6.39deg,rgba(1,45,105,0.82)_5.02%,rgba(1,45,105,0.82)_123.09%)] px-[13px] text-base font-bold uppercase leading-3 text-white">
-                    <Image
-                        alt="xbox live"
-                        className="size-[27px] brightness-0 invert"
-                        height={27}
-                        src="/xbox.png"
-                        width={27}
-                    />
-                    <span className="truncate">Global</span>
-                </div>
+                <ProductPlatformBadge
+                    className="h-[38px] shrink-0 px-[13px] text-base"
+                    iconClassName="size-[27px]"
+                    image={product.platformImage}
+                    name={product.platform}
+                />
 
                 <div className="flex min-h-0 flex-1 flex-col justify-between px-[15px] pb-[15px] pt-[15px]">
                     <div>
@@ -161,6 +158,11 @@ function ProductResultCard({
                                     TND
                                 </span>
                             </p>
+                            {product.originalPrice ? (
+                                <p className="font-mono text-[11px] text-[#6F6288]/70 line-through">
+                                    {product.originalPrice} TND
+                                </p>
+                            ) : null}
                         </div>
 
                         <button

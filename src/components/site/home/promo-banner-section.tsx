@@ -32,7 +32,7 @@ export function PromoBannerSection() {
             </div>
             <Link
               className="font-cta inline-flex items-center justify-center gap-2 rounded-2xl border border-brand-lavender/45 px-5 py-3 text-sm font-bold uppercase text-brand-lavender transition hover:bg-brand-lavender/10"
-              href="#products"
+              href="/produits"
             >
               Profiter
               <ArrowRight className="size-4" />

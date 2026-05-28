@@ -9,6 +9,7 @@ import {
 import { serializeDocument } from "@/lib/utils/serialization";
 import { generateSlug, generateUniqueSlug } from "@/lib/utils/slug";
 import {
+  categoryReorderSchema,
   categoryCreateSchema,
   categoryUpdateSchema,
 } from "@/lib/validation/category";
@@ -16,13 +17,17 @@ import {
   countProductsByCategoryId,
 } from "@/repositories/product.repository";
 import {
+  compactCategorySortOrders,
+  countCategoriesByIds,
   createCategory,
   deleteCategoryById,
   existsCategorySlug,
+  getNextCategorySortOrder,
   getCategoryById,
   listCategories,
   type CategoryListFilters,
   updateCategoryById,
+  updateCategorySortOrders,
 } from "@/repositories/category.repository";
 import type { Category } from "@/types/entities";
 
@@ -65,9 +70,11 @@ export const categoryService = {
   async create(input: z.input<typeof categoryCreateSchema>) {
     const parsed = categoryCreateSchema.parse(input);
     const slug = await resolveCategorySlug(parsed.slug ?? parsed.name);
+    const sortOrder = await getNextCategorySortOrder();
     const created = await createCategory({
       ...parsed,
       slug,
+      sortOrder,
     });
 
     return serializeDocument<Category>(created);
@@ -99,6 +106,27 @@ export const categoryService = {
     return serializeDocument<Category>(updated);
   },
 
+  async reorder(input: z.input<typeof categoryReorderSchema>) {
+    const parsed = categoryReorderSchema.parse(input);
+    const existingCategoriesCount = await countCategoriesByIds(parsed.categoryIds);
+
+    if (existingCategoriesCount !== parsed.categoryIds.length) {
+      throw new AppError(
+        "La liste de réordonnancement contient une catégorie invalide.",
+        400,
+      );
+    }
+
+    await updateCategorySortOrders(parsed.categoryIds);
+
+    const result = await listCategories({
+      page: 1,
+      limit: Math.max(parsed.categoryIds.length, 1),
+    });
+
+    return serializeDocument<Category[]>(result.items);
+  },
+
   async delete(id: string) {
     assertObjectId(id, "Identifiant de catégorie");
 
@@ -116,6 +144,8 @@ export const categoryService = {
     if (!deleted) {
       throw new AppError("Catégorie introuvable.", 404);
     }
+
+    await compactCategorySortOrders();
 
     return {
       success: true,

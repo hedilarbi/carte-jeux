@@ -1,10 +1,20 @@
-import { products } from "@/components/site/home/home-data";
 import Link from "next/link";
-import { ArrowRight } from "lucide-react";
 import { IoGameController } from "react-icons/io5";
 import { RecommendedProductsCarousel } from "./recommended-products-carousel";
+import { buildProductsHref } from "@/lib/utils/catalog-links";
+import type { ProductPreview } from "@/types/home";
 
-export function RecommendedProductsSection() {
+export function RecommendedProductsSection({
+  categorySlug,
+  products,
+}: {
+  categorySlug: string;
+  products: ProductPreview[];
+}) {
+  if (products.length === 0) {
+    return null;
+  }
+
   return (
     <section className="py-16" id="recommended">
       <div className="mx-auto max-w-[1400px] lg:ml-[100px] lg:mr-[50px] px-6">
@@ -28,10 +38,13 @@ export function RecommendedProductsSection() {
 
         </div>
 
-        <RecommendedProductsCarousel products={products} />
+        <RecommendedProductsCarousel
+          categorySlug={categorySlug}
+          products={products}
+        />
         <div className="mt-8 flex justify-center">
           <Link
-            href="#products"
+            href={buildProductsHref(categorySlug)}
             className="inline-flex h-[53px] w-full max-w-[436px] items-center justify-center gap-2 rounded-[11px] bg-[linear-gradient(274.47deg,#B99CF1_-12.06%,#7FCCFF_110.42%)] px-[22px] pb-[14px] pt-[11px] text-center font-heading text-sm font-bold text-[#03030A]  transition hover:-translate-y-0.5 hover:shadow-[0_8px_28px_rgba(243,252,255,0.58)]"
           >
             <IoGameController className="size-6 shrink-0" />

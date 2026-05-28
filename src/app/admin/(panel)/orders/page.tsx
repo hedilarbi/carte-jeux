@@ -34,7 +34,7 @@ export default async function AdminOrdersPage() {
         </CardHeader>
         <CardContent className="overflow-x-auto p-0">
           <table className="min-w-full text-left text-sm">
-            <thead className="border-b border-white/8 bg-slate-950/30 text-xs uppercase tracking-[0.24em] text-slate-500">
+            <thead className="border-b border-border bg-slate-50 text-xs uppercase tracking-[0.24em] text-slate-500">
               <tr>
                 <th className="px-6 py-4">Commande</th>
                 <th className="px-6 py-4">Client</th>
@@ -45,27 +45,27 @@ export default async function AdminOrdersPage() {
             </thead>
             <tbody>
               {orders.items.map((order) => (
-                <tr key={order._id} className="border-b border-white/6 text-slate-300">
+                <tr key={order._id} className="border-b border-border text-slate-700">
                   <td className="px-6 py-4">
-                    <div className="font-medium text-white">{order.orderNumber}</div>
+                    <div className="font-medium text-foreground">{order.orderNumber}</div>
                     <div className="mt-2 flex flex-wrap gap-2">
                       <OrderStatusBadge status={order.status} />
                       <PaymentStatusBadge status={order.paymentStatus} />
                     </div>
                   </td>
-                  <td className="px-6 py-4 text-xs text-slate-400">
+                  <td className="px-6 py-4 text-xs text-slate-600">
                     <div>{order.customerEmail}</div>
                     <div className="mt-1">{formatDateTime(order.createdAt)}</div>
                   </td>
                   <td className="px-6 py-4 text-xs">
-                    <div className="font-medium text-white">
+                    <div className="font-medium text-foreground">
                       {formatCurrency(order.total, order.currency)}
                     </div>
                     <div className="mt-1 text-slate-500">
                       {order.paymentProvider || "Fournisseur de paiement en attente"}
                     </div>
                   </td>
-                  <td className="px-6 py-4 text-xs text-slate-400">
+                  <td className="px-6 py-4 text-xs text-slate-600">
                     <div>{order.supplierPlatform || "Pas encore acheté"}</div>
                     <div className="mt-1">
                       {order.supplierPurchaseReference || "Aucune référence"}
@@ -74,7 +74,7 @@ export default async function AdminOrdersPage() {
                   <td className="px-6 py-4 text-right">
                     <Link
                       href={`/admin/orders/${order._id}`}
-                      className="inline-flex items-center justify-center rounded-2xl border border-white/15 px-4 py-2.5 text-sm font-semibold text-slate-100 transition hover:bg-white/6"
+                      className="inline-flex items-center justify-center rounded-2xl border border-slate-200 px-4 py-2.5 text-sm font-semibold text-slate-700 transition hover:bg-slate-50"
                     >
                       Ouvrir la commande
                     </Link>

@@ -24,7 +24,7 @@ export default function AdminPromosPage() {
             validé.
           </CardDescription>
         </CardHeader>
-        <CardContent className="text-sm leading-6 text-slate-300">
+        <CardContent className="text-sm leading-6 text-slate-700">
           Périmètre prévu : campagnes en pourcentage, fenêtres d’activation,
           affectation en lot aux produits et visibilité admin sur les promotions
           qui se chevauchent.

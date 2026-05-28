@@ -17,25 +17,24 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { ImagePreview } from "@/components/ui/image-preview";
 import { Input } from "@/components/ui/input";
 import { Modal } from "@/components/ui/modal";
-import { Select } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { PRODUCT_TYPE_LABELS } from "@/constants/admin";
 import { calculateDiscountedPrice } from "@/lib/utils/pricing";
 import { formatCurrency } from "@/lib/utils/format";
 import { fetchJson } from "@/lib/utils/fetch-json";
-import type { Category, Platform, Product, Region } from "@/types/entities";
+import type { Category, Product, Region } from "@/types/entities";
 
 interface ProductsManagerProps {
   initialProducts: Product[];
   categories: Category[];
-  platforms: Platform[];
+  platformCategories: Category[];
   regions: Region[];
 }
 
 interface ProductFormState {
   title: string;
   slug: string;
-  categoryId: string;
+  categoryIds: string[];
   platformId: string;
   regionIds: string[];
   price: string;
@@ -50,7 +49,7 @@ interface ProductFormState {
 const defaultFormState: ProductFormState = {
   title: "",
   slug: "",
-  categoryId: "",
+  categoryIds: [],
   platformId: "",
   regionIds: [],
   price: "0",
@@ -64,6 +63,14 @@ const defaultFormState: ProductFormState = {
 
 const PRODUCT_CURRENCY = "DTN";
 const DEFAULT_PRODUCT_TYPE: Product["productType"] = "gift_card";
+
+function getProductCategoryIds(product: Product) {
+  if (product.categoryIds?.length) {
+    return product.categoryIds;
+  }
+
+  return product.categoryId ? [product.categoryId] : [];
+}
 
 function getProductRegionIds(product: Product) {
   if (product.regionIds?.length) {
@@ -92,7 +99,7 @@ function readImagePreview(file: File) {
 export function ProductsManager({
   initialProducts,
   categories,
-  platforms,
+  platformCategories,
   regions,
 }: ProductsManagerProps) {
   const router = useRouter();
@@ -110,7 +117,7 @@ export function ProductsManager({
     categories.map((category) => [category._id, category.name]),
   );
   const platformNameMap = Object.fromEntries(
-    platforms.map((platform) => [platform._id, platform.name]),
+    platformCategories.map((category) => [category._id, category.name]),
   );
   const regionNameMap = Object.fromEntries(
     regions.map((region) => [region._id, region.name]),
@@ -159,7 +166,7 @@ export function ProductsManager({
     setForm({
       title: product.title,
       slug: product.slug,
-      categoryId: product.categoryId,
+      categoryIds: getProductCategoryIds(product),
       platformId: product.platformId,
       regionIds: getProductRegionIds(product),
       price: String(product.price),
@@ -195,6 +202,11 @@ export function ProductsManager({
     event.preventDefault();
     setError(null);
 
+    if (form.categoryIds.length === 0) {
+      setError("Sélectionnez au moins une catégorie.");
+      return;
+    }
+
     if (form.regionIds.length === 0) {
       setError("Sélectionnez au moins une région.");
       return;
@@ -206,7 +218,10 @@ export function ProductsManager({
       const payload = new FormData();
       payload.set("title", form.title);
       payload.set("slug", form.slug);
-      payload.set("categoryId", form.categoryId);
+      payload.set("categoryId", form.categoryIds[0]);
+      form.categoryIds.forEach((categoryId) => {
+        payload.append("categoryIds", categoryId);
+      });
       payload.set("platformId", form.platformId);
       form.regionIds.forEach((regionId) => {
         payload.append("regionIds", regionId);
@@ -296,10 +311,25 @@ export function ProductsManager({
     });
   }
 
+  function toggleCategory(categoryId: string) {
+    setForm((current) => {
+      const isSelected = current.categoryIds.includes(categoryId);
+
+      return {
+        ...current,
+        categoryIds: isSelected
+          ? current.categoryIds.filter(
+              (currentCategoryId) => currentCategoryId !== categoryId,
+            )
+          : [...current.categoryIds, categoryId],
+      };
+    });
+  }
+
   return (
     <>
       <Card>
-        <CardHeader className="flex flex-col gap-4 border-b border-white/8 pb-6 md:flex-row md:items-center md:justify-between">
+        <CardHeader className="flex flex-col gap-4 border-b border-border pb-6 md:flex-row md:items-center md:justify-between">
           <div>
             <CardTitle>Catalogue produits</CardTitle>
             <CardDescription className="mt-2">
@@ -321,7 +351,7 @@ export function ProductsManager({
         </CardHeader>
         <CardContent className="overflow-x-auto p-0">
           <table className="min-w-full text-left text-sm">
-            <thead className="border-b border-white/8 bg-slate-950/30 text-xs uppercase tracking-[0.24em] text-slate-500">
+            <thead className="border-b border-border bg-slate-50 text-xs uppercase tracking-[0.24em] text-slate-500">
               <tr>
                 <th className="px-6 py-4">Produit</th>
                 <th className="px-6 py-4">Catalogue</th>
@@ -332,7 +362,7 @@ export function ProductsManager({
             </thead>
             <tbody>
               {filteredProducts.map((product) => (
-                <tr key={product._id} className="border-b border-white/6 text-slate-300">
+                <tr key={product._id} className="border-b border-border text-slate-700">
                   <td className="px-6 py-4">
                     <div className="flex items-center gap-3">
                       <ImagePreview
@@ -342,7 +372,7 @@ export function ProductsManager({
                         src={product.image}
                       />
                       <div>
-                        <div className="font-medium text-white">
+                        <div className="font-medium text-foreground">
                           {product.title}
                         </div>
                         <div className="mt-1 text-xs text-slate-500">
@@ -352,8 +382,13 @@ export function ProductsManager({
                       </div>
                     </div>
                   </td>
-                  <td className="px-6 py-4 text-xs text-slate-400">
-                    <div>{categoryNameMap[product.categoryId] ?? "—"}</div>
+                  <td className="px-6 py-4 text-xs text-slate-600">
+                    <div>
+                      {getProductCategoryIds(product)
+                        .map((categoryId) => categoryNameMap[categoryId])
+                        .filter(Boolean)
+                        .join(", ") || "—"}
+                    </div>
                     <div className="mt-1">
                       {platformNameMap[product.platformId] ?? "—"} ·{" "}
                       {getProductRegionIds(product)
@@ -363,7 +398,7 @@ export function ProductsManager({
                     </div>
                   </td>
                   <td className="px-6 py-4 text-xs">
-                    <div className="text-white">
+                    <div className="text-foreground">
                       {formatCurrency(product.finalPrice, product.currency)}
                     </div>
                     <div className="mt-1 text-slate-500">
@@ -391,7 +426,7 @@ export function ProductsManager({
                       <Button
                         variant="ghost"
                         onClick={() => handleDelete(product._id)}
-                        className="px-3 text-rose-300 hover:text-rose-200"
+                        className="px-3 text-rose-600 hover:text-rose-700"
                       >
                         <Trash2 className="size-4" />
                       </Button>
@@ -424,7 +459,7 @@ export function ProductsManager({
         <form className="space-y-5" onSubmit={handleSubmit}>
           <div className="grid gap-6 lg:grid-cols-[0.9fr_1.1fr]">
             <div>
-              <label className="mb-2 block text-sm font-medium text-slate-300">
+              <label className="mb-2 block text-sm font-medium text-slate-700">
                 Image principale
               </label>
               <ImagePreview
@@ -435,7 +470,7 @@ export function ProductsManager({
               />
               <Input
                 accept="image/*"
-                className="cursor-pointer file:mr-4 file:rounded-xl file:border-0 file:bg-sky-400/15 file:px-3 file:py-2 file:text-sm file:font-medium file:text-sky-200"
+                className="cursor-pointer file:mr-4 file:rounded-xl file:border-0 file:bg-sky-400/15 file:px-3 file:py-2 file:text-sm file:font-medium file:text-sky-700"
                 name="image"
                 onChange={handleImageChange}
                 type="file"
@@ -448,7 +483,7 @@ export function ProductsManager({
 
             <div className="grid content-start gap-4">
               <div>
-                <label className="mb-2 block text-sm font-medium text-slate-300">
+                <label className="mb-2 block text-sm font-medium text-slate-700">
                   Titre
                 </label>
                 <Input
@@ -463,7 +498,7 @@ export function ProductsManager({
 
               <div className="grid gap-4 md:grid-cols-2">
                 <div>
-                  <label className="mb-2 block text-sm font-medium text-slate-300">
+                  <label className="mb-2 block text-sm font-medium text-slate-700">
                     Slug
                   </label>
                   <Input
@@ -478,7 +513,7 @@ export function ProductsManager({
                   />
                 </div>
                 <div>
-                  <label className="mb-2 block text-sm font-medium text-slate-300">
+                  <label className="mb-2 block text-sm font-medium text-slate-700">
                     SKU
                   </label>
                   <Input
@@ -496,7 +531,7 @@ export function ProductsManager({
               </div>
 
               <div className="grid gap-3 md:grid-cols-2">
-                <label className="flex items-center gap-3 rounded-2xl border border-white/8 bg-slate-950/40 px-4 py-3 text-sm text-slate-300">
+                <label className="flex items-center gap-3 rounded-2xl border border-border bg-slate-50 px-4 py-3 text-sm text-slate-700">
                   <Checkbox
                     checked={form.isFeatured}
                     onChange={(event) =>
@@ -508,7 +543,7 @@ export function ProductsManager({
                   />
                   Mise en avant
                 </label>
-                <label className="flex items-center gap-3 rounded-2xl border border-white/8 bg-slate-950/40 px-4 py-3 text-sm text-slate-300">
+                <label className="flex items-center gap-3 rounded-2xl border border-border bg-slate-50 px-4 py-3 text-sm text-slate-700">
                   <Checkbox
                     checked={form.isActive}
                     onChange={(event) =>
@@ -524,53 +559,71 @@ export function ProductsManager({
             </div>
           </div>
 
-          <div className="grid gap-4 xl:grid-cols-5">
-            <div>
-              <label className="mb-2 block text-sm font-medium text-slate-300">
-                Catégorie
-              </label>
-              <Select
-                value={form.categoryId}
-                onChange={(event) =>
-                  setForm((current) => ({
-                    ...current,
-                    categoryId: event.target.value,
-                  }))
-                }
-                required
-              >
-                <option value="">Sélectionner une catégorie</option>
-                {categories.map((category) => (
-                  <option key={category._id} value={category._id}>
-                    {category.name}
-                  </option>
-                ))}
-              </Select>
+          <div>
+            <label className="mb-2 block text-sm font-medium text-slate-700">
+              Type
+            </label>
+            <div className="grid gap-2 rounded-2xl border border-border bg-slate-50 p-3 sm:grid-cols-2 lg:grid-cols-3">
+              {categories.map((category) => (
+                <label
+                  key={category._id}
+                  className="flex cursor-pointer items-center gap-3 rounded-xl px-3 py-2 text-sm text-slate-700 transition hover:bg-slate-50"
+                >
+                  <Checkbox
+                    checked={form.categoryIds.includes(category._id)}
+                    onChange={() => toggleCategory(category._id)}
+                  />
+                  <span>{category.name}</span>
+                </label>
+              ))}
             </div>
-            <div>
-              <label className="mb-2 block text-sm font-medium text-slate-300">
-                Plateforme
-              </label>
-              <Select
-                value={form.platformId}
-                onChange={(event) =>
-                  setForm((current) => ({
-                    ...current,
-                    platformId: event.target.value,
-                  }))
-                }
-                required
-              >
-                <option value="">Sélectionner une plateforme</option>
-                {platforms.map((platform) => (
-                  <option key={platform._id} value={platform._id}>
-                    {platform.name}
-                  </option>
-                ))}
-              </Select>
+            <p className="mt-2 text-xs text-slate-500">
+              Sélectionnez un ou plusieurs types. La première sélectionnée sert
+              de catégorie principale pour les anciens écrans.
+            </p>
+          </div>
+
+          <div>
+            <label className="mb-2 block text-sm font-medium text-slate-700">
+              Plateforme
+            </label>
+            <div className="grid gap-2 rounded-2xl border border-border bg-slate-50 p-3 sm:grid-cols-2 lg:grid-cols-3">
+              {platformCategories.map((platform) => {
+                const isSelected = form.platformId === platform._id;
+
+                return (
+                  <label
+                    key={platform._id}
+                    className={`flex cursor-pointer items-center gap-3 rounded-xl px-3 py-2 text-sm transition ${
+                      isSelected
+                        ? "bg-white text-primary shadow-sm"
+                        : "text-slate-700 hover:bg-white"
+                    }`}
+                  >
+                    <Checkbox
+                      type="radio"
+                      name="platformId"
+                      checked={isSelected}
+                      onChange={() =>
+                        setForm((current) => ({
+                          ...current,
+                          platformId: platform._id,
+                        }))
+                      }
+                    />
+                    <span>{platform.name}</span>
+                  </label>
+                );
+              })}
             </div>
+            <p className="mt-2 text-xs text-slate-500">
+              Ces options viennent des catégories cochées comme plateforme.
+            </p>
+          </div>
+
+          <div className="grid gap-4 xl:grid-cols-3">
             <div>
-              <label className="mb-2 block text-sm font-medium text-slate-300">
+              <label className="mb-2 block text-sm font-medium text-slate-700">
                 Prix
               </label>
               <Input
@@ -588,7 +641,7 @@ export function ProductsManager({
               />
             </div>
             <div>
-              <label className="mb-2 block text-sm font-medium text-slate-300">
+              <label className="mb-2 block text-sm font-medium text-slate-700">
                 Remise %
               </label>
               <Input
@@ -605,23 +658,23 @@ export function ProductsManager({
                 }
               />
             </div>
-            <div className="rounded-2xl border border-sky-400/12 bg-sky-400/8 px-4 py-3 text-sm text-slate-300">
+            <div className="rounded-2xl border border-sky-400/12 bg-sky-400/8 px-4 py-3 text-sm text-slate-700">
               Aperçu du prix final · DTN
-              <div className="mt-2 text-lg font-semibold text-white">
+              <div className="mt-2 text-lg font-semibold text-foreground">
                 {formatCurrency(pricePreview, PRODUCT_CURRENCY)}
               </div>
             </div>
           </div>
 
           <div>
-            <label className="mb-2 block text-sm font-medium text-slate-300">
+            <label className="mb-2 block text-sm font-medium text-slate-700">
               Régions
             </label>
-            <div className="grid gap-2 rounded-2xl border border-white/8 bg-slate-950/40 p-3 sm:grid-cols-2 lg:grid-cols-3">
+            <div className="grid gap-2 rounded-2xl border border-border bg-slate-50 p-3 sm:grid-cols-2 lg:grid-cols-3">
               {regions.map((region) => (
                 <label
                   key={region._id}
-                  className="flex cursor-pointer items-center gap-3 rounded-xl px-3 py-2 text-sm text-slate-300 transition hover:bg-white/5"
+                  className="flex cursor-pointer items-center gap-3 rounded-xl px-3 py-2 text-sm text-slate-700 transition hover:bg-slate-50"
                 >
                   <Checkbox
                     checked={form.regionIds.includes(region._id)}
@@ -639,7 +692,7 @@ export function ProductsManager({
 
           <div className="grid gap-4 md:grid-cols-2">
             <div>
-              <label className="mb-2 block text-sm font-medium text-slate-300">
+              <label className="mb-2 block text-sm font-medium text-slate-700">
                 Titre SEO
               </label>
               <Input
@@ -654,7 +707,7 @@ export function ProductsManager({
               />
             </div>
             <div>
-              <label className="mb-2 block text-sm font-medium text-slate-300">
+              <label className="mb-2 block text-sm font-medium text-slate-700">
                 Description SEO
               </label>
               <Textarea
@@ -671,7 +724,7 @@ export function ProductsManager({
           </div>
 
           {error ? (
-            <div className="rounded-2xl border border-rose-500/20 bg-rose-500/10 px-4 py-3 text-sm text-rose-200">
+            <div className="rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-700">
               {error}
             </div>
           ) : null}

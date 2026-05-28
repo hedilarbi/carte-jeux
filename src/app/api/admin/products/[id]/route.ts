@@ -34,6 +34,8 @@ async function resolveProductPayload(request: NextRequest) {
   const gallery = galleryFiles.length
     ? await mediaService.uploadProductGallery(galleryFiles)
     : undefined;
+  const categoryIds = getFormDataStrings(formData, "categoryIds");
+  const legacyCategoryId = getFormDataString(formData, "categoryId");
   const regionIds = getFormDataStrings(formData, "regionIds");
   const legacyRegionId = getFormDataString(formData, "regionId");
 
@@ -44,7 +46,12 @@ async function resolveProductPayload(request: NextRequest) {
     description: getFormDataString(formData, "description"),
     ...(image ? { image } : {}),
     ...(gallery ? { gallery } : {}),
-    categoryId: getFormDataString(formData, "categoryId"),
+    categoryId: legacyCategoryId,
+    categoryIds: categoryIds.length
+      ? categoryIds
+      : legacyCategoryId
+        ? [legacyCategoryId]
+        : undefined,
     platformId: getFormDataString(formData, "platformId"),
     regionIds: regionIds.length
       ? regionIds

@@ -17,6 +17,7 @@ export interface ProductRecord {
   image?: string;
   gallery: string[];
   categoryId: Types.ObjectId;
+  categoryIds: Types.ObjectId[];
   platformId: Types.ObjectId;
   regionId?: Types.ObjectId;
   regionIds: Types.ObjectId[];
@@ -79,9 +80,21 @@ const productSchema = new Schema<ProductRecord>(
       required: true,
       index: true,
     },
+    categoryIds: {
+      type: [Schema.Types.ObjectId],
+      ref: "Category",
+      default: [],
+      index: true,
+      validate: {
+        validator(value: Types.ObjectId[]) {
+          return value.length > 0;
+        },
+        message: "Au moins une catégorie doit être sélectionnée.",
+      },
+    },
     platformId: {
       type: Schema.Types.ObjectId,
-      ref: "Platform",
+      ref: "Category",
       required: true,
       index: true,
     },
@@ -178,6 +191,14 @@ const productSchema = new Schema<ProductRecord>(
 
 productSchema.pre("validate", function setFinalPrice() {
   const product = this as ProductRecord;
+
+  if ((!product.categoryIds || product.categoryIds.length === 0) && product.categoryId) {
+    product.categoryIds = [product.categoryId];
+  }
+
+  if (!product.categoryId && product.categoryIds?.[0]) {
+    product.categoryId = product.categoryIds[0];
+  }
 
   if ((!product.regionIds || product.regionIds.length === 0) && product.regionId) {
     product.regionIds = [product.regionId];

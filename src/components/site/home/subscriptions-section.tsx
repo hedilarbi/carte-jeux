@@ -7,7 +7,7 @@ export function SubscriptionsSection() {
 
     <div className="mx-auto max-w-[1400px] lg:ml-[100px] lg:mr-[50px] px-6 mt-16">
       <SectionHeading
-        actionHref="#products"
+        actionHref="/produits"
         actionLabel="Voir tout"
         eyebrow="// Pass & Sub"
         title="Abonnements gaming"

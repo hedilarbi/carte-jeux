@@ -28,23 +28,25 @@ export function Modal({
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
       <button
         aria-label="Fermer la fenêtre"
-        className="absolute inset-0 bg-slate-950/72 backdrop-blur-sm"
+        className="absolute inset-0 bg-slate-900/35 backdrop-blur-sm"
         onClick={onClose}
         type="button"
       />
       <section
         aria-modal="true"
         className={cn(
-          "relative flex max-h-[90vh] w-full flex-col overflow-hidden rounded-[1.75rem] border border-white/12 bg-slate-950 shadow-[0_30px_120px_rgba(0,0,0,0.55)]",
+          "relative flex max-h-[90vh] w-full flex-col overflow-hidden rounded-[1.75rem] border border-border bg-card shadow-[0_28px_90px_rgba(15,35,68,0.2)]",
           size === "wide" ? "max-w-5xl" : "max-w-2xl",
         )}
         role="dialog"
       >
-        <header className="flex items-start justify-between gap-4 border-b border-white/8 px-6 py-5">
+        <header className="flex items-start justify-between gap-4 border-b border-border px-6 py-5">
           <div>
-            <h2 className="text-xl font-semibold text-white">{title}</h2>
+            <h2 className="text-xl font-semibold text-card-foreground">
+              {title}
+            </h2>
             {description ? (
-              <p className="mt-2 max-w-3xl text-sm leading-6 text-slate-400">
+              <p className="mt-2 max-w-3xl text-sm leading-6 text-muted-foreground">
                 {description}
               </p>
             ) : null}

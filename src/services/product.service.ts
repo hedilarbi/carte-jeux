@@ -17,7 +17,6 @@ import {
   productUpdateSchema,
 } from "@/lib/validation/product";
 import { getCategoryById } from "@/repositories/category.repository";
-import { getPlatformById } from "@/repositories/platform.repository";
 import {
   createProduct,
   deleteProductById,
@@ -33,27 +32,54 @@ import type { Product } from "@/types/entities";
 
 async function ensureProductRelations(input: {
   categoryId?: string;
+  categoryIds?: string[];
   platformId?: string;
   regionIds?: string[];
 }) {
-  const checks = await Promise.all([
-    input.categoryId ? getCategoryById(input.categoryId) : Promise.resolve(true),
-    input.platformId ? getPlatformById(input.platformId) : Promise.resolve(true),
-    input.regionIds?.length
-      ? Promise.all(input.regionIds.map((regionId) => getRegionById(regionId)))
-      : Promise.resolve(true),
-  ]);
+  const categories = input.categoryIds?.length
+    ? await Promise.all(
+        input.categoryIds.map((categoryId) => getCategoryById(categoryId)),
+      )
+    : input.categoryId
+      ? [await getCategoryById(input.categoryId)]
+      : [];
 
-  if (!checks[0]) {
+  if (categories.some((category) => !category)) {
     throw new AppError("La référence de catégorie est invalide.", 400);
   }
 
-  if (!checks[1]) {
+  if (input.platformId) {
+    const platformCategory = await getCategoryById(input.platformId);
+
+    if (!platformCategory || !platformCategory.isPlateforme) {
+      throw new AppError("La référence de plateforme est invalide.", 400);
+    }
+  }
+
+  const regions = input.regionIds?.length
+    ? await Promise.all(input.regionIds.map((regionId) => getRegionById(regionId)))
+    : [];
+
+  if (regions.some((region) => !region)) {
+    throw new AppError("La référence de région est invalide.", 400);
+  }
+}
+
+function assertRequiredProductRelations(input: {
+  categoryIds: string[];
+  platformId: string;
+  regionIds: string[];
+}) {
+  if (input.categoryIds.length === 0) {
+    throw new AppError("Sélectionnez au moins une catégorie.", 400);
+  }
+
+  if (!input.platformId) {
     throw new AppError("La référence de plateforme est invalide.", 400);
   }
 
-  if (Array.isArray(checks[2]) && checks[2].some((region) => !region)) {
-    throw new AppError("La référence de région est invalide.", 400);
+  if (input.regionIds.length === 0) {
+    throw new AppError("Sélectionnez au moins une région.", 400);
   }
 }
 
@@ -79,6 +105,10 @@ function toObjectId(value: string) {
 
 function normalizeRegionIds(regionIds: string[] | undefined) {
   return [...new Set(regionIds ?? [])];
+}
+
+function normalizeCategoryIds(categoryIds: string[] | undefined) {
+  return [...new Set(categoryIds ?? [])];
 }
 
 export const productService = {
@@ -107,8 +137,16 @@ export const productService = {
 
   async create(input: z.input<typeof productCreateSchema>) {
     const parsed = productCreateSchema.parse(input);
+    const categoryIds = normalizeCategoryIds(
+      parsed.categoryIds ?? (parsed.categoryId ? [parsed.categoryId] : []),
+    );
     const regionIds = normalizeRegionIds(parsed.regionIds);
-    await ensureProductRelations({ ...parsed, regionIds });
+    assertRequiredProductRelations({
+      categoryIds,
+      platformId: parsed.platformId,
+      regionIds,
+    });
+    await ensureProductRelations({ ...parsed, categoryIds, regionIds });
 
     const normalizedSku = parsed.sku.toUpperCase();
 
@@ -117,11 +155,13 @@ export const productService = {
     }
 
     const slug = await resolveProductSlug(parsed.slug ?? parsed.title);
+    const primaryCategoryId = toObjectId(categoryIds[0]);
     const primaryRegionId = toObjectId(regionIds[0]);
     const created = await createProduct({
       ...parsed,
       gallery: normalizeGallery(parsed.gallery),
-      categoryId: toObjectId(parsed.categoryId),
+      categoryId: primaryCategoryId,
+      categoryIds: categoryIds.map(toObjectId),
       platformId: toObjectId(parsed.platformId),
       regionId: primaryRegionId,
       regionIds: regionIds.map(toObjectId),
@@ -143,10 +183,13 @@ export const productService = {
     }
 
     const parsed = productUpdateSchema.parse(input);
+    const categoryIds = parsed.categoryIds
+      ? normalizeCategoryIds(parsed.categoryIds)
+      : undefined;
     const regionIds = parsed.regionIds
       ? normalizeRegionIds(parsed.regionIds)
       : undefined;
-    await ensureProductRelations({ ...parsed, regionIds });
+    await ensureProductRelations({ ...parsed, categoryIds, regionIds });
 
     const normalizedSku = parsed.sku?.toUpperCase();
 
@@ -175,7 +218,14 @@ export const productService = {
       seoTitle: parsed.seoTitle,
       seoDescription: parsed.seoDescription,
       ...(parsed.gallery ? { gallery: normalizeGallery(parsed.gallery) } : {}),
-      ...(parsed.categoryId ? { categoryId: toObjectId(parsed.categoryId) } : {}),
+      ...(categoryIds
+        ? {
+            categoryId: toObjectId(categoryIds[0]),
+            categoryIds: categoryIds.map(toObjectId),
+          }
+        : parsed.categoryId
+          ? { categoryId: toObjectId(parsed.categoryId) }
+          : {}),
       ...(parsed.platformId ? { platformId: toObjectId(parsed.platformId) } : {}),
       ...(regionIds
         ? {

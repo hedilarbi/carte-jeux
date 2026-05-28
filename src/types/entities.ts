@@ -31,14 +31,10 @@ export interface Category extends BaseEntity {
   name: string;
   slug: string;
   description?: string;
+  image?: string;
+  isPlateforme: boolean;
   isActive: boolean;
-}
-
-export interface Platform extends BaseEntity {
-  name: string;
-  slug: string;
-  logo?: string;
-  isActive: boolean;
+  sortOrder: number;
 }
 
 export interface Region {
@@ -57,6 +53,7 @@ export interface Product extends BaseEntity {
   image?: string;
   gallery: string[];
   categoryId: string;
+  categoryIds: string[];
   platformId: string;
   regionId?: string;
   regionIds: string[];

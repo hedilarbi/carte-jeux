@@ -4,11 +4,13 @@ import { useCallback, useEffect, useMemo, useRef } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
 import { RecommendedCard } from "@/components/site/home/RecommendedCard";
-import type { ProductPreview } from "@/components/site/home/home-data";
+import type { ProductPreview } from "@/types/home";
 
 export function RecommendedProductsCarousel({
+  categorySlug,
   products,
 }: {
+  categorySlug?: string;
   products: ProductPreview[];
 }) {
   const carouselProducts = useMemo(() => products.slice(0, 8), [products]);
@@ -89,7 +91,11 @@ export function RecommendedProductsCarousel({
               data-carousel-card
               key={product.id}
             >
-              <RecommendedCard className="lg:w-full" product={product} />
+              <RecommendedCard
+                categorySlug={categorySlug}
+                className="lg:w-full"
+                product={product}
+              />
             </div>
           ))}
         </div>
