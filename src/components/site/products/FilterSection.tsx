@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ChevronDown, Search, SlidersHorizontal } from "lucide-react";
+import { Check, ChevronDown, Search, SlidersHorizontal } from "lucide-react";
 
 import { cn } from "@/lib/utils/cn";
 import type {
@@ -219,7 +219,7 @@ export default function FilterSection({
                         return (
                             <Link
                                 className={cn(
-                                    "inline-flex cursor-pointer items-center rounded-lg border px-3 py-2 text-xs font-semibold transition",
+                                    "inline-flex cursor-pointer items-center gap-1.5 rounded-lg border px-3 py-2 text-xs font-semibold transition",
                                     isActive
                                         ? "border-brand-lavender bg-brand-lavender text-[#03030A]"
                                         : "border-white/12 bg-white/8 text-white/86 hover:border-brand-lavender/45",
@@ -231,6 +231,7 @@ export default function FilterSection({
                                 })}
                                 key={region.id}
                             >
+                                {isActive ? <Check className="size-3.5" /> : null}
                                 {region.label}
                             </Link>
                         );
@@ -310,16 +311,19 @@ function FilterGroup({
                                 selected,
                                 value: option.slug,
                             })}
+                            aria-current={isActive ? "true" : undefined}
                             key={option.id}
                         >
                             <span
                                 className={cn(
-                                    "size-4 rounded border",
+                                    "flex size-5 shrink-0 items-center justify-center rounded-md border transition",
                                     isActive
-                                        ? "border-[#03030A] bg-[#03030A]"
-                                        : "border-white/30",
+                                        ? "border-[#03030A] bg-[#03030A] text-brand-lavender shadow-[0_0_0_3px_rgba(3,3,10,0.14)]"
+                                        : "border-white/30 bg-white/5 text-transparent",
                                 )}
-                            />
+                            >
+                                <Check className="size-3.5 stroke-[3]" />
+                            </span>
                             <span>{option.label}</span>
                         </Link>
                     );

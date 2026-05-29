@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Link from "next/link";
 import { Heart, ShoppingCart } from "lucide-react";
 
 import { ProductPlatformBadge } from "@/components/site/product-platform-badge";
@@ -140,7 +141,13 @@ function ProductResultCard({
     product: CatalogProduct;
 }) {
     return (
-        <article className="group flex min-h-[508px] w-full flex-col overflow-hidden rounded-[20px] border border-[#A582ED] bg-[#A582ED] shadow-[0_18px_38px_rgba(130,88,203,0.28)] transition hover:-translate-y-1 hover:shadow-[0_24px_50px_rgba(130,88,203,0.35)]">
+        <article className="group relative flex min-h-[508px] w-full flex-col overflow-hidden rounded-[20px] border border-[#A582ED] bg-[#A582ED] shadow-[0_18px_38px_rgba(130,88,203,0.28)] transition hover:-translate-y-1 hover:shadow-[0_24px_50px_rgba(130,88,203,0.35)]">
+            <Link
+                aria-label={`Voir le produit - ${product.title}`}
+                className="absolute inset-0 z-[1]"
+                href={`/produits/${product.slug}`}
+            />
+
             <div className="relative h-[255px] shrink-0 overflow-hidden rounded-t-[19px]">
                 <Image
                     alt={product.title}
@@ -149,15 +156,15 @@ function ProductResultCard({
                     sizes="(max-width: 768px) 100vw, 280px"
                     src={product.image ?? "/jeu1.jpg"}
                 />
-
-                <button
-                    aria-label={`Ajouter ${product.title} aux favoris`}
-                    className="absolute right-[11px] top-px z-20 flex h-16 w-12 translate-y-[-6px] items-start justify-center rounded-b-[18px] bg-black/10 pt-4 text-white opacity-0 backdrop-blur transition group-hover:translate-y-0 group-hover:opacity-100"
-                    type="button"
-                >
-                    <Heart className="size-5" />
-                </button>
             </div>
+
+            <button
+                aria-label={`Ajouter ${product.title} aux favoris`}
+                className="absolute right-[11px] top-px z-20 flex h-16 w-12 translate-y-[-6px] items-start justify-center rounded-b-[18px] bg-black/10 pt-4 text-white opacity-0 backdrop-blur transition group-hover:translate-y-0 group-hover:opacity-100"
+                type="button"
+            >
+                <Heart className="size-5" />
+            </button>
 
             <div className="flex min-h-0 flex-1 flex-col bg-white text-brand-dark">
                 <ProductPlatformBadge
@@ -169,7 +176,7 @@ function ProductResultCard({
 
                 <div className="flex min-h-0 flex-1 flex-col justify-between gap-5 px-[15px] pb-[15px] pt-[15px]">
                     <div>
-                        <h2 className="line-clamp-2 min-h-10 text-sm font-extrabold leading-5 text-[#1F0A4D]">
+                        <h2 className="line-clamp-2 min-h-10 text-sm font-extrabold leading-5 text-[#1F0A4D] transition group-hover:text-[#8258CB]">
                             {product.title}
                         </h2>
                         <p className="mt-2 w-fit rounded-md bg-[#E7DAFF] px-2 py-1 font-mono text-[10px] font-bold uppercase tracking-[0.08em] text-[#8258CB]">
@@ -196,7 +203,7 @@ function ProductResultCard({
                         </div>
 
                         <button
-                            className="flex h-11 min-h-11 w-full items-center justify-center gap-2 rounded-lg bg-[#B0A4F5] px-4 text-xs font-extrabold text-white transition hover:bg-[#A582ED]"
+                            className="relative z-20 flex h-11 min-h-11 w-full items-center justify-center gap-2 rounded-lg bg-[#B0A4F5] px-4 text-xs font-extrabold text-white transition hover:bg-[#A582ED]"
                             type="button"
                         >
                             <ShoppingCart className="size-4 shrink-0" />

@@ -2,7 +2,6 @@ import Link from "next/link";
 import type { ComponentType } from "react";
 import {
   Camera,
-  Gamepad2,
   Globe,
   MessageCircle,
   ShieldCheck,
@@ -12,23 +11,41 @@ import Image from "next/image";
 
 const footerColumns = [
   {
+    links: [
+      { href: "/", label: "Accueil" },
+      { href: "/categories", label: "Catégories" },
+      { href: "/produits", label: "Produits" },
+      { href: "/panier", label: "Panier" },
+      { href: "/#faq", label: "FAQ" },
+    ],
+    title: "Navigation",
+  },
+  {
+    links: [
+      { href: "/produits?platform=steam", label: "Steam" },
+      { href: "/produits?platform=psn", label: "PlayStation" },
+      { href: "/produits?platform=xbox", label: "Xbox" },
+      { href: "/produits?platform=nintendo", label: "Nintendo" },
+      { href: "/produits?platform=jeu-mobile", label: "Jeu mobile" },
+    ],
     title: "Plateformes",
-    links: ["Steam", "PlayStation", "Xbox", "Free Fire", "PUBG", "Roblox"],
   },
   {
-    title: "Support",
-    links: ["WhatsApp", "FAQ", "Remboursement", "Contact"],
-  },
-  {
-    title: "Légal",
-    links: ["CGU", "Confidentialité", "Cookies", "À propos"],
+    links: [
+      { href: "/#faq", label: "Support" },
+      { href: "/#faq", label: "Demande produit" },
+      { href: "/checkout", label: "Paiement" },
+      { href: "/obtenir-votre-produit", label: "Livraison" },
+      { href: "/categories", label: "Toutes les catégories" },
+    ],
+    title: "Aide",
   },
 ];
 
 export function SiteFooter() {
   return (
     <footer className="relative z-10 border-t border-brand-ice/14 bg-brand-navy">
-      <div className="mx-auto max-w-[1400px] px-6 py-12">
+      <div className="mx-auto max-w-[1200px] px-6 py-12">
         <div className="grid gap-10 md:grid-cols-2 lg:grid-cols-[2fr_1fr_1fr_1fr]">
           <div>
             <Link
@@ -44,11 +61,12 @@ export function SiteFooter() {
             </p>
 
             <div className="mt-5 flex flex-wrap gap-2">
-              <SocialLink ariaLabel="Facebook" icon={Globe} />
-              <SocialLink ariaLabel="Instagram" icon={Camera} />
+              <SocialLink ariaLabel="Facebook" href="/" icon={Globe} />
+              <SocialLink ariaLabel="Instagram" href="/" icon={Camera} />
               <SocialLink
                 ariaLabel="WhatsApp"
                 className="border-[#25d366]/35 bg-[#25d366]/12 text-[#25d366]"
+                href="/#faq"
                 icon={MessageCircle}
               />
             </div>
@@ -63,10 +81,10 @@ export function SiteFooter() {
                 {column.links.map((link) => (
                   <Link
                     className="text-sm text-brand-periwinkle/70 transition hover:text-brand-lavender"
-                    href="/"
-                    key={link}
+                    href={link.href}
+                    key={`${column.title}-${link.label}`}
                   >
-                    {link}
+                    {link.label}
                   </Link>
                 ))}
               </div>
@@ -95,17 +113,19 @@ export function SiteFooter() {
 function SocialLink({
   ariaLabel,
   className,
+  href,
   icon: Icon,
 }: {
   ariaLabel: string;
   className?: string;
+  href: string;
   icon: ComponentType<{ className?: string }>;
 }) {
   return (
     <Link
       aria-label={ariaLabel}
       className={`flex size-9 items-center justify-center rounded-lg border border-brand-ice/14 bg-brand-lilac/8 text-brand-periwinkle transition hover:border-brand-lavender hover:text-brand-lavender ${className ?? ""}`}
-      href="/"
+      href={href}
     >
       <Icon className="size-4" />
     </Link>

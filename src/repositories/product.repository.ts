@@ -211,6 +211,11 @@ export async function getProductById(id: string) {
   return ProductModel.findById(id).lean().exec();
 }
 
+export async function getProductBySlug(slug: string) {
+  await connectToDatabase();
+  return ProductModel.findOne({ slug }).lean().exec();
+}
+
 export async function createProduct(payload: Partial<ProductRecord>) {
   await connectToDatabase();
   return ProductModel.create(payload);

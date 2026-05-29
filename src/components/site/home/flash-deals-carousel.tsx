@@ -18,6 +18,7 @@ type FlashDealProduct = {
   platformImage?: string;
   platformSlug?: string;
   price: string;
+  slug?: string;
 };
 
 function FlashDealCard({
@@ -29,7 +30,9 @@ function FlashDealCard({
   className?: string;
   product: FlashDealProduct;
 }) {
-  const productHref = buildProductsHref(categorySlug ?? product.platformSlug);
+  const productHref = product.slug
+    ? `/produits/${product.slug}`
+    : buildProductsHref(categorySlug ?? product.platformSlug);
 
   return (
     <article
@@ -40,8 +43,8 @@ function FlashDealCard({
     >
       <div className="relative grid h-full grid-cols-[116px_1fr] md:hidden">
         <Link
-          aria-label={`Voir les offres - ${product.name}`}
-          className="absolute inset-0 z-[1]"
+          aria-label={`Voir le produit - ${product.name}`}
+          className="absolute inset-0 z-10"
           href={productHref}
         />
 
@@ -95,8 +98,8 @@ function FlashDealCard({
 
       <div className="relative hidden h-full md:grid md:[grid-template-areas:'img']">
         <Link
-          aria-label={`Voir les offres - ${product.name}`}
-          className="absolute inset-0 z-[1] cursor-pointer"
+          aria-label={`Voir le produit - ${product.name}`}
+          className="absolute inset-0 z-10 cursor-pointer"
           href={productHref}
         />
 
@@ -122,8 +125,8 @@ function FlashDealCard({
             name={product.platform}
           />
           <Link
-            aria-label={`Voir les offres - ${product.name}`}
-            className="absolute inset-0 z-[1]"
+            aria-label={`Voir le produit - ${product.name}`}
+            className="absolute inset-0 z-10"
             href={productHref}
             tabIndex={-1}
           />
@@ -158,7 +161,7 @@ function FlashDealCard({
               </div>
             </div>
 
-            <div className="relative z-[2] mt-4 grid gap-2">
+            <div className="relative z-20 mt-4 grid gap-2">
               <button
                 aria-label={`Ajouter au panier - ${product.name}`}
                 className="rounded-lg bg-[#B0A4F5] px-3 py-3 text-center text-xs font-black text-[#1F0A4D] transition hover:bg-[#A681F0]"
@@ -167,11 +170,11 @@ function FlashDealCard({
                 Ajouter au panier
               </button>
               <Link
-                aria-label={`Voir les offres - ${product.name}`}
+                aria-label={`Voir le produit - ${product.name}`}
                 className="rounded-lg border border-[#B3B3B3] px-3 py-3 text-center text-xs font-black text-[#00061E] transition hover:border-[#A681F0] hover:text-[#1F0A4D]"
                 href={productHref}
               >
-                Voir les offres
+                Voir le produit
               </Link>
             </div>
           </div>
@@ -244,10 +247,10 @@ export function FlashDealsCarousel({
   }, [scrollToCard]);
 
   return (
-    <div className="relative mt-10 overflow-hidden">
+    <div className="relative mt-10">
       <button
         aria-label="Offre précédente"
-        className="absolute left-3 top-1/2 z-30 flex size-11 -translate-y-1/2 items-center justify-center rounded-full border border-[#B3B3B3] bg-white/95 text-[#00061E] shadow-[0_10px_28px_rgba(23,23,54,0.16)] backdrop-blur transition hover:border-[#A681F0] hover:bg-[#B0A4F5] hover:text-[#1F0A4D] md:left-6"
+        className="absolute left-0 top-1/2 z-30 flex size-11 -translate-x-full -translate-y-1/2 items-center justify-center rounded-full border border-[#B3B3B3] bg-white/95 text-[#00061E] shadow-[0_10px_28px_rgba(23,23,54,0.16)] backdrop-blur transition hover:border-[#A681F0] hover:bg-[#B0A4F5] hover:text-[#1F0A4D]"
         onClick={() => scrollToCard("previous")}
         type="button"
       >
@@ -278,7 +281,7 @@ export function FlashDealsCarousel({
 
       <button
         aria-label="Offre suivante"
-        className="absolute right-3 top-1/2 z-30 flex size-11 -translate-y-1/2 items-center justify-center rounded-full border border-[#B3B3B3] bg-white/95 text-[#00061E] shadow-[0_10px_28px_rgba(23,23,54,0.16)] backdrop-blur transition hover:border-[#A681F0] hover:bg-[#B0A4F5] hover:text-[#1F0A4D] md:right-6"
+        className="absolute right-0 top-1/2 z-30 flex size-11 translate-x-full -translate-y-1/2 items-center justify-center rounded-full border border-[#B3B3B3] bg-white/95 text-[#00061E] shadow-[0_10px_28px_rgba(23,23,54,0.16)] backdrop-blur transition hover:border-[#A681F0] hover:bg-[#B0A4F5] hover:text-[#1F0A4D]"
         onClick={() => scrollToCard("next")}
         type="button"
       >

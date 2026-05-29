@@ -9,29 +9,16 @@ import {
   Menu,
   Search,
   ShoppingCart,
-  User,
   X,
 } from "lucide-react";
-import { BiSolidZap } from "react-icons/bi";
-import { FaLock } from "react-icons/fa";
-import { IoGameController } from "react-icons/io5";
-import { IoLogoWhatsapp } from "react-icons/io";
-import { IoGift } from "react-icons/io5";
 import { cn } from "@/lib/utils/cn";
 
 const navItems = [
   { href: "/", label: "Accueil" },
-  { href: "/#categories", label: "Catégories" },
-  { href: "/#products", label: "Produits" },
-  { href: "/admin", label: "Admin" },
-];
-
-const announcementItems = [
-  { icon: BiSolidZap, label: "Livraison instantanée 24/7" },
-  { icon: FaLock, label: "Paiement 100% sécurisé" },
-  { icon: IoGameController, label: "+500 produits" },
-  { icon: IoLogoWhatsapp, label: "Support WhatsApp" },
-  { icon: IoGift, label: "Code promo: GAMER15" },
+  { href: "/categories", label: "Catégories" },
+  { href: "/produits", label: "Produits" },
+  { href: "/#faq", label: "FAQ" },
+  { href: "/panier", label: "Panier" },
 ];
 
 export function SiteHeader() {
@@ -39,13 +26,6 @@ export function SiteHeader() {
 
   return (
     <header className="fixed inset-x-0 top-0 z-50 max-w-screen h-10">
-      {/* <div className="flex h-9 items-center overflow-hidden bg-[linear-gradient(90deg,var(--brand-lilac-soft),var(--brand-ice),var(--brand-electric-blue),var(--brand-violet-mist))] bg-[length:300%_100%] ">
-        <div className="flex w-max max-w-none animate-[announcement-marquee_24s_linear_infinite] items-center md:mx-auto md:w-full md:max-w-[1400px] md:animate-none md:justify-center motion-reduce:animate-none">
-          <AnnouncementGroup />
-          <AnnouncementGroup isDuplicate />
-        </div>
-      </div> */}
-
       <nav className="border-b border-brand-lavender/25 bg-brand-navy/88 backdrop-blur-2xl">
         <div className="mx-auto flex  max-w-[1200px] items-center gap-4 px-4 sm:px-6">
           <Link
@@ -56,10 +36,15 @@ export function SiteHeader() {
             <Image src="/logo_white.webp" alt="logo" width={100} height={100} className="" />
           </Link>
 
-          <form className="hidden max-w-md flex-1 items-center overflow-hidden rounded-full border border-brand-ice/15  bg-[#0D0D22] transition focus-within:border-brand-lavender focus-within:shadow-[0_0_0_3px_rgba(185,152,241,0.12)] md:flex">
+          <form
+            action="/produits"
+            className="hidden max-w-md flex-1 items-center overflow-hidden rounded-full border border-brand-ice/15  bg-[#0D0D22] transition focus-within:border-brand-lavender focus-within:shadow-[0_0_0_3px_rgba(185,152,241,0.12)] md:flex"
+            method="get"
+          >
             <input
               aria-label="Rechercher"
               className="min-w-0 flex-1 bg-[#0D0D22] px-4 py-2.5 text-sm text-brand-lilac outline-none placeholder:text-brand-periwinkle/60"
+              name="search"
               placeholder="Chercher Steam, PSN, Free Fire..."
               type="search"
             />
@@ -87,14 +72,12 @@ export function SiteHeader() {
           <div className="ml-auto flex items-center gap-2">
 
             <HeaderAction ariaLabel="Wishlist" badge="0" icon={Heart} />
-            <HeaderAction ariaLabel="Panier" badge="0" icon={ShoppingCart} />
-            <Link
-              aria-label="Compte"
-              className="hidden size-10 items-center justify-center rounded-xl border border-brand-ice/15 bg-brand-lilac/8 text-brand-periwinkle transition hover:border-brand-lavender hover:text-brand-lavender sm:flex"
-              href="/admin"
-            >
-              <User className="size-4" />
-            </Link>
+            <HeaderAction
+              ariaLabel="Panier"
+              badge="0"
+              href="/panier"
+              icon={ShoppingCart}
+            />
             <button
               aria-label={mobileMenuOpen ? "Fermer le menu" : "Ouvrir le menu"}
               className="flex size-10 items-center justify-center rounded-xl border border-brand-ice/15 bg-brand-lilac/8 text-brand-lilac lg:hidden"
@@ -112,10 +95,15 @@ export function SiteHeader() {
             mobileMenuOpen ? "block" : "hidden",
           )}
         >
-          <form className="mb-3 flex items-center overflow-hidden rounded-full border border-brand-ice/15 bg-brand-lilac/8">
+          <form
+            action="/produits"
+            className="mb-3 flex items-center overflow-hidden rounded-full border border-brand-ice/15 bg-brand-lilac/8"
+            method="get"
+          >
             <input
               aria-label="Rechercher"
               className="min-w-0 flex-1 bg-transparent px-4 py-2.5 text-sm text-brand-lilac outline-none placeholder:text-brand-periwinkle/60"
+              name="search"
               placeholder="Chercher un produit..."
               type="search"
             />
@@ -145,50 +133,39 @@ export function SiteHeader() {
   );
 }
 
-function AnnouncementGroup({ isDuplicate = false }: { isDuplicate?: boolean }) {
-  return (
-    <div
-      aria-hidden={isDuplicate || undefined}
-      className={cn(
-        "flex shrink-0 items-center gap-6 whitespace-nowrap px-4 font-mono text-[11px] font-bold uppercase text-black",
-        "md:w-full md:shrink md:justify-center",
-        isDuplicate && "md:hidden",
-      )}
-    >
-      {announcementItems.map((item, index) => (
-        <div className="contents" key={`${item.label}-${isDuplicate ? "copy" : "main"}`}>
-          {index > 0 ? (
-            <span className="size-1 rounded-full bg-brand-navy/45" />
-          ) : null}
-          <span className="inline-flex items-center gap-2">
-            <item.icon className="size-3.5" />
-            {item.label}
-          </span>
-        </div>
-      ))}
-    </div>
-  );
-}
-
 function HeaderAction({
   ariaLabel,
   badge,
+  href,
   icon: Icon,
 }: {
   ariaLabel: string;
   badge: string;
+  href?: string;
   icon: ComponentType<{ className?: string }>;
 }) {
-  return (
-    <button
-      aria-label={ariaLabel}
-      className="relative hidden size-10 items-center justify-center rounded-xl border border-brand-ice/15 bg-brand-lilac/8 text-brand-periwinkle transition hover:border-brand-lavender hover:text-brand-lavender sm:flex"
-      type="button"
-    >
+  const className =
+    "relative hidden size-10 items-center justify-center rounded-xl border border-brand-ice/15 bg-brand-lilac/8 text-brand-periwinkle transition hover:border-brand-lavender hover:text-brand-lavender sm:flex";
+  const content = (
+    <>
       <Icon className="size-4" />
       <span className="absolute -right-1 -top-1 flex size-4 items-center justify-center rounded-full bg-danger text-[10px] font-bold text-white">
         {badge}
       </span>
+    </>
+  );
+
+  if (href) {
+    return (
+      <Link aria-label={ariaLabel} className={className} href={href}>
+        {content}
+      </Link>
+    );
+  }
+
+  return (
+    <button aria-label={ariaLabel} className={className} type="button">
+      {content}
     </button>
   );
 }

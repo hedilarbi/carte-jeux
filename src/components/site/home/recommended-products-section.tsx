@@ -17,7 +17,7 @@ export function RecommendedProductsSection({
 
   return (
     <section className="py-16" id="recommended">
-      <div className="mx-auto max-w-[1400px] lg:ml-[100px] lg:mr-[50px] px-6">
+      <div className="mx-auto max-w-[1200px] px-6">
 
         <div className="mb-7 flex items-end justify-between gap-4">
           <div>

@@ -9,7 +9,7 @@ const flashProducts = products.filter((product) => product.originalPrice);
 export function FlashDealsSection() {
   return (
     <section className="bg-brand-light py-16">
-      <div className="mx-auto max-w-[1400px] lg:ml-[100px] lg:mr-[50px] px-6">
+      <div className="mx-auto max-w-[1200px] px-6">
         <div className="mb-7 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
           <div>
             <span className="font-mono text-[11px] font-bold uppercase text-brand-dark">

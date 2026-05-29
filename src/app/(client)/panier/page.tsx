@@ -146,7 +146,7 @@ function CartItemCard({ item }: { item: (typeof cartItems)[number] }) {
         </div>
 
         <div className="mt-10 flex items-center gap-2 font-body text-xs font-medium tracking-[0.1em] text-black">
-          <span>Produit numérique</span>
+
           <span className="inline-flex size-5 items-center justify-center rounded-full border border-black text-[11px]">
             <Info className="size-3" />
           </span>

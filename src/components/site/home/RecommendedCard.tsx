@@ -16,7 +16,9 @@ export function RecommendedCard({
     className?: string;
     product: ProductPreview;
 }) {
-    const productHref = buildProductsHref(categorySlug ?? product.platformSlug);
+    const productHref = product.slug
+        ? `/produits/${product.slug}`
+        : buildProductsHref(categorySlug ?? product.platformSlug);
 
     return (
         <article
@@ -27,8 +29,8 @@ export function RecommendedCard({
         >
             <div className="relative grid h-full grid-cols-[116px_1fr] md:hidden">
                 <Link
-                    aria-label={`Voir les offres - ${product.name}`}
-                    className="absolute inset-0 z-[1]"
+                    aria-label={`Voir le produit - ${product.name}`}
+                    className="absolute inset-0 z-10"
                     href={productHref}
                 />
 
@@ -75,8 +77,8 @@ export function RecommendedCard({
 
             <div className="relative hidden h-full md:grid md:[grid-template-areas:'img']">
                 <Link
-                    aria-label={`Voir les offres - ${product.name}`}
-                    className="absolute inset-0 z-[1] cursor-pointer"
+                    aria-label={`Voir le produit - ${product.name}`}
+                    className="absolute inset-0 z-10 cursor-pointer"
                     href={productHref}
                 />
 
@@ -104,8 +106,8 @@ export function RecommendedCard({
                         name={product.platform}
                     />
                     <Link
-                        aria-label={`Voir les offres - ${product.name}`}
-                        className="absolute inset-0 z-[1]"
+                        aria-label={`Voir le produit - ${product.name}`}
+                        className="absolute inset-0 z-10"
                         href={productHref}
                         tabIndex={-1}
                     />
@@ -150,7 +152,7 @@ export function RecommendedCard({
                             </button> */}
                         </div>
 
-                        <div className="relative z-[2] mt-4 grid gap-2">
+                        <div className="relative z-20 mt-4 grid gap-2">
                             <button
                                 aria-label={`Ajouter au panier - ${product.name}`}
                                 className="rounded-md bg-brand-lavender px-3 py-3 text-center text-xs font-black text-white transition hover:bg-brand-electric-blue"
@@ -159,11 +161,11 @@ export function RecommendedCard({
                                 Ajouter au panier
                             </button>
                             <Link
-                                aria-label={`Voir les offres - ${product.name}`}
+                                aria-label={`Voir le produit - ${product.name}`}
                                 className="rounded-md border border-white/18 px-3 py-3 text-center text-xs font-black text-white transition hover:border-brand-lavender hover:text-brand-lavender"
                                 href={productHref}
                             >
-                                Voir les offres
+                                Voir le produit
                             </Link>
                         </div>
                     </div>

@@ -69,10 +69,10 @@ export function RecommendedProductsCarousel({
   }, [scrollToCard]);
 
   return (
-    <div className="relative mt-10 overflow-hidden">
+    <div className="relative mt-10">
       <button
         aria-label="Produit précédent"
-        className="absolute left-3 top-1/2 z-30 flex size-11 -translate-y-1/2 items-center justify-center rounded-full border border-white/15 bg-[#0F0F28]/90 text-white shadow-[0_10px_28px_rgba(0,0,0,0.35)] backdrop-blur transition hover:border-brand-lavender hover:bg-brand-lavender hover:text-[#03030A] md:left-6"
+        className="absolute left-0 top-1/2 z-30 flex size-11 -translate-x-full -translate-y-1/2 items-center justify-center rounded-full border border-white/15 bg-[#0F0F28]/90 text-white shadow-[0_10px_28px_rgba(0,0,0,0.35)] backdrop-blur transition hover:border-brand-lavender hover:bg-brand-lavender hover:text-[#03030A]"
         onClick={() => scrollToCard("previous")}
         type="button"
       >
@@ -103,7 +103,7 @@ export function RecommendedProductsCarousel({
 
       <button
         aria-label="Produit suivant"
-        className="absolute right-3 top-1/2 z-30 flex size-11 -translate-y-1/2 items-center justify-center rounded-full border border-white/15 bg-[#0F0F28]/90 text-white shadow-[0_10px_28px_rgba(0,0,0,0.35)] backdrop-blur transition hover:border-brand-lavender hover:bg-brand-lavender hover:text-[#03030A] md:right-6"
+        className="absolute right-0 top-1/2 z-30 flex size-11 translate-x-full -translate-y-1/2 items-center justify-center rounded-full border border-white/15 bg-[#0F0F28]/90 text-white shadow-[0_10px_28px_rgba(0,0,0,0.35)] backdrop-blur transition hover:border-brand-lavender hover:bg-brand-lavender hover:text-[#03030A]"
         onClick={() => scrollToCard("next")}
         type="button"
       >

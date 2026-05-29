@@ -4,7 +4,7 @@ import { ArrowRight, Flame, TicketPercent } from "lucide-react";
 export function PromoBannerSection() {
   return (
     <section className="bg-brand-navy py-16">
-      <div className="mx-auto max-w-[1400px] px-6">
+      <div className="mx-auto max-w-[1200px] px-6">
         <div className="relative overflow-hidden rounded-3xl border border-brand-lavender/25 bg-[linear-gradient(135deg,rgba(130,88,203,0.26),rgba(99,146,255,0.18))] p-6 md:flex md:items-center md:justify-between md:gap-8 md:p-9">
           <div className="absolute -right-20 -top-24 size-72 rounded-full bg-brand-lavender/15 blur-3xl" />
           <div className="relative">

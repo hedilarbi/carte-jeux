@@ -5,7 +5,7 @@ import { SectionHeading } from "@/components/site/home/section-heading";
 export function SubscriptionsSection() {
   return (
 
-    <div className="mx-auto max-w-[1400px] lg:ml-[100px] lg:mr-[50px] px-6 mt-16">
+    <div className="mx-auto mt-16 max-w-[1200px] px-6">
       <SectionHeading
         actionHref="/produits"
         actionLabel="Voir tout"
