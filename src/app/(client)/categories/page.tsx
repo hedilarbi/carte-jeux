@@ -1,40 +1,39 @@
 import Image from "next/image";
+import Link from "next/link";
+import { connection } from "next/server";
 import { Gamepad2 } from "lucide-react";
+
+import { ProductPlatformBadge } from "@/components/site/product-platform-badge";
+import { buildProductsHref } from "@/lib/utils/catalog-links";
 import {
-  FaApple,
-  FaGooglePlay,
-  FaPlaystation,
-  FaSteam,
-  FaXbox,
-} from "react-icons/fa";
-import { SiPubg, SiRoblox } from "react-icons/si";
+  categoriesService,
+  type CategoriesPageCategory,
+  type CategoriesPageProduct,
+} from "@/services/categories.service";
 
-const platforms = [
-  { name: "Xbox", icon: FaXbox, tone: "text-[#107C10]" },
-  { name: "PlayStation", icon: FaPlaystation, tone: "text-[#00439C]" },
-  { name: "Steam", icon: FaSteam, tone: "text-[#1B2838]" },
-  { name: "Nintendo", icon: Gamepad2, tone: "text-[#E60012]" },
-  { name: "Google Play", icon: FaGooglePlay, tone: "text-[#34A853]" },
-  { name: "iTunes", icon: FaApple, tone: "text-[#555555]" },
-  { name: "PUBG Mobile", icon: SiPubg, tone: "text-[#C8A240]" },
-  { name: "Roblox", icon: SiRoblox, tone: "text-[#CC0000]" },
-] as const;
+export default async function CategoriesPage() {
+  await connection();
 
-const bestSellers = [
-  "PUBG Mobile 60 UC Recharge Global",
-  "Free Fire 720 Diamonds Global",
-  "Roblox 800 Robux Gift Card",
-  "Call of Duty Mobile CP Recharge",
-  "Valorant Points VP Europe",
-] as const;
+  const content = await categoriesService.getCategoriesPageContent();
 
-export default function CategoriesPage() {
   return (
     <main className="min-h-screen bg-[linear-gradient(90deg,#E3CDFF_0%,#D8E0FF_67.31%,#C9CAFF_100%)] text-[#00061E]">
       <BannerBlock />
-      <PlatformCardsBlock />
-      <CategoryDescriptionBlock />
-      <BestSellersBlock />
+      <CategoryCardsBlock
+        categories={content.platforms}
+        eyebrow="// Plateformes"
+        title="Plateformes gaming"
+      />
+      <CategoryCardsBlock
+        categories={content.types}
+        eyebrow="// Types"
+        title="Types de produits"
+      />
+      <CategoryDescriptionBlock
+        platformCount={content.platforms.length}
+        typeCount={content.types.length}
+      />
+      <BestSellersBlock products={content.products} />
     </main>
   );
 }
@@ -56,53 +55,99 @@ function BannerBlock() {
   );
 }
 
-function PlatformCardsBlock() {
+function CategoryCardsBlock({
+  categories,
+  eyebrow,
+  title,
+}: {
+  categories: CategoriesPageCategory[];
+  eyebrow: string;
+  title: string;
+}) {
+  if (categories.length === 0) {
+    return null;
+  }
+
   return (
     <section className="mx-auto max-w-[1200px] px-6 pb-12">
-      <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-8">
-        {platforms.map((platform) => (
-          <article
-            className="group flex min-h-[138px] flex-col items-center justify-center gap-4 bg-white p-5 text-center shadow-[0_14px_34px_rgba(1,45,105,0.14)] transition hover:-translate-y-1 hover:shadow-[0_18px_42px_rgba(1,45,105,0.2)]"
-            key={platform.name}
-          >
-            <span className="flex size-16 items-center justify-center rounded-2xl bg-[#E7DAFF]">
-              <platform.icon className={`size-9 ${platform.tone}`} />
-            </span>
-            <h2 className="font-body text-xs font-bold uppercase tracking-[0.08em] text-[#012D69]">
-              {platform.name}
-            </h2>
-          </article>
+      <div className="mb-6">
+        <span className="font-mono text-[11px] font-bold uppercase text-[#012D69]/70">
+          {eyebrow}
+        </span>
+        <h1 className="mt-2 font-heading text-2xl font-bold leading-tight tracking-[0.04em] text-[#012D69]">
+          {title}
+        </h1>
+      </div>
+
+      <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
+        {categories.map((category) => (
+          <CategoryCard category={category} key={category.id} />
         ))}
       </div>
     </section>
   );
 }
 
-function CategoryDescriptionBlock() {
+function CategoryCard({ category }: { category: CategoriesPageCategory }) {
+  return (
+    <Link
+      className="group flex min-h-[158px] flex-col items-center justify-center gap-4 bg-white p-5 text-center shadow-[0_14px_34px_rgba(1,45,105,0.14)] transition hover:-translate-y-1 hover:shadow-[0_18px_42px_rgba(1,45,105,0.2)]"
+      href={buildProductsHref(category.slug)}
+    >
+      {category.image ? (
+        <span className="relative size-16 overflow-hidden">
+          <Image
+            alt={category.label}
+            className="object-contain transition group-hover:scale-110"
+            fill
+            sizes="64px"
+            src={category.image}
+          />
+        </span>
+      ) : (
+        <span className="flex size-16 items-center justify-center rounded-2xl bg-[#E7DAFF] text-[#012D69]">
+          <Gamepad2 className="size-9 transition group-hover:scale-110" />
+        </span>
+      )}
+      <div>
+        <h2 className="font-body text-xs font-bold uppercase tracking-[0.08em] text-[#012D69]">
+          {category.label}
+        </h2>
+        {category.description ? (
+          <p className="mt-2 line-clamp-2 text-[11px] font-semibold leading-4 text-[#00061E]/55">
+            {category.description}
+          </p>
+        ) : null}
+      </div>
+    </Link>
+  );
+}
+
+function CategoryDescriptionBlock({
+  platformCount,
+  typeCount,
+}: {
+  platformCount: number;
+  typeCount: number;
+}) {
   return (
     <section className="mx-auto max-w-[1200px] px-6 pb-12">
       <div className="bg-white/37 p-6 font-inter shadow-[0_4px_4px_#B1A3F5] backdrop-blur-sm md:p-8">
-        <div className="flex items-center gap-3">
-
-          <h1 className="font-heading text-xl font-bold leading-7 tracking-[0.04em] text-[#012D69] md:text-2xl">
-            Jeux mobile & top up gaming en Tunisie
-          </h1>
-        </div>
+        <h2 className="font-heading text-xl font-bold leading-7 tracking-[0.04em] text-[#012D69] md:text-2xl">
+          Catégories gaming en Tunisie
+        </h2>
 
         <div className="mt-6 grid gap-5 text-xs font-semibold leading-7 text-[#00061E]/75 md:text-sm">
           <p>
-            Retrouvez les meilleures solutions de recharge jeux mobile et de top
-            up gaming en Tunisie pour acheter rapidement vos crédits virtuels,
-            UC, Diamonds, Robux, V-Bucks ou VP Valorant. Cette catégorie
-            regroupe les principaux jeux mobile et services de recharge gaming
-            mobile avec paiement en dinars tunisiens.
+            Retrouvez toutes les plateformes et types de produits disponibles :
+            cartes de recharge, jeux, abonnements et top up mobile. Les
+            catégories sont organisées depuis l’admin et affichées selon leur
+            ordre personnalisé.
           </p>
           <p>
-            Que vous cherchiez un top up PUBG Mobile, une recharge Free Fire,
-            des Robux Roblox ou des crédits Call of Duty: Mobile, profitez d’une
-            plateforme pensée pour les joueurs tunisiens avec livraison rapide,
-            paiement local et recharge gaming simple sans carte bancaire
-            internationale.
+            Catalogue actuel : {platformCount} plateformes et {typeCount} types
+            de produits. Sélectionnez une catégorie pour accéder directement aux
+            produits filtrés.
           </p>
         </div>
       </div>
@@ -110,7 +155,15 @@ function CategoryDescriptionBlock() {
   );
 }
 
-function BestSellersBlock() {
+function BestSellersBlock({
+  products,
+}: {
+  products: CategoriesPageProduct[];
+}) {
+  if (products.length === 0) {
+    return null;
+  }
+
   return (
     <section className="mx-auto max-w-[1200px] px-6 pb-24 pt-2">
       <h2 className="font-heading text-lg font-bold leading-6 tracking-[0.06em] text-black">
@@ -118,40 +171,42 @@ function BestSellersBlock() {
       </h2>
 
       <div className="mt-8 grid gap-7 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5">
-        {bestSellers.map((name) => (
-          <BestSellerCard key={name} name={name} />
+        {products.map((product) => (
+          <BestSellerCard key={product.id} product={product} />
         ))}
       </div>
     </section>
   );
 }
 
-function BestSellerCard({ name }: { name: string }) {
+function BestSellerCard({ product }: { product: CategoriesPageProduct }) {
   return (
-    <article className="relative mx-auto h-[435px] w-full max-w-[220px] overflow-hidden rounded-[15px] bg-white shadow-[0_18px_38px_rgba(1,45,105,0.14)] xl:max-w-[210px]">
+    <Link
+      className="group relative mx-auto h-[435px] w-full max-w-[220px] overflow-hidden rounded-[15px] bg-white shadow-[0_18px_38px_rgba(1,45,105,0.14)] transition hover:-translate-y-1 hover:shadow-[0_24px_50px_rgba(1,45,105,0.18)] xl:max-w-[210px]"
+      href={`/produits/${product.slug}`}
+    >
       <div className="relative h-[342px]">
         <Image
-          alt={name}
+          alt={product.title}
           className="object-cover"
           fill
           sizes="220px"
-          src="/jeu1.jpg"
+          src={product.image ?? "/jeu1.jpg"}
         />
-        <div className="absolute bottom-0 left-0 right-0 flex h-10 items-center gap-3 bg-[linear-gradient(6.39deg,rgba(1,45,105,0.82)_5.02%,rgba(1,45,105,0.82)_123.09%)] px-3 text-white">
-          <Gamepad2 className="size-7" />
-          <span className="text-xs font-bold uppercase leading-3">
-            Global
-          </span>
-        </div>
+        <ProductPlatformBadge
+          className="absolute bottom-0 left-0 right-0 h-10 px-3 text-xs"
+          image={product.platformImage}
+          name={product.platformName}
+        />
       </div>
       <div className="px-[18px] py-3">
         <h3 className="line-clamp-2 h-[35px] text-xs font-bold leading-[18px] text-[#00061E]">
-          {name}
+          {product.title}
         </h3>
         <p className="mt-3 text-center text-xl font-bold leading-[22px] text-[#012D69]">
-          50 Dt
+          {product.price} TND
         </p>
       </div>
-    </article>
+    </Link>
   );
 }
