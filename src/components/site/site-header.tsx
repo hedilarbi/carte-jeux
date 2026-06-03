@@ -3,26 +3,91 @@
 import Link from "next/link";
 import Image from "next/image";
 import type { ComponentType } from "react";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { useRouter } from "next/navigation";
 import {
   Heart,
+  LogOut,
   Menu,
   Search,
   ShoppingCart,
+  UserRound,
   X,
 } from "lucide-react";
 import { cn } from "@/lib/utils/cn";
+import { useHeaderCounters } from "@/components/site/site-header-counters";
 
 const navItems = [
   { href: "/", label: "Accueil" },
   { href: "/categories", label: "Catégories" },
   { href: "/produits", label: "Produits" },
   { href: "/#faq", label: "FAQ" },
-  { href: "/panier", label: "Panier" },
 ];
 
+type HeaderUser = {
+  email: string;
+};
+
 export function SiteHeader() {
+  const router = useRouter();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
+  const [user, setUser] = useState<HeaderUser | null>(null);
+  const { cartCount, favoriteCount } = useHeaderCounters();
+
+  async function refreshUser() {
+    try {
+      const response = await fetch("/api/auth/me");
+      const payload = await response.json();
+
+      setUser(payload?.success ? payload.data.user : null);
+    } catch (error) {
+      console.error(error);
+      setUser(null);
+    }
+  }
+
+  async function handleLogout() {
+    if (isLoggingOut) {
+      return;
+    }
+
+    setIsLoggingOut(true);
+
+    try {
+      await fetch("/api/auth/logout", {
+        method: "POST",
+      });
+      setUser(null);
+      setMobileMenuOpen(false);
+      window.dispatchEvent(
+        new CustomEvent("auth:updated", {
+          detail: { user: null },
+        }),
+      );
+      router.push("/connexion");
+      router.refresh();
+    } finally {
+      setIsLoggingOut(false);
+    }
+  }
+
+  useEffect(() => {
+    queueMicrotask(() => {
+      refreshUser();
+    });
+
+    function handleAuthUpdate(event: Event) {
+      const customEvent = event as CustomEvent<{ user: HeaderUser | null }>;
+      setUser(customEvent.detail.user);
+    }
+
+    window.addEventListener("auth:updated", handleAuthUpdate);
+
+    return () => {
+      window.removeEventListener("auth:updated", handleAuthUpdate);
+    };
+  }, []);
 
   return (
     <header className="fixed inset-x-0 top-0 z-50 max-w-screen h-10">
@@ -71,13 +136,40 @@ export function SiteHeader() {
 
           <div className="ml-auto flex items-center gap-2">
 
-            <HeaderAction ariaLabel="Wishlist" badge="0" icon={Heart} />
+            <HeaderAction
+              ariaLabel="Favoris"
+              badge={String(favoriteCount)}
+              href="/favoris"
+              icon={Heart}
+            />
             <HeaderAction
               ariaLabel="Panier"
-              badge="0"
+              badge={String(cartCount)}
               href="/panier"
               icon={ShoppingCart}
             />
+            {user ? (
+              <ProfileDropdown
+                isLoggingOut={isLoggingOut}
+                onLogout={handleLogout}
+                user={user}
+              />
+            ) : (
+              <div className="hidden items-center gap-2 sm:flex">
+                <Link
+                  className="rounded-xl border border-brand-ice/15 bg-brand-lilac/8 px-3 py-2 text-xs font-black uppercase text-brand-periwinkle transition hover:border-brand-lavender hover:text-brand-lavender"
+                  href="/connexion"
+                >
+                  Connexion
+                </Link>
+                <Link
+                  className="rounded-xl bg-brand-lavender px-3 py-2 text-xs font-black uppercase text-[#03030A] transition hover:bg-brand-blue-mist"
+                  href="/inscription"
+                >
+                  Inscription
+                </Link>
+              </div>
+            )}
             <button
               aria-label={mobileMenuOpen ? "Fermer le menu" : "Ouvrir le menu"}
               className="flex size-10 items-center justify-center rounded-xl border border-brand-ice/15 bg-brand-lilac/8 text-brand-lilac lg:hidden"
@@ -126,6 +218,44 @@ export function SiteHeader() {
                 {item.label}
               </Link>
             ))}
+            <div className="mt-2 grid grid-cols-2 gap-2 border-t border-brand-ice/12 pt-3">
+              {user ? (
+                <>
+                  <Link
+                    className="rounded-xl px-4 py-3 text-center text-sm font-semibold text-brand-periwinkle transition hover:bg-brand-lilac/8 hover:text-brand-lilac"
+                    href="/profil"
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
+                    Profil
+                  </Link>
+                  <button
+                    className="rounded-xl border border-brand-ice/15 px-4 py-3 text-center text-sm font-black uppercase text-brand-periwinkle transition hover:border-brand-lavender hover:text-brand-lavender disabled:cursor-wait disabled:opacity-60"
+                    disabled={isLoggingOut}
+                    onClick={handleLogout}
+                    type="button"
+                  >
+                    {isLoggingOut ? "..." : "Déconnexion"}
+                  </button>
+                </>
+              ) : (
+                <>
+                  <Link
+                    className="rounded-xl border border-brand-ice/15 px-4 py-3 text-center text-sm font-black uppercase text-brand-periwinkle transition hover:border-brand-lavender hover:text-brand-lavender"
+                    href="/connexion"
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
+                    Connexion
+                  </Link>
+                  <Link
+                    className="rounded-xl bg-brand-lavender px-4 py-3 text-center text-sm font-black uppercase text-[#03030A] transition hover:bg-brand-blue-mist"
+                    href="/inscription"
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
+                    Inscription
+                  </Link>
+                </>
+              )}
+            </div>
           </div>
         </div>
       </nav>
@@ -140,18 +270,20 @@ function HeaderAction({
   icon: Icon,
 }: {
   ariaLabel: string;
-  badge: string;
+  badge?: string;
   href?: string;
   icon: ComponentType<{ className?: string }>;
 }) {
   const className =
-    "relative hidden size-10 items-center justify-center rounded-xl border border-brand-ice/15 bg-brand-lilac/8 text-brand-periwinkle transition hover:border-brand-lavender hover:text-brand-lavender sm:flex";
+    "relative flex size-10 items-center justify-center rounded-xl border border-brand-ice/15 bg-brand-lilac/8 text-brand-periwinkle transition hover:border-brand-lavender hover:text-brand-lavender";
   const content = (
     <>
       <Icon className="size-4" />
-      <span className="absolute -right-1 -top-1 flex size-4 items-center justify-center rounded-full bg-danger text-[10px] font-bold text-white">
-        {badge}
-      </span>
+      {badge ? (
+        <span className="absolute -right-1 -top-1 flex size-4 items-center justify-center rounded-full bg-danger text-[10px] font-bold text-white">
+          {badge}
+        </span>
+      ) : null}
     </>
   );
 
@@ -167,5 +299,92 @@ function HeaderAction({
     <button aria-label={ariaLabel} className={className} type="button">
       {content}
     </button>
+  );
+}
+
+function ProfileDropdown({
+  isLoggingOut,
+  onLogout,
+  user,
+}: {
+  isLoggingOut: boolean;
+  onLogout: () => void;
+  user: HeaderUser;
+}) {
+  const [isOpen, setIsOpen] = useState(false);
+  const menuRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!isOpen) {
+      return;
+    }
+
+    function handlePointerDown(event: PointerEvent) {
+      if (
+        menuRef.current &&
+        !menuRef.current.contains(event.target as Node)
+      ) {
+        setIsOpen(false);
+      }
+    }
+
+    function handleKeyDown(event: KeyboardEvent) {
+      if (event.key === "Escape") {
+        setIsOpen(false);
+      }
+    }
+
+    document.addEventListener("pointerdown", handlePointerDown);
+    document.addEventListener("keydown", handleKeyDown);
+
+    return () => {
+      document.removeEventListener("pointerdown", handlePointerDown);
+      document.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [isOpen]);
+
+  return (
+    <div className="relative" ref={menuRef}>
+      <button
+        aria-expanded={isOpen}
+        aria-haspopup="menu"
+        aria-label={`Profil - ${user.email}`}
+        className="relative flex size-10 items-center justify-center rounded-xl border border-brand-ice/15 bg-brand-lilac/8 text-brand-periwinkle transition hover:border-brand-lavender hover:text-brand-lavender"
+        onClick={() => setIsOpen((current) => !current)}
+        type="button"
+      >
+        <UserRound className="size-4" />
+      </button>
+
+      {isOpen ? (
+        <div
+          className="absolute right-0 top-[calc(100%+10px)] z-50 w-[210px] rounded-2xl border border-brand-ice/15 bg-[#0D0D22] p-2 shadow-[0_18px_42px_rgba(0,0,0,0.32)]"
+          role="menu"
+        >
+          <p className="truncate px-3 pb-2 pt-1 font-inter text-xs font-semibold text-brand-periwinkle/70">
+            {user.email}
+          </p>
+          <Link
+            className="flex h-11 items-center gap-2 rounded-xl px-3 font-inter text-sm font-bold text-brand-periwinkle transition hover:bg-brand-lilac/8 hover:text-brand-lilac"
+            href="/profil"
+            onClick={() => setIsOpen(false)}
+            role="menuitem"
+          >
+            <UserRound className="size-4" />
+            Profil
+          </Link>
+          <button
+            className="mt-1 flex h-11 w-full items-center gap-2 rounded-xl px-3 text-left font-inter text-sm font-bold text-brand-periwinkle transition hover:bg-brand-lilac/8 hover:text-brand-lilac disabled:cursor-wait disabled:opacity-60"
+            disabled={isLoggingOut}
+            onClick={onLogout}
+            role="menuitem"
+            type="button"
+          >
+            <LogOut className="size-4" />
+            {isLoggingOut ? "Déconnexion..." : "Déconnexion"}
+          </button>
+        </div>
+      ) : null}
+    </div>
   );
 }

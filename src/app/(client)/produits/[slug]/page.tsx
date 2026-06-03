@@ -4,7 +4,6 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import {
   CheckCircle2,
-  Heart,
   Info,
   Minus,
   Plus,
@@ -13,11 +12,13 @@ import {
 } from "lucide-react";
 
 import { ProductPlatformBadge } from "@/components/site/product-platform-badge";
+import { FavoriteButton } from "@/components/site/favorites/favorite-button";
 import {
   productDetailService,
   type ProductDetailPageContent,
   type ProductDetailRelatedProduct,
 } from "@/services/product-detail.service";
+import { AddToCartButton } from "@/components/site/add-to-cart-button";
 
 type ProductPageProps = {
   params: Promise<{ slug: string }>;
@@ -115,13 +116,14 @@ function ProductTopBlock({ product }: { product: ProductDetailPageContent }) {
                 {product.title}
               </h1>
             </div>
-            <button
+            <FavoriteButton
               aria-label="Ajouter aux favoris"
-              className="flex size-12 shrink-0 items-center justify-center rounded-full bg-white text-[#012D69] shadow-[0_4px_12px_rgba(1,45,105,0.16)]"
-              type="button"
-            >
-              <Heart className="size-5" />
-            </button>
+              activeClassName="text-danger"
+              className="flex size-12 shrink-0 items-center justify-center rounded-full bg-white text-[#012D69] shadow-[0_4px_12px_rgba(1,45,105,0.16)] transition hover:text-danger"
+              iconClassName="size-5"
+              productId={product.id}
+              productSlug={product.slug}
+            />
           </div>
 
           <div className="mt-2 flex items-center gap-1 text-[#E5B000]">
@@ -247,13 +249,15 @@ function PurchaseCard({ product }: { product: ProductDetailPageContent }) {
         </div>
       </div>
 
-      <button
+      <AddToCartButton
         className="mt-10 flex w-full items-center justify-center gap-2 rounded-[14px] bg-[#B0A4F5] px-4 py-4 text-center text-lg font-bold uppercase leading-[1] text-black shadow-[0_4px_8.6px_-1px_rgba(1,45,105,0.63)] transition hover:bg-[#A582ED]"
-        type="button"
+        productId={product.id}
+        productSlug={product.slug}
+        redirectTo="/panier"
       >
         <ShoppingCart className="size-5" />
         Acheter maintenant
-      </button>
+      </AddToCartButton>
 
       <p className="mt-5 flex items-start gap-2 text-xs font-semibold leading-5 text-[#012D69]/75">
         <Info className="mt-0.5 size-4 shrink-0" />

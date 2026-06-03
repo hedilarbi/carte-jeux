@@ -4,6 +4,8 @@ import { ShoppingCart } from "lucide-react";
 
 import { cn } from "@/lib/utils/cn";
 import { buildProductsHref } from "@/lib/utils/catalog-links";
+import { AddToCartButton } from "@/components/site/add-to-cart-button";
+import { FavoriteButton } from "@/components/site/favorites/favorite-button";
 import { ProductPlatformBadge } from "@/components/site/product-platform-badge";
 import type { ProductPreview } from "@/types/home";
 
@@ -19,6 +21,7 @@ export function RecommendedCard({
     const productHref = product.slug
         ? `/produits/${product.slug}`
         : buildProductsHref(categorySlug ?? product.platformSlug);
+    const productId = typeof product.id === "string" ? product.id : undefined;
 
     return (
         <article
@@ -66,13 +69,21 @@ export function RecommendedCard({
                     </p>
                 </div>
 
-                <button
+                <AddToCartButton
                     aria-label={`Ajouter au panier - ${product.name}`}
-                    className="absolute bottom-3 right-3 z-20 flex size-10 items-center justify-center rounded-xl bg-brand-lavender text-[#03030A] shadow-[0_6px_18px_rgba(185,152,241,0.35)] transition hover:bg-brand-blue-mist"
-                    type="button"
+                    className="absolute bottom-3 right-3 z-40 flex size-10 items-center justify-center rounded-xl bg-brand-lavender text-[#03030A] shadow-[0_6px_18px_rgba(185,152,241,0.35)] transition hover:bg-brand-blue-mist"
+                    productId={productId}
+                    productSlug={product.slug}
                 >
                     <ShoppingCart className="size-4" />
-                </button>
+                </AddToCartButton>
+                <FavoriteButton
+                    aria-label={`Ajouter aux favoris - ${product.name}`}
+                    activeClassName="bg-danger text-white"
+                    className="absolute right-3 top-3 z-20 flex size-10 items-center justify-center rounded-xl bg-black/40 text-white shadow-[0_6px_18px_rgba(0,0,0,0.25)] backdrop-blur transition hover:bg-danger"
+                    productId={productId}
+                    productSlug={product.slug}
+                />
             </div>
 
             <div className="relative hidden h-full md:grid md:[grid-template-areas:'img']">
@@ -123,7 +134,7 @@ export function RecommendedCard({
                         </div>
                     </div>
 
-                    <div className="relative z-[2] flex flex-col justify-between bg-transparent px-4 pb-4 [grid-area:bottom]">
+                    <div className="relative z-20 flex flex-col justify-between bg-transparent px-4 pb-4 [grid-area:bottom]">
                         <div className="flex items-end justify-between gap-3">
                             <div className="min-w-0">
                                 <p className="text-xs font-bold text-[#b3aac9]">
@@ -152,14 +163,15 @@ export function RecommendedCard({
                             </button> */}
                         </div>
 
-                        <div className="relative z-20 mt-4 grid gap-2">
-                            <button
+                        <div className="relative z-40 mt-4 grid gap-2">
+                            <AddToCartButton
                                 aria-label={`Ajouter au panier - ${product.name}`}
                                 className="rounded-md bg-brand-lavender px-3 py-3 text-center text-xs font-black text-white transition hover:bg-brand-electric-blue"
-                                type="button"
+                                productId={productId}
+                                productSlug={product.slug}
                             >
                                 Ajouter au panier
-                            </button>
+                            </AddToCartButton>
                             <Link
                                 aria-label={`Voir le produit - ${product.name}`}
                                 className="rounded-md border border-white/18 px-3 py-3 text-center text-xs font-black text-white transition hover:border-brand-lavender hover:text-brand-lavender"
@@ -179,6 +191,13 @@ export function RecommendedCard({
             >
                 <Heart className="size-4" />
             </button> */}
+            <FavoriteButton
+                aria-label={`Ajouter aux favoris - ${product.name}`}
+                activeClassName="text-danger"
+                className="absolute right-3 top-0 z-30 hidden h-14 w-9 items-start justify-center bg-brand-lavender pt-2 text-white shadow-[0_8px_20px_rgba(0,0,0,0.25)] transition hover:bg-danger md:flex [clip-path:polygon(0_0,100%_0,100%_100%,50%_78%,0_100%)]"
+                productId={productId}
+                productSlug={product.slug}
+            />
         </article>
     );
 }

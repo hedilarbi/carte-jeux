@@ -8,8 +8,13 @@ import type { mongo } from "mongoose";
 type OrderQuery = mongo.Filter<OrderRecord>;
 
 export interface OrderListFilters extends SearchablePaginationInput {
+  customerEmail?: string;
   status?: OrderStatus;
   paymentStatus?: PaymentStatus;
+}
+
+function escapeRegExp(value: string) {
+  return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 }
 
 export async function listOrders(filters: OrderListFilters = {}) {
@@ -24,6 +29,13 @@ export async function listOrders(filters: OrderListFilters = {}) {
 
   if (filters.paymentStatus) {
     query.paymentStatus = filters.paymentStatus;
+  }
+
+  if (filters.customerEmail?.trim()) {
+    query.customerEmail = new RegExp(
+      `^${escapeRegExp(filters.customerEmail.trim())}$`,
+      "i",
+    );
   }
 
   if (filters.search?.trim()) {
@@ -53,6 +65,11 @@ export async function listOrders(filters: OrderListFilters = {}) {
   };
 }
 
+export async function createOrder(payload: Partial<OrderRecord>) {
+  await connectToDatabase();
+  return OrderModel.create(payload);
+}
+
 export async function countOrders() {
   await connectToDatabase();
   return OrderModel.countDocuments();
@@ -66,6 +83,11 @@ export async function countPendingOrders() {
 export async function getOrderById(id: string) {
   await connectToDatabase();
   return OrderModel.findById(id).lean().exec();
+}
+
+export async function getOrderByOrderNumber(orderNumber: string) {
+  await connectToDatabase();
+  return OrderModel.findOne({ orderNumber: orderNumber.trim() }).lean().exec();
 }
 
 export async function updateOrderById(id: string, payload: Partial<OrderRecord>) {

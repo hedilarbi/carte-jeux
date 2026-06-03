@@ -8,8 +8,14 @@ import { SiteHeader } from "@/components/site/site-header";
 export function PublicShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const isAdminRoute = pathname.startsWith("/admin");
+  const isShelllessRoute = [
+    "/connexion",
+    "/inscription",
+    "/mot-de-passe-oublie",
+    "/reinitialiser-mot-de-passe",
+  ].some((route) => pathname === route || pathname.startsWith(`${route}/`));
 
-  if (isAdminRoute) {
+  if (isAdminRoute || isShelllessRoute) {
     return children;
   }
 

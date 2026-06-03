@@ -5,9 +5,23 @@ import { serializeDocument } from "@/lib/utils/serialization";
 import {
   createUser,
   getUserByEmail,
+  listUsers,
+  type UserListFilters,
   upsertUserByEmail,
 } from "@/repositories/user.repository";
-import type { User } from "@/types/entities";
+import type { AuthProvider, User, UserRole } from "@/types/entities";
+
+export interface AdminUserListItem {
+  _id: string;
+  authProviders: AuthProvider[];
+  createdAt: string;
+  email: string;
+  firstName: string;
+  isActive: boolean;
+  lastName: string;
+  role: UserRole;
+  updatedAt: string;
+}
 
 interface CreateUserInput {
   firstName: string;
@@ -18,7 +32,31 @@ interface CreateUserInput {
   isActive?: boolean;
 }
 
+function toAdminUserListItem(user: User): AdminUserListItem {
+  return {
+    _id: user._id,
+    authProviders: user.authProviders?.length ? user.authProviders : ["local"],
+    createdAt: user.createdAt,
+    email: user.email,
+    firstName: user.firstName,
+    isActive: user.isActive,
+    lastName: user.lastName,
+    role: user.role,
+    updatedAt: user.updatedAt,
+  };
+}
+
 export const userService = {
+  async list(filters: UserListFilters = {}) {
+    const result = await listUsers(filters);
+    const users = serializeDocument<User[]>(result.items);
+
+    return {
+      ...result,
+      items: users.map(toAdminUserListItem),
+    };
+  },
+
   async ensureSeedUser(input: CreateUserInput) {
     const existing = await getUserByEmail(input.email);
 

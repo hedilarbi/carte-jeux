@@ -1,6 +1,11 @@
-import { type HydratedDocument, model, models, Schema } from "mongoose";
+import {
+  type HydratedDocument,
+  type Model,
+  model,
+  Schema,
+} from "mongoose";
 
-import type { UserRole } from "@/types/entities";
+import type { AuthProvider, UserRole } from "@/types/entities";
 
 export interface UserRecord {
   firstName: string;
@@ -9,6 +14,11 @@ export interface UserRecord {
   passwordHash: string;
   role: UserRole;
   isActive: boolean;
+  authProviders: AuthProvider[];
+  googleId?: string;
+  facebookId?: string;
+  passwordResetTokenHash?: string;
+  passwordResetExpiresAt?: Date;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -52,11 +62,36 @@ const userSchema = new Schema<UserRecord>(
       default: true,
       index: true,
     },
+    authProviders: {
+      type: [String],
+      enum: ["local", "google", "facebook"],
+      default: ["local"],
+    },
+    googleId: {
+      type: String,
+      trim: true,
+      index: true,
+    },
+    facebookId: {
+      type: String,
+      trim: true,
+      index: true,
+    },
+    passwordResetTokenHash: {
+      type: String,
+      trim: true,
+      index: true,
+    },
+    passwordResetExpiresAt: {
+      type: Date,
+      index: true,
+    },
   },
   {
     timestamps: true,
   },
 );
 
-export const UserModel =
-  models.User || model<UserRecord>("User", userSchema);
+export const UserModel = model<UserRecord>("User", userSchema, undefined, {
+  overwriteModels: true,
+}) as Model<UserRecord>;

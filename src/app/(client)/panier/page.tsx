@@ -1,42 +1,18 @@
 import Image from "next/image";
+import Link from "next/link";
+import { cookies } from "next/headers";
 import {
   BadgePercent,
   Gamepad2,
   Heart,
   Info,
-  Minus,
-  Plus,
-  Trash2,
+  ShoppingBag,
 } from "lucide-react";
 
-const cartItems = [
-  {
-    id: 1,
-    name: "PUBG Mobile 60 UC",
-    image: "/jeu1.jpg",
-    tags: ["Global", "Mobile"],
-    quantity: 1,
-    price: "4,400",
-    originalPrice: "4,900",
-  },
-  {
-    id: 2,
-    name: "GTA V Rockstar Games Launcher",
-    image: "/jeu1.jpg",
-    tags: ["Global", "PC"],
-    quantity: 2,
-    price: "35,000",
-    originalPrice: "50,900",
-  },
-  {
-    id: 3,
-    name: "Carte Steam 20 EUR",
-    image: "/jeu1.jpg",
-    tags: ["Global", "Code"],
-    quantity: 1,
-    price: "40,000",
-  },
-];
+import { CartItemActions } from "@/components/site/cart/cart-item-actions";
+import { CART_SESSION_COOKIE } from "@/lib/auth/cart-session";
+import { cartService } from "@/services/cart.service";
+import type { Cart, CartItem } from "@/types/entities";
 
 const inspiredProducts = [
   "Grand Theft Auto V (PSN 5) Edition & Great White Shark Card",
@@ -48,19 +24,47 @@ const inspiredProducts = [
 
 const steps = ["Panier", "Paiement", "Obtenir votre produit"] as const;
 
-export default function CartPage() {
+async function getCurrentCart() {
+  const cookieStore = await cookies();
+  const sessionId = cookieStore.get(CART_SESSION_COOKIE)?.value;
+
+  if (!sessionId) {
+    return null;
+  }
+
+  try {
+    return await cartService.getCart(sessionId);
+  } catch (error) {
+    console.error(error);
+    return null;
+  }
+}
+
+function formatPrice(value: number) {
+  return value.toFixed(3);
+}
+
+export default async function CartPage() {
+  const cart = await getCurrentCart();
+  const items = cart?.items ?? [];
+  const itemCount = items.reduce((sum, item) => sum + item.quantity, 0);
+
   return (
     <main className="min-h-screen bg-[linear-gradient(90deg,#E3CDFF_0%,#D8E0FF_67.31%,#C9CAFF_100%)] text-[#00061E]">
       <CartProgress />
 
       <section className="mx-auto grid max-w-[1200px] gap-7 px-6 py-10 lg:grid-cols-[minmax(0,1fr)_360px] lg:items-start">
-        <div className="grid gap-5">
-          {cartItems.map((item) => (
-            <CartItemCard item={item} key={item.id} />
-          ))}
-        </div>
+        {items.length > 0 ? (
+          <div className="grid gap-5">
+            {items.map((item) => (
+              <CartItemCard item={item} key={item.productId} />
+            ))}
+          </div>
+        ) : (
+          <EmptyCart />
+        )}
 
-        <CartSummary />
+        <CartSummary cart={cart} itemCount={itemCount} />
       </section>
 
       <InspiredSection />
@@ -70,13 +74,10 @@ export default function CartPage() {
 
 function CartProgress() {
   return (
-    <section className="bg-[#012D69] px-6 py-6 text-white shadow-[0_10px_30px_rgba(1,45,105,0.2)] mt-6">
+    <section className="mt-6 bg-[#012D69] px-6 py-6 text-white shadow-[0_10px_30px_rgba(1,45,105,0.2)]">
       <div className="mx-auto flex max-w-[1200px] items-center justify-between gap-3">
         {steps.map((step, index) => (
-          <div
-            className="flex min-w-0 flex-1 items-center gap-3"
-            key={step}
-          >
+          <div className="flex min-w-0 flex-1 items-center gap-3" key={step}>
             <div className="flex items-center gap-3">
               <span
                 className={
@@ -107,34 +108,78 @@ function CartProgress() {
   );
 }
 
-function CartItemCard({ item }: { item: (typeof cartItems)[number] }) {
+function EmptyCart() {
   return (
-    <article className="relative grid gap-5 bg-white/37 p-4 shadow-[0_4px_4px_#B1A3F5] backdrop-blur-sm md:grid-cols-[170px_minmax(0,1fr)_190px] md:p-5">
-      <div className="relative h-[190px] overflow-hidden bg-white md:h-[225px]">
+    <div className="flex min-h-[360px] flex-col items-center justify-center bg-white/45 p-8 text-center shadow-[0_4px_4px_#B1A3F5] backdrop-blur-sm">
+      <span className="flex size-16 items-center justify-center rounded-full bg-[#012D69] text-white">
+        <ShoppingBag className="size-7" />
+      </span>
+      <h1 className="mt-5 font-heading text-2xl font-bold text-[#012D69]">
+        Votre panier est vide
+      </h1>
+      <p className="mt-3 max-w-[440px] text-sm font-semibold leading-6 text-[#00061E]/65">
+        Ajoutez un produit depuis le catalogue pour le retrouver ici avec ses
+        quantités et son total.
+      </p>
+      <Link
+        className="mt-6 inline-flex h-12 items-center justify-center rounded-[14px] bg-[#B0A4F5] px-6 font-body text-sm font-bold uppercase text-black shadow-[0_4px_8.6px_-1px_rgba(1,45,105,0.63)] transition hover:bg-[#A582ED]"
+        href="/produits"
+      >
+        Voir les produits
+      </Link>
+    </div>
+  );
+}
+
+function CartItemCard({ item }: { item: CartItem }) {
+  const originalLineTotal =
+    item.discountPercent > 0 && item.unitPrice > item.finalUnitPrice
+      ? formatPrice(item.unitPrice * item.quantity)
+      : undefined;
+
+  return (
+    <article className="relative grid gap-5 bg-white/37 p-4 shadow-[0_4px_4px_#B1A3F5] backdrop-blur-sm md:grid-cols-[170px_minmax(0,1fr)_220px] md:p-5">
+      <Link
+        className="relative h-[190px] overflow-hidden bg-white md:h-[225px]"
+        href={`/produits/${item.productSlug}`}
+      >
         <Image
-          alt={item.name}
+          alt={item.productTitle}
           className="object-cover"
           fill
           sizes="170px"
-          src={item.image}
+          src={item.productImage ?? "/jeu1.jpg"}
         />
-      </div>
+      </Link>
 
       <div className="min-w-0 pr-16 md:pr-0">
         <h2 className="font-body text-sm font-bold leading-6 text-[#012D69]">
-          Produit : {item.name}
+          Produit :{" "}
+          <Link className="hover:underline" href={`/produits/${item.productSlug}`}>
+            {item.productTitle}
+          </Link>
         </h2>
 
         <div className="mt-4 flex flex-wrap items-center gap-3">
-          {item.tags.map((tag) => (
-            <span
-              className="inline-flex h-8 items-center gap-2 rounded-full bg-white px-3 font-body text-xs font-semibold text-[#012D69]"
-              key={tag}
-            >
+          <span className="inline-flex h-8 items-center gap-2 rounded-full bg-white px-3 font-body text-xs font-semibold text-[#012D69]">
+            {item.platformImage ? (
+              <span className="relative size-4 overflow-hidden rounded-full bg-white">
+                <Image
+                  alt=""
+                  className="object-contain"
+                  fill
+                  sizes="16px"
+                  src={item.platformImage}
+                />
+              </span>
+            ) : (
               <Gamepad2 className="size-4" />
-              {tag}
-            </span>
-          ))}
+            )}
+            {item.platformName ?? "Global"}
+          </span>
+          <span className="inline-flex h-8 items-center rounded-full bg-white px-3 font-body text-xs font-semibold text-[#012D69]">
+            SKU: {item.sku}
+          </span>
         </div>
 
         <div className="mt-4 flex items-center gap-1 text-[#E5B000]">
@@ -146,46 +191,38 @@ function CartItemCard({ item }: { item: (typeof cartItems)[number] }) {
         </div>
 
         <div className="mt-10 flex items-center gap-2 font-body text-xs font-medium tracking-[0.1em] text-black">
-
           <span className="inline-flex size-5 items-center justify-center rounded-full border border-black text-[11px]">
             <Info className="size-3" />
           </span>
+          Livraison numérique après confirmation de paiement.
         </div>
       </div>
 
       <div className="flex flex-col items-start justify-between gap-5 md:items-end">
-        <div className="absolute right-4 top-4 flex items-center gap-3">
-          <button
-            aria-label="Ajouter aux favoris"
-            className="flex size-9 items-center justify-center rounded-full bg-white text-black shadow-[0_4px_10px_rgba(1,45,105,0.12)]"
-            type="button"
-          >
-            <Heart className="size-4" />
-          </button>
-          <button
-            aria-label="Supprimer le produit"
-            className="flex size-9 items-center justify-center rounded-full bg-white text-black shadow-[0_4px_10px_rgba(1,45,105,0.12)]"
-            type="button"
-          >
-            <Trash2 className="size-4" />
-          </button>
-        </div>
+        <button
+          aria-label="Ajouter aux favoris"
+          className="absolute right-4 top-4 flex size-9 items-center justify-center rounded-full bg-white text-black shadow-[0_4px_10px_rgba(1,45,105,0.12)]"
+          type="button"
+        >
+          <Heart className="size-4" />
+        </button>
 
-        <div className="mt-12 flex h-11 w-[180px] items-center justify-between bg-[#A1A1A1]/30 px-7 font-inter text-base font-bold text-black md:mt-20">
-          <Minus className="size-5 opacity-35" />
-          <span className="opacity-70">{item.quantity}</span>
-          <Plus className="size-5 opacity-35" />
+        <div className="mt-12 md:mt-20">
+          <CartItemActions
+            productReference={item.productSlug || item.productId}
+            quantity={item.quantity}
+          />
         </div>
 
         <div className="text-right font-inter">
           <div className="flex items-center justify-end gap-3">
-            {item.originalPrice ? (
+            {originalLineTotal ? (
               <span className="text-lg text-[#2D2D2D] line-through opacity-80">
-                {item.originalPrice}
+                {originalLineTotal}
               </span>
             ) : null}
             <span className="text-2xl font-bold tracking-[0.06em] text-[#191919]">
-              {item.price}
+              {formatPrice(item.lineTotal)} {item.currency}
             </span>
           </div>
         </div>
@@ -194,57 +231,66 @@ function CartItemCard({ item }: { item: (typeof cartItems)[number] }) {
   );
 }
 
-function CartSummary() {
+function CartSummary({
+  cart,
+  itemCount,
+}: {
+  cart: Cart | null;
+  itemCount: number;
+}) {
+  const hasItems = itemCount > 0;
+
   return (
     <aside className="rounded-2xl bg-white p-7 text-black shadow-[0_4px_4px_#B0A4F5] backdrop-blur-[2px] lg:min-h-[725px]">
       <p className="font-inter text-sm font-semibold leading-5 tracking-[0.06em] text-[#012D69]">
-        Gagnez des points plus: 150
+        Gagnez des points plus: {Math.round((cart?.total ?? 0) * 5)}
       </p>
 
       <h2 className="mt-10 font-inter text-xl font-bold tracking-[0.06em]">
         Récapitulatif
       </h2>
 
-      <button
-        className="mt-8 flex h-14 w-full items-center justify-center rounded-[14px] bg-[#B0A4F5] px-6 text-center font-body text-sm font-bold uppercase leading-[1] text-black shadow-[0_4px_8.6px_-1px_rgba(1,45,105,0.63)]"
-        type="button"
-      >
-        Passer au paiement
-      </button>
+      {hasItems ? (
+        <Link
+          className="mt-8 flex h-14 w-full items-center justify-center rounded-[14px] bg-[#B0A4F5] px-6 text-center font-body text-sm font-bold uppercase leading-[1] text-black shadow-[0_4px_8.6px_-1px_rgba(1,45,105,0.63)] transition hover:bg-[#A582ED]"
+          href="/checkout"
+        >
+          Passer au paiement
+        </Link>
+      ) : (
+        <button
+          className="mt-8 flex h-14 w-full cursor-not-allowed items-center justify-center rounded-[14px] bg-[#B0A4F5]/45 px-6 text-center font-body text-sm font-bold uppercase leading-[1] text-black/55"
+          disabled
+          type="button"
+        >
+          Passer au paiement
+        </button>
+      )}
 
       <div className="mt-9 font-inter">
         <p className="text-lg font-bold tracking-[0.06em]">
-          Total ( 4 produits )
+          Total ({itemCount} produit{itemCount > 1 ? "s" : ""})
         </p>
-        <div className="mt-3 flex h-[68px] w-full items-center justify-center bg-[#D9D9D9]/55 text-center text-2xl font-bold tracking-[0.06em] blur-[0.2px]">
-          79,400
+        <div className="mt-3 flex min-h-[68px] w-full items-center justify-center bg-[#D9D9D9]/55 px-4 text-center text-2xl font-bold tracking-[0.06em]">
+          {formatPrice(cart?.total ?? 0)} {cart?.currency ?? "TND"}
         </div>
       </div>
 
       <div className="mt-7 border-y-2 border-[#DADDFF] py-5">
-        <label className="flex items-start gap-3 font-inter text-xs font-medium leading-5 text-black/76">
-          <input
-            className="mt-1 size-[26px] shrink-0 accent-[#B0A4F5]"
-            defaultChecked
-            type="checkbox"
-          />
-          <span>
-            J&apos;accepte de recevoir une invitation par e-mail pour évaluer le
-            service sur Trustpilot.
-          </span>
-        </label>
-
-        <label className="mt-5 flex items-start gap-3 font-inter text-xs font-medium leading-5 text-black/76">
-          <input
-            className="mt-1 size-[26px] shrink-0 accent-[#B0A4F5]"
-            defaultChecked
-            type="checkbox"
-          />
-          <span>
-            Je souhaite recevoir des offres personnalisées pour les meilleures
-            offres de jeux.
-          </span>
-        </label>
+        <div className="grid gap-3 font-inter text-sm">
+          <div className="flex items-center justify-between gap-4">
+            <span>Sous-total</span>
+            <span className="font-black">
+              {formatPrice(cart?.subtotal ?? 0)} {cart?.currency ?? "TND"}
+            </span>
+          </div>
+          <div className="flex items-center justify-between gap-4">
+            <span>Réduction</span>
+            <span className="font-black">
+              {formatPrice(cart?.totalDiscount ?? 0)} {cart?.currency ?? "TND"}
+            </span>
+          </div>
+        </div>
       </div>
 
       <div className="mt-6">
@@ -255,7 +301,7 @@ function CartSummary() {
           </span>
           <input
             className="mt-4 h-[57px] w-full bg-[#B0A4F5]/47 px-4 text-center font-inter text-lg font-semibold tracking-[0.01em] text-black outline-none placeholder:text-black/45"
-            defaultValue="GAMER15"
+            placeholder="CODE"
           />
         </label>
       </div>
@@ -292,9 +338,7 @@ function InspiredCard({ name }: { name: string }) {
         />
         <div className="absolute bottom-0 left-0 right-0 flex h-10 items-center gap-3 bg-[linear-gradient(6.39deg,rgba(1,45,105,0.82)_5.02%,rgba(1,45,105,0.82)_123.09%)] px-3 text-white">
           <Gamepad2 className="size-7" />
-          <span className="text-xs font-bold uppercase leading-3">
-            Global
-          </span>
+          <span className="text-xs font-bold uppercase leading-3">Global</span>
         </div>
       </div>
       <div className="px-[18px] py-3">
