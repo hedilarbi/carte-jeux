@@ -11,7 +11,7 @@ import { AddToCartButton } from "@/components/site/add-to-cart-button";
 import { FavoriteButton } from "@/components/site/favorites/favorite-button";
 import { ProductPlatformBadge } from "@/components/site/product-platform-badge";
 
-type FlashDealProduct = {
+export type FlashDealProduct = {
   id?: number | string;
   image?: string;
   name: string;
@@ -23,7 +23,7 @@ type FlashDealProduct = {
   slug?: string;
 };
 
-function FlashDealCard({
+export function FlashDealCard({
   categorySlug,
   className,
   product,

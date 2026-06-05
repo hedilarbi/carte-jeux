@@ -1,8 +1,10 @@
 import Image from "next/image";
 
-import { RecommendedCard } from "@/components/site/home/RecommendedCard";
+import {
+    FlashDealCard,
+    type FlashDealProduct,
+} from "@/components/site/home/flash-deals-carousel";
 import type { CatalogPageContent, CatalogProduct } from "@/types/catalog";
-import type { ProductPreview } from "@/types/home";
 
 interface MainSectionProps {
     content: CatalogPageContent;
@@ -139,10 +141,7 @@ function ProductResultCard({
 }: {
     product: CatalogProduct;
 }) {
-    const cardProduct: ProductPreview = {
-        badges: [],
-        gradient: "",
-        icon: "",
+    const cardProduct: FlashDealProduct = {
         id: product.id,
         image: product.image,
         name: product.title,
@@ -151,12 +150,11 @@ function ProductResultCard({
         platformImage: product.platformImage,
         platformSlug: product.platformSlug,
         price: product.price,
-        reviews: "",
         slug: product.slug,
     };
 
     return (
-        <RecommendedCard
+        <FlashDealCard
             className="w-full max-w-none md:w-full lg:w-full"
             product={cardProduct}
         />
