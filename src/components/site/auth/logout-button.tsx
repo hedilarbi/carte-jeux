@@ -24,7 +24,7 @@ export function LogoutButton() {
           detail: { user: null },
         }),
       );
-      router.push("/connexion");
+      router.push("/");
       router.refresh();
     } finally {
       setIsPending(false);

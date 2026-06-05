@@ -23,6 +23,8 @@ import {
   type OrderListFilters,
   updateOrderById,
 } from "@/repositories/order.repository";
+import { emailService } from "@/services/email.service";
+import { userService } from "@/services/user.service";
 import type { Order } from "@/types/entities";
 
 function generateOrderNumber() {
@@ -73,6 +75,13 @@ export const orderService = {
 
   async createFromCart(input: {
     customerEmail: string;
+    customerFirstName: string;
+    customerLastName: string;
+    guestCustomer?: {
+      email: string;
+      firstName: string;
+      lastName: string;
+    };
     paymentProvider: "floussi";
     sessionId: string;
     userId?: string;
@@ -83,9 +92,15 @@ export const orderService = {
       throw new AppError("Votre panier est vide.", 409);
     }
 
+    const guestUser =
+      input.userId || !input.guestCustomer
+        ? null
+        : await userService.ensureGuestForOrder(input.guestCustomer);
+    const orderUserId = input.userId ?? guestUser?._id;
+
     const order = await createOrder({
       orderNumber: generateOrderNumber(),
-      userId: input.userId ? new Types.ObjectId(input.userId) : undefined,
+      userId: orderUserId ? new Types.ObjectId(orderUserId) : undefined,
       status: "pending",
       paymentStatus: "pending",
       items: cart.items.map((item: CartItemRecord) => ({
@@ -103,6 +118,8 @@ export const orderService = {
       totalDiscount: cart.totalDiscount,
       total: cart.total,
       currency: cart.currency,
+      customerFirstName: input.customerFirstName,
+      customerLastName: input.customerLastName,
       customerEmail: input.customerEmail,
       deliveryMethod: "email",
       paymentProvider: input.paymentProvider,
@@ -113,7 +130,18 @@ export const orderService = {
       status: "converted",
     });
 
-    return serializeDocument<Order>(order);
+    const serializedOrder = serializeDocument<Order>(order);
+
+    try {
+      await emailService.sendOrderConfirmation({ order: serializedOrder });
+    } catch (error) {
+      console.error(
+        `Impossible d'envoyer le récapitulatif de la commande ${serializedOrder.orderNumber}.`,
+        error,
+      );
+    }
+
+    return serializedOrder;
   },
 
   async update(id: string, input: z.input<typeof orderUpdateSchema>) {

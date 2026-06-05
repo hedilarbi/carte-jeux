@@ -30,6 +30,8 @@ export interface OrderRecord {
   totalDiscount: number;
   total: number;
   currency: string;
+  customerFirstName?: string;
+  customerLastName?: string;
   customerEmail: string;
   supplierPlatform?: string;
   supplierPurchaseReference?: string;
@@ -175,6 +177,16 @@ const orderSchema = new Schema<OrderRecord>(
       trim: true,
       lowercase: true,
       index: true,
+    },
+    customerFirstName: {
+      type: String,
+      trim: true,
+      maxlength: 80,
+    },
+    customerLastName: {
+      type: String,
+      trim: true,
+      maxlength: 80,
     },
     supplierPlatform: {
       type: String,

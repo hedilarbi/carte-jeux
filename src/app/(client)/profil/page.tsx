@@ -68,6 +68,7 @@ export default async function ProfilePage() {
             displayName={displayName || "Client"}
             email={user.email}
             initials={initials}
+            phone={user.phone}
           />
 
           <section className="min-w-0">
@@ -107,10 +108,12 @@ function ProfileSidebar({
   displayName,
   email,
   initials,
+  phone,
 }: {
   displayName: string;
   email: string;
   initials: string;
+  phone?: string;
 }) {
   return (
     <aside
@@ -127,6 +130,11 @@ function ProfileSidebar({
         <p className="mt-1 max-w-full truncate font-inter text-[15px] font-medium leading-5 text-[#012D69]">
           {email}
         </p>
+        {phone ? (
+          <p className="mt-1 max-w-full truncate font-inter text-[13px] font-bold leading-5 text-[#012D69]/70">
+            {phone}
+          </p>
+        ) : null}
       </div>
 
       <div className="mt-3 h-px bg-[#A8BCE6]" />

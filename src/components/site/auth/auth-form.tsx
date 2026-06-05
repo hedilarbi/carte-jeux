@@ -1,7 +1,9 @@
 "use client";
 
 import { useState, type FormEvent } from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { Eye, EyeOff } from "lucide-react";
 
 import { cn } from "@/lib/utils/cn";
 
@@ -16,6 +18,8 @@ export type AuthFormField = {
 type AuthFormProps = {
   endpoint: string;
   fields: AuthFormField[];
+  forgotPasswordHref?: string;
+  forgotPasswordLabel?: string;
   hiddenFields?: Record<string, string | undefined>;
   submitLabel: string;
   successRedirect?: string;
@@ -25,6 +29,8 @@ type AuthFormProps = {
 export function AuthForm({
   endpoint,
   fields,
+  forgotPasswordHref,
+  forgotPasswordLabel = "Mot de passe oublié ?",
   hiddenFields,
   submitLabel,
   successRedirect,
@@ -33,8 +39,18 @@ export function AuthForm({
   const router = useRouter();
   const [error, setError] = useState<string | null>(null);
   const [isPending, setIsPending] = useState(false);
+  const [visiblePasswordFields, setVisiblePasswordFields] = useState<
+    Record<string, boolean>
+  >({});
   const [resetUrl, setResetUrl] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
+
+  function togglePasswordVisibility(fieldName: string) {
+    setVisiblePasswordFields((current) => ({
+      ...current,
+      [fieldName]: !current[fieldName],
+    }));
+  }
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -103,14 +119,51 @@ export function AuthForm({
           key={field.name}
         >
           {field.label}
-          <input
-            autoComplete={field.autoComplete}
-            className="h-12 rounded-[14px] border border-[#DADDFF] bg-[#F8F9FF] px-4 font-inter text-sm font-semibold text-[#00061E] outline-none transition placeholder:text-[#012D69]/35 focus:border-[#A582ED] focus:bg-white focus:ring-4 focus:ring-[#A582ED]/16"
-            name={field.name}
-            placeholder={field.placeholder}
-            required
-            type={field.type}
-          />
+          {field.type === "password" ? (
+            <span className="relative block">
+              <input
+                autoComplete={field.autoComplete}
+                className="h-12 w-full rounded-[14px] border border-[#DADDFF] bg-[#F8F9FF] px-4 pr-12 font-inter text-sm font-semibold text-[#00061E] outline-none transition placeholder:text-[#012D69]/35 focus:border-[#A582ED] focus:bg-white focus:ring-4 focus:ring-[#A582ED]/16"
+                name={field.name}
+                placeholder={field.placeholder}
+                required
+                type={visiblePasswordFields[field.name] ? "text" : "password"}
+              />
+              <button
+                aria-label={
+                  visiblePasswordFields[field.name]
+                    ? "Masquer le mot de passe"
+                    : "Afficher le mot de passe"
+                }
+                className="absolute right-3 top-1/2 flex size-8 -translate-y-1/2 items-center justify-center rounded-full text-[#012D69]/60 transition hover:bg-[#DADDFF]/45 hover:text-[#012D69]"
+                onClick={() => togglePasswordVisibility(field.name)}
+                type="button"
+              >
+                {visiblePasswordFields[field.name] ? (
+                  <EyeOff className="size-4" />
+                ) : (
+                  <Eye className="size-4" />
+                )}
+              </button>
+            </span>
+          ) : (
+            <input
+              autoComplete={field.autoComplete}
+              className="h-12 rounded-[14px] border border-[#DADDFF] bg-[#F8F9FF] px-4 font-inter text-sm font-semibold text-[#00061E] outline-none transition placeholder:text-[#012D69]/35 focus:border-[#A582ED] focus:bg-white focus:ring-4 focus:ring-[#A582ED]/16"
+              name={field.name}
+              placeholder={field.placeholder}
+              required
+              type={field.type}
+            />
+          )}
+          {field.name === "password" && forgotPasswordHref ? (
+            <Link
+              className="justify-self-end font-inter text-xs font-black text-[#8258CB] transition hover:text-[#012D69] hover:underline"
+              href={forgotPasswordHref}
+            >
+              {forgotPasswordLabel}
+            </Link>
+          ) : null}
         </label>
       ))}
 

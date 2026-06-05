@@ -1,0 +1,3146 @@
+<!-- 
+  ═══════════════════════════════════════════════════
+  MODIFICATION APPLIQUÉE : Blog Dynamique WordPress
+  Les articles sont chargés automatiquement depuis 
+  l'API REST WordPress (/wp-json/wp/v2/posts)
+  ═══════════════════════════════════════════════════
+-->
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Label Minceur — Programme Minceur Personnalisé | Perdez du poids durablement</title>
+    <meta name="description"
+        content="Label Minceur x Comme J'aime : votre programme minceur personnalisé par des nutritionnistes experts. Perdez du poids durablement avec un accompagnement sur-mesure. Devis gratuit.">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=DM+Sans:wght@300;400;500;600&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --sage: #7a9e7e;
+            --sage-lt: #a8c5ac;
+            --sage-dk: #4a7050;
+            --cream: #faf7f2;
+            --warm: #f5ede0;
+            --gold: #c8975a;
+            --gold-lt: #e8b97a;
+            --charcoal: #1a1a1a;
+            --mid: #4a4a4a;
+            --light: #8a8a8a;
+            --white: #ffffff;
+            --rose: #e8b4b8;
+            --border: #e8e0d5;
+            --magenta: #c2185b;
+            --magenta-dk: #a01550
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box
+        }
+
+        html {
+            scroll-behavior: smooth
+        }
+
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background: var(--cream);
+            color: var(--charcoal);
+            overflow-x: hidden
+        }
+
+        nav {
+            position: fixed;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            padding: 0 5%;
+            background: rgba(250, 247, 242, 0.92);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 80px;
+            transition: all .3s
+        }
+
+        .nav-logo {
+            display: flex;
+            align-items: center;
+            text-decoration: none
+        }
+
+        .nav-logo-obj {
+            height: 52px;
+            width: auto;
+            display: block;
+            pointer-events: none
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 36px
+        }
+
+        .nav-links a {
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--mid);
+            text-decoration: none;
+            transition: color .2s;
+            display: flex;
+            align-items: center;
+            gap: 5px
+        }
+
+        .nav-links a:hover {
+            color: var(--sage-dk)
+        }
+
+        .nav-links a svg {
+            width: 16px;
+            height: 16px;
+            opacity: .6
+        }
+
+        .nav-cta {
+            background: var(--sage-dk);
+            color: #fff;
+            padding: 10px 24px;
+            border-radius: 50px;
+            font-size: 14px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all .2s;
+            white-space: nowrap;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px
+        }
+
+        .nav-cta:hover {
+            background: var(--sage);
+            transform: translateY(-1px)
+        }
+
+        .nav-cta svg {
+            width: 16px;
+            height: 16px
+        }
+
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 100px 5% 60px;
+            position: relative;
+            overflow: hidden
+        }
+
+        .hero-bg-img {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            z-index: 0
+        }
+
+        .hero-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(250, 247, 242, 0.6);
+            backdrop-filter: blur(5px);
+            z-index: 1
+        }
+
+        .hero-inner {
+            position: relative;
+            z-index: 2;
+            display: grid;
+            grid-template-columns: 1fr 1.2fr;
+            gap: 60px;
+            align-items: center;
+            max-width: 1300px;
+            width: 100%
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 1
+        }
+
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: var(--sage-dk);
+            color: #fff;
+            padding: 6px 16px;
+            border-radius: 50px;
+            font-size: 12px;
+            font-weight: 600;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            margin-bottom: 28px
+        }
+
+        .hero-badge svg {
+            width: 14px;
+            height: 14px
+        }
+
+        .hero h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(38px, 3vw, 62px);
+            line-height: 1.1;
+            font-weight: 700;
+            color: var(--charcoal);
+            margin-bottom: 12px
+        }
+
+        .hero h1 em {
+            color: var(--sage-dk);
+            font-style: italic
+        }
+
+        .hero-sub {
+            font-size: 18px;
+            font-weight: 300;
+            color: var(--mid);
+            line-height: 1.6;
+            margin-bottom: 40px;
+            max-width: 480px
+        }
+
+        .hero-sub strong {
+            color: var(--sage-dk);
+            font-weight: 600
+        }
+
+        .hero-actions {
+            display: flex;
+            gap: 16px;
+            align-items: center;
+            flex-wrap: wrap
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--sage-dk), var(--sage));
+            color: #fff;
+            padding: 16px 36px;
+            border-radius: 50px;
+            font-size: 16px;
+            font-weight: 600;
+            text-decoration: none;
+            box-shadow: 0 8px 30px #4a705040;
+            transition: all .3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            border: none;
+            cursor: pointer
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 40px #4a705055
+        }
+
+        .btn-primary svg {
+            width: 18px;
+            height: 18px
+        }
+
+        .btn-outline {
+            border: 2px solid var(--sage-dk);
+            color: var(--sage-dk);
+            padding: 14px 32px;
+            border-radius: 50px;
+            font-size: 15px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all .2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: transparent;
+            cursor: pointer
+        }
+
+        .btn-outline:hover {
+            background: var(--sage-dk);
+            color: #fff
+        }
+
+        .btn-outline svg {
+            width: 16px;
+            height: 16px
+        }
+
+        .cja-banner {
+            display: flex;
+            align-items: stretch;
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 16px 20px;
+            margin-top: 32px;
+            margin-bottom: 12px;
+            gap: 0;
+            max-width: 520px
+        }
+
+        .cja-logo-area {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: flex-start;
+            padding-right: 16px;
+            white-space: nowrap
+        }
+
+        .cja-logo-area strong {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--sage-dk);
+            display: block;
+            margin-bottom: 2px
+        }
+
+        .cja-logo-area small {
+            font-size: 11px;
+            color: var(--light);
+            font-weight: 500
+        }
+
+        .cja-sep {
+            width: 2px;
+            background: linear-gradient(180deg, var(--sage-dk), var(--gold));
+            border-radius: 1px;
+            flex-shrink: 0;
+            margin-right: 16px
+        }
+
+        .cja-text {
+            font-size: 12px;
+            color: var(--mid);
+            line-height: 1.5
+        }
+
+        .cja-text strong {
+            color: var(--sage-dk);
+            font-weight: 600
+        }
+
+        .cja-banner-dark {
+            display: flex;
+            align-items: stretch;
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(122, 158, 126, 0.3);
+            border-radius: 16px;
+            padding: 16px 20px;
+            margin-top: 32px;
+            gap: 0;
+            max-width: 520px
+        }
+
+        .cja-banner-dark .cja-logo-area strong {
+            color: var(--sage-lt)
+        }
+
+        .cja-banner-dark .cja-logo-area small {
+            color: #888
+        }
+
+        .cja-banner-dark .cja-sep {
+            background: linear-gradient(180deg, var(--sage-lt), var(--gold-lt))
+        }
+
+        .cja-banner-dark .cja-text {
+            color: #bbb
+        }
+
+        .cja-banner-dark .cja-text strong {
+            color: var(--sage-lt)
+        }
+
+        .hero-trust {
+            display: flex;
+            gap: 24px;
+            margin-top: 20px;
+            align-items: center
+        }
+
+        .trust-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px
+        }
+
+        .trust-number {
+            font-family: 'Playfair Display', serif;
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--sage-dk)
+        }
+
+        .trust-label {
+            font-size: 11px;
+            color: var(--light);
+            font-weight: 500;
+            letter-spacing: 0.5px;
+            text-align: center
+        }
+
+        .trust-sep {
+            width: 1px;
+            height: 40px;
+            background: var(--border)
+        }
+
+        section {
+            padding: 90px 5%
+        }
+
+        .section-label {
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            color: var(--sage-dk);
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px
+        }
+
+        .section-label svg {
+            width: 16px;
+            height: 16px
+        }
+
+        .section-title {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(32px, 4vw, 50px);
+            font-weight: 700;
+            line-height: 1.15;
+            margin-bottom: 20px
+        }
+
+        .section-title em {
+            color: var(--sage-dk);
+            font-style: italic
+        }
+
+        .section-sub {
+            font-size: 17px;
+            color: var(--mid);
+            line-height: 1.7;
+            max-width: 600px;
+            font-weight: 300
+        }
+
+        .text-center {
+            text-align: center
+        }
+
+        .text-center .section-sub {
+            margin: 0 auto
+        }
+
+        .text-center .section-label {
+            justify-content: center
+        }
+
+        .method-section {
+            background: var(--white)
+        }
+
+        .method-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+            margin-top: 56px
+        }
+
+        .method-step {
+            position: relative;
+            transition: all .4s;
+            overflow: hidden;
+            border-radius: 20px;
+            background: #fff;
+            border: 1px solid var(--border);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+            display: flex;
+            flex-direction: column
+        }
+
+        .method-step:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 16px 40px rgba(0, 0, 0, 0.1)
+        }
+
+        .method-step-img {
+            height: 200px;
+            background-size: cover;
+            background-position: center;
+            position: relative;
+            overflow: hidden;
+            transition: all .5s
+        }
+
+        .method-step-img::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: rgba(255, 255, 255, 0.15);
+            transition: all .5s
+        }
+
+        .method-step:hover .method-step-img::before {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(3px)
+        }
+
+        .method-step-img .step-num {
+            position: absolute;
+            top: 16px;
+            left: 20px;
+            font-family: 'Playfair Display', serif;
+            font-size: 48px;
+            font-weight: 700;
+            color: rgba(255, 255, 255, 0.7);
+            line-height: 1;
+            text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+            transition: color .4s
+        }
+
+        .method-step:hover .step-num {
+            color: #fff
+        }
+
+        .method-step-img .step-icon-svg {
+            position: absolute;
+            bottom: 16px;
+            right: 20px;
+            width: 40px;
+            height: 40px;
+            filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.3));
+            color: #fff
+        }
+
+        .method-step-body {
+            padding: 24px 24px 28px;
+            flex: 1;
+            display: flex;
+            flex-direction: column
+        }
+
+        .step-title {
+            font-size: 17px;
+            font-weight: 700;
+            color: var(--charcoal);
+            margin-bottom: 8px
+        }
+
+        .step-desc {
+            font-size: 14px;
+            color: var(--mid);
+            line-height: 1.6
+        }
+
+        .method-step:nth-child(1) .method-step-img {
+            background-image: url('https://images.unsplash.com/photo-1506784983877-45594efa4cbe?w=600&q=80')
+        }
+
+        .method-step:nth-child(2) .method-step-img {
+            background-image: url('https://images.unsplash.com/photo-1547592180-85f173990554?w=600&q=80')
+        }
+
+        .method-step:nth-child(3) .method-step-img {
+            background-image: url('https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=600&q=80')
+        }
+
+        .method-step:nth-child(4) .method-step-img {
+            background-image: url('https://images.unsplash.com/photo-1511688878353-3a2f5be94cd7?w=600&q=80')
+        }
+
+        .idm-section {
+            background: linear-gradient(135deg, var(--charcoal) 0%, #2a3a2a 100%);
+            color: #fff;
+            position: relative;
+            overflow: hidden
+        }
+
+        .idm-section::before {
+            content: '';
+            position: absolute;
+            top: -100px;
+            right: -100px;
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, var(--sage)22 0%, transparent 70%);
+            border-radius: 50%
+        }
+
+        .idm-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 80px;
+            align-items: center;
+            position: relative;
+            z-index: 1
+        }
+
+        .idm-label {
+            color: var(--sage-lt);
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px
+        }
+
+        .idm-label svg {
+            width: 16px;
+            height: 16px
+        }
+
+        .idm-title {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(32px, 4vw, 48px);
+            font-weight: 700;
+            line-height: 1.15;
+            margin-bottom: 20px
+        }
+
+        .idm-title em {
+            color: var(--gold-lt);
+            font-style: italic
+        }
+
+        .idm-desc {
+            font-size: 16px;
+            color: #ccc;
+            line-height: 1.7;
+            font-weight: 300;
+            margin-bottom: 36px
+        }
+
+        .idm-features {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            margin-bottom: 40px
+        }
+
+        .idm-feat {
+            display: flex;
+            align-items: flex-start;
+            gap: 14px
+        }
+
+        .idm-feat-icon {
+            width: 36px;
+            height: 36px;
+            background: var(--sage-dk);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            color: #fff
+        }
+
+        .idm-feat-icon svg {
+            width: 18px;
+            height: 18px
+        }
+
+        .idm-feat-text h4 {
+            font-size: 15px;
+            font-weight: 600;
+            margin-bottom: 3px
+        }
+
+        .idm-feat-text p {
+            font-size: 13px;
+            color: #aaa;
+            line-height: 1.5
+        }
+
+        .idm-visual {
+            position: relative
+        }
+
+        .idm-app-mock {
+            background: linear-gradient(160deg, #1e2e1e, #2a3a2a);
+            border: 1px solid #3a5a3a;
+            border-radius: 24px;
+            padding: 28px;
+            box-shadow: 0 30px 80px #00000060
+        }
+
+        .app-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px
+        }
+
+        .app-logo-mock {
+            font-family: 'Playfair Display', serif;
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--sage-lt)
+        }
+
+        .app-notif {
+            background: var(--sage-dk);
+            color: #fff;
+            font-size: 11px;
+            padding: 4px 10px;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            gap: 4px
+        }
+
+        .app-notif svg {
+            width: 14px;
+            height: 14px
+        }
+
+        .imc-inline-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 22px;
+            font-weight: 700;
+            color: #fff;
+            text-align: center;
+            margin-bottom: 8px
+        }
+
+        .imc-inline-title em {
+            color: var(--gold-lt);
+            font-style: italic
+        }
+
+        .imc-inline-sub {
+            text-align: center;
+            font-size: 14px;
+            color: var(--sage-lt);
+            margin-bottom: 24px
+        }
+
+        .imc-inline-gender {
+            display: flex;
+            gap: 16px;
+            justify-content: center;
+            margin-bottom: 20px
+        }
+
+        .imc-inline-gender label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            color: #ccc
+        }
+
+        .imc-inline-gender input[type="radio"] {
+            appearance: none;
+            -webkit-appearance: none;
+            width: 18px;
+            height: 18px;
+            border: 2px solid #5a7a5a;
+            border-radius: 50%;
+            cursor: pointer;
+            position: relative;
+            transition: all .2s
+        }
+
+        .imc-inline-gender input[type="radio"]:checked {
+            border-color: var(--sage-lt);
+            background: radial-gradient(circle, var(--sage-lt) 35%, transparent 35%)
+        }
+
+        .imc-inline-fields {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin-bottom: 18px
+        }
+
+        .imc-inline-field {
+            position: relative
+        }
+
+        .imc-inline-field input {
+            width: 100%;
+            padding: 14px 40px 14px 14px;
+            border: 1px solid #3a5a3a;
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.08);
+            color: #fff;
+            font-size: 15px;
+            font-weight: 500;
+            font-family: 'DM Sans', sans-serif;
+            outline: none;
+            transition: all .2s
+        }
+
+        .imc-inline-field input::placeholder {
+            color: rgba(255, 255, 255, 0.4)
+        }
+
+        .imc-inline-field input:focus {
+            background: rgba(255, 255, 255, 0.15);
+            border-color: var(--sage);
+            box-shadow: 0 0 0 2px rgba(122, 158, 126, 0.2)
+        }
+
+        .imc-inline-unit {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 12px;
+            font-weight: 600;
+            color: rgba(255, 255, 255, 0.5);
+            pointer-events: none
+        }
+
+        .imc-inline-ossature {
+            display: flex;
+            gap: 14px;
+            justify-content: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap
+        }
+
+        .imc-inline-ossature label {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            cursor: pointer;
+            font-size: 13px;
+            color: #aaa
+        }
+
+        .imc-inline-ossature input[type="radio"] {
+            appearance: none;
+            -webkit-appearance: none;
+            width: 16px;
+            height: 16px;
+            border: 2px solid #5a7a5a;
+            border-radius: 50%;
+            cursor: pointer;
+            position: relative;
+            transition: all .2s
+        }
+
+        .imc-inline-ossature input[type="radio"]:checked {
+            border-color: var(--sage-lt);
+            background: radial-gradient(circle, var(--sage-lt) 35%, transparent 35%)
+        }
+
+        .imc-inline-btn {
+            display: block;
+            width: 100%;
+            padding: 14px;
+            border-radius: 50px;
+            border: 2px solid var(--sage);
+            background: transparent;
+            color: var(--sage-lt);
+            font-size: 15px;
+            font-weight: 700;
+            font-family: 'DM Sans', sans-serif;
+            cursor: pointer;
+            transition: all .3s;
+            text-transform: uppercase;
+            letter-spacing: 1px
+        }
+
+        .imc-inline-btn:hover {
+            background: var(--sage-dk);
+            color: #fff;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(74, 112, 80, 0.3)
+        }
+
+        .imc-inline-error {
+            text-align: center;
+            font-size: 12px;
+            color: #ef9a9a;
+            margin-top: 8px;
+            min-height: 18px
+        }
+
+        .imc-inline-results {
+            display: none
+        }
+
+        .imc-inline-results.show {
+            display: block;
+            animation: fadeSlideUp .5s ease
+        }
+
+        @keyframes fadeSlideUp {
+            from {
+                opacity: 0;
+                transform: translateY(15px)
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0)
+            }
+        }
+
+        .imc-result-score {
+            text-align: center;
+            margin-bottom: 16px
+        }
+
+        .imc-result-circle {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            display: inline-flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 8px
+        }
+
+        .imc-result-val {
+            font-family: 'Playfair Display', serif;
+            font-size: 32px;
+            font-weight: 700;
+            color: #fff;
+            line-height: 1
+        }
+
+        .imc-result-lbl {
+            font-size: 10px;
+            font-weight: 600;
+            color: rgba(255, 255, 255, 0.8);
+            text-transform: uppercase;
+            letter-spacing: 1px
+        }
+
+        .imc-result-cat {
+            font-family: 'Playfair Display', serif;
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 4px
+        }
+
+        .imc-result-desc {
+            font-size: 12px;
+            color: #aaa;
+            line-height: 1.5;
+            max-width: 320px;
+            margin: 0 auto 16px;
+            text-align: center
+        }
+
+        .imc-inline-gauge {
+            height: 10px;
+            border-radius: 5px;
+            background: linear-gradient(90deg, #42a5f5 0%, #66bb6a 22%, #fdd835 44%, #ff9800 66%, #f44336 82%, #b71c1c 100%);
+            position: relative;
+            margin-bottom: 6px;
+            overflow: visible
+        }
+
+        .imc-inline-gauge-marker {
+            position: absolute;
+            top: -4px;
+            width: 4px;
+            height: 18px;
+            background: #fff;
+            border-radius: 2px;
+            transform: translateX(-50%);
+            transition: left 1s ease;
+            box-shadow: 0 0 6px rgba(0, 0, 0, 0.4)
+        }
+
+        .imc-inline-gauge-labels {
+            display: flex;
+            justify-content: space-between;
+            font-size: 9px;
+            color: #666;
+            margin-bottom: 16px
+        }
+
+        .imc-result-metrics {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            margin-bottom: 16px
+        }
+
+        .imc-result-metric {
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px solid #3a5a3a;
+            border-radius: 10px;
+            padding: 12px;
+            text-align: center
+        }
+
+        .imc-result-metric-val {
+            font-family: 'Playfair Display', serif;
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--sage-lt)
+        }
+
+        .imc-result-metric-lbl {
+            font-size: 10px;
+            color: #888;
+            margin-top: 2px
+        }
+
+        .imc-result-programme {
+            background: var(--sage-dk);
+            border-radius: 12px;
+            padding: 16px;
+            text-align: center;
+            margin-bottom: 12px
+        }
+
+        .imc-result-programme h4 {
+            font-family: 'Playfair Display', serif;
+            font-size: 15px;
+            font-weight: 700;
+            color: #fff;
+            margin-bottom: 6px
+        }
+
+        .imc-result-programme p {
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.8);
+            line-height: 1.4;
+            margin-bottom: 10px
+        }
+
+        .imc-result-cta {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: linear-gradient(135deg, var(--gold), var(--gold-lt));
+            color: #fff;
+            padding: 10px 24px;
+            border-radius: 50px;
+            font-size: 13px;
+            font-weight: 700;
+            text-decoration: none;
+            transition: all .2s;
+            border: none;
+            cursor: pointer
+        }
+
+        .imc-result-cta:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(200, 151, 90, 0.4)
+        }
+
+        .imc-result-cta svg {
+            width: 14px;
+            height: 14px
+        }
+
+        .imc-result-reset {
+            display: block;
+            margin: 10px auto 0;
+            background: none;
+            border: 1px solid #3a5a3a;
+            color: #aaa;
+            padding: 8px 20px;
+            border-radius: 50px;
+            font-size: 12px;
+            cursor: pointer;
+            font-family: 'DM Sans', sans-serif;
+            transition: all .2s
+        }
+
+        .imc-result-reset:hover {
+            border-color: var(--sage);
+            color: var(--sage-lt)
+        }
+
+        .results-section {
+            background: var(--warm)
+        }
+
+        .results-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 24px;
+            margin-top: 56px
+        }
+
+        .result-card {
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 4px 20px #00000008;
+            border: 1px solid var(--border);
+            transition: all .3s
+        }
+
+        .result-card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 16px 40px #00000015
+        }
+
+        .result-img {
+            height: 240px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            background-size: cover;
+            background-position: center
+        }
+
+        .result-img::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            z-index: 0
+        }
+
+        .result-img.green {
+            background-image: url('https://images.unsplash.com/photo-1506784983877-45594efa4cbe?w=600&q=80')
+        }
+
+        .result-img.green::before {
+            background: linear-gradient(160deg, rgba(232, 244, 232, 0.75), rgba(197, 224, 200, 0.8))
+        }
+
+        .result-img.gold {
+            background-image: url('https://images.unsplash.com/photo-1547592180-85f173990554?w=600&q=80')
+        }
+
+        .result-img.gold::before {
+            background: linear-gradient(160deg, rgba(253, 240, 224, 0.75), rgba(240, 213, 176, 0.8))
+        }
+
+        .result-img.rose {
+            background-image: url('https://images.unsplash.com/photo-1511688878353-3a2f5be94cd7?w=600&q=80')
+        }
+
+        .result-img.rose::before {
+            background: linear-gradient(160deg, rgba(252, 232, 234, 0.75), rgba(240, 200, 204, 0.8))
+        }
+
+        .result-img>* {
+            position: relative;
+            z-index: 1
+        }
+
+        .result-loss {
+            position: absolute;
+            bottom: 12px;
+            right: 12px;
+            background: var(--sage-dk);
+            color: #fff;
+            font-family: 'Playfair Display', serif;
+            font-size: 18px;
+            font-weight: 700;
+            padding: 6px 14px;
+            border-radius: 20px;
+            z-index: 1
+        }
+
+        .result-body {
+            padding: 24px;
+            background: #fff
+        }
+
+        .result-name {
+            font-size: 16px;
+            font-weight: 700;
+            margin-bottom: 4px
+        }
+
+        .result-meta {
+            font-size: 13px;
+            color: var(--light);
+            margin-bottom: 12px
+        }
+
+        .result-quote {
+            font-size: 14px;
+            color: var(--mid);
+            line-height: 1.6;
+            font-style: italic
+        }
+
+        .stars {
+            color: var(--gold);
+            font-size: 14px;
+            margin-bottom: 8px
+        }
+
+        /* BLOG CAROUSEL */
+        .blog-section {
+            background: var(--white);
+            padding: 90px 5%;
+            overflow: hidden
+        }
+
+        .blog-carousel-wrapper {
+            position: relative;
+            margin-top: 56px
+        }
+
+        .blog-carousel {
+            display: flex;
+            gap: 28px;
+            overflow-x: hidden;
+            scroll-behavior: smooth;
+            scroll-snap-type: x mandatory;
+            padding: 10px 0 20px
+        }
+
+        .blog-card {
+            min-width: calc(33.333% - 19px);
+            scroll-snap-align: start;
+            border-radius: 20px;
+            overflow: hidden;
+            background: #fff;
+            box-shadow: 0 4px 24px #00000008;
+            border: 1px solid var(--border);
+            transition: all .3s;
+            cursor: pointer;
+            flex-shrink: 0
+        }
+
+        .blog-card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 16px 40px #00000015
+        }
+
+        .blog-card-img {
+            height: 220px;
+            background-size: cover;
+            background-position: center;
+            position: relative;
+            overflow: hidden
+        }
+
+        .blog-card-img::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 60%;
+            background: linear-gradient(to top, rgba(0, 0, 0, 0.35), transparent)
+        }
+
+        .blog-card-img-dynamic {
+            height: 220px;
+            background-size: cover;
+            background-position: center;
+            position: relative;
+            overflow: hidden
+        }
+
+        .blog-card-img-dynamic::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 60%;
+            background: linear-gradient(to top, rgba(0, 0, 0, 0.35), transparent)
+        }
+
+        .blog-read-time {
+            position: absolute;
+            top: 16px;
+            right: 16px;
+            z-index: 1;
+            background: rgba(255, 255, 255, 0.9);
+            color: var(--mid);
+            font-size: 11px;
+            font-weight: 600;
+            padding: 4px 10px;
+            border-radius: 50px
+        }
+
+        .blog-card-body {
+            padding: 24px
+        }
+
+        .blog-card-date {
+            font-size: 12px;
+            color: var(--light);
+            margin-bottom: 8px;
+            font-weight: 500
+        }
+
+        .blog-card-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 19px;
+            font-weight: 700;
+            line-height: 1.3;
+            margin-bottom: 10px;
+            color: var(--charcoal)
+        }
+
+        .blog-card-excerpt {
+            font-size: 14px;
+            color: var(--mid);
+            line-height: 1.6;
+            margin-bottom: 16px
+        }
+
+        .blog-card-link {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--sage-dk);
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            transition: gap .2s
+        }
+
+        .blog-card:hover .blog-card-link {
+            gap: 10px
+        }
+
+        .blog-carousel-nav {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            margin-top: 32px;
+            align-items: center
+        }
+
+        .blog-arrow {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            border: 2px solid var(--border);
+            background: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all .2s;
+            font-size: 20px;
+            color: var(--mid)
+        }
+
+        .blog-arrow:hover {
+            border-color: var(--sage-dk);
+            color: var(--sage-dk);
+            transform: scale(1.05)
+        }
+
+        .blog-dots {
+            display: flex;
+            gap: 8px;
+            margin: 0 16px
+        }
+
+        .blog-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: var(--border);
+            transition: all .3s;
+            cursor: pointer
+        }
+
+        .blog-dot.active {
+            background: var(--sage-dk);
+            width: 28px;
+            border-radius: 5px
+        }
+
+        .blog-section .section-label {
+            color: var(--sage-dk)
+        }
+
+        .blog-section .section-label svg {
+            color: var(--sage-dk)
+        }
+
+        .blog-section .section-title {
+            color: var(--charcoal)
+        }
+
+        .blog-section .section-title em {
+            color: var(--sage-dk);
+            font-style: italic
+        }
+
+        .blog-section .section-sub {
+            color: var(--mid)
+        }
+
+        .blog-tag {
+            position: absolute;
+            top: 16px;
+            left: 16px;
+            z-index: 1;
+            background: linear-gradient(135deg, var(--sage-dk), var(--sage));
+            color: #fff;
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            padding: 5px 12px;
+            border-radius: 50px
+        }
+
+        /* BLOG LOADING & EMPTY STATES */
+        .blog-loading {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 280px;
+            gap: 12px;
+            color: var(--light);
+            font-size: 15px;
+            font-weight: 500
+        }
+
+        .blog-loading .spinner {
+            width: 28px;
+            height: 28px;
+            border: 3px solid var(--border);
+            border-top-color: var(--sage-dk);
+            border-radius: 50%;
+            animation: spin .8s linear infinite
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg)
+            }
+        }
+
+        .blog-empty {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--light);
+            font-size: 15px
+        }
+
+        .form-step-title svg {
+            color: transparent;
+            background: linear-gradient(135deg, var(--sage-dk), var(--gold));
+            -webkit-background-clip: text;
+            background-clip: text;
+            stroke: url(#formIconGrad)
+        }
+
+        .form-step-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--charcoal);
+            margin-bottom: 22px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding-bottom: 14px;
+            border-bottom: 1px solid var(--border)
+        }
+
+        .lead-form {
+            background: #fff;
+            border-radius: 28px;
+            padding: 44px;
+            box-shadow: 0 20px 60px #00000015;
+            border: 1px solid var(--border);
+            position: relative;
+            overflow: hidden
+        }
+
+        .lead-form::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--sage-dk), var(--gold), var(--sage))
+        }
+
+        .form-title-block {
+            margin-bottom: 28px;
+            text-align: center
+        }
+
+        .form-title-block h3 {
+            font-family: 'Playfair Display', serif;
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            background: linear-gradient(135deg, var(--sage-dk), var(--gold));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text
+        }
+
+        .form-title-block p {
+            font-size: 14px;
+            color: var(--mid)
+        }
+
+        .form-progress {
+            margin-bottom: 28px
+        }
+
+        .form-prog-bar {
+            height: 4px;
+            background: #f0f0f0;
+            border-radius: 2px;
+            overflow: hidden
+        }
+
+        .form-prog-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--sage-dk), var(--gold), var(--sage));
+            border-radius: 2px;
+            transition: width .4s
+        }
+
+        .form-prog-label {
+            font-size: 11px;
+            color: var(--light);
+            margin-top: 6px;
+            font-weight: 500
+        }
+
+        .form-step {
+            display: none
+        }
+
+        .form-step.active {
+            display: block
+        }
+
+        .form-step-title svg {
+            width: 24px;
+            height: 24px;
+            stroke: url(#formIconGrad);
+            flex-shrink: 0
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 14px;
+            margin-bottom: 14px
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            margin-bottom: 14px
+        }
+
+        .form-label-lg {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--charcoal)
+        }
+
+        .form-label-req::after {
+            content: ' *';
+            color: var(--sage-dk)
+        }
+
+        .form-control {
+            border: 1.5px solid var(--border);
+            border-radius: 10px;
+            padding: 12px 16px;
+            font-size: 14px;
+            color: var(--charcoal);
+            font-family: 'DM Sans', sans-serif;
+            outline: none;
+            width: 100%;
+            background: #fafafa;
+            transition: all .2s
+        }
+
+        .form-control:focus {
+            border-color: var(--sage-dk);
+            background: #fff;
+            box-shadow: 0 0 0 3px #7a9e7e20
+        }
+
+        .form-control::placeholder {
+            color: #bbb
+        }
+
+        .radio-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px
+        }
+
+        .radio-btn {
+            flex: 1;
+            min-width: calc(50% - 5px);
+            border: 1.5px solid var(--border);
+            border-radius: 10px;
+            padding: 12px 14px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--mid);
+            transition: all .2s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: #fafafa
+        }
+
+        .radio-btn:hover {
+            border-color: var(--sage);
+            background: #f0f7f0
+        }
+
+        .radio-btn.selected {
+            border-color: var(--sage-dk);
+            background: #f0f7f0;
+            color: var(--sage-dk);
+            font-weight: 700
+        }
+
+        .radio-btn input {
+            display: none
+        }
+
+        .radio-btn svg {
+            width: 18px;
+            height: 18px;
+            flex-shrink: 0
+        }
+
+        .form-nav {
+            display: flex;
+            gap: 12px;
+            margin-top: 24px
+        }
+
+        .btn-form-next {
+            flex: 2;
+            background: linear-gradient(135deg, var(--sage-dk), var(--sage));
+            color: #fff;
+            padding: 14px;
+            border-radius: 50px;
+            font-size: 15px;
+            font-weight: 700;
+            border: none;
+            cursor: pointer;
+            font-family: 'DM Sans', sans-serif;
+            transition: all .2s
+        }
+
+        .btn-form-next:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px #4a705040
+        }
+
+        .btn-form-back {
+            flex: 1;
+            background: transparent;
+            border: 1.5px solid var(--border);
+            color: var(--mid);
+            padding: 14px;
+            border-radius: 50px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            font-family: 'DM Sans', sans-serif;
+            transition: all .2s
+        }
+
+        .btn-form-back:hover {
+            border-color: var(--sage-dk);
+            color: var(--sage-dk)
+        }
+
+        .form-rgpd {
+            font-size: 11px;
+            color: var(--light);
+            line-height: 1.5;
+            margin-top: 16px
+        }
+
+        .form-rgpd a {
+            color: var(--sage-dk);
+            text-decoration: underline
+        }
+
+        .step-dots {
+            display: flex;
+            gap: 6px;
+            margin-bottom: 20px;
+            justify-content: center
+        }
+
+        .step-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--border);
+            transition: all .3s
+        }
+
+        .step-dot.active {
+            background: linear-gradient(135deg, var(--sage-dk), var(--gold));
+            width: 24px;
+            border-radius: 4px
+        }
+
+        .step-dot.done {
+            background: var(--sage-lt)
+        }
+
+        .form-success {
+            display: none;
+            text-align: center;
+            padding: 20px 0
+        }
+
+        .success-icon {
+            font-size: 60px;
+            margin-bottom: 16px
+        }
+
+        .success-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: var(--sage-dk)
+        }
+
+        .success-text {
+            font-size: 14px;
+            color: var(--mid);
+            line-height: 1.6
+        }
+
+        .faq-section {
+            background: var(--white)
+        }
+
+        .faq-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin-top: 56px;
+            max-width: 960px;
+            margin-left: auto;
+            margin-right: auto
+        }
+
+        .faq-item {
+            border: 1.5px solid var(--border);
+            border-radius: 16px;
+            overflow: hidden;
+            cursor: pointer;
+            transition: all .2s
+        }
+
+        .faq-item:hover {
+            border-color: var(--sage)
+        }
+
+        .faq-item.open {
+            border-color: var(--sage-dk)
+        }
+
+        .faq-q {
+            padding: 20px 24px;
+            font-size: 15px;
+            font-weight: 600;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 16px;
+            background: #fff
+        }
+
+        .faq-icon {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            background: var(--cream);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            color: var(--sage-dk);
+            transition: transform .3s
+        }
+
+        .faq-item.open .faq-icon {
+            transform: rotate(45deg)
+        }
+
+        .faq-icon svg {
+            width: 16px;
+            height: 16px
+        }
+
+        .faq-a {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height .4s ease;
+            background: var(--cream)
+        }
+
+        .faq-item.open .faq-a {
+            max-height: 300px
+        }
+
+        .faq-a-inner {
+            padding: 0 24px 20px;
+            font-size: 14px;
+            color: var(--mid);
+            line-height: 1.7
+        }
+
+        .proof-strip {
+            background: var(--sage-dk);
+            color: #fff;
+            padding: 28px 5%;
+            overflow: hidden;
+            position: relative
+        }
+
+        .proof-ticker {
+            display: flex;
+            gap: 60px;
+            animation: scroll 30s linear infinite;
+            white-space: nowrap
+        }
+
+        @keyframes scroll {
+            0% {
+                transform: translateX(0)
+            }
+
+            100% {
+                transform: translateX(-50%)
+            }
+        }
+
+        .proof-item {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 14px;
+            font-weight: 500
+        }
+
+        .proof-item svg {
+            width: 14px;
+            height: 14px;
+            color: var(--gold-lt)
+        }
+
+        footer {
+            background: var(--charcoal);
+            color: #aaa;
+            padding: 60px 5% 30px
+        }
+
+        .footer-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1fr;
+            gap: 40px;
+            margin-bottom: 50px
+        }
+
+        .footer-brand {
+            margin-bottom: 16px;
+            display: block;
+            text-align: left
+        }
+
+        .footer-logo-obj {
+            height: 44px;
+            width: auto !important;
+            display: block !important;
+            filter: brightness(0) invert(1);
+            pointer-events: none;
+            margin: 0 !important
+        }
+
+        .footer-desc {
+            font-size: 14px;
+            color: #777;
+            line-height: 1.6;
+            max-width: 260px;
+            text-align: left
+        }
+
+        .footer-col h4 {
+            font-size: 13px;
+            font-weight: 700;
+            color: #fff;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            margin-bottom: 16px
+        }
+
+        .footer-col a {
+            display: block;
+            font-size: 13px;
+            color: #777;
+            text-decoration: none;
+            margin-bottom: 8px;
+            transition: color .2s
+        }
+
+        .footer-col a:hover {
+            color: var(--sage-lt)
+        }
+
+        .footer-bottom {
+            border-top: 1px solid #2a2a2a;
+            padding-top: 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 12px;
+            color: #555;
+            flex-wrap: wrap;
+            gap: 12px
+        }
+
+        .rgpd-links {
+            display: flex;
+            gap: 20px
+        }
+
+        .rgpd-links a {
+            color: #555;
+            text-decoration: none
+        }
+
+        .rgpd-links a:hover {
+            color: var(--sage-lt)
+        }
+
+        .sticky-cta {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: linear-gradient(135deg, var(--sage-dk), var(--sage));
+            color: #fff;
+            padding: 14px 32px;
+            border-radius: 50px;
+            font-size: 15px;
+            font-weight: 700;
+            text-decoration: none;
+            box-shadow: 0 8px 30px #4a705060;
+            z-index: 999;
+            display: none;
+            white-space: nowrap;
+            animation: pulse 2s ease-in-out infinite
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                box-shadow: 0 8px 30px #4a705060
+            }
+
+            50% {
+                box-shadow: 0 8px 40px #4a705090
+            }
+        }
+
+        .fade-up {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity .6s, transform .6s
+        }
+
+        .fade-up.visible {
+            opacity: 1;
+            transform: translateY(0)
+        }
+
+        .consent-checkboxes {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-top: 16px
+        }
+
+        .consent-label {
+            display: flex;
+            align-items: flex-start;
+            gap: 8px;
+            font-size: 12px;
+            line-height: 1.5;
+            cursor: pointer
+        }
+
+        .consent-label a {
+            color: var(--sage-dk);
+            text-decoration: underline
+        }
+
+        .consent-check {
+            width: 18px;
+            height: 18px;
+            min-width: 18px;
+            accent-color: var(--sage-dk);
+            cursor: pointer;
+            margin-top: 1px
+        }
+
+        .step-error {
+            color: #e53935;
+            font-size: 13px;
+            margin-top: 8px;
+            min-height: 18px;
+            font-weight: 500
+        }
+
+        .btn-form-next:disabled,
+        .btn-form-next[disabled] {
+            opacity: 0.4;
+            cursor: not-allowed;
+            transform: none !important;
+            box-shadow: none !important
+        }
+
+        .scroll-top-btn {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: var(--sage-dk);
+            color: #fff;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 20px rgba(74, 112, 80, 0.4);
+            z-index: 998;
+            opacity: 0;
+            visibility: hidden;
+            transition: all .3s;
+            transform: translateY(10px)
+        }
+
+        .scroll-top-btn.visible {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0)
+        }
+
+        .scroll-top-btn:hover {
+            background: var(--sage);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 30px rgba(74, 112, 80, 0.5)
+        }
+
+        .scroll-top-btn svg {
+            width: 20px;
+            height: 20px
+        }
+
+        @media(max-width:900px) {
+            .hero-inner {
+                grid-template-columns: 1fr;
+                gap: 30px
+            }
+
+            .method-grid {
+                grid-template-columns: 1fr 1fr
+            }
+
+            .method-step-img {
+                height: 160px
+            }
+
+            .idm-grid,
+            .results-grid,
+            .faq-grid {
+                grid-template-columns: 1fr
+            }
+
+            .blog-card {
+                min-width: calc(80% - 14px)
+            }
+
+            .footer-grid {
+                grid-template-columns: 1fr 1fr
+            }
+
+            nav .nav-links {
+                display: none
+            }
+
+            .sticky-cta {
+                display: block
+            }
+
+            .hero-trust {
+                flex-wrap: wrap;
+                gap: 16px
+            }
+
+            .scroll-top-btn {
+                bottom: 80px
+            }
+
+            .cja-banner,
+            .cja-banner-dark {
+                flex-direction: column;
+                gap: 12px;
+                max-width: 100%
+            }
+
+            .cja-sep {
+                width: 100%;
+                height: 2px;
+                margin-right: 0;
+                margin-bottom: 0
+            }
+        }
+
+        @media(max-width:600px) {
+            .blog-card {
+                min-width: calc(90% - 14px)
+            }
+
+            .imc-inline-fields {
+                grid-template-columns: 1fr
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <svg width="0" height="0" style="position:absolute">
+        <defs>
+            <linearGradient id="formIconGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" style="stop-color:#4a7050" />
+                <stop offset="50%" style="stop-color:#c8975a" />
+                <stop offset="100%" style="stop-color:#7a9e7e" />
+            </linearGradient>
+            <linearGradient id="testimonialGrad1" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" style="stop-color:#2e7d32" />
+                <stop offset="50%" style="stop-color:#66bb6a" />
+                <stop offset="100%" style="stop-color:#a5d6a7" />
+            </linearGradient>
+            <linearGradient id="testimonialGrad2" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" style="stop-color:#bf8034" />
+                <stop offset="50%" style="stop-color:#e8b97a" />
+                <stop offset="100%" style="stop-color:#ffe0b2" />
+            </linearGradient>
+            <linearGradient id="testimonialGrad3" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" style="stop-color:#ad1457" />
+                <stop offset="50%" style="stop-color:#e8b4b8" />
+                <stop offset="100%" style="stop-color:#fce4ec" />
+            </linearGradient>
+            <linearGradient id="testimonialFill1" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" style="stop-color:#2e7d32;stop-opacity:0.15" />
+                <stop offset="100%" style="stop-color:#66bb6a;stop-opacity:0.08" />
+            </linearGradient>
+            <linearGradient id="testimonialFill2" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" style="stop-color:#bf8034;stop-opacity:0.15" />
+                <stop offset="100%" style="stop-color:#e8b97a;stop-opacity:0.08" />
+            </linearGradient>
+            <linearGradient id="testimonialFill3" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" style="stop-color:#ad1457;stop-opacity:0.15" />
+                <stop offset="100%" style="stop-color:#e8b4b8;stop-opacity:0.08" />
+            </linearGradient>
+        </defs>
+    </svg>
+
+    <nav id="nav"><a href="#accueil" class="nav-logo"><object
+                data="https://labelminceur.fr/wp-content/uploads/2026/03/Logo-LabelMinceur-2026.svg"
+                type="image/svg+xml" class="nav-logo-obj" aria-label="Label Minceur"><img
+                    src="https://labelminceur.fr/wp-content/uploads/2026/03/Logo-LabelMinceur-2026.svg"
+                    alt="Label Minceur" class="nav-logo-obj"></object></a>
+        <div class="nav-links"><a href="#methode"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                    stroke-width="2">
+                    <path d="M4 6h16M4 12h16M4 18h16" />
+                </svg> Notre méthode</a><a href="#bilan"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                    stroke-width="2">
+                    <circle cx="12" cy="12" r="10" />
+                    <path d="M12 6v6l4 2" />
+                </svg> Mon bilan</a><a href="#resultats"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                    stroke-width="2">
+                    <path d="M22 12h-4l-3 9L9 3l-3 9H2" />
+                </svg> Résultats</a><a href="#blog"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                    stroke-width="2">
+                    <path d="M4 19.5A2.5 2.5 0 016.5 17H20" />
+                    <path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z" />
+                </svg> Blog</a><a href="#faq"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                    stroke-width="2">
+                    <circle cx="12" cy="12" r="10" />
+                    <path d="M9.09 9a3 3 0 015.83 1c0 2-3 3-3 3" />
+                    <line x1="12" y1="17" x2="12.01" y2="17" />
+                </svg> FAQ</a></div><a href="#bilan" class="nav-cta"><svg viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2">
+                <path d="M9 18l6-6-6-6" />
+            </svg> Calculer mon IMC</a>
+    </nav>
+
+    <!-- HERO -->
+    <section class="hero" id="accueil"><img class="hero-bg-img"
+            src="https://images.unsplash.com/photo-1490645935967-10de6ba17061?w=1920&q=80"
+            alt="Alimentation saine et équilibrée">
+        <div class="hero-overlay"></div>
+        <div class="hero-inner">
+            <div class="hero-content fade-up">
+                <div class="hero-badge"><svg viewBox="0 0 24 24" fill="currentColor" width="14" height="14">
+                        <polygon
+                            points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26" />
+                    </svg> Programme Expert 2026</div>
+                <h1>Retrouvez votre <em>silhouette idéale</em> durablement</h1>
+                <p class="hero-sub">Un programme minceur <strong>100% personnalisé</strong>, conçu par des
+                    nutritionnistes experts. Résultats visibles en 3 semaines, transformation durable en 3 mois.</p>
+                <div class="hero-actions"><a href="#methode" class="btn-primary"><svg viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2">
+                            <path d="M9 18l6-6-6-6" />
+                        </svg> Calculer mon IMC gratuit</a><a
+                        href="http://tracking.gototrackers.com/aff_c?offer_id=7&aff_id=1064&file_id=2041&source=cis&aff_sub=cis&url_id=9956"
+                        class="btn-outline"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="10" />
+                            <polygon points="10,8 16,12 10,16" />
+                        </svg> Découvrir la méthode</a></div>
+                <div class="cja-banner">
+                    <div class="cja-logo-area"><strong>✦ Comme J'aime</strong><small>Partenaire officiel</small></div>
+                    <div class="cja-sep"></div>
+                    <div class="cja-text">Votre demande sera traitée directement par les équipes <strong>Comme
+                            J'aime</strong>, leader français du programme minceur personnalisé. <strong>Un conseiller
+                            certifié vous contactera sous 24h.</strong></div>
+                </div>
+                <div class="hero-trust">
+                    <div class="trust-item">
+                        <div class="trust-number" data-count="94" data-suffix="%">0%</div>
+                        <div class="trust-label">Taux de<br>satisfaction</div>
+                    </div>
+                    <div class="trust-sep"></div>
+                    <div class="trust-item">
+                        <div class="trust-number" data-count="8" data-prefix="-" data-suffix="kg">0kg</div>
+                        <div class="trust-label">Perte moyenne<br>sur 3 mois</div>
+                    </div>
+                    <div class="trust-sep"></div>
+                    <div class="trust-item">
+                        <div class="trust-number" data-count="15" data-suffix="k+">0k+</div>
+                        <div class="trust-label">Personnes<br>transformées</div>
+                    </div>
+                    <div class="trust-sep"></div>
+                    <div class="trust-item">
+                        <div class="trust-number" data-count="3" data-suffix="">0</div>
+                        <div class="trust-label">Semaines pour<br>les premiers résultats</div>
+                    </div>
+                </div>
+            </div>
+            <div class="hero-form-wrapper fade-up" style="animation-delay:.2s" id="formyy">
+                <div class="lead-form">
+                    <div class="form-title-block">
+                        <h3>Mon bilan minceur gratuit</h3>
+                        <p>Répondez en 2 minutes · Un expert vous contacte sous 24h</p>
+                    </div>
+                    <div class="step-dots" id="stepDots">
+                        <div class="step-dot active" id="dot0"></div>
+                        <div class="step-dot" id="dot1"></div>
+                        <div class="step-dot" id="dot2"></div>
+                        <div class="step-dot" id="dot3"></div>
+                    </div>
+                    <div class="form-progress">
+                        <div class="form-prog-bar">
+                            <div class="form-prog-fill" id="progFill" style="width:25%"></div>
+                        </div>
+                        <div class="form-prog-label" id="progLabel">Étape 1/4 — Votre profil</div>
+                    </div>
+                    <div class="form-step active" id="step0">
+                        <div class="form-step-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2">
+                                <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2" />
+                                <circle cx="12" cy="7" r="4" />
+                            </svg> Votre profil</div>
+                        <div class="form-row">
+                            <div class="form-group"><label class="form-label-lg form-label-req">Civilité</label><select
+                                    class="form-control" id="civilite" required>
+                                    <option value="">Sélectionner</option>
+                                    <option>Madame</option>
+                                    <option>Monsieur</option>
+                                </select></div>
+                            <div class="form-group"><label class="form-label-lg form-label-req">Âge</label><select
+                                    class="form-control" id="age" required>
+                                    <option value="">Tranche d'âge</option>
+                                    <option>18-25</option>
+                                    <option>26-35</option>
+                                    <option>36-45</option>
+                                    <option>46-55</option>
+                                    <option>56-65</option>
+                                    <option>65+</option>
+                                </select></div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group"><label class="form-label-lg form-label-req">Poids
+                                    actuel</label><select class="form-control" id="poids" required>
+                                    <option value="">Votre poids</option>
+                                    <option>-60 kg</option>
+                                    <option>60-70 kg</option>
+                                    <option>70-80 kg</option>
+                                    <option>80-90 kg</option>
+                                    <option>90-100 kg</option>
+                                    <option>+100 kg</option>
+                                </select></div>
+                            <div class="form-group"><label class="form-label-lg form-label-req">Poids
+                                    souhaité</label><select class="form-control" id="poidsCible" required>
+                                    <option value="">Objectif</option>
+                                    <option>-50 kg</option>
+                                    <option>50-60 kg</option>
+                                    <option>60-70 kg</option>
+                                    <option>70-80 kg</option>
+                                    <option>+80 kg</option>
+                                </select></div>
+                        </div>
+                        <div class="form-group"><label class="form-label-lg form-label-req">Taille</label><select
+                                class="form-control" id="taille" required>
+                                <option value="">Votre taille</option>
+                                <option>-155 cm</option>
+                                <option>155-160</option>
+                                <option>160-165</option>
+                                <option>165-170</option>
+                                <option>170-175</option>
+                                <option>175-180</option>
+                                <option>+180 cm</option>
+                            </select></div>
+                        <div class="step-error" id="stepError0"></div>
+                        <div class="form-nav"><button class="btn-form-next" id="btnNext0" onclick="nextStep(0)"
+                                disabled>Continuer →</button></div>
+                    </div>
+                    <div class="form-step" id="step1">
+                        <div class="form-step-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2">
+                                <circle cx="12" cy="12" r="10" />
+                                <path d="M12 8v4l3 3" />
+                            </svg> Vos objectifs</div>
+                        <div class="form-group"><label class="form-label-lg form-label-req">Objectif minceur</label>
+                            <div class="radio-group" id="objectifGroup"><label class="radio-btn"
+                                    onclick="selectRadio(this,'objectifGroup')"><svg viewBox="0 0 24 24" fill="none"
+                                        stroke="currentColor" stroke-width="2">
+                                        <polygon points="13,2 3,14 12,14 11,22 21,10 12,10" />
+                                    </svg>Perte rapide</label><label class="radio-btn"
+                                    onclick="selectRadio(this,'objectifGroup')"><svg viewBox="0 0 24 24" fill="none"
+                                        stroke="currentColor" stroke-width="2">
+                                        <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+                                        <path d="M7 11V7a5 5 0 0110 0v4" />
+                                    </svg>Résultats durables</label><label class="radio-btn"
+                                    onclick="selectRadio(this,'objectifGroup')"><svg viewBox="0 0 24 24" fill="none"
+                                        stroke="currentColor" stroke-width="2">
+                                        <path d="M18 20V6a2 2 0 00-2-2H8a2 2 0 00-2 2v14" />
+                                        <path d="M2 20h20" />
+                                        <path d="M14 12H10" />
+                                    </svg>Remodelage</label><label class="radio-btn"
+                                    onclick="selectRadio(this,'objectifGroup')"><svg viewBox="0 0 24 24" fill="none"
+                                        stroke="currentColor" stroke-width="2">
+                                        <path d="M12 22c4-4 8-7.58 8-12a8 8 0 10-16 0c0 4.42 4 8 8 12z" />
+                                        <circle cx="12" cy="10" r="3" />
+                                    </svg>Mieux manger</label></div>
+                        </div>
+                        <div class="form-group"><label class="form-label-lg form-label-req">Délai
+                                souhaité</label><select class="form-control" id="delai" required>
+                                <option value="">Choisir</option>
+                                <option>1-2 mois</option>
+                                <option>3 mois</option>
+                                <option>6 mois</option>
+                                <option>Mon rythme</option>
+                            </select></div>
+                        <div class="step-error" id="stepError1"></div>
+                        <div class="form-nav"><button class="btn-form-back" onclick="prevStep(1)">←
+                                Retour</button><button class="btn-form-next" id="btnNext1" onclick="nextStep(1)"
+                                disabled>Continuer →</button></div>
+                    </div>
+                    <div class="form-step" id="step2">
+                        <div class="form-step-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2">
+                                <path d="M22 12h-4l-3 9L9 3l-3 9H2" />
+                            </svg> Mode de vie</div>
+                        <div class="form-group"><label class="form-label-lg form-label-req">Activité physique</label>
+                            <div class="radio-group" id="activiteGroup"><label class="radio-btn"
+                                    onclick="selectRadio(this,'activiteGroup')"><svg viewBox="0 0 24 24" fill="none"
+                                        stroke="currentColor" stroke-width="2">
+                                        <rect x="2" y="5" width="20" height="14" rx="2" />
+                                        <line x1="2" y1="10" x2="22" y2="10" />
+                                    </svg>Sédentaire</label><label class="radio-btn"
+                                    onclick="selectRadio(this,'activiteGroup')"><svg viewBox="0 0 24 24" fill="none"
+                                        stroke="currentColor" stroke-width="2">
+                                        <path d="M13 4v16" />
+                                        <path d="M17 4v16" />
+                                        <path d="M19 4H9.5a4.5 4.5 0 000 9H13" />
+                                    </svg>Léger</label><label class="radio-btn"
+                                    onclick="selectRadio(this,'activiteGroup')"><svg viewBox="0 0 24 24" fill="none"
+                                        stroke="currentColor" stroke-width="2">
+                                        <path d="M22 12h-4l-3 9L9 3l-3 9H2" />
+                                    </svg>Modéré</label><label class="radio-btn"
+                                    onclick="selectRadio(this,'activiteGroup')"><svg viewBox="0 0 24 24" fill="none"
+                                        stroke="currentColor" stroke-width="2">
+                                        <path d="M18 20V6a2 2 0 00-2-2H8a2 2 0 00-2 2v14" />
+                                        <path d="M2 20h20" />
+                                        <path d="M14 12H10" />
+                                    </svg>Très actif</label></div>
+                        </div>
+                        <div class="form-group"><label class="form-label-lg form-label-req">Budget mensuel</label>
+                            <div class="radio-group" id="budgetGroup"><label class="radio-btn"
+                                    onclick="selectRadio(this,'budgetGroup')"><svg viewBox="0 0 24 24" fill="none"
+                                        stroke="currentColor" stroke-width="2">
+                                        <circle cx="12" cy="12" r="10" />
+                                        <path d="M12 6v12M8 10h8M8 14h6" />
+                                    </svg>-200€</label><label class="radio-btn"
+                                    onclick="selectRadio(this,'budgetGroup')"><svg viewBox="0 0 24 24" fill="none"
+                                        stroke="currentColor" stroke-width="2">
+                                        <circle cx="12" cy="12" r="10" />
+                                        <path d="M12 6v12M8 10h8M8 14h6" />
+                                    </svg>200-400€</label><label class="radio-btn"
+                                    onclick="selectRadio(this,'budgetGroup')"><svg viewBox="0 0 24 24" fill="none"
+                                        stroke="currentColor" stroke-width="2">
+                                        <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" />
+                                    </svg>400€+</label></div>
+                        </div>
+                        <div class="step-error" id="stepError2"></div>
+                        <div class="form-nav"><button class="btn-form-back" onclick="prevStep(2)">←
+                                Retour</button><button class="btn-form-next" id="btnNext2" onclick="nextStep(2)"
+                                disabled>Continuer →</button></div>
+                    </div>
+                    <div class="form-step" id="step3">
+                        <div class="form-step-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2">
+                                <path
+                                    d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6A19.79 19.79 0 012.12 4.18 2 2 0 014.11 2h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z" />
+                            </svg> Vos coordonnées</div>
+                        <div class="form-row">
+                            <div class="form-group"><label class="form-label-lg form-label-req">Prénom</label><input
+                                    type="text" class="form-control" id="prenom" placeholder="Prénom" required></div>
+                            <div class="form-group"><label class="form-label-lg form-label-req">Nom</label><input
+                                    type="text" class="form-control" id="nom" placeholder="Nom" required></div>
+                        </div>
+                        <div class="form-group"><label class="form-label-lg form-label-req">Email</label><input
+                                type="email" class="form-control" id="email" placeholder="contact@labelminceur.fr"
+                                required></div>
+                        <div class="form-group"><label class="form-label-lg form-label-req">Téléphone</label><input
+                                type="tel" class="form-control" id="telephone" placeholder="06 12 34 56 78" required>
+                        </div>
+                        <div class="consent-checkboxes"><label class="consent-label"><input type="checkbox"
+                                    id="formConsent1" class="consent-check" required> J'ai lu et j'accepte la <a
+                                    href="https://labelminceur.fr/politique-de-confidentialite/">politique de
+                                    confidentialité</a>. <span style="color:var(--sage-dk)">*</span></label><label
+                                class="consent-label"><input type="checkbox" id="formConsent2" class="consent-check">
+                                J'accepte de recevoir par e-mail les offres exclusives et réductions de Label Minceur et
+                                de ses partenaires.</label></div>
+                        <div class="step-error" id="stepError3"></div>
+                        <div class="form-nav"><button class="btn-form-back" onclick="prevStep(3)">←
+                                Retour</button><button class="btn-form-next" id="btnSubmit" onclick="submitForm()"
+                                disabled>Recevoir mon programme ✓</button></div>
+                        <div class="form-rgpd">En soumettant, vous acceptez que vos données soient transmises à
+                            <strong>Comme J'aime</strong>. <a
+                                href="https://labelminceur.fr/politique-de-confidentialite/">Politique de
+                                confidentialité</a>
+                        </div>
+                    </div>
+                    <div class="form-success" id="formSuccess">
+                        <div class="success-icon">🎉</div>
+                        <div class="success-title">Demande envoyée !</div>
+                        <div class="success-text">Un conseiller <strong>Comme J'aime</strong> vous contactera dans les
+                            <strong>24h</strong>.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div class="proof-strip">
+        <div class="proof-ticker"><span class="proof-item"><svg viewBox="0 0 24 24" fill="currentColor" width="14"
+                    height="14">
+                    <polygon
+                        points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26" />
+                </svg> -12 kg en 4 mois · Sophie, Lyon</span><span class="proof-item"><svg viewBox="0 0 24 24"
+                    fill="currentColor" width="14" height="14">
+                    <polygon
+                        points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26" />
+                </svg> Programme 100% personnalisé</span><span class="proof-item"><svg viewBox="0 0 24 24"
+                    fill="currentColor" width="14" height="14">
+                    <polygon
+                        points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26" />
+                </svg> -8 kg en 3 mois · Marc, Paris</span><span class="proof-item"><svg viewBox="0 0 24 24"
+                    fill="currentColor" width="14" height="14">
+                    <polygon
+                        points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26" />
+                </svg> Nutritionnistes certifiés AFDN</span><span class="proof-item"><svg viewBox="0 0 24 24"
+                    fill="currentColor" width="14" height="14">
+                    <polygon
+                        points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26" />
+                </svg> -6 kg sans reprendre · Leila, Marseille</span><span class="proof-item"><svg viewBox="0 0 24 24"
+                    fill="currentColor" width="14" height="14">
+                    <polygon
+                        points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26" />
+                </svg> Accompagnement 7j/7</span><span class="proof-item"><svg viewBox="0 0 24 24" fill="currentColor"
+                    width="14" height="14">
+                    <polygon
+                        points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26" />
+                </svg> -15 kg · Pierre, Bordeaux</span><span class="proof-item"><svg viewBox="0 0 24 24"
+                    fill="currentColor" width="14" height="14">
+                    <polygon
+                        points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26" />
+                </svg> Livraison repas incluse</span><span class="proof-item"><svg viewBox="0 0 24 24"
+                    fill="currentColor" width="14" height="14">
+                    <polygon
+                        points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26" />
+                </svg> -12 kg en 4 mois · Sophie, Lyon</span><span class="proof-item"><svg viewBox="0 0 24 24"
+                    fill="currentColor" width="14" height="14">
+                    <polygon
+                        points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26" />
+                </svg> Programme 100% personnalisé</span><span class="proof-item"><svg viewBox="0 0 24 24"
+                    fill="currentColor" width="14" height="14">
+                    <polygon
+                        points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26" />
+                </svg> -8 kg en 3 mois · Marc, Paris</span><span class="proof-item"><svg viewBox="0 0 24 24"
+                    fill="currentColor" width="14" height="14">
+                    <polygon
+                        points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26" />
+                </svg> Nutritionnistes certifiés AFDN</span></div>
+    </div>
+
+    <section class="method-section" id="methode">
+        <div class="text-center fade-up">
+            <div class="section-label"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M12 20V10" />
+                    <path d="M18 20V4" />
+                    <path d="M6 20v-4" />
+                </svg> Notre approche</div>
+            <h2 class="section-title">Une méthode en 4 étapes<br>scientifiquement prouvée</h2>
+            <p class="section-sub">Pas de régime miracle. Une transformation durable, fondée sur la science de la
+                nutrition.</p>
+        </div>
+        <div class="method-grid fade-up">
+            <a class="method-step"
+                href="http://tracking.gototrackers.com/aff_c?offer_id=7&aff_id=1064&file_id=2041&source=cis&aff_sub=cis&url_id=9956">
+                <div class="method-step-img">
+                    <div class="step-num">01</div><svg class="step-icon-svg" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2">
+                        <path d="M9 11l3 3L22 4" />
+                        <path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11" />
+                    </svg>
+                </div>
+                <div class="method-step-body">
+                    <div class="step-title">Bilan personnalisé</div>
+                    <div class="step-desc">Analyse complète de votre profil : IMC, métabolisme, habitudes alimentaires,
+                        objectifs et contraintes de vie.</div>
+                </div>
+            </a>
+            <a class="method-step"
+                href="http://tracking.gototrackers.com/aff_c?offer_id=7&aff_id=1064&file_id=2041&source=cis&aff_sub=cis&url_id=9956">
+                <div class="method-step-img">
+                    <div class="step-num">02</div><svg class="step-icon-svg" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2">
+                        <path
+                            d="M14.7 6.3a1 1 0 000 1.4l1.6 1.6a1 1 0 001.4 0l3.77-3.77a6 6 0 01-7.94 7.94l-6.91 6.91a2.12 2.12 0 01-3-3l6.91-6.91a6 6 0 017.94-7.94l-3.76 3.76z" />
+                    </svg>
+                </div>
+                <div class="method-step-body">
+                    <div class="step-title">Programme sur-mesure</div>
+                    <div class="step-desc">Votre nutritionniste dédié conçoit un programme adapté à votre corps, vos
+                        goûts et votre rythme de vie.</div>
+                </div>
+            </a>
+            <a class="method-step"
+                href="http://tracking.gototrackers.com/aff_c?offer_id=7&aff_id=1064&file_id=2041&source=cis&aff_sub=cis&url_id=9956">
+                <div class="method-step-img">
+                    <div class="step-num">03</div><svg class="step-icon-svg" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2">
+                        <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2" />
+                        <circle cx="9" cy="7" r="4" />
+                        <path d="M23 21v-2a4 4 0 00-3-3.87" />
+                        <path d="M16 3.13a4 4 0 010 7.75" />
+                    </svg>
+                </div>
+                <div class="method-step-body">
+                    <div class="step-title">Accompagnement continu</div>
+                    <div class="step-desc">Suivi hebdomadaire, ajustements en temps réel, conseils psycho-nutritionnels.
+                    </div>
+                </div>
+            </a>
+            <a class="method-step"
+                href="http://tracking.gototrackers.com/aff_c?offer_id=7&aff_id=1064&file_id=2041&source=cis&aff_sub=cis&url_id=9956">
+                <div class="method-step-img">
+                    <div class="step-num">04</div><svg class="step-icon-svg" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2">
+                        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+                        <path d="M9 12l2 2 4-4" />
+                    </svg>
+                </div>
+                <div class="method-step-body">
+                    <div class="step-title">Stabilisation durable</div>
+                    <div class="step-desc">Réapprenez à manger durablement. 80% de nos clients maintiennent leurs
+                        résultats 2 ans après.</div>
+                </div>
+            </a>
+        </div>
+    </section>
+
+    <section class="idm-section" id="bilan">
+        <div class="idm-grid">
+            <div class="fade-up">
+                <div class="idm-label"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="10" />
+                        <path d="M12 16v-4" />
+                        <path d="M12 8h.01" />
+                    </svg> Technologie 2026</div>
+                <h2 class="idm-title">Calculez votre<br><em>IMC</em> personnalisé</h2>
+                <p class="idm-desc">Notre algorithme analyse plus de 40 paramètres biométriques pour calculer votre
+                    Indice de Minceur Dynamique personnalisé.</p>
+                <div class="idm-features">
+                    <div class="idm-feat">
+                        <div class="idm-feat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2">
+                                <circle cx="12" cy="12" r="10" />
+                                <path d="M12 8v4l3 3" />
+                            </svg></div>
+                        <div class="idm-feat-text">
+                            <h4>Analyse métabolique avancée</h4>
+                            <p>Métabolisme de base, masse grasse, ratio musculaire et dépense calorique.</p>
+                        </div>
+                    </div>
+                    <div class="idm-feat">
+                        <div class="idm-feat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2">
+                                <path d="M18 20V10" />
+                                <path d="M12 20V4" />
+                                <path d="M6 20v-6" />
+                            </svg></div>
+                        <div class="idm-feat-text">
+                            <h4>Prédiction de résultats</h4>
+                            <p>Projection semaine par semaine selon votre profil.</p>
+                        </div>
+                    </div>
+                    <div class="idm-feat">
+                        <div class="idm-feat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2">
+                                <polyline points="23 4 23 10 17 10" />
+                                <polyline points="1 20 1 14 7 14" />
+                                <path d="M3.51 9a9 9 0 0114.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0020.49 15" />
+                            </svg></div>
+                        <div class="idm-feat-text">
+                            <h4>Adaptation en temps réel</h4>
+                            <p>Programme ajusté selon vos progrès hebdomadaires.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="cja-banner-dark">
+                    <div class="cja-logo-area"><strong>✦ Comme J'aime</strong><small>Partenaire officiel</small></div>
+                    <div class="cja-sep"></div>
+                    <div class="cja-text">Votre demande sera traitée directement par les équipes <strong>Comme
+                            J'aime</strong>, leader français du programme minceur personnalisé. <strong>Un conseiller
+                            certifié vous contactera sous 24h.</strong></div>
+                </div>
+            </div>
+            <div class="idm-visual fade-up visible" style="animation-delay:.2s" id="idmVisual">
+                <div class="idm-app-mock">
+                    <div class="app-header">
+                        <div class="app-logo-mock">Label Minceur</div>
+                        <div class="app-notif"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2">
+                                <path d="M9 18l6-6-6-6" />
+                            </svg> Calcul IMC</div>
+                    </div>
+                    <div id="imcFormSection">
+                        <div class="imc-inline-title">Calculez votre <em>IMC</em></div>
+                        <div class="imc-inline-sub">Remplissez vos informations pour obtenir votre analyse</div>
+                        <div class="imc-inline-gender"><label><input type="radio" name="imcGender" value="femme"
+                                    checked> Femme</label><label><input type="radio" name="imcGender" value="homme">
+                                Homme</label></div>
+                        <div class="imc-inline-fields">
+                            <div class="imc-inline-field"><input type="number" id="imcAge" placeholder="Mon Âge"
+                                    min="18" max="99">
+                                <div class="imc-inline-unit">ans</div>
+                            </div>
+                            <div class="imc-inline-field"><input type="number" id="imcTaille" placeholder="Ma Taille"
+                                    min="130" max="230">
+                                <div class="imc-inline-unit">cm</div>
+                            </div>
+                            <div class="imc-inline-field"><input type="number" id="imcPoids" placeholder="Mon Poids"
+                                    min="30" max="300" step="0.1">
+                                <div class="imc-inline-unit">kg</div>
+                            </div>
+                            <div class="imc-inline-field"><input type="number" id="imcObjectif"
+                                    placeholder="Mon Objectif" min="30" max="300" step="0.1">
+                                <div class="imc-inline-unit">kg</div>
+                            </div>
+                        </div>
+                        <div class="imc-inline-ossature"><label><input type="radio" name="imcOssature" value="fine">
+                                Fine</label><label><input type="radio" name="imcOssature" value="moyenne" checked>
+                                Moyenne</label><label><input type="radio" name="imcOssature" value="lourde">
+                                Large</label></div><button class="imc-inline-btn"
+                            onclick="calculateIMCInline()">Calculer mon IMC</button>
+                        <div class="imc-inline-error" id="imcInlineError"></div>
+                    </div>
+                    <div class="imc-inline-results" id="imcInlineResults">
+                        <div class="imc-result-score">
+                            <div class="imc-result-circle" id="imcInlineCircle">
+                                <div class="imc-result-val" id="imcInlineVal">--</div>
+                                <div class="imc-result-lbl">IMC</div>
+                            </div>
+                            <div class="imc-result-cat" id="imcInlineCat">--</div>
+                            <div class="imc-result-desc" id="imcInlineDesc">--</div>
+                        </div>
+                        <div class="imc-inline-gauge">
+                            <div class="imc-inline-gauge-marker" id="imcInlineMarker" style="left:0%"></div>
+                        </div>
+                        <div class="imc-inline-gauge-labels">
+                            <span>Maigreur</span><span>Normal</span><span>Surpoids</span><span>Obésité</span><span>Sévère</span>
+                        </div>
+                        <div class="imc-result-metrics">
+                            <div class="imc-result-metric">
+                                <div class="imc-result-metric-val" id="imcInlineKg">--</div>
+                                <div class="imc-result-metric-lbl">à perdre</div>
+                            </div>
+                            <div class="imc-result-metric">
+                                <div class="imc-result-metric-val" id="imcInlineCal">--</div>
+                                <div class="imc-result-metric-lbl">kcal/jour</div>
+                            </div>
+                            <div class="imc-result-metric">
+                                <div class="imc-result-metric-val" id="imcInlinePi">--</div>
+                                <div class="imc-result-metric-lbl">poids idéal</div>
+                            </div>
+                            <div class="imc-result-metric">
+                                <div class="imc-result-metric-val" id="imcInlineDuree">--</div>
+                                <div class="imc-result-metric-lbl">durée estimée</div>
+                            </div>
+                        </div>
+                        <div class="imc-result-programme">
+                            <h4 id="imcInlineProgTitle">Programme recommandé</h4>
+                            <p id="imcInlineProgDesc">--</p><a href="#devis" class="imc-result-cta"><svg
+                                    viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M9 18l6-6-6-6" />
+                                </svg> Démarrer mon bilan gratuit</a>
+                        </div><button class="imc-result-reset" onclick="resetIMCForm()"><svg viewBox="0 0 24 24"
+                                fill="none" stroke="currentColor" stroke-width="1.5"
+                                style="width:14px;height:14px;vertical-align:middle;margin-right:4px">
+                                <polyline points="23 4 23 10 17 10" />
+                                <polyline points="1 20 1 14 7 14" />
+                                <path d="M3.51 9a9 9 0 0114.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0020.49 15" />
+                            </svg>Recalculer</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="results-section" id="resultats">
+        <div class="text-center fade-up">
+            <div class="section-label"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M22 12h-4l-3 9L9 3l-3 9H2" />
+                </svg> Témoignages</div>
+            <h2 class="section-title">Ils ont transformé<br>leur silhouette</h2>
+            <p class="section-sub">Des vraies personnes, de vrais résultats.</p>
+        </div>
+        <div class="results-grid fade-up">
+            <div class="result-card">
+                <div class="result-img green"><svg style="position:relative;z-index:1;width:68px;height:68px"
+                        viewBox="0 0 24 24" fill="url(#testimonialFill1)" stroke="url(#testimonialGrad1)"
+                        stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M12 22c4-4 8-7.58 8-12a8 8 0 10-16 0c0 4.42 4 8 8 12z" />
+                        <path d="M12 13V7" fill="none" />
+                        <path d="M9 10c1.5 0 3-1 3-3" fill="none" />
+                        <path d="M15 10c-1.5 0-3-1-3-3" fill="none" />
+                    </svg>
+                    <div class="result-loss">-12 kg</div>
+                </div>
+                <div class="result-body">
+                    <div class="stars">★★★★★</div>
+                    <div class="result-name">Sophie M., 42 ans</div>
+                    <div class="result-meta">Lyon · 4 mois</div>
+                    <div class="result-quote">«&nbsp;J'ai enfin trouvé une méthode qui fonctionne. Mon nutritionniste a
+                        tout adapté à mes contraintes.&nbsp;»</div>
+                </div>
+            </div>
+            <div class="result-card">
+                <div class="result-img gold"><svg style="position:relative;z-index:1;width:68px;height:68px"
+                        viewBox="0 0 24 24" fill="url(#testimonialFill2)" stroke="url(#testimonialGrad2)"
+                        stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M6 9H4.5a2.5 2.5 0 010-5H6" />
+                        <path d="M18 9h1.5a2.5 2.5 0 000-5H18" />
+                        <path d="M4 22h16" />
+                        <path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20 7 22" />
+                        <path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20 17 22" />
+                        <path d="M18 2H6v7a6 6 0 1012 0V2z" />
+                    </svg>
+                    <div class="result-loss">-8 kg</div>
+                </div>
+                <div class="result-body">
+                    <div class="stars">★★★★★</div>
+                    <div class="result-name">Marc D., 55 ans</div>
+                    <div class="result-meta">Paris · 3 mois</div>
+                    <div class="result-quote">«&nbsp;À 55 ans, j'ai retrouvé mon poids d'il y a 20 ans. Les repas sont
+                        délicieux !&nbsp;»</div>
+                </div>
+            </div>
+            <div class="result-card">
+                <div class="result-img rose"><svg style="position:relative;z-index:1;width:68px;height:68px"
+                        viewBox="0 0 24 24" fill="url(#testimonialFill3)" stroke="url(#testimonialGrad3)"
+                        stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+                        <path d="M9 12l2 2 4-4" fill="none" />
+                    </svg>
+                    <div class="result-loss">-15 kg</div>
+                </div>
+                <div class="result-body">
+                    <div class="stars">★★★★★</div>
+                    <div class="result-name">Leila B., 35 ans</div>
+                    <div class="result-meta">Marseille · 5 mois</div>
+                    <div class="result-quote">«&nbsp;Le suivi hebdomadaire a tout changé. 2 ans après, j'ai toujours mon
+                        poids cible.&nbsp;»</div>
+                </div>
+            </div>
+        </div>
+        <div class="text-center" style="margin-top:48px"><a href="#formyy" class="btn-primary"><svg viewBox="0 0 24 24"
+                    fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M9 18l6-6-6-6" />
+                </svg> Je veux transformer ma silhouette</a></div>
+    </section>
+
+    <!-- ✅ BLOG DYNAMIQUE — Articles chargés depuis WordPress REST API -->
+    <section class="blog-section" id="blog">
+        <div class="text-center fade-up">
+            <div class="section-label"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M4 19.5A2.5 2.5 0 016.5 17H20" />
+                    <path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z" />
+                </svg> Notre blog</div>
+            <h2 class="section-title">Conseils & inspiration<br>pour votre transformation</h2>
+            <p class="section-sub">Articles rédigés par des nutritionnistes experts.</p>
+        </div>
+        <div class="blog-carousel-wrapper fade-up">
+            <div class="blog-carousel" id="blogCarousel"><!-- Articles chargés dynamiquement depuis WordPress -->
+                <div class="blog-loading" id="blogLoading">
+                    <div class="spinner"></div> Chargement des articles...
+                </div>
+            </div>
+            <div class="blog-carousel-nav"><button class="blog-arrow" onclick="scrollBlog(-1)">‹</button>
+                <div class="blog-dots" id="blogDots"></div><button class="blog-arrow" onclick="scrollBlog(1)">›</button>
+            </div>
+        </div>
+    </section>
+
+    <section class="faq-section" id="faq">
+        <div class="text-center fade-up">
+            <div class="section-label"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="10" />
+                    <path d="M9.09 9a3 3 0 015.83 1c0 2-3 3-3 3" />
+                    <line x1="12" y1="17" x2="12.01" y2="17" />
+                </svg> Questions fréquentes</div>
+            <h2 class="section-title">Tout ce que vous<br>voulez savoir</h2>
+        </div>
+        <div class="faq-grid fade-up">
+            <div class="faq-item" onclick="toggleFaq(this)">
+                <div class="faq-q">Comment fonctionne le programme ?<div class="faq-icon"><svg viewBox="0 0 24 24"
+                            fill="none" stroke="currentColor" stroke-width="2">
+                            <line x1="12" y1="5" x2="12" y2="19" />
+                            <line x1="5" y1="12" x2="19" y2="12" />
+                        </svg></div>
+                </div>
+                <div class="faq-a">
+                    <div class="faq-a-inner">Après votre bilan gratuit, un nutritionniste crée votre programme 100%
+                        personnalisé avec suivi hebdomadaire.</div>
+                </div>
+            </div>
+            <div class="faq-item" onclick="toggleFaq(this)">
+                <div class="faq-q">Combien de temps pour les résultats ?<div class="faq-icon"><svg viewBox="0 0 24 24"
+                            fill="none" stroke="currentColor" stroke-width="2">
+                            <line x1="12" y1="5" x2="12" y2="19" />
+                            <line x1="5" y1="12" x2="19" y2="12" />
+                        </svg></div>
+                </div>
+                <div class="faq-a">
+                    <div class="faq-a-inner">1-2 kg dès la première semaine. En moyenne -8 kg sur 3 mois sans effet
+                        yo-yo.</div>
+                </div>
+            </div>
+            <div class="faq-item" onclick="toggleFaq(this)">
+                <div class="faq-q">Compatible avec une vie de famille ?<div class="faq-icon"><svg viewBox="0 0 24 24"
+                            fill="none" stroke="currentColor" stroke-width="2">
+                            <line x1="12" y1="5" x2="12" y2="19" />
+                            <line x1="5" y1="12" x2="19" y2="12" />
+                        </svg></div>
+                </div>
+                <div class="faq-a">
+                    <div class="faq-a-inner">Absolument. Programme adapté à vos contraintes réelles : temps limité,
+                        repas en famille.</div>
+                </div>
+            </div>
+            <div class="faq-item" onclick="toggleFaq(this)">
+                <div class="faq-q">Différence avec un régime classique ?<div class="faq-icon"><svg viewBox="0 0 24 24"
+                            fill="none" stroke="currentColor" stroke-width="2">
+                            <line x1="12" y1="5" x2="12" y2="19" />
+                            <line x1="5" y1="12" x2="19" y2="12" />
+                        </svg></div>
+                </div>
+                <div class="faq-a">
+                    <div class="faq-a-inner">Approche scientifique, personnalisée et progressive. 80% maintiennent leur
+                        poids 2 ans après.</div>
+                </div>
+            </div>
+            <div class="faq-item" onclick="toggleFaq(this)">
+                <div class="faq-q">Quels sont les tarifs ?<div class="faq-icon"><svg viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2">
+                            <line x1="12" y1="5" x2="12" y2="19" />
+                            <line x1="5" y1="12" x2="19" y2="12" />
+                        </svg></div>
+                </div>
+                <div class="faq-a">
+                    <div class="faq-a-inner">À partir de 150€/mois, personnalisé selon vos objectifs. Facilités de
+                        paiement disponibles.</div>
+                </div>
+            </div>
+            <div class="faq-item" onclick="toggleFaq(this)">
+                <div class="faq-q">Données protégées ?<div class="faq-icon"><svg viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2">
+                            <line x1="12" y1="5" x2="12" y2="19" />
+                            <line x1="5" y1="12" x2="19" y2="12" />
+                        </svg></div>
+                </div>
+                <div class="faq-a">
+                    <div class="faq-a-inner">Oui, conformément au RGPD. Jamais revendues à des tiers.</div>
+                </div>
+            </div>
+            <div class="faq-item" onclick="toggleFaq(this)">
+                <div class="faq-q">Garantie résultats ?<div class="faq-icon"><svg viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2">
+                            <line x1="12" y1="5" x2="12" y2="19" />
+                            <line x1="5" y1="12" x2="19" y2="12" />
+                        </svg></div>
+                </div>
+                <div class="faq-a">
+                    <div class="faq-a-inner">-3 kg minimum en 6 semaines ou remboursement intégral.</div>
+                </div>
+            </div>
+            <div class="faq-item" onclick="toggleFaq(this)">
+                <div class="faq-q">Problèmes de santé ?<div class="faq-icon"><svg viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2">
+                            <line x1="12" y1="5" x2="12" y2="19" />
+                            <line x1="5" y1="12" x2="19" y2="12" />
+                        </svg></div>
+                </div>
+                <div class="faq-a">
+                    <div class="faq-a-inner">Adapté à de nombreuses conditions. Votre historique médical est pris en
+                        compte.</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section
+        style="background:linear-gradient(135deg,var(--sage-dk),#2a5a30);color:#fff;padding:80px 5%;text-align:center;">
+        <div class="fade-up">
+            <div
+                style="font-size:13px;letter-spacing:3px;text-transform:uppercase;color:var(--sage-lt);margin-bottom:16px;">
+                Dernière chance</div>
+            <h2
+                style="font-family:'Playfair Display',serif;font-size:clamp(32px,4vw,52px);font-weight:700;margin-bottom:20px;line-height:1.15;">
+                Votre nouvelle silhouette<br><span style="color:var(--gold-lt)">n'attend que vous</span></h2>
+            <p style="font-size:17px;color:#ccc;max-width:500px;margin:0 auto 40px;line-height:1.6;font-weight:300;">
+                Rejoignez les 15 000 personnes transformées avec Label Minceur x Comme J'aime.</p><a href="#bilan"
+                class="btn-primary"
+                style="background:linear-gradient(135deg,var(--gold),var(--gold-lt));box-shadow:0 8px 30px #c8975a60;font-size:17px;padding:18px 44px;"><svg
+                    viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    style="width:20px;height:20px">
+                    <path d="M9 18l6-6-6-6" />
+                </svg> Calculer mon IMC gratuit</a>
+            <div style="margin-top:24px;font-size:13px;color:#aaa;">Sans engagement · Résultat instantané · 100% gratuit
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="footer-grid">
+            <div>
+                <div class="footer-brand"><object
+                        data="https://labelminceur.fr/wp-content/uploads/2026/03/Logo-LabelMinceur-2026.svg"
+                        type="image/svg+xml" class="footer-logo-obj" aria-label="Label Minceur"><img
+                            src="https://labelminceur.fr/wp-content/uploads/2026/03/Logo-LabelMinceur-2026.svg"
+                            alt="Label Minceur" class="footer-logo-obj"></object></div>
+                <div class="footer-desc">Le programme minceur personnalisé par des experts. Partenaire officiel Comme
+                    J'aime.</div>
+            </div>
+            <div class="footer-col">
+                <h4>Programme</h4><a href="#methode">Notre méthode</a><a href="#bilan">Calcul IMC</a><a
+                    href="#resultats">Résultats</a><a href="#devis">Devis gratuit</a>
+            </div>
+            <div class="footer-col">
+                <h4>Informations</h4><a href="#faq">FAQ</a><a href="https://labelminceur.fr/blog/">Blog minceur</a><a
+                    href="https://commejaime.fr/contact/">Contact</a><a
+                    href="mailto:contact@labelminceur.fr">contact@labelminceur.fr</a>
+            </div>
+            <div class="footer-col">
+                <h4>Légal</h4><a href="https://labelminceur.fr/mentions-legales/">Mentions légales</a><a
+                    href="https://labelminceur.fr/politique-de-confidentialite/">Politique RGPD</a><a
+                    href="https://labelminceur.fr/conditions-generales-dutilisation/">CGU & Cookies</a>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <div>© 2026 Label Minceur · Partenaire officiel Comme J'aime</div>
+            <div class="rgpd-links"><a href="https://labelminceur.fr/mentions-legales/">Mentions légales</a><a
+                    href="https://labelminceur.fr/politique-de-confidentialite/">RGPD</a><a
+                    href="https://labelminceur.fr/conditions-generales-dutilisation/">Cookies</a></div>
+        </div>
+    </footer>
+
+    <a href="#devis" class="sticky-cta">Calculer mon IMC →</a>
+    <button class="scroll-top-btn" id="scrollTopBtn" onclick="window.scrollTo({top:0,behavior:'smooth'})"
+        aria-label="Retour en haut"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <polyline points="18 15 12 9 6 15" />
+        </svg></button>
+
+    <script>
+        // FORM
+        let currentStep = 0; const totalSteps = 4, progLabels = ['Étape 1/4 — Votre profil', 'Étape 2/4 — Vos objectifs', 'Étape 3/4 — Votre mode de vie', 'Étape 4/4 — Vos coordonnées'];
+        function updateProgress(s) { document.getElementById('progFill').style.width = ((s + 1) / totalSteps * 100) + '%'; document.getElementById('progLabel').textContent = progLabels[s]; for (let i = 0; i < totalSteps; i++) { const d = document.getElementById('dot' + i); d.className = 'step-dot'; if (i < s) d.classList.add('done'); else if (i === s) d.classList.add('active') } }
+        function showStep(s) { document.querySelectorAll('.form-step').forEach(e => e.classList.remove('active')); document.getElementById('step' + s).classList.add('active'); updateProgress(s); currentStep = s; validateCurrentStep() }
+        function nextStep(f) { if (validateStep(f) && f < totalSteps - 1) showStep(f + 1) }
+        function prevStep(f) { if (f > 0) showStep(f - 1) }
+        function selectRadio(e, g) { document.querySelectorAll('#' + g + ' .radio-btn').forEach(b => b.classList.remove('selected')); e.classList.add('selected'); validateCurrentStep() }
+        const stepFields = { 0: { selects: ['civilite', 'age', 'poids', 'poidsCible', 'taille'], radios: [], inputs: [], checkboxes: [] }, 1: { selects: ['delai'], radios: ['objectifGroup'], inputs: [], checkboxes: [] }, 2: { selects: [], radios: ['activiteGroup', 'budgetGroup'], inputs: [], checkboxes: [] }, 3: { selects: [], radios: [], inputs: ['prenom', 'nom', 'email', 'telephone'], checkboxes: ['formConsent1'] } };
+        function validateStep(step) { const cfg = stepFields[step]; if (!cfg) return true; const errEl = document.getElementById('stepError' + step); for (const id of cfg.selects) { if (!document.getElementById(id).value) { if (errEl) errEl.textContent = 'Veuillez remplir tous les champs obligatoires.'; return false; } } for (const gid of cfg.radios) { if (!document.querySelector('#' + gid + ' .radio-btn.selected')) { if (errEl) errEl.textContent = 'Veuillez sélectionner une option pour chaque question.'; return false; } } for (const id of cfg.inputs) { const v = document.getElementById(id).value.trim(); if (!v) { if (errEl) errEl.textContent = 'Veuillez remplir tous les champs obligatoires.'; return false; } } if (cfg.inputs.includes('email')) { const em = document.getElementById('email').value.trim(); if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(em)) { if (errEl) errEl.textContent = 'Veuillez entrer une adresse e-mail valide.'; return false; } } if (cfg.inputs.includes('telephone')) { const ph = document.getElementById('telephone').value.trim(); if (!/^[\d\s\+\-\.]{8,}$/.test(ph)) { if (errEl) errEl.textContent = 'Veuillez entrer un numéro de téléphone valide.'; return false; } } for (const id of cfg.checkboxes) { if (!document.getElementById(id).checked) { if (errEl) errEl.textContent = 'Veuillez accepter la politique de confidentialité.'; return false; } } if (errEl) errEl.textContent = ''; return true; }
+        function validateCurrentStep() { const step = currentStep; const cfg = stepFields[step]; if (!cfg) return; const valid = validateStepSilent(step); const btnId = step < 3 ? 'btnNext' + step : 'btnSubmit'; const btn = document.getElementById(btnId); if (btn) { btn.disabled = !valid; } const errEl = document.getElementById('stepError' + step); if (errEl) errEl.textContent = ''; }
+        function validateStepSilent(step) { const cfg = stepFields[step]; if (!cfg) return true; for (const id of cfg.selects) { if (!document.getElementById(id).value) return false; } for (const gid of cfg.radios) { if (!document.querySelector('#' + gid + ' .radio-btn.selected')) return false; } for (const id of cfg.inputs) { if (!document.getElementById(id).value.trim()) return false; } if (cfg.inputs.includes('email')) { if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(document.getElementById('email').value.trim())) return false; } if (cfg.inputs.includes('telephone')) { if (!/^[\d\s\+\-\.]{8,}$/.test(document.getElementById('telephone').value.trim())) return false; } for (const id of cfg.checkboxes) { if (!document.getElementById(id).checked) return false; } return true; }
+        document.addEventListener('DOMContentLoaded', function () { ['civilite', 'age', 'poids', 'poidsCible', 'taille', 'delai'].forEach(id => { const el = document.getElementById(id); if (el) el.addEventListener('change', validateCurrentStep); });['prenom', 'nom', 'email', 'telephone'].forEach(id => { const el = document.getElementById(id); if (el) { el.addEventListener('input', validateCurrentStep); el.addEventListener('change', validateCurrentStep); } });['formConsent1', 'formConsent2'].forEach(id => { const el = document.getElementById(id); if (el) el.addEventListener('change', validateCurrentStep); }); validateCurrentStep(); });
+        function submitForm() { if (!validateStep(3)) return; const btn = document.getElementById('btnSubmit'); btn.disabled = true; btn.textContent = 'Envoi en cours...'; const trk = window.lm_tracking || JSON.parse(sessionStorage.getItem('lm_tracking') || '{}'); const data = { action: 'labelminceur_submit_form', civilite: document.getElementById('civilite').value, age: document.getElementById('age').value, poids: document.getElementById('poids').value, poids_cible: document.getElementById('poidsCible').value, taille: document.getElementById('taille').value, objectif: document.querySelector('#objectifGroup .radio-btn.selected')?.textContent.trim() || '', delai: document.getElementById('delai').value, activite: document.querySelector('#activiteGroup .radio-btn.selected')?.textContent.trim() || '', budget: document.querySelector('#budgetGroup .radio-btn.selected')?.textContent.trim() || '', prenom: document.getElementById('prenom').value.trim(), nom: document.getElementById('nom').value.trim(), email: document.getElementById('email').value.trim(), telephone: document.getElementById('telephone').value.trim(), consent_confidentialite: document.getElementById('formConsent1').checked ? 1 : 0, consent_offres: document.getElementById('formConsent2').checked ? 1 : 0, source: trk.detected_source || 'Direct', utm_source: trk.utm_source || '', utm_medium: trk.utm_medium || '', utm_campaign: trk.utm_campaign || '', utm_term: trk.utm_term || '', utm_content: trk.utm_content || '', referrer: trk.referrer || '', landing_page: trk.landing_page || '', device: trk.device || '', browser: trk.browser || '' }; const ajaxUrl = (typeof labelminceur_ajax !== 'undefined') ? labelminceur_ajax.ajax_url : '/wp-admin/admin-ajax.php'; fetch(ajaxUrl, { method: 'POST', headers: { 'Content-Type': 'application/x-www-form-urlencoded' }, body: new URLSearchParams(data).toString() }).then(r => r.json()).then(res => { if (res.success) { window.location.href = 'http://tracking.gototrackers.com/aff_c?offer_id=7&aff_id=1064&file_id=2041&source=cis&aff_sub=cis&url_id=9956'; } else { btn.disabled = false; btn.textContent = 'Recevoir mon programme ✓'; document.getElementById('stepError3').textContent = res.data?.message || 'Erreur lors de l\'envoi. Veuillez réessayer.'; } }).catch(() => { btn.disabled = false; btn.textContent = 'Recevoir mon programme ✓'; document.getElementById('stepError3').textContent = 'Erreur de connexion. Veuillez réessayer.'; }); }
+        function toggleFaq(e) { const o = e.classList.contains('open'); document.querySelectorAll('.faq-item').forEach(f => f.classList.remove('open')); if (!o) e.classList.add('open') }
+        const observer = new IntersectionObserver(e => { e.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible') }) }, { threshold: 0.1 }); document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
+        window.addEventListener('scroll', () => { document.getElementById('nav').style.boxShadow = window.scrollY > 50 ? '0 4px 30px #00000015' : 'none' });
+        window.addEventListener('scroll', function () { const btn = document.getElementById('scrollTopBtn'); if (window.scrollY > 500) { btn.classList.add('visible') } else { btn.classList.remove('visible') } });
+        function animateCountUp(el) { const t = parseInt(el.dataset.count), p = el.dataset.prefix || '', s = el.dataset.suffix || '', d = 2000, st = performance.now(); function u(c) { const e = c - st, pr = Math.min(e / d, 1), ea = 1 - Math.pow(1 - pr, 3); el.textContent = p + Math.round(ea * t) + s; if (pr < 1) requestAnimationFrame(u) } requestAnimationFrame(u) }
+        const tO = new IntersectionObserver(e => { e.forEach(e => { if (e.isIntersecting && !e.target.dataset.animated) { e.target.dataset.animated = 'true'; animateCountUp(e.target) } }) }, { threshold: 0.5 }); document.querySelectorAll('.trust-number[data-count]').forEach(el => tO.observe(el));
+
+        // IMC CALCULATOR
+        function calculateIMCInline() { const age = parseInt(document.getElementById('imcAge').value), taille = parseInt(document.getElementById('imcTaille').value), poids = parseFloat(document.getElementById('imcPoids').value), objectif = parseFloat(document.getElementById('imcObjectif').value), gender = document.querySelector('input[name="imcGender"]:checked')?.value || 'femme', ossature = document.querySelector('input[name="imcOssature"]:checked')?.value || 'moyenne', err = document.getElementById('imcInlineError'); if (!age || age < 18 || age > 99) { err.textContent = 'Âge valide requis (18-99 ans).'; return } if (!taille || taille < 130 || taille > 230) { err.textContent = 'Taille valide requise (130-230 cm).'; return } if (!poids || poids < 30 || poids > 300) { err.textContent = 'Poids actuel requis.'; return } if (!objectif || objectif < 30 || objectif > 300) { err.textContent = 'Objectif de poids requis.'; return } if (objectif >= poids) { err.textContent = 'L\'objectif doit être inférieur au poids actuel.'; return } err.textContent = ''; const tm = taille / 100, imc = poids / (tm * tm), imcR = Math.round(imc * 10) / 10; let pi; if (gender === 'femme') pi = (taille - 100) - ((taille - 150) / 2.5); else pi = (taille - 100) - ((taille - 150) / 4); if (ossature === 'fine') pi *= 0.95; else if (ossature === 'lourde') pi *= 1.05; pi = Math.round(pi * 10) / 10; const pap = Math.round((poids - objectif) * 10) / 10, weeks = Math.ceil(pap / 0.8), months = Math.round(weeks / 4.3); let bmr; if (gender === 'femme') bmr = 447.593 + (9.247 * poids) + (3.098 * taille) - (4.330 * age); else bmr = 88.362 + (13.397 * poids) + (4.799 * taille) - (5.677 * age); const cal = Math.round(bmr * 1.4 - 500); let cat, desc, color, cc, pt, pd; if (imc < 18.5) { cat = 'Insuffisance pondérale'; desc = 'Votre IMC est en dessous de la norme.'; color = '#42a5f5'; cc = 'linear-gradient(135deg,#42a5f5,#1e88e5)'; pt = 'Programme Équilibre & Vitalité'; pd = 'Rééquilibrage alimentaire avec menus enrichis.' } else if (imc < 25) { cat = 'Corpulence normale'; desc = 'Votre IMC est dans la norme.'; color = '#66bb6a'; cc = 'linear-gradient(135deg,#66bb6a,#43a047)'; pt = 'Programme Maintien & Bien-être'; pd = 'Optimisez votre alimentation durablement.' } else if (imc < 30) { cat = 'Surpoids'; desc = 'Un programme personnalisé vous aidera.'; color = '#fdd835'; cc = 'linear-gradient(135deg,#fdd835,#f9a825)'; pt = 'Programme Minceur Personnalisé'; pd = pap + ' kg à perdre sur ' + (months <= 1 ? '4-6 semaines' : months + ' mois') + '.'; } else if (imc < 35) { cat = 'Obésité modérée'; desc = 'Accompagnement nutritionnel recommandé.'; color = '#ff9800'; cc = 'linear-gradient(135deg,#ff9800,#ef6c00)'; pt = 'Programme Transformation'; pd = 'Objectif -' + pap + ' kg sur ' + months + ' mois.'; } else { cat = 'Obésité sévère'; desc = 'Programme intensif essentiel.'; color = '#f44336'; cc = 'linear-gradient(135deg,#f44336,#c62828)'; pt = 'Accompagnement Médical'; pd = 'Perte de ' + pap + ' kg sur ' + months + ' mois.'; } document.getElementById('imcInlineVal').textContent = imcR; document.getElementById('imcInlineCat').textContent = cat; document.getElementById('imcInlineCat').style.color = color; document.getElementById('imcInlineDesc').textContent = desc; document.getElementById('imcInlineCircle').style.background = cc; document.getElementById('imcInlineMarker').style.left = Math.min(Math.max(((imc - 15) / (42 - 15)) * 100, 2), 98) + '%'; document.getElementById('imcInlineKg').textContent = '-' + pap + ' kg'; document.getElementById('imcInlineCal').textContent = cal + ' kcal'; document.getElementById('imcInlinePi').textContent = pi + ' kg'; document.getElementById('imcInlineDuree').textContent = months <= 1 ? '4-6 sem.' : months + ' mois'; document.getElementById('imcInlineProgTitle').textContent = pt; document.getElementById('imcInlineProgDesc').textContent = pd; document.getElementById('imcFormSection').style.display = 'none'; document.getElementById('imcInlineResults').classList.add('show'); saveIMCToWP({ age, taille, poids, objectif, gender, ossature, imc: imcR, category: cat }); }
+        function resetIMCForm() { document.getElementById('imcFormSection').style.display = 'block'; document.getElementById('imcInlineResults').classList.remove('show'); }
+        function saveIMCToWP(data) { const ajaxUrl = (typeof labelminceur_ajax !== 'undefined') ? labelminceur_ajax.ajax_url : '/wp-admin/admin-ajax.php'; const trk = window.lm_tracking || JSON.parse(sessionStorage.getItem('lm_tracking') || '{}'); const params = new URLSearchParams({ action: 'labelminceur_save_imc', ...data, source: trk.detected_source || 'Direct', utm_source: trk.utm_source || '', utm_medium: trk.utm_medium || '', utm_campaign: trk.utm_campaign || '' }); fetch(ajaxUrl, { method: 'POST', headers: { 'Content-Type': 'application/x-www-form-urlencoded' }, body: params.toString() }).catch(() => { }); }
+
+        // ═══════════════════════════════════════════════════════
+        // ✅ BLOG DYNAMIQUE — Chargement depuis WordPress REST API
+        // ═══════════════════════════════════════════════════════
+        let blogIndex = 0, blogCards = [], bai = null;
+        const blogCarousel = document.getElementById('blogCarousel'), dotsC = document.getElementById('blogDots');
+
+        // Determine WP REST API base URL
+        const wpApiBase = (function () {
+            if (typeof labelminceur_ajax !== 'undefined' && labelminceur_ajax.site_url) return labelminceur_ajax.site_url + '/wp-json/wp/v2';
+            try { const loc = window.location; if (loc.hostname.indexOf('labelminceur') !== -1) return loc.origin + '/wp-json/wp/v2'; } catch (e) { }
+            return 'https://labelminceur.fr/wp-json/wp/v2';
+        })();
+
+        function formatDateFR(dateStr) {
+            const d = new Date(dateStr);
+            const months = ['jan', 'fév', 'mars', 'avr', 'mai', 'juin', 'juil', 'août', 'sept', 'oct', 'nov', 'déc'];
+            return d.getDate() + ' ' + months[d.getMonth()] + ' ' + d.getFullYear();
+        }
+        function estimateReadTime(text) { return Math.max(1, Math.round(text.replace(/<[^>]+>/g, '').split(/\s+/).length / 200)); }
+        function stripHTML(html) { const d = document.createElement('div'); d.innerHTML = html; return d.textContent || d.innerText || ''; }
+
+        function createBlogCard(post, catName, imgUrl) {
+            const card = document.createElement('div'); card.className = 'blog-card';
+            const excerpt = stripHTML(post.excerpt?.rendered || '').substring(0, 120).trim();
+            const readTime = estimateReadTime(post.content?.rendered || post.excerpt?.rendered || '');
+            const date = formatDateFR(post.date);
+            const title = post.title?.rendered || 'Sans titre';
+            const link = post.link || '#';
+            const img = imgUrl || 'https://images.unsplash.com/photo-1506784983877-45594efa4cbe?w=800&q=80';
+            const tag = catName || 'Article';
+            card.innerHTML = '<div class="blog-card-img-dynamic" style="background-image:url(\'' + img + '\')"><div class="blog-tag">' + tag + '</div><div class="blog-read-time">' + readTime + ' min</div></div><div class="blog-card-body"><div class="blog-card-date">' + date + '</div><div class="blog-card-title">' + title + '</div><div class="blog-card-excerpt">' + excerpt + (excerpt.length >= 120 ? '…' : '') + '</div><a href="' + link + '" class="blog-card-link">Lire l\'article →</a></div>';
+            card.addEventListener('click', function (e) { if (!e.target.closest('.blog-card-link')) window.location.href = link; });
+            return card;
+        }
+
+        function loadFallbackArticles() {
+            const f = [
+                { t: 'Les 7 erreurs qui sabotent votre perte de poids', e: 'Découvrez les pièges les plus courants selon nos nutritionnistes.', tag: 'Nutrition', img: 'https://images.unsplash.com/photo-1506784983877-45594efa4cbe?w=800&q=80', d: '8 mars 2026', m: '5' },
+                { t: '5 recettes healthy prêtes en 15 minutes', e: 'Des repas équilibrés et ultra-rapides pour les soirs pressés.', tag: 'Recettes', img: 'https://images.unsplash.com/photo-1547592180-85f173990554?w=800&q=80', d: '2 mars 2026', m: '3' },
+                { t: 'Stress et prise de poids : la science du cortisol', e: 'Le lien entre stress chronique et prise de poids expliqué.', tag: 'Bien-être', img: 'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=800&q=80', d: '25 fév 2026', m: '7' },
+                { t: 'IMC vs IDM : pourquoi l\'IMC ne suffit plus', e: 'Les limites de l\'IMC et l\'avantage de l\'Indice Dynamique.', tag: 'Science', img: 'https://images.unsplash.com/photo-1511688878353-3a2f5be94cd7?w=800&q=80', d: '18 fév 2026', m: '6' },
+                { t: '3 exercices pour brûler les graisses chez soi', e: 'Pas besoin de salle : 20 minutes suffisent.', tag: 'Sport', img: 'https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?w=800&q=80', d: '10 fév 2026', m: '4' },
+                { t: 'Garder la motivation pendant un programme', e: 'Les techniques psychologiques de nos coaches.', tag: 'Motivation', img: 'https://images.unsplash.com/photo-1505576399279-0d754c0f5932?w=800&q=80', d: '3 fév 2026', m: '5' }
+            ];
+            blogCarousel.innerHTML = '';
+            f.forEach(function (a) { const c = document.createElement('div'); c.className = 'blog-card'; c.innerHTML = '<div class="blog-card-img-dynamic" style="background-image:url(\'' + a.img + '\')"><div class="blog-tag">' + a.tag + '</div><div class="blog-read-time">' + a.m + ' min</div></div><div class="blog-card-body"><div class="blog-card-date">' + a.d + '</div><div class="blog-card-title">' + a.t + '</div><div class="blog-card-excerpt">' + a.e + '</div><a href="#" class="blog-card-link">Lire l\'article →</a></div>'; blogCarousel.appendChild(c); });
+            initBlogCarousel();
+        }
+
+        async function loadWPBlogPosts() {
+            try {
+                const r = await fetch(wpApiBase + '/posts?per_page=9&orderby=date&order=desc&_embed&status=publish');
+                if (!r.ok) throw new Error('API ' + r.status);
+                const posts = await r.json();
+                if (!posts.length) { document.getElementById('blogLoading').innerHTML = '<div class="blog-empty">Aucun article pour le moment.</div>'; return; }
+                blogCarousel.innerHTML = '';
+                posts.forEach(function (post) {
+                    let img = ''; try { const m = post._embedded?.['wp:featuredmedia']; if (m && m[0]) { const s = m[0].media_details?.sizes; img = (s?.medium_large?.source_url) || (s?.medium?.source_url) || (s?.large?.source_url) || m[0].source_url || ''; } } catch (e) { }
+                    let cat = 'Article'; try { const t = post._embedded?.['wp:term']; if (t && t[0] && t[0][0]) cat = t[0][0].name; } catch (e) { }
+                    blogCarousel.appendChild(createBlogCard(post, cat, img));
+                });
+                initBlogCarousel();
+            } catch (err) { console.warn('Blog WP API error:', err); loadFallbackArticles(); }
+        }
+
+        function initBlogCarousel() { blogIndex = 0; blogCards = document.querySelectorAll('#blogCarousel .blog-card'); buildDots(); startAutoScroll(); window.addEventListener('resize', buildDots); }
+        function getCV() { return window.innerWidth <= 600 ? 1 : window.innerWidth <= 900 ? 1 : 3 }
+        function buildDots() { if (!dotsC || !blogCards.length) return; dotsC.innerHTML = ''; const p = Math.ceil(blogCards.length / getCV()); for (let i = 0; i < p; i++) { const d = document.createElement('div'); d.className = 'blog-dot' + (i === 0 ? ' active' : ''); d.onclick = () => { blogIndex = Math.min(i * getCV(), blogCards.length - getCV()); updateBC() }; dotsC.appendChild(d); } }
+        function scrollBlog(dir) { if (!blogCards.length) return; const mx = blogCards.length - getCV(); blogIndex = Math.max(0, Math.min(blogIndex + dir, mx)); updateBC(); }
+        function updateBC() { if (!blogCards.length) return; const cw = blogCards[0].offsetWidth + 28; blogCarousel.scrollTo({ left: blogIndex * cw, behavior: 'smooth' }); const ap = Math.floor(blogIndex / getCV()); dotsC.querySelectorAll('.blog-dot').forEach((d, i) => d.className = 'blog-dot' + (i === ap ? ' active' : '')); }
+        function startAutoScroll() { if (bai) clearInterval(bai); bai = setInterval(() => { if (!blogCards.length) return; const mx = blogCards.length - getCV(); blogIndex = blogIndex >= mx ? 0 : blogIndex + 1; updateBC(); }, 5000); blogCarousel.addEventListener('mouseenter', () => clearInterval(bai)); blogCarousel.addEventListener('mouseleave', () => startAutoScroll()); }
+
+        // Charger les articles au démarrage
+        if (document.readyState === 'loading') { document.addEventListener('DOMContentLoaded', loadWPBlogPosts); } else { loadWPBlogPosts(); }
+    </script>
+</body>
+
+</html>

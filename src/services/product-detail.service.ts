@@ -45,6 +45,8 @@ export interface ProductDetailPageContent {
   price: string;
   regions: ProductDetailRegion[];
   relatedProducts: ProductDetailRelatedProduct[];
+  seoDescription?: string;
+  seoTitle?: string;
   shortDescription?: string;
   sku: string;
   slug: string;
@@ -214,6 +216,8 @@ export const productDetailService = {
       price: formatPrice(product.finalPrice),
       regions: productRegions.map(toDetailRegion),
       relatedProducts,
+      seoDescription: product.seoDescription,
+      seoTitle: product.seoTitle,
       shortDescription: product.shortDescription,
       sku: product.sku,
       slug: product.slug,

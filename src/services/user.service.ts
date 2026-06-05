@@ -4,11 +4,15 @@ import { AppError } from "@/lib/utils/app-error";
 import { serializeDocument } from "@/lib/utils/serialization";
 import {
   createUser,
+  deleteUserById,
   getUserByEmail,
+  getUserById,
   listUsers,
   type UserListFilters,
+  updateUserById,
   upsertUserByEmail,
 } from "@/repositories/user.repository";
+import { assertObjectId } from "@/lib/utils/object-id";
 import type { AuthProvider, User, UserRole } from "@/types/entities";
 
 export interface AdminUserListItem {
@@ -19,6 +23,7 @@ export interface AdminUserListItem {
   firstName: string;
   isActive: boolean;
   lastName: string;
+  phone?: string;
   role: UserRole;
   updatedAt: string;
 }
@@ -32,15 +37,27 @@ interface CreateUserInput {
   isActive?: boolean;
 }
 
+interface EnsureGuestUserInput {
+  email: string;
+  firstName: string;
+  lastName: string;
+}
+
 function toAdminUserListItem(user: User): AdminUserListItem {
   return {
     _id: user._id,
-    authProviders: user.authProviders?.length ? user.authProviders : ["local"],
+    authProviders:
+      user.role === "guest"
+        ? []
+        : user.authProviders?.length
+          ? user.authProviders
+          : ["local"],
     createdAt: user.createdAt,
     email: user.email,
     firstName: user.firstName,
     isActive: user.isActive,
     lastName: user.lastName,
+    phone: user.phone,
     role: user.role,
     updatedAt: user.updatedAt,
   };
@@ -54,6 +71,59 @@ export const userService = {
     return {
       ...result,
       items: users.map(toAdminUserListItem),
+    };
+  },
+
+  async ensureGuestForOrder(input: EnsureGuestUserInput) {
+    const email = input.email.toLowerCase();
+    const existing = await getUserByEmail(email);
+
+    if (existing && existing.role !== "guest") {
+      return serializeDocument<User>(existing);
+    }
+
+    if (existing) {
+      const updated = await updateUserById(String(existing._id), {
+        firstName: input.firstName,
+        lastName: input.lastName,
+        email,
+        role: "guest",
+        isActive: true,
+        authProviders: [],
+      });
+
+      return serializeDocument<User>(updated ?? existing);
+    }
+
+    const created = await createUser({
+      firstName: input.firstName,
+      lastName: input.lastName,
+      email,
+      role: "guest",
+      isActive: true,
+      authProviders: [],
+    });
+
+    return serializeDocument<User>(created);
+  },
+
+  async delete(id: string) {
+    assertObjectId(id, "Identifiant utilisateur");
+
+    const existing = await getUserById(id);
+
+    if (!existing) {
+      throw new AppError("Utilisateur introuvable.", 404);
+    }
+
+    const deleted = await deleteUserById(id);
+
+    if (!deleted) {
+      throw new AppError("Utilisateur introuvable.", 404);
+    }
+
+    return {
+      success: true,
     };
   },
 

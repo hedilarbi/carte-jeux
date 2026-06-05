@@ -11,6 +11,7 @@ import {
   successResponse,
 } from "@/lib/utils/api-response";
 import { checkoutCreateSchema } from "@/lib/validation/checkout";
+import { customerAuthService } from "@/services/customer-auth.service";
 import { orderService } from "@/services/order.service";
 
 async function readJsonBody(request: NextRequest) {
@@ -26,14 +27,29 @@ export async function POST(request: NextRequest) {
 
   try {
     const customerSession = await getCustomerApiSession(request);
+    const customerUser = customerSession
+      ? await customerAuthService.getSessionUser(customerSession.userId)
+      : null;
     const body = await readJsonBody(request);
     const parsed = checkoutCreateSchema.parse({
       ...body,
-      customerEmail: customerSession?.email ?? body.customerEmail,
+      customerFirstName: customerUser?.firstName ?? body.customerFirstName,
+      customerLastName: customerUser?.lastName ?? body.customerLastName,
+      customerEmail:
+        customerUser?.email ?? body.customerEmail ?? customerSession?.email,
       paymentMethod: "floussi",
     });
     const order = await orderService.createFromCart({
       customerEmail: parsed.customerEmail,
+      customerFirstName: parsed.customerFirstName,
+      customerLastName: parsed.customerLastName,
+      guestCustomer: customerSession
+        ? undefined
+        : {
+            email: parsed.customerEmail,
+            firstName: parsed.customerFirstName,
+            lastName: parsed.customerLastName,
+          },
       paymentProvider: parsed.paymentMethod,
       sessionId: cartSession.sessionId,
       userId: customerSession?.userId,
@@ -41,6 +57,7 @@ export async function POST(request: NextRequest) {
 
     revalidatePath("/admin");
     revalidatePath("/admin/orders");
+    revalidatePath("/admin/users");
     revalidatePath("/checkout");
     revalidatePath("/panier");
     revalidatePath("/profil");

@@ -34,6 +34,7 @@ interface ProductsManagerProps {
 interface ProductFormState {
   title: string;
   slug: string;
+  description: string;
   categoryIds: string[];
   platformId: string;
   regionIds: string[];
@@ -49,6 +50,7 @@ interface ProductFormState {
 const defaultFormState: ProductFormState = {
   title: "",
   slug: "",
+  description: "",
   categoryIds: [],
   platformId: "",
   regionIds: [],
@@ -131,7 +133,13 @@ export function ProductsManager({
     }
 
     return products.filter((product) =>
-      [product.title, product.slug, product.sku, product.shortDescription ?? ""]
+      [
+        product.title,
+        product.slug,
+        product.sku,
+        product.shortDescription ?? "",
+        product.description ?? "",
+      ]
         .join(" ")
         .toLowerCase()
         .includes(query),
@@ -166,6 +174,7 @@ export function ProductsManager({
     setForm({
       title: product.title,
       slug: product.slug,
+      description: product.description ?? "",
       categoryIds: getProductCategoryIds(product),
       platformId: product.platformId,
       regionIds: getProductRegionIds(product),
@@ -218,6 +227,7 @@ export function ProductsManager({
       const payload = new FormData();
       payload.set("title", form.title);
       payload.set("slug", form.slug);
+      payload.set("description", form.description);
       payload.set("categoryId", form.categoryIds[0]);
       form.categoryIds.forEach((categoryId) => {
         payload.append("categoryIds", categoryId);
@@ -691,6 +701,22 @@ export function ProductsManager({
           </div>
 
           <div className="grid gap-4 md:grid-cols-2">
+            <div className="md:col-span-2">
+              <label className="mb-2 block text-sm font-medium text-slate-700">
+                Description produit
+              </label>
+              <Textarea
+                value={form.description}
+                onChange={(event) =>
+                  setForm((current) => ({
+                    ...current,
+                    description: event.target.value,
+                  }))
+                }
+                placeholder="Description visible sur la page produit"
+              />
+            </div>
+
             <div>
               <label className="mb-2 block text-sm font-medium text-slate-700">
                 Titre SEO

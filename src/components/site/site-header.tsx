@@ -65,7 +65,7 @@ export function SiteHeader() {
           detail: { user: null },
         }),
       );
-      router.push("/connexion");
+      router.push("/");
       router.refresh();
     } finally {
       setIsLoggingOut(false);

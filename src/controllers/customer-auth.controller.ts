@@ -66,7 +66,29 @@ async function signedInResponse(
 export async function registerCustomerController(request: NextRequest) {
   try {
     const body = await readJsonBody(request);
-    const user = await customerAuthService.register(body);
+    const data = await customerAuthService.register(body);
+
+    return successResponse(data, { status: 201 });
+  } catch (error) {
+    return handleRouteError(error);
+  }
+}
+
+export async function resendRegistrationOtpController(request: NextRequest) {
+  try {
+    const body = await readJsonBody(request);
+    const data = await customerAuthService.resendRegistrationOtp(body);
+
+    return successResponse(data);
+  } catch (error) {
+    return handleRouteError(error);
+  }
+}
+
+export async function verifyRegistrationOtpController(request: NextRequest) {
+  try {
+    const body = await readJsonBody(request);
+    const user = await customerAuthService.verifyRegistrationOtp(body);
 
     return signedInResponse(request, user, { status: 201 });
   } catch (error) {
@@ -80,6 +102,31 @@ export async function loginCustomerController(request: NextRequest) {
     const user = await customerAuthService.login(body);
 
     return signedInResponse(request, user);
+  } catch (error) {
+    return handleRouteError(error);
+  }
+}
+
+export async function completeCustomerProfileController(request: NextRequest) {
+  try {
+    const session = await getCustomerApiSession(request);
+
+    if (!session) {
+      return NextResponse.json(
+        {
+          success: false,
+          error: {
+            message: "Vous devez être connecté pour compléter votre profil.",
+          },
+        },
+        { status: 401 },
+      );
+    }
+
+    const body = await readJsonBody(request);
+    const user = await customerAuthService.completeProfile(session.userId, body);
+
+    return successResponse({ user });
   } catch (error) {
     return handleRouteError(error);
   }

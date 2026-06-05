@@ -1,4 +1,4 @@
-export type UserRole = "admin" | "customer";
+export type UserRole = "admin" | "customer" | "guest";
 export type AuthProvider = "local" | "google" | "facebook";
 export type ProductType = "gift_card" | "subscription" | "game_credit";
 export type DeliveryMode = "manual_email";
@@ -13,6 +13,7 @@ export type OrderStatus =
 export type PaymentStatus = "pending" | "paid" | "failed" | "refunded";
 export type PromoCampaignType = "percentage";
 export type CartStatus = "active" | "converted" | "abandoned";
+export type ContactSubmissionStatus = "new" | "replied";
 
 export interface BaseEntity {
   _id: string;
@@ -24,12 +25,14 @@ export interface User extends BaseEntity {
   firstName: string;
   lastName: string;
   email: string;
-  passwordHash: string;
+  phone?: string;
+  passwordHash?: string;
   role: UserRole;
   isActive: boolean;
   authProviders?: AuthProvider[];
   googleId?: string;
   facebookId?: string;
+  profileCompletedAt?: string;
   passwordResetTokenHash?: string;
   passwordResetExpiresAt?: string;
 }
@@ -145,6 +148,8 @@ export interface Order extends BaseEntity {
   totalDiscount: number;
   total: number;
   currency: string;
+  customerFirstName?: string;
+  customerLastName?: string;
   customerEmail: string;
   supplierPlatform?: string;
   supplierPurchaseReference?: string;
@@ -167,6 +172,27 @@ export interface PromoCampaign extends BaseEntity {
   startsAt: string;
   endsAt: string;
   isActive: boolean;
+}
+
+export interface ContactSubmissionReply {
+  _id?: string;
+  message: string;
+  sentTo: string;
+  sentAt: string;
+  adminEmail?: string;
+}
+
+export interface ContactSubmission extends BaseEntity {
+  platform: string;
+  requestType: string;
+  productName: string;
+  region: string;
+  budget: string;
+  payment: string;
+  email: string;
+  phone?: string;
+  status: ContactSubmissionStatus;
+  replies: ContactSubmissionReply[];
 }
 
 export interface DashboardStats {
@@ -195,6 +221,8 @@ export interface AuthUser {
   firstName: string;
   lastName: string;
   email: string;
+  phone?: string;
+  profileCompletedAt?: string;
   role: UserRole;
   authProviders: AuthProvider[];
 }

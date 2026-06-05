@@ -143,7 +143,9 @@ export async function authenticateAdminUser(email: string, password: string) {
     throw new AppError("Ce compte administrateur est inactif.", 403);
   }
 
-  const passwordMatches = await compare(password, user.passwordHash);
+  const passwordMatches = user.passwordHash
+    ? await compare(password, user.passwordHash)
+    : false;
 
   if (!passwordMatches) {
     throw new AppError("Identifiants administrateur invalides.", 401);

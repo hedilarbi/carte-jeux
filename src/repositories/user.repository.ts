@@ -3,7 +3,7 @@ import { type mongo } from "mongoose";
 import { connectToDatabase } from "@/lib/db/mongoose";
 import { resolvePagination } from "@/lib/utils/pagination";
 import { UserModel, type UserRecord } from "@/models/user.model";
-import type { AuthProvider } from "@/types/entities";
+import type { AuthProvider, UserRole } from "@/types/entities";
 import type { SearchablePaginationInput } from "@/types/common";
 
 type UserQuery = mongo.Filter<UserRecord>;
@@ -12,7 +12,8 @@ type UserCountQuery = Parameters<typeof UserModel.countDocuments>[0];
 
 export interface UserListFilters extends SearchablePaginationInput {
   isActive?: boolean;
-  role?: "admin" | "customer";
+  role?: UserRole;
+  roles?: UserRole[];
 }
 
 export async function countUsers() {
@@ -32,11 +33,16 @@ export async function listUsers(filters: UserListFilters = {}) {
       { firstName: searchRegex },
       { lastName: searchRegex },
       { email: searchRegex },
+      { phone: searchRegex },
     ];
   }
 
   if (filters.role) {
     query.role = filters.role;
+  }
+
+  if (filters.roles?.length) {
+    query.role = { $in: filters.roles };
   }
 
   if (typeof filters.isActive === "boolean") {
@@ -71,6 +77,11 @@ export async function getUserByEmail(email: string) {
 export async function getUserById(id: string) {
   await connectToDatabase();
   return UserModel.findById(id).lean().exec();
+}
+
+export async function deleteUserById(id: string) {
+  await connectToDatabase();
+  return UserModel.findByIdAndDelete(id).lean().exec();
 }
 
 export async function getUserByResetTokenHash(tokenHash: string) {

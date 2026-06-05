@@ -1,3 +1,4 @@
+@import "react-phone-number-input/style.css";
 @import "tailwindcss";
 
 :root {
@@ -121,6 +122,59 @@ textarea {
 
 ::selection {
   background: rgba(185, 152, 241, 0.32);
+}
+
+.auth-phone-input {
+  min-height: 3rem;
+  border: 1px solid #daddff;
+  border-radius: 14px;
+  background: #f8f9ff;
+  padding: 0 1rem;
+  color: #00061e;
+  font-family: var(--font-inter-family), sans-serif;
+  font-size: 0.875rem;
+  font-weight: 600;
+  transition:
+    background-color 150ms ease,
+    border-color 150ms ease,
+    box-shadow 150ms ease;
+}
+
+.auth-phone-input:focus-within {
+  border-color: #a582ed;
+  background: #ffffff;
+  box-shadow: 0 0 0 4px rgba(165, 130, 237, 0.16);
+}
+
+.auth-phone-input .PhoneInputCountry {
+  align-self: stretch;
+  margin-right: 0.75rem;
+  padding-right: 0.75rem;
+  border-right: 1px solid rgba(1, 45, 105, 0.14);
+}
+
+.auth-phone-input .PhoneInputCountrySelect {
+  cursor: pointer;
+}
+
+.auth-phone-input .PhoneInputCountryIcon {
+  width: 1.65rem;
+  height: 1.1rem;
+  border-radius: 3px;
+  overflow: hidden;
+  box-shadow: none;
+}
+
+.auth-phone-input .PhoneInputInput {
+  min-width: 0;
+  border: 0;
+  background: transparent;
+  color: #00061e;
+  outline: 0;
+}
+
+.auth-phone-input .PhoneInputInput::placeholder {
+  color: rgba(1, 45, 105, 0.35);
 }
 
 @keyframes announcement-marquee {

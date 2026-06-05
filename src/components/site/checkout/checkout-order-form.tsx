@@ -4,7 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState, type FormEvent } from "react";
-import { CheckCircle2, Mail, ShoppingBag } from "lucide-react";
+import { CheckCircle2, Mail, ShoppingBag, UserRound } from "lucide-react";
 
 import { fetchJson } from "@/lib/utils/fetch-json";
 import type { Cart, CartItem, Order } from "@/types/entities";
@@ -17,19 +17,28 @@ function countItems(items: CartItem[]) {
   return items.reduce((sum, item) => sum + item.quantity, 0);
 }
 
+interface CheckoutCustomer {
+  email: string;
+  firstName: string;
+  lastName: string;
+}
+
 export function CheckoutOrderForm({
   cart,
-  customerEmail,
+  customer,
 }: {
   cart: Cart | null;
-  customerEmail?: string;
+  customer?: CheckoutCustomer;
 }) {
   const router = useRouter();
   const items = cart?.items ?? [];
   const hasItems = items.length > 0;
-  const [email, setEmail] = useState(customerEmail ?? "");
+  const [firstName, setFirstName] = useState(customer?.firstName ?? "");
+  const [lastName, setLastName] = useState(customer?.lastName ?? "");
+  const [email, setEmail] = useState(customer?.email ?? "");
   const [error, setError] = useState<string | null>(null);
   const [isPending, setIsPending] = useState(false);
+  const isAuthenticated = Boolean(customer);
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -45,6 +54,8 @@ export function CheckoutOrderForm({
       const order = await fetchJson<Order>("/api/checkout", {
         method: "POST",
         body: JSON.stringify({
+          customerFirstName: firstName,
+          customerLastName: lastName,
           customerEmail: email,
           paymentMethod: "floussi",
         }),
@@ -81,10 +92,14 @@ export function CheckoutOrderForm({
     >
       <section className="grid gap-[15px]">
         <PaymentMethodCard />
-        <EmailCard
+        <CustomerInfoCard
           email={email}
-          isAuthenticated={Boolean(customerEmail)}
+          firstName={firstName}
+          isAuthenticated={isAuthenticated}
+          lastName={lastName}
           onEmailChange={setEmail}
+          onFirstNameChange={setFirstName}
+          onLastNameChange={setLastName}
         />
       </section>
 
@@ -129,31 +144,82 @@ function PaymentMethodCard() {
   );
 }
 
-function EmailCard({
+function CustomerInfoCard({
   email,
+  firstName,
   isAuthenticated,
+  lastName,
   onEmailChange,
+  onFirstNameChange,
+  onLastNameChange,
 }: {
   email: string;
+  firstName: string;
   isAuthenticated: boolean;
+  lastName: string;
   onEmailChange: (value: string) => void;
+  onFirstNameChange: (value: string) => void;
+  onLastNameChange: (value: string) => void;
 }) {
   return (
-    <label className="grid gap-3 bg-white/37 px-8 py-7 shadow-[0_4px_4px_#B1A3F5]">
+    <div className="grid gap-4 bg-white/37 px-8 py-7 shadow-[0_4px_4px_#B1A3F5]">
       <span className="flex items-center gap-3 font-body text-base font-bold text-[#012D69]">
-        <Mail className="size-5" />
-        Email de livraison
+        <UserRound className="size-5" />
+        Informations de livraison
       </span>
-      <input
-        className="h-13 w-full rounded-[14px] border border-[#DADDFF] bg-white/74 px-4 font-inter text-sm font-semibold text-[#00061E] outline-none placeholder:text-[#012D69]/35 focus:border-[#A582ED] focus:bg-white focus:ring-4 focus:ring-[#A582ED]/16"
-        onChange={(event) => onEmailChange(event.target.value)}
-        placeholder="votre@email.com"
-        readOnly={isAuthenticated}
-        required
-        type="email"
-        value={email}
-      />
-    </label>
+      <div className="grid gap-3 sm:grid-cols-2">
+        <label className="grid gap-2">
+          <span className="font-inter text-xs font-bold uppercase tracking-[0.08em] text-[#012D69]/70">
+            Prénom
+          </span>
+          <input
+            className="h-13 w-full rounded-[14px] border border-[#DADDFF] bg-white/74 px-4 font-inter text-sm font-semibold text-[#00061E] outline-none placeholder:text-[#012D69]/35 focus:border-[#A582ED] focus:bg-white focus:ring-4 focus:ring-[#A582ED]/16 read-only:text-[#012D69]/70"
+            maxLength={80}
+            onChange={(event) => onFirstNameChange(event.target.value)}
+            placeholder="Votre prénom"
+            readOnly={isAuthenticated}
+            required
+            type="text"
+            value={firstName}
+          />
+        </label>
+        <label className="grid gap-2">
+          <span className="font-inter text-xs font-bold uppercase tracking-[0.08em] text-[#012D69]/70">
+            Nom
+          </span>
+          <input
+            className="h-13 w-full rounded-[14px] border border-[#DADDFF] bg-white/74 px-4 font-inter text-sm font-semibold text-[#00061E] outline-none placeholder:text-[#012D69]/35 focus:border-[#A582ED] focus:bg-white focus:ring-4 focus:ring-[#A582ED]/16 read-only:text-[#012D69]/70"
+            maxLength={80}
+            onChange={(event) => onLastNameChange(event.target.value)}
+            placeholder="Votre nom"
+            readOnly={isAuthenticated}
+            required
+            type="text"
+            value={lastName}
+          />
+        </label>
+      </div>
+      <label className="grid gap-2">
+        <span className="flex items-center gap-2 font-inter text-xs font-bold uppercase tracking-[0.08em] text-[#012D69]/70">
+          <Mail className="size-4" />
+          Email
+        </span>
+        <input
+          className="h-13 w-full rounded-[14px] border border-[#DADDFF] bg-white/74 px-4 font-inter text-sm font-semibold text-[#00061E] outline-none placeholder:text-[#012D69]/35 focus:border-[#A582ED] focus:bg-white focus:ring-4 focus:ring-[#A582ED]/16 read-only:text-[#012D69]/70"
+          onChange={(event) => onEmailChange(event.target.value)}
+          placeholder="votre@email.com"
+          readOnly={isAuthenticated}
+          required
+          type="email"
+          value={email}
+        />
+      </label>
+      {isAuthenticated ? (
+        <p className="font-inter text-xs font-semibold leading-5 text-[#012D69]/60">
+          Ces informations viennent de votre compte client.
+        </p>
+      ) : null}
+    </div>
   );
 }
 

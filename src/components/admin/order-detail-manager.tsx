@@ -59,6 +59,11 @@ export function OrderDetailManager({
   initialOrder,
 }: OrderDetailManagerProps) {
   const [order, setOrder] = useState(initialOrder);
+  const customerName =
+    [order.customerFirstName, order.customerLastName]
+      .map((value) => value?.trim())
+      .filter(Boolean)
+      .join(" ") || "Client";
   const [statusForm, setStatusForm] = useState<StatusFormState>({
     status: initialOrder.status,
     paymentStatus: initialOrder.paymentStatus,
@@ -201,7 +206,8 @@ export function OrderDetailManager({
               Commande {order.orderNumber}
             </CardTitle>
             <CardDescription className="mt-2">
-              Client {order.customerEmail} · Créée le {formatDateTime(order.createdAt)}
+              Client {customerName} · {order.customerEmail} · Créée le{" "}
+              {formatDateTime(order.createdAt)}
             </CardDescription>
           </CardHeader>
           <CardContent className="grid gap-4 md:grid-cols-2">

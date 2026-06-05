@@ -88,13 +88,14 @@ export async function GET(request: NextRequest) {
       return redirectWithError(request, "google_profile_error");
     }
 
-    const user = await customerAuthService.authenticateOAuth({
+    const authResult = await customerAuthService.authenticateOAuth({
       email: profile.email,
       firstName: profile.given_name,
       googleId: profile.sub,
       lastName: profile.family_name,
       provider: "google",
     });
+    const { user } = authResult;
     const cartSessionId = request.cookies.get(CART_SESSION_COOKIE)?.value;
 
     if (cartSessionId) {
@@ -111,7 +112,12 @@ export async function GET(request: NextRequest) {
       userId: user._id,
       email: user.email,
     });
-    const response = NextResponse.redirect(new URL("/", request.url));
+    const response = NextResponse.redirect(
+      new URL(
+        authResult.requiresProfileCompletion ? "/completer-profil" : "/",
+        request.url,
+      ),
+    );
 
     clearOAuthStateCookie(response, "google");
     return attachCustomerSessionCookie(response, sessionToken);

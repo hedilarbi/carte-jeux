@@ -1,4 +1,11 @@
-import { ChevronDown, HelpCircle, Send } from "lucide-react";
+"use client";
+
+import type { FormEvent } from "react";
+import { useState } from "react";
+import { CheckCircle, ChevronDown, HelpCircle, Send, X } from "lucide-react";
+
+import { fetchJson } from "@/lib/utils/fetch-json";
+import type { ContactSubmission } from "@/types/entities";
 
 const faqs = [
   {
@@ -56,6 +63,48 @@ const faqs = [
 ];
 
 export function FaqSection() {
+  const [error, setError] = useState<string | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isSuccessOpen, setIsSuccessOpen] = useState(false);
+
+  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+
+    const form = event.currentTarget;
+    const formData = new FormData(form);
+    const payload = {
+      budget: String(formData.get("budget") ?? ""),
+      email: String(formData.get("email") ?? ""),
+      payment: String(formData.get("payment") ?? ""),
+      phone: String(formData.get("phone") ?? ""),
+      platform: String(formData.get("platform") ?? ""),
+      productName: String(formData.get("productName") ?? ""),
+      region: String(formData.get("region") ?? ""),
+      requestType: String(formData.get("requestType") ?? ""),
+    };
+
+    setError(null);
+    setIsSubmitting(true);
+
+    try {
+      await fetchJson<ContactSubmission>("/api/contact-submissions", {
+        body: JSON.stringify(payload),
+        method: "POST",
+      });
+
+      form.reset();
+      setIsSuccessOpen(true);
+    } catch (submitError) {
+      setError(
+        submitError instanceof Error
+          ? submitError.message
+          : "Impossible d'envoyer votre demande.",
+      );
+    } finally {
+      setIsSubmitting(false);
+    }
+  }
+
   return (
     <section className="bg-brand-navy py-16" id="faq">
       <div className="mx-auto grid max-w-[1200px] gap-10 px-6 lg:grid-cols-2 lg:items-start">
@@ -72,7 +121,7 @@ export function FaqSection() {
             en Tunisie avec paiement en dinars.
           </p>
 
-          <form className="mt-7 grid gap-4">
+          <form className="mt-7 grid gap-4" onSubmit={handleSubmit}>
             <div className="grid gap-4 md:grid-cols-2">
               <SelectField
                 label="Plateforme"
@@ -95,6 +144,7 @@ export function FaqSection() {
               label="Nom du jeu/produit recherché"
               name="productName"
               placeholder="Ex: FC 26, carte PSN 20 EUR..."
+              required
             />
 
             <div className="grid gap-4 md:grid-cols-2">
@@ -127,6 +177,7 @@ export function FaqSection() {
                 label="Email"
                 name="email"
                 placeholder="votre@email.com"
+                required
                 type="email"
               />
               <TextField
@@ -137,12 +188,19 @@ export function FaqSection() {
               />
             </div>
 
+            {error ? (
+              <p className="rounded-xl border border-rose-300/35 bg-rose-500/12 px-4 py-3 text-sm font-semibold text-rose-100">
+                {error}
+              </p>
+            ) : null}
+
             <button
               className="mt-2 inline-flex h-[53px] items-center justify-center gap-2 rounded-[11px] bg-[linear-gradient(274.47deg,#B99CF1_-12.06%,#7FCCFF_110.42%)] px-6 font-heading text-sm font-bold uppercase text-brand-dark  transition hover:-translate-y-0.5 hover:shadow-[0_8px_28px_rgba(185,152,241,0.45)]"
+              disabled={isSubmitting}
               type="submit"
             >
               <Send className="size-4" />
-              Envoyer
+              {isSubmitting ? "Envoi..." : "Envoyer"}
             </button>
           </form>
         </div>
@@ -185,6 +243,48 @@ export function FaqSection() {
           </div>
         </div>
       </div>
+
+      {isSuccessOpen ? (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+          <button
+            aria-label="Fermer le modal de confirmation"
+            className="absolute inset-0 bg-slate-950/55 backdrop-blur-sm"
+            onClick={() => setIsSuccessOpen(false)}
+            type="button"
+          />
+          <section
+            aria-modal="true"
+            className="relative w-full max-w-md rounded-[24px] border border-white/15 bg-[#0F0F28] p-7 text-center shadow-[0_28px_90px_rgba(0,0,0,0.36)]"
+            role="dialog"
+          >
+            <button
+              aria-label="Fermer"
+              className="absolute right-4 top-4 inline-flex size-9 items-center justify-center rounded-full border border-white/10 text-brand-periwinkle transition hover:bg-white/10 hover:text-white"
+              onClick={() => setIsSuccessOpen(false)}
+              type="button"
+            >
+              <X className="size-4" />
+            </button>
+            <div className="mx-auto flex size-16 items-center justify-center rounded-full bg-emerald-400/15 text-emerald-300">
+              <CheckCircle className="size-8" />
+            </div>
+            <h3 className="mt-5 font-heading text-xl font-bold text-brand-lilac">
+              Demande envoyée
+            </h3>
+            <p className="mt-3 text-sm leading-6 text-brand-periwinkle">
+              Votre demande a bien été enregistrée. Nous vous répondrons par
+              e-mail dès que possible.
+            </p>
+            <button
+              className="mt-6 inline-flex h-11 items-center justify-center rounded-xl bg-brand-lavender px-6 text-sm font-bold text-brand-dark transition hover:bg-brand-lilac"
+              onClick={() => setIsSuccessOpen(false)}
+              type="button"
+            >
+              Fermer
+            </button>
+          </section>
+        </div>
+      ) : null}
     </section>
   );
 }
@@ -207,6 +307,7 @@ function SelectField({
         className="h-12 rounded-xl border border-white/10 bg-[#0F0F28]/75 px-4 text-sm font-semibold text-brand-lilac outline-none focus:border-brand-lavender/55"
         defaultValue=""
         name={name}
+        required
       >
         <option disabled value="">
           Sélectionner
@@ -225,11 +326,13 @@ function TextField({
   label,
   name,
   placeholder,
+  required = false,
   type = "text",
 }: {
   label: string;
   name: string;
   placeholder: string;
+  required?: boolean;
   type?: "email" | "tel" | "text";
 }) {
   return (
@@ -241,6 +344,7 @@ function TextField({
         className="h-12 rounded-xl border border-white/10 bg-[#0F0F28]/75 px-4 text-sm font-semibold text-brand-lilac outline-none placeholder:text-brand-periwinkle/45 focus:border-brand-lavender/55"
         name={name}
         placeholder={placeholder}
+        required={required}
         type={type}
       />
     </label>

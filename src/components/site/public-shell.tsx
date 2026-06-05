@@ -9,6 +9,7 @@ export function PublicShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const isAdminRoute = pathname.startsWith("/admin");
   const isShelllessRoute = [
+    "/completer-profil",
     "/connexion",
     "/inscription",
     "/mot-de-passe-oublie",

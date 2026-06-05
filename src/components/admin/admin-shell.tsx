@@ -6,6 +6,7 @@ import { useState } from "react";
 import {
   LayoutDashboard,
   LogOut,
+  Mail,
   Menu,
   Package2,
   PanelsTopLeft,
@@ -30,6 +31,7 @@ const navigation = [
   { href: "/admin/categories", label: "Catégories", icon: PanelsTopLeft },
   { href: "/admin/regions", label: "Régions", icon: PanelsTopLeft },
   { href: "/admin/orders", label: "Commandes", icon: ShoppingCart },
+  { href: "/admin/soumissions", label: "Soumissions", icon: Mail },
   { href: "/admin/users", label: "Utilisateurs", icon: Users },
   { href: "/admin/promos", label: "Promotions", icon: Percent },
 ];

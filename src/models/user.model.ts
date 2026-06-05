@@ -11,12 +11,14 @@ export interface UserRecord {
   firstName: string;
   lastName: string;
   email: string;
-  passwordHash: string;
+  phone?: string;
+  passwordHash?: string;
   role: UserRole;
   isActive: boolean;
   authProviders: AuthProvider[];
   googleId?: string;
   facebookId?: string;
+  profileCompletedAt?: Date;
   passwordResetTokenHash?: string;
   passwordResetExpiresAt?: Date;
   createdAt: Date;
@@ -47,13 +49,17 @@ const userSchema = new Schema<UserRecord>(
       trim: true,
       index: true,
     },
+    phone: {
+      type: String,
+      trim: true,
+      maxlength: 24,
+    },
     passwordHash: {
       type: String,
-      required: true,
     },
     role: {
       type: String,
-      enum: ["admin", "customer"],
+      enum: ["admin", "customer", "guest"],
       required: true,
       default: "customer",
     },
@@ -76,6 +82,9 @@ const userSchema = new Schema<UserRecord>(
       type: String,
       trim: true,
       index: true,
+    },
+    profileCompletedAt: {
+      type: Date,
     },
     passwordResetTokenHash: {
       type: String,

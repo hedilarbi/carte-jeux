@@ -12,7 +12,7 @@ export const ADMIN_PAGE_SIZE = 10;
 export const DEFAULT_PAGE_SIZE = 12;
 export const MAX_PAGE_SIZE = 100;
 
-export const USER_ROLE_OPTIONS: UserRole[] = ["admin", "customer"];
+export const USER_ROLE_OPTIONS: UserRole[] = ["admin", "customer", "guest"];
 
 export const PRODUCT_TYPE_OPTIONS: ProductType[] = [
   "gift_card",

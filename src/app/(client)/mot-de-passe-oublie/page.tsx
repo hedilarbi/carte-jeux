@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import Link from "next/link";
 
 import { AuthPanel } from "@/components/site/auth/auth-panel";
@@ -30,6 +31,16 @@ export default function MotDePasseOubliePage() {
         </>
       }
       helper="Entrez votre email pour recevoir les instructions de réinitialisation."
+      sideContent={
+        <Image
+          alt="Mot de passe oublié"
+          className="h-auto w-full max-w-[620px]"
+          height={620}
+          priority
+          src="/mot_pass_oublie.png"
+          width={620}
+        />
+      }
       showSocial={false}
       submitLabel="Envoyer le lien"
       successText="Si un compte existe avec cet email, un lien de réinitialisation a été généré."

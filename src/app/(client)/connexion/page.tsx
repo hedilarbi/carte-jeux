@@ -61,20 +61,13 @@ export default async function ConnexionPage({
           </Link>
         </>
       }
+      forgotPasswordHref="/mot-de-passe-oublie"
       helper={
-        <>
-          {authError ? (
-            <span className="mb-2 block rounded-[14px] border border-red-200 bg-red-50 px-4 py-3 font-bold text-red-700">
-              {authError}
-            </span>
-          ) : null}
-          <Link
-            className="font-bold text-[#8258CB] hover:underline"
-            href="/mot-de-passe-oublie"
-          >
-            Mot de passe oublié ?
-          </Link>
-        </>
+        authError ? (
+          <span className="block rounded-[14px] border border-red-200 bg-red-50 px-4 py-3 font-bold text-red-700">
+            {authError}
+          </span>
+        ) : undefined
       }
       submitLabel="Se connecter"
       sideTitle={

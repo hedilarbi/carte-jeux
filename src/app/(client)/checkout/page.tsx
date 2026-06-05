@@ -5,6 +5,7 @@ import { CheckoutOrderForm } from "@/components/site/checkout/checkout-order-for
 import { CART_SESSION_COOKIE } from "@/lib/auth/cart-session";
 import { getCustomerPageSession } from "@/lib/auth/customer";
 import { cartService } from "@/services/cart.service";
+import { customerAuthService } from "@/services/customer-auth.service";
 
 const steps = ["Panier", "Paiement", "Obtenir votre produit"] as const;
 
@@ -24,25 +25,39 @@ async function getCurrentCart() {
   }
 }
 
-async function getCurrentCustomerEmail() {
+async function getCurrentCustomer() {
   try {
     const session = await getCustomerPageSession();
-    return session?.email;
+    if (!session) {
+      return undefined;
+    }
+
+    const user = await customerAuthService.getSessionUser(session.userId);
+
+    if (!user) {
+      return undefined;
+    }
+
+    return {
+      email: user.email,
+      firstName: user.firstName,
+      lastName: user.lastName,
+    };
   } catch {
     return undefined;
   }
 }
 
 export default async function CheckoutPage() {
-  const [cart, customerEmail] = await Promise.all([
+  const [cart, customer] = await Promise.all([
     getCurrentCart(),
-    getCurrentCustomerEmail(),
+    getCurrentCustomer(),
   ]);
 
   return (
     <main className="min-h-screen bg-[linear-gradient(90deg,#E3CDFF_0%,#D8E0FF_67.31%,#C9CAFF_100%)] text-[#00061E]">
       <CheckoutProgress />
-      <CheckoutOrderForm cart={cart} customerEmail={customerEmail} />
+      <CheckoutOrderForm cart={cart} customer={customer} />
     </main>
   );
 }

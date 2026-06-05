@@ -42,6 +42,8 @@ export async function listOrders(filters: OrderListFilters = {}) {
     const searchRegex = new RegExp(filters.search.trim(), "i");
     query.$or = [
       { orderNumber: searchRegex },
+      { customerFirstName: searchRegex },
+      { customerLastName: searchRegex },
       { customerEmail: searchRegex },
       { supplierPurchaseReference: searchRegex },
       { paymentReference: searchRegex },

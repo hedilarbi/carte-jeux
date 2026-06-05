@@ -45,12 +45,22 @@ export async function generateMetadata({
     };
   }
 
+  const title = product.seoTitle || `${product.title} | PlaySDepot`;
+  const description =
+    product.seoDescription ||
+    product.description ||
+    product.shortDescription ||
+    `Achetez ${product.title} en Tunisie.`;
+
   return {
-    description:
-      product.shortDescription ??
-      product.description ??
-      `Achetez ${product.title} en Tunisie.`,
-    title: `${product.title} | PlaySDepot`,
+    description,
+    openGraph: {
+      description,
+      images: product.image ? [product.image] : undefined,
+      title,
+      type: "website",
+    },
+    title,
   };
 }
 
@@ -176,6 +186,10 @@ function ProductDetailsBlock({
     product.description ??
     product.shortDescription ??
     `${product.title} est disponible en Tunisie avec livraison numérique après validation de la commande. Vérifiez la plateforme et la région avant l'achat.`;
+  const descriptionParagraphs = description
+    .split(/\n+/)
+    .map((paragraph) => paragraph.trim())
+    .filter(Boolean);
   const gallery = product.gallery.length > 0 ? product.gallery : ["/jeu1.jpg"];
 
   return (
@@ -185,7 +199,7 @@ function ProductDetailsBlock({
           Description
         </h2>
         <div className="mt-4 grid gap-4">
-          {description.split(/\n+/).map((paragraph) => (
+          {descriptionParagraphs.map((paragraph) => (
             <p
               className="text-sm font-semibold leading-7 text-[#00061E]/75"
               key={paragraph}

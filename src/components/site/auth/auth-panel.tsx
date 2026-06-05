@@ -7,15 +7,19 @@ import { FaFacebookF } from "react-icons/fa6";
 import { AuthForm, type AuthFormField } from "@/components/site/auth/auth-form";
 
 type AuthPanelProps = {
-  endpoint: string;
+  endpoint?: string;
   eyebrow: string;
-  fields: AuthFormField[];
+  fields?: AuthFormField[];
+  form?: ReactNode;
   footer: ReactNode;
+  forgotPasswordHref?: string;
+  forgotPasswordLabel?: string;
   helper?: ReactNode;
   hiddenFields?: Record<string, string | undefined>;
+  sideContent?: ReactNode;
   sideTitle?: ReactNode;
   showSocial?: boolean;
-  submitLabel: string;
+  submitLabel?: string;
   successRedirect?: string;
   successText?: string;
   title: string;
@@ -25,9 +29,13 @@ export function AuthPanel({
   endpoint,
   eyebrow,
   fields,
+  form,
   footer,
+  forgotPasswordHref,
+  forgotPasswordLabel,
   helper,
   hiddenFields,
+  sideContent,
   sideTitle,
   showSocial = true,
   submitLabel,
@@ -53,14 +61,16 @@ export function AuthPanel({
           <div className="pointer-events-none absolute -left-[110px] -top-[190px] size-[280px] rounded-full bg-[radial-gradient(70.71%_70.71%_at_50%_50%,rgba(0,255,224,0.055)_0%,rgba(0,255,224,0)_70%)]" />
 
           <div className="relative z-10 mt-[130px] max-w-[780px]">
-            <h1 className="font-heading text-[clamp(58px,4.75vw,91px)] font-extrabold leading-[1.42] tracking-[0.03em] text-white">
-              {sideTitle ?? (
-                <>
-                  Bonjour !<br />
-                  C&apos;est un plaisir de vous voir !
-                </>
-              )}
-            </h1>
+            {sideContent ?? (
+              <h1 className="font-heading text-[clamp(58px,4.75vw,91px)] font-extrabold leading-[1.42] tracking-[0.03em] text-white">
+                {sideTitle ?? (
+                  <>
+                    Bonjour !<br />
+                    C&apos;est un plaisir de vous voir !
+                  </>
+                )}
+              </h1>
+            )}
           </div>
         </aside>
 
@@ -120,14 +130,19 @@ export function AuthPanel({
               <div className="mt-8" />
             )}
 
-            <AuthForm
-              endpoint={endpoint}
-              fields={fields}
-              hiddenFields={hiddenFields}
-              submitLabel={submitLabel}
-              successRedirect={successRedirect}
-              successText={successText}
-            />
+            {form ??
+              (endpoint && fields && submitLabel ? (
+                <AuthForm
+                  endpoint={endpoint}
+                  fields={fields}
+                  forgotPasswordHref={forgotPasswordHref}
+                  forgotPasswordLabel={forgotPasswordLabel}
+                  hiddenFields={hiddenFields}
+                  submitLabel={submitLabel}
+                  successRedirect={successRedirect}
+                  successText={successText}
+                />
+              ) : null)}
 
             <div className="mt-6 text-center text-sm font-semibold text-[#00061E]/62">
               {footer}
