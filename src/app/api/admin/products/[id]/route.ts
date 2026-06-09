@@ -18,6 +18,21 @@ import {
 import { mediaService } from "@/services/media.service";
 import { productService } from "@/services/product.service";
 
+function getFormDataJsonArray(formData: FormData, key: string) {
+  const value = getFormDataString(formData, key);
+
+  if (!value) {
+    return undefined;
+  }
+
+  try {
+    const parsed = JSON.parse(value);
+    return Array.isArray(parsed) ? parsed : undefined;
+  } catch {
+    return undefined;
+  }
+}
+
 async function resolveProductPayload(request: NextRequest) {
   const contentType = request.headers.get("content-type") ?? "";
 
@@ -66,6 +81,7 @@ async function resolveProductPayload(request: NextRequest) {
     productType: getFormDataString(formData, "productType"),
     isFeatured: getOptionalFormDataBoolean(formData, "isFeatured"),
     isActive: getOptionalFormDataBoolean(formData, "isActive"),
+    faqItems: getFormDataJsonArray(formData, "faqItems"),
     seoTitle: getFormDataString(formData, "seoTitle"),
     seoDescription: getFormDataString(formData, "seoDescription"),
   };

@@ -22,7 +22,7 @@ import { PRODUCT_TYPE_LABELS } from "@/constants/admin";
 import { calculateDiscountedPrice } from "@/lib/utils/pricing";
 import { formatCurrency } from "@/lib/utils/format";
 import { fetchJson } from "@/lib/utils/fetch-json";
-import type { Category, Product, Region } from "@/types/entities";
+import type { Category, Product, ProductFaqItem, Region } from "@/types/entities";
 
 interface ProductsManagerProps {
   initialProducts: Product[];
@@ -43,6 +43,7 @@ interface ProductFormState {
   sku: string;
   isFeatured: boolean;
   isActive: boolean;
+  faqItems: ProductFaqItem[];
   seoTitle: string;
   seoDescription: string;
 }
@@ -59,6 +60,7 @@ const defaultFormState: ProductFormState = {
   sku: "",
   isFeatured: false,
   isActive: true,
+  faqItems: [],
   seoTitle: "",
   seoDescription: "",
 };
@@ -183,6 +185,7 @@ export function ProductsManager({
       sku: product.sku,
       isFeatured: product.isFeatured,
       isActive: product.isActive,
+      faqItems: product.faqItems ?? [],
       seoTitle: product.seoTitle ?? "",
       seoDescription: product.seoDescription ?? "",
     });
@@ -221,6 +224,17 @@ export function ProductsManager({
       return;
     }
 
+    if (
+      form.faqItems.some(
+        (item) =>
+          (item.question.trim() && !item.answer.trim()) ||
+          (!item.question.trim() && item.answer.trim()),
+      )
+    ) {
+      setError("Chaque question FAQ doit contenir une question et une réponse.");
+      return;
+    }
+
     setIsSubmitting(true);
 
     try {
@@ -242,6 +256,17 @@ export function ProductsManager({
       payload.set("sku", form.sku);
       payload.set("isFeatured", String(form.isFeatured));
       payload.set("isActive", String(form.isActive));
+      payload.set(
+        "faqItems",
+        JSON.stringify(
+          form.faqItems
+            .map((item) => ({
+              question: item.question.trim(),
+              answer: item.answer.trim(),
+            }))
+            .filter((item) => item.question && item.answer),
+        ),
+      );
       payload.set("seoTitle", form.seoTitle);
       payload.set("seoDescription", form.seoDescription);
 
@@ -334,6 +359,33 @@ export function ProductsManager({
           : [...current.categoryIds, categoryId],
       };
     });
+  }
+
+  function addFaqItem() {
+    setForm((current) => ({
+      ...current,
+      faqItems: [...current.faqItems, { answer: "", question: "" }],
+    }));
+  }
+
+  function updateFaqItem(
+    index: number,
+    field: keyof ProductFaqItem,
+    value: string,
+  ) {
+    setForm((current) => ({
+      ...current,
+      faqItems: current.faqItems.map((item, itemIndex) =>
+        itemIndex === index ? { ...item, [field]: value } : item,
+      ),
+    }));
+  }
+
+  function removeFaqItem(index: number) {
+    setForm((current) => ({
+      ...current,
+      faqItems: current.faqItems.filter((_, itemIndex) => itemIndex !== index),
+    }));
   }
 
   return (
@@ -747,6 +799,82 @@ export function ProductsManager({
                 placeholder="Description SEO optionnelle"
               />
             </div>
+          </div>
+
+          <div className="rounded-2xl border border-border bg-slate-50 p-4">
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+              <div>
+                <h3 className="text-sm font-semibold text-slate-800">
+                  FAQ produit
+                </h3>
+                <p className="mt-1 text-xs text-slate-500">
+                  Ajoutez les questions/réponses affichées sur la page du
+                  produit.
+                </p>
+              </div>
+              <Button type="button" variant="outline" onClick={addFaqItem}>
+                <Plus className="size-4" />
+                Ajouter une question
+              </Button>
+            </div>
+
+            {form.faqItems.length > 0 ? (
+              <div className="mt-4 grid gap-4">
+                {form.faqItems.map((item, index) => (
+                  <div
+                    className="rounded-2xl border border-border bg-white p-4 shadow-sm"
+                    key={`faq-${index}`}
+                  >
+                    <div className="mb-3 flex items-center justify-between gap-3">
+                      <p className="text-xs font-bold uppercase tracking-[0.18em] text-slate-500">
+                        Question {index + 1}
+                      </p>
+                      <Button
+                        aria-label={`Supprimer la question ${index + 1}`}
+                        className="px-3 text-rose-600 hover:text-rose-700"
+                        onClick={() => removeFaqItem(index)}
+                        type="button"
+                        variant="ghost"
+                      >
+                        <Trash2 className="size-4" />
+                      </Button>
+                    </div>
+                    <div className="grid gap-4 md:grid-cols-2">
+                      <div>
+                        <label className="mb-2 block text-sm font-medium text-slate-700">
+                          Question
+                        </label>
+                        <Input
+                          maxLength={240}
+                          onChange={(event) =>
+                            updateFaqItem(index, "question", event.target.value)
+                          }
+                          placeholder="Ex: Comment recevoir ce produit ?"
+                          value={item.question}
+                        />
+                      </div>
+                      <div>
+                        <label className="mb-2 block text-sm font-medium text-slate-700">
+                          Réponse
+                        </label>
+                        <Textarea
+                          maxLength={1200}
+                          onChange={(event) =>
+                            updateFaqItem(index, "answer", event.target.value)
+                          }
+                          placeholder="Réponse affichée dans la FAQ produit"
+                          value={item.answer}
+                        />
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="mt-4 rounded-2xl border border-dashed border-slate-300 bg-white px-4 py-6 text-center text-sm text-slate-500">
+                Aucune question FAQ ajoutée pour ce produit.
+              </div>
+            )}
           </div>
 
           {error ? (

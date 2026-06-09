@@ -7,7 +7,27 @@ import { CheckCircle, ChevronDown, HelpCircle, Send, X } from "lucide-react";
 import { fetchJson } from "@/lib/utils/fetch-json";
 import type { ContactSubmission } from "@/types/entities";
 
-const faqs = [
+export interface FaqItem {
+  answer: string;
+  question: string;
+}
+
+interface FaqSectionProps {
+  contactDescription?: string;
+  contactEyebrow?: string;
+  contactTitle?: string;
+  defaultPlatform?: string;
+  defaultProductName?: string;
+  faqDescription?: string;
+  faqEyebrow?: string;
+  faqs?: FaqItem[];
+  faqTitle?: string;
+  id?: string;
+}
+
+const platformOptions = ["Steam", "PSN", "Xbox", "Nintendo", "Mobile"];
+
+const faqs: FaqItem[] = [
   {
     question:
       "Comment acheter des jeux et recharges gaming en Tunisie sans carte bancaire internationale ?",
@@ -62,7 +82,28 @@ const faqs = [
   },
 ];
 
-export function FaqSection() {
+function withDefaultOption(options: string[], value?: string) {
+  const normalizedValue = value?.trim();
+
+  if (!normalizedValue || options.includes(normalizedValue)) {
+    return options;
+  }
+
+  return [normalizedValue, ...options];
+}
+
+export function FaqSection({
+  contactDescription = "Indiquez-nous votre besoin (Steam, PSN, Xbox, Nintendo ou mobile). Nous vous répondons rapidement avec une solution adaptée, disponible en Tunisie avec paiement en dinars.",
+  contactEyebrow = "// Demande produit",
+  contactTitle = "Vous ne trouvez pas votre jeu ou votre recharge ?",
+  defaultPlatform,
+  defaultProductName,
+  faqDescription = "Les réponses essentielles avant d'acheter une recharge, une gift card ou un abonnement gaming.",
+  faqEyebrow = "// FAQ",
+  faqs: sectionFaqs = faqs,
+  faqTitle = "Questions fréquentes",
+  id = "faq",
+}: FaqSectionProps = {}) {
   const [error, setError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccessOpen, setIsSuccessOpen] = useState(false);
@@ -106,27 +147,26 @@ export function FaqSection() {
   }
 
   return (
-    <section className="bg-brand-navy py-16" id="faq">
+    <section className="bg-brand-navy py-16" id={id}>
       <div className="mx-auto grid max-w-[1200px] gap-10 px-6 lg:grid-cols-2 lg:items-start">
         <div className="order-2 rounded-[17px] border border-white/10 bg-white/13 p-5 shadow-[0_24px_80px_rgba(0,0,0,0.22)] backdrop-blur md:p-7 lg:min-h-[675px]">
           <span className="font-mono text-[11px] font-bold uppercase text-brand-lavender">
-            {"// Demande produit"}
+            {contactEyebrow}
           </span>
           <h2 className="mt-2 font-heading text-2xl font-bold leading-tight text-brand-lilac md:text-3xl">
-            Vous ne trouvez pas votre jeu ou votre recharge ?
+            {contactTitle}
           </h2>
           <p className="mt-4 max-w-2xl text-sm leading-7 text-brand-periwinkle">
-            Indiquez-nous votre besoin (Steam, PSN, Xbox, Nintendo ou mobile).
-            Nous vous répondons rapidement avec une solution adaptée, disponible
-            en Tunisie avec paiement en dinars.
+            {contactDescription}
           </p>
 
           <form className="mt-7 grid gap-4" onSubmit={handleSubmit}>
             <div className="grid gap-4 md:grid-cols-2">
               <SelectField
+                defaultValue={defaultPlatform}
                 label="Plateforme"
                 name="platform"
-                options={["Steam", "PSN", "Xbox", "Nintendo", "Mobile"]}
+                options={withDefaultOption(platformOptions, defaultPlatform)}
               />
               <SelectField
                 label="Type de demande"
@@ -141,6 +181,7 @@ export function FaqSection() {
             </div>
 
             <TextField
+              defaultValue={defaultProductName}
               label="Nom du jeu/produit recherché"
               name="productName"
               placeholder="Ex: FC 26, carte PSN 20 EUR..."
@@ -207,18 +248,17 @@ export function FaqSection() {
 
         <div className="order-1">
           <span className="font-mono text-[11px] font-bold uppercase text-brand-lavender">
-            {"// FAQ"}
+            {faqEyebrow}
           </span>
           <h2 className="mt-2 font-heading text-2xl font-bold text-brand-lilac md:text-3xl">
-            Questions fréquentes
+            {faqTitle}
           </h2>
           <p className="mt-4 max-w-xl text-sm leading-7 text-brand-periwinkle">
-            Les réponses essentielles avant d&apos;acheter une recharge, une
-            gift card ou un abonnement gaming.
+            {faqDescription}
           </p>
 
           <div className="mt-7 grid gap-3">
-            {faqs.map((faq, index) => (
+            {sectionFaqs.map((faq, index) => (
               <details
                 className="group rounded-xl border border-white/7 bg-[#0F0F28] shadow-[0_18px_50px_rgba(0,0,0,0.18)] transition open:border-brand-lavender/45"
                 key={faq.question}
@@ -290,10 +330,12 @@ export function FaqSection() {
 }
 
 function SelectField({
+  defaultValue = "",
   label,
   name,
   options,
 }: {
+  defaultValue?: string;
   label: string;
   name: string;
   options: string[];
@@ -305,7 +347,7 @@ function SelectField({
       </span>
       <select
         className="h-12 rounded-xl border border-white/10 bg-[#0F0F28]/75 px-4 text-sm font-semibold text-brand-lilac outline-none focus:border-brand-lavender/55"
-        defaultValue=""
+        defaultValue={defaultValue}
         name={name}
         required
       >
@@ -323,12 +365,14 @@ function SelectField({
 }
 
 function TextField({
+  defaultValue,
   label,
   name,
   placeholder,
   required = false,
   type = "text",
 }: {
+  defaultValue?: string;
   label: string;
   name: string;
   placeholder: string;
@@ -342,6 +386,7 @@ function TextField({
       </span>
       <input
         className="h-12 rounded-xl border border-white/10 bg-[#0F0F28]/75 px-4 text-sm font-semibold text-brand-lilac outline-none placeholder:text-brand-periwinkle/45 focus:border-brand-lavender/55"
+        defaultValue={defaultValue}
         name={name}
         placeholder={placeholder}
         required={required}

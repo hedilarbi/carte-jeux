@@ -215,6 +215,7 @@ export const productService = {
       deliveryMode: parsed.deliveryMode,
       isFeatured: parsed.isFeatured,
       isActive: parsed.isActive,
+      faqItems: parsed.faqItems,
       seoTitle: parsed.seoTitle,
       seoDescription: parsed.seoDescription,
       ...(parsed.gallery ? { gallery: normalizeGallery(parsed.gallery) } : {}),

@@ -5,7 +5,7 @@ import {
   listProducts,
 } from "@/repositories/product.repository";
 import { listAllRegions } from "@/repositories/region.repository";
-import type { Category, Product, Region } from "@/types/entities";
+import type { Category, Product, ProductFaqItem, Region } from "@/types/entities";
 
 export interface ProductDetailCategory {
   id: string;
@@ -36,6 +36,7 @@ export interface ProductDetailPageContent {
   description?: string;
   discountPercent: number;
   faceValue: number;
+  faqItems: ProductFaqItem[];
   gallery: string[];
   id: string;
   image?: string;
@@ -198,6 +199,7 @@ export const productDetailService = {
       description: product.description,
       discountPercent: product.discountPercent,
       faceValue: product.faceValue,
+      faqItems: product.faqItems ?? [],
       gallery,
       id: product._id,
       image: product.image,

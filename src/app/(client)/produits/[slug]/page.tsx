@@ -13,6 +13,7 @@ import {
 
 import { ProductPlatformBadge } from "@/components/site/product-platform-badge";
 import { FavoriteButton } from "@/components/site/favorites/favorite-button";
+import { FaqSection, type FaqItem } from "@/components/site/home/faq-section";
 import {
   productDetailService,
   type ProductDetailPageContent,
@@ -23,15 +24,6 @@ import { AddToCartButton } from "@/components/site/add-to-cart-button";
 type ProductPageProps = {
   params: Promise<{ slug: string }>;
 };
-
-const productFaqs = [
-  "Comment recevoir ce produit numérique ?",
-  "Ce produit est-il compatible avec mon compte ?",
-  "Puis-je payer en Tunisie avec une méthode locale ?",
-  "Combien de temps prend la livraison ?",
-  "Que faire si la région ne correspond pas à mon compte ?",
-  "Est-ce un produit officiel ?",
-] as const;
 
 export async function generateMetadata({
   params,
@@ -77,7 +69,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
       <ProductTopBlock product={product} />
       <ProductDetailsBlock product={product} />
       <RelatedProductsSection products={product.relatedProducts} />
-      <ProductFaqSection productTitle={product.title} />
+      <ProductFaqSection product={product} />
     </main>
   );
 }
@@ -341,32 +333,51 @@ function RelatedProductCard({
   );
 }
 
-function ProductFaqSection({ productTitle }: { productTitle: string }) {
-  return (
-    <section className="min-h-[720px] bg-[#012D69] px-6 py-16 text-white lg:py-20">
-      <div className="mx-auto max-w-[1200px]">
-        <h2 className="mx-auto max-w-[900px] text-center font-heading text-xl font-bold leading-8 tracking-[0.06em]">
-          Vos questions nos réponses
-          <br />
-          {productTitle}
-        </h2>
+function getProductFaqs(product: ProductDetailPageContent): FaqItem[] {
+  if (product.faqItems.length > 0) {
+    return product.faqItems;
+  }
 
-        <div className="mt-14 grid gap-8 lg:grid-cols-2 lg:gap-x-8 lg:gap-y-9">
-          {productFaqs.map((question) => (
-            <article
-              className="flex min-h-[60px] items-center gap-5 rounded-[52.5px] bg-[#CECECE]/18 p-2 pr-8"
-              key={question}
-            >
-              <span className="flex size-[50px] shrink-0 items-center justify-center rounded-full bg-white">
-                <Image alt="" height={49} src="/icon_qa.svg" width={71} />
-              </span>
-              <p className="text-xs leading-[150.25%] text-white md:text-sm">
-                {question}
-              </p>
-            </article>
-          ))}
-        </div>
-      </div>
-    </section>
+  return [
+    {
+      question: "Comment recevoir ce produit numérique ?",
+      answer:
+        "Après validation de votre commande, notre équipe prépare la livraison numérique et vous envoie les informations nécessaires par e-mail.",
+    },
+    {
+      question: "Ce produit est-il compatible avec mon compte ?",
+      answer: `Vérifiez la plateforme ${product.platform.label} et la région indiquée sur la fiche avant l'achat. Le code doit être utilisé sur un compte compatible.`,
+    },
+    {
+      question: "Puis-je payer en Tunisie avec une méthode locale ?",
+      answer:
+        "Oui. PlaySDepot permet de commander en Tunisie avec les moyens de paiement disponibles localement sur la page de checkout.",
+    },
+    {
+      question: "Que faire si j'ai une question avant l'achat ?",
+      answer:
+        "Utilisez le formulaire de contact dans cette section. Votre demande sera enregistrée et notre équipe vous répondra par e-mail.",
+    },
+  ];
+}
+
+function ProductFaqSection({
+  product,
+}: {
+  product: ProductDetailPageContent;
+}) {
+  return (
+    <FaqSection
+      contactDescription="Envoyez-nous votre question sur ce produit. Nous vous répondrons par e-mail avec les informations de compatibilité, région ou disponibilité."
+      contactEyebrow="// Contact produit"
+      contactTitle={`Une question sur ${product.title} ?`}
+      defaultPlatform={product.platform.label}
+      defaultProductName={product.title}
+      faqDescription="Les réponses utiles avant de finaliser votre achat."
+      faqEyebrow="// FAQ produit"
+      faqs={getProductFaqs(product)}
+      faqTitle={`Questions fréquentes - ${product.title}`}
+      id="product-faq"
+    />
   );
 }

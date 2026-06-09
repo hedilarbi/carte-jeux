@@ -37,6 +37,7 @@ const footerColumns = [
       { href: "/checkout", label: "Paiement" },
       { href: "/obtenir-votre-produit", label: "Livraison" },
       { href: "/categories", label: "Toutes les catégories" },
+      { href: "/cgv", label: "CGV & Mentions légales" },
     ],
     title: "Aide",
   },

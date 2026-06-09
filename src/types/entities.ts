@@ -77,8 +77,14 @@ export interface Product extends BaseEntity {
   deliveryMode: DeliveryMode;
   isFeatured: boolean;
   isActive: boolean;
+  faqItems: ProductFaqItem[];
   seoTitle?: string;
   seoDescription?: string;
+}
+
+export interface ProductFaqItem {
+  question: string;
+  answer: string;
 }
 
 export interface CartItem {

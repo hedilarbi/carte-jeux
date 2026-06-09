@@ -7,7 +7,7 @@ import {
 } from "mongoose";
 
 import { calculateDiscountedPrice } from "@/lib/utils/pricing";
-import type { DeliveryMode, ProductType } from "@/types/entities";
+import type { DeliveryMode, ProductFaqItem, ProductType } from "@/types/entities";
 
 export interface ProductRecord {
   title: string;
@@ -31,6 +31,7 @@ export interface ProductRecord {
   deliveryMode: DeliveryMode;
   isFeatured: boolean;
   isActive: boolean;
+  faqItems: ProductFaqItem[];
   seoTitle?: string;
   seoDescription?: string;
   createdAt: Date;
@@ -172,6 +173,30 @@ const productSchema = new Schema<ProductRecord>(
       type: Boolean,
       default: true,
       index: true,
+    },
+    faqItems: {
+      type: [
+        new Schema<ProductFaqItem>(
+          {
+            question: {
+              type: String,
+              required: true,
+              trim: true,
+              maxlength: 240,
+            },
+            answer: {
+              type: String,
+              required: true,
+              trim: true,
+              maxlength: 1200,
+            },
+          },
+          {
+            _id: false,
+          },
+        ),
+      ],
+      default: [],
     },
     seoTitle: {
       type: String,
