@@ -4,12 +4,12 @@ import { cookies } from "next/headers";
 import {
   BadgePercent,
   Gamepad2,
-  Heart,
   Info,
   ShoppingBag,
 } from "lucide-react";
 
 import { CartItemActions } from "@/components/site/cart/cart-item-actions";
+import { FavoriteButton } from "@/components/site/favorites/favorite-button";
 import { CART_SESSION_COOKIE } from "@/lib/auth/cart-session";
 import { cartService } from "@/services/cart.service";
 import type { Cart, CartItem } from "@/types/entities";
@@ -140,7 +140,7 @@ function CartItemCard({ item }: { item: CartItem }) {
   return (
     <article className="relative grid gap-5 bg-white/37 p-4 shadow-[0_4px_4px_#B1A3F5] backdrop-blur-sm md:grid-cols-[170px_minmax(0,1fr)_220px] md:p-5">
       <Link
-        className="relative h-[190px] overflow-hidden bg-white md:h-[225px]"
+        className="relative mx-auto aspect-[625/873] w-full max-w-[220px] overflow-hidden bg-white md:mx-0 md:w-[170px] md:max-w-none"
         href={`/produits/${item.productSlug}`}
       >
         <Image
@@ -176,6 +176,14 @@ function CartItemCard({ item }: { item: CartItem }) {
               <Gamepad2 className="size-4" />
             )}
             {item.platformName ?? "Global"}
+            <FavoriteButton
+              aria-label={`Ajouter aux favoris - ${item.productTitle}`}
+              activeClassName="text-danger"
+              className="ml-1 flex size-6 items-center justify-center rounded-full bg-[#012D69]/8 text-[#012D69] transition hover:bg-danger hover:text-white"
+              iconClassName="size-3.5"
+              productId={item.productId}
+              productSlug={item.productSlug}
+            />
           </span>
           <span className="inline-flex h-8 items-center rounded-full bg-white px-3 font-body text-xs font-semibold text-[#012D69]">
             SKU: {item.sku}
@@ -199,14 +207,6 @@ function CartItemCard({ item }: { item: CartItem }) {
       </div>
 
       <div className="flex flex-col items-start justify-between gap-5 md:items-end">
-        <button
-          aria-label="Ajouter aux favoris"
-          className="absolute right-4 top-4 flex size-9 items-center justify-center rounded-full bg-white text-black shadow-[0_4px_10px_rgba(1,45,105,0.12)]"
-          type="button"
-        >
-          <Heart className="size-4" />
-        </button>
-
         <div className="mt-12 md:mt-20">
           <CartItemActions
             productReference={item.productSlug || item.productId}
@@ -328,7 +328,7 @@ function InspiredSection() {
 function InspiredCard({ name }: { name: string }) {
   return (
     <article className="relative mx-auto h-[435px] w-full max-w-[220px] overflow-hidden rounded-[15px] bg-white shadow-[0_18px_38px_rgba(1,45,105,0.14)] xl:max-w-[210px]">
-      <div className="relative h-[342px]">
+      <div className="relative aspect-[625/873]">
         <Image
           alt={name}
           className="object-cover"

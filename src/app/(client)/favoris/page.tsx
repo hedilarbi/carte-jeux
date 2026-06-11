@@ -81,7 +81,7 @@ function FavoriteCard({ item }: { item: FavoriteItem }) {
         href={`/produits/${item.productSlug}`}
       />
 
-      <div className="relative h-[270px]">
+      <div className="relative aspect-[625/873] bg-white">
         <Image
           alt={item.productTitle}
           className="object-cover"
@@ -91,19 +91,20 @@ function FavoriteCard({ item }: { item: FavoriteItem }) {
         />
       </div>
 
-      <FavoriteButton
-        aria-label={`Retirer ${item.productTitle} des favoris`}
-        activeClassName="bg-danger text-white"
-        className="absolute right-3 top-3 z-20 flex size-10 items-center justify-center rounded-full bg-white text-danger shadow-[0_8px_20px_rgba(1,45,105,0.18)] transition hover:bg-danger hover:text-white"
-        productId={item.productId}
-        productSlug={item.productSlug}
-        refreshOnChange
-      />
-
       <div className="relative z-[2] bg-white p-4">
-        <p className="text-xs font-bold uppercase text-[#012D69]">
-          {item.platformName ?? "Global"}
-        </p>
+        <div className="flex items-center justify-between gap-3">
+          <p className="min-w-0 truncate text-xs font-bold uppercase text-[#012D69]">
+            {item.platformName ?? "Global"}
+          </p>
+          <FavoriteButton
+            aria-label={`Retirer ${item.productTitle} des favoris`}
+            activeClassName="bg-danger text-white"
+            className="flex size-9 shrink-0 items-center justify-center rounded-full bg-[#012D69]/8 text-danger shadow-[0_8px_20px_rgba(1,45,105,0.12)] transition hover:bg-danger hover:text-white"
+            productId={item.productId}
+            productSlug={item.productSlug}
+            refreshOnChange
+          />
+        </div>
         <h2 className="mt-2 line-clamp-2 min-h-10 text-sm font-extrabold leading-5 text-[#1F0A4D]">
           {item.productTitle}
         </h2>

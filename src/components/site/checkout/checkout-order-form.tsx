@@ -300,7 +300,7 @@ function CheckoutSummary({
 function SummaryLine({ item }: { item: CartItem }) {
   return (
     <article className="grid grid-cols-[87px_minmax(0,1fr)_26px] gap-5">
-      <div className="relative h-[121px] overflow-hidden bg-white shadow-[0_4px_12px_rgba(1,45,105,0.12)]">
+      <div className="relative aspect-[625/873] w-[87px] overflow-hidden bg-white shadow-[0_4px_12px_rgba(1,45,105,0.12)]">
         <Image
           alt={item.productTitle}
           className="object-cover"

@@ -94,7 +94,7 @@ function ProductTopBlock({ product }: { product: ProductDetailPageContent }) {
   return (
     <section className="mx-auto max-w-[1200px] px-6 py-10 md:py-14 lg:py-16">
       <div className="grid gap-8 lg:grid-cols-[320px_minmax(0,1fr)_360px] lg:items-start">
-        <div className="relative min-h-[460px] overflow-hidden bg-white shadow-[0_4px_4px_#B1A3F5]">
+        <div className="relative aspect-[625/873] overflow-hidden bg-white shadow-[0_4px_4px_#B1A3F5]">
           <Image
             alt={product.title}
             className="object-cover"
@@ -207,7 +207,7 @@ function ProductDetailsBlock({
         <div className="grid grid-cols-3 gap-3">
           {gallery.slice(0, 3).map((image, index) => (
             <div
-              className="relative h-[136px] overflow-hidden rounded-xl bg-white shadow-[0_4px_12px_rgba(1,45,105,0.14)] lg:h-[118px]"
+              className="relative aspect-[625/873] overflow-hidden rounded-xl bg-white shadow-[0_4px_12px_rgba(1,45,105,0.14)]"
               key={`${image}-${index}`}
             >
               <Image
@@ -303,11 +303,15 @@ function RelatedProductCard({
   product: ProductDetailRelatedProduct;
 }) {
   return (
-    <Link
-      className="group relative mx-auto flex h-[435px] w-full max-w-[220px] flex-col overflow-hidden rounded-[15px] bg-white shadow-[0_18px_38px_rgba(1,45,105,0.14)] transition hover:-translate-y-1 hover:shadow-[0_24px_50px_rgba(1,45,105,0.18)] xl:max-w-[210px]"
-      href={`/produits/${product.slug}`}
+    <article
+      className="group relative mx-auto flex w-full max-w-[220px] flex-col overflow-hidden rounded-[15px] bg-white shadow-[0_18px_38px_rgba(1,45,105,0.14)] transition hover:-translate-y-1 hover:shadow-[0_24px_50px_rgba(1,45,105,0.18)] xl:max-w-[210px]"
     >
-      <div className="relative h-[342px]">
+      <Link
+        aria-label={`Voir le produit - ${product.title}`}
+        className="absolute inset-0 z-10"
+        href={`/produits/${product.slug}`}
+      />
+      <div className="relative aspect-[625/873]">
         <Image
           alt={product.title}
           className="object-cover"
@@ -316,7 +320,17 @@ function RelatedProductCard({
           src={product.image ?? "/jeu1.jpg"}
         />
         <ProductPlatformBadge
-          className="absolute bottom-0 left-0 right-0 h-10 px-3 text-xs"
+          action={
+            <FavoriteButton
+              aria-label={`Ajouter aux favoris - ${product.title}`}
+              activeClassName="bg-white text-danger"
+              className="flex size-7 items-center justify-center rounded-full bg-white/14 text-white transition hover:bg-white/24 hover:text-[#B0A4F5]"
+              iconClassName="size-4"
+              productId={product.id}
+              productSlug={product.slug}
+            />
+          }
+          className="absolute bottom-0 left-0 right-0 z-20 h-10 px-3 text-xs"
           image={product.platformImage}
           name={product.platformName}
         />
@@ -329,7 +343,7 @@ function RelatedProductCard({
           {product.price} TND
         </p>
       </div>
-    </Link>
+    </article>
   );
 }
 
