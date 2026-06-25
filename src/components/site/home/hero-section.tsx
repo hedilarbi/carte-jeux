@@ -32,7 +32,7 @@ export function HeroSection() {
       <section className="relative min-h-[420px] w-full overflow-hidden py-10" id="home" >
 
 
-        <div className="relative mx-auto grid min-h-[420px] max-w-[1200px]  gap-20 px-6 pt-8  lg:grid-cols-[1.4fr_0.6fr]">
+        <div className="relative mx-auto grid min-h-[420px] max-w-[1350px]  gap-20 px-6 pt-8  lg:grid-cols-[1.4fr_0.6fr]">
           <div>
 
 
@@ -114,7 +114,7 @@ export function HeroSection() {
       </section>
       <div className="bg-brand-navy/88  w-full">
 
-        <div className="mx-auto grid  px-6 md:grid-cols-2  xl:grid-cols-4 max-w-[1200px] justify-between ">
+        <div className="mx-auto grid  px-6 md:grid-cols-2  xl:grid-cols-4 max-w-[1350px] justify-between ">
           {trustItems.map((item) => (
             <div className="flex items-center gap-4 py-5 md:px-6" key={item.title}>
               <span className="flex size-11 shrink-0 items-center justify-center rounded-xl border border-brand-lavender/20 bg-brand-lavender text-black">

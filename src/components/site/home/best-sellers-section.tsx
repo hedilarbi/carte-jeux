@@ -17,7 +17,7 @@ export function BestSellersSection({
 
   return (
     <section className=" py-16">
-      <div className="mx-auto max-w-[1200px] px-6">
+      <div className="mx-auto max-w-[1350px] px-6">
         <div>
           <span className="font-mono text-[11px] font-bold uppercase text-brand-dark">
             {"// NINTENDO"}

@@ -148,7 +148,7 @@ export function FaqSection({
 
   return (
     <section className="bg-brand-navy py-16" id={id}>
-      <div className="mx-auto grid max-w-[1200px] gap-10 px-6 lg:grid-cols-2 lg:items-start">
+      <div className="mx-auto grid max-w-[1350px] gap-10 px-6 lg:grid-cols-2 lg:items-start">
         <div className="order-2 rounded-[17px] border border-white/10 bg-white/13 p-5 shadow-[0_24px_80px_rgba(0,0,0,0.22)] backdrop-blur md:p-7 lg:min-h-[675px]">
           <span className="font-mono text-[11px] font-bold uppercase text-brand-lavender">
             {contactEyebrow}

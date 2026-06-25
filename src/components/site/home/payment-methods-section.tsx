@@ -4,7 +4,7 @@ import { HomeIcon } from "@/components/site/home/home-icons";
 export function PaymentMethodsSection() {
   return (
     <section className="bg-brand-lilac/5 py-10">
-      <div className="mx-auto max-w-[1200px] px-6">
+      <div className="mx-auto max-w-[1350px] px-6">
         <div className="mb-6 text-center">
           <span className="font-mono text-[11px] font-bold uppercase text-brand-lavender">
             {"// Moyens de paiement"}

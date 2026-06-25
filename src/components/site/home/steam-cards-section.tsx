@@ -17,7 +17,7 @@ export function SteamCardsSection({
 
   return (
     <section className="bg-[#E1D0FF]/65 py-16 ">
-      <div className="mx-auto max-w-[1200px] px-6">
+      <div className="mx-auto max-w-[1350px] px-6">
 
         <div className="mb-7 flex items-end justify-between gap-4">
           <div>

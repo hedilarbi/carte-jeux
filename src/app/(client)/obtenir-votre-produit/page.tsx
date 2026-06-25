@@ -43,7 +43,7 @@ export default async function GetProductPage({
     <main className="min-h-screen bg-[linear-gradient(90deg,#E3CDFF_0%,#D8E0FF_67.31%,#C9CAFF_100%)] text-[#00061E]">
       <GetProductProgress />
 
-      <section className="mx-auto grid max-w-[1200px] gap-8 px-6 py-11 lg:grid-cols-[minmax(0,1fr)_437px] lg:items-start">
+      <section className="mx-auto grid max-w-[1350px] gap-8 px-6 py-11 lg:grid-cols-[minmax(0,1fr)_437px] lg:items-start">
         <OrderConfirmation order={order} />
         <OrderSummary order={order} />
       </section>
@@ -54,7 +54,7 @@ export default async function GetProductPage({
 function GetProductProgress() {
   return (
     <section className="mt-6 bg-[#012D69] px-6 py-6 text-white shadow-[0_10px_30px_rgba(1,45,105,0.2)]">
-      <div className="mx-auto flex max-w-[1200px] items-center justify-between gap-3">
+      <div className="mx-auto flex max-w-[1350px] items-center justify-between gap-3">
         {steps.map((step, index) => {
           const isDone = index < 2;
           const isActive = index === 2;

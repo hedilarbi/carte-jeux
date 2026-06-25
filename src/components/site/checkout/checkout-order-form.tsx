@@ -87,7 +87,7 @@ export function CheckoutOrderForm({
 
   return (
     <form
-      className="mx-auto grid max-w-[1200px] gap-7 px-6 py-10 lg:grid-cols-[minmax(0,1fr)_437px] lg:items-start"
+      className="mx-auto grid max-w-[1350px] gap-7 px-6 py-10 lg:grid-cols-[minmax(0,1fr)_437px] lg:items-start"
       onSubmit={handleSubmit}
     >
       <section className="grid gap-[15px]">

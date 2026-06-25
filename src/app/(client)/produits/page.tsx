@@ -25,7 +25,7 @@ export default async function ProductsPage({
 
   return (
     <main className="bg-brand-light text-brand-lilac">
-      <div className="mx-auto flex w-full max-w-[1200px] flex-col gap-8 px-6 py-10 lg:flex-row lg:items-start">
+      <div className="mx-auto flex w-full max-w-[1350px] flex-col gap-8 px-6 py-10 lg:flex-row lg:items-start">
         <FilterSection
           platforms={content.filters.platforms}
           regions={content.filters.regions}

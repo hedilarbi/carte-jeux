@@ -46,7 +46,7 @@ const footerColumns = [
 export function SiteFooter() {
   return (
     <footer className="relative z-10 border-t border-brand-ice/14 bg-brand-navy">
-      <div className="mx-auto max-w-[1200px] px-6 py-12">
+      <div className="mx-auto max-w-[1350px] px-6 py-12">
         <div className="grid gap-10 md:grid-cols-2 lg:grid-cols-[2fr_1fr_1fr_1fr]">
           <div>
             <Link

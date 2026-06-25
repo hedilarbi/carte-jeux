@@ -58,7 +58,7 @@ export default async function ProfilePage() {
 
   return (
     <main className="relative min-h-[947px] overflow-hidden bg-[linear-gradient(90deg,#E3CDFF_0%,#D8E0FF_67.31%,#C9CAFF_100%)] px-5 py-8 text-[#012D69] sm:px-8">
-      <section className="relative z-10 mx-auto w-full max-w-[1240px]">
+      <section className="relative z-10 mx-auto w-full max-w-[1350px]">
         <p className="font-inter text-xs font-black tracking-[0.12em] text-[#240638]">
           {"// Mon compte"}
         </p>

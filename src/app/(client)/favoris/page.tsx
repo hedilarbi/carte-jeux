@@ -32,7 +32,7 @@ export default async function FavoritesPage() {
 
   return (
     <main className="min-h-screen bg-[linear-gradient(90deg,#E3CDFF_0%,#D8E0FF_67.31%,#C9CAFF_100%)] px-6 py-12 text-[#00061E]">
-      <section className="mx-auto max-w-[1200px]">
+      <section className="mx-auto max-w-[1350px]">
         <div className="mb-8">
           <span className="font-mono text-[11px] font-bold uppercase text-[#012D69]/70">
             {"// Favoris"}

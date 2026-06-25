@@ -65,7 +65,7 @@ export default async function CheckoutPage() {
 function CheckoutProgress() {
   return (
     <section className="mt-6 bg-[#012D69] px-6 py-6 text-white shadow-[0_10px_30px_rgba(1,45,105,0.2)]">
-      <div className="mx-auto flex max-w-[1200px] items-center justify-between gap-3">
+      <div className="mx-auto flex max-w-[1350px] items-center justify-between gap-3">
         {steps.map((step, index) => {
           const isDone = index === 0;
           const isActive = index === 1;

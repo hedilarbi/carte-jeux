@@ -19,7 +19,7 @@ export function CategoriesSection({
 }) {
   return (
     <section className="bg-brand-light py-8" id="categories">
-      <div className="mx-auto max-w-[1200px] px-6">
+      <div className="mx-auto max-w-[1350px] px-6">
         <div className="mb-7">
           <span className="font-mono text-[11px] font-bold uppercase text-brand-purple-deep">
             {"// Plateformes"}

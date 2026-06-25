@@ -92,7 +92,7 @@ export function SiteHeader() {
   return (
     <header className="fixed inset-x-0 top-0 z-50 max-w-screen h-10">
       <nav className="border-b border-brand-lavender/25 bg-brand-navy/88 backdrop-blur-2xl">
-        <div className="mx-auto flex  max-w-[1200px] items-center gap-4 px-4 sm:px-6">
+        <div className="mx-auto flex  max-w-[1350px] items-center gap-4 px-4 sm:px-6">
           <Link
             aria-label="Playsdepot TN"
 

@@ -40,7 +40,7 @@ export default async function CategoriesPage() {
 
 function BannerBlock() {
   return (
-    <section className="mx-auto max-w-[1200px] px-6 py-10 md:py-12">
+    <section className="mx-auto max-w-[1350px] px-6 py-10 md:py-12">
       <div className="relative h-[180px] overflow-hidden bg-white shadow-[0_4px_4px_#B1A3F5] sm:h-[240px] lg:h-[300px]">
         <Image
           alt="Jeux mobile et top up gaming en Tunisie"
@@ -69,7 +69,7 @@ function CategoryCardsBlock({
   }
 
   return (
-    <section className="mx-auto max-w-[1200px] px-6 pb-12">
+    <section className="mx-auto max-w-[1350px] px-6 pb-12">
       <div className="mb-6">
         <span className="font-mono text-[11px] font-bold uppercase text-[#012D69]/70">
           {eyebrow}
@@ -131,7 +131,7 @@ function CategoryDescriptionBlock({
   typeCount: number;
 }) {
   return (
-    <section className="mx-auto max-w-[1200px] px-6 pb-12">
+    <section className="mx-auto max-w-[1350px] px-6 pb-12">
       <div className="bg-white/37 p-6 font-inter shadow-[0_4px_4px_#B1A3F5] backdrop-blur-sm md:p-8">
         <h2 className="font-heading text-xl font-bold leading-7 tracking-[0.04em] text-[#012D69] md:text-2xl">
           Catégories gaming en Tunisie
@@ -165,7 +165,7 @@ function BestSellersBlock({
   }
 
   return (
-    <section className="mx-auto max-w-[1200px] px-6 pb-24 pt-2">
+    <section className="mx-auto max-w-[1350px] px-6 pb-24 pt-2">
       <h2 className="font-heading text-lg font-bold leading-6 tracking-[0.06em] text-black">
         Best seller
       </h2>

@@ -92,7 +92,7 @@ function ProductTopBlock({ product }: { product: ProductDetailPageContent }) {
   ] as const;
 
   return (
-    <section className="mx-auto max-w-[1200px] px-6 py-10 md:py-14 lg:py-16">
+    <section className="mx-auto max-w-[1350px] px-6 py-10 md:py-14 lg:py-16">
       <div className="grid gap-8 lg:grid-cols-[320px_minmax(0,1fr)_360px] lg:items-start">
         <div className="relative aspect-[625/873] overflow-hidden bg-white shadow-[0_4px_4px_#B1A3F5]">
           <Image
@@ -185,7 +185,7 @@ function ProductDetailsBlock({
   const gallery = product.gallery.length > 0 ? product.gallery : ["/jeu1.jpg"];
 
   return (
-    <section className="mx-auto grid max-w-[1200px] gap-8 px-6 pb-12 lg:grid-cols-[2fr_1fr] lg:items-start">
+    <section className="mx-auto grid max-w-[1350px] gap-8 px-6 pb-12 lg:grid-cols-[2fr_1fr] lg:items-start">
       <div className="bg-white/45 p-5 font-inter shadow-[0_4px_4px_#B1A3F5] backdrop-blur-sm">
         <h2 className="font-heading text-lg font-bold text-[#012D69]">
           Description
@@ -283,7 +283,7 @@ function RelatedProductsSection({
   }
 
   return (
-    <section className="mx-auto max-w-[1200px] px-6 pb-24 pt-10">
+    <section className="mx-auto max-w-[1350px] px-6 pb-24 pt-10">
       <h2 className="font-heading text-lg font-bold leading-6 tracking-[0.06em] text-black">
         Les joueurs ont également consulté
       </h2>
