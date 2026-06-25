@@ -194,13 +194,13 @@ function SummaryLine({ item }: { item: OrderItem }) {
       </div>
 
       <div className="min-w-0 pt-2">
-        <h2 className="truncate font-heading text-sm font-bold tracking-[0.06em] text-black">
+        <h2 className="truncate font-body text-sm font-bold tracking-[0.06em] text-black">
           {item.productTitle}
         </h2>
         <p className="mt-3 font-body text-xs font-bold leading-5 text-[#012D69]">
           Produit : {item.sku}
         </p>
-        <p className="mt-4 font-heading text-sm tracking-[0.06em] text-black">
+        <p className="mt-4 font-body text-sm tracking-[0.06em] text-black">
           {item.discountPercent > 0 ? (
             <>
               <span className="mr-2 font-medium line-through">

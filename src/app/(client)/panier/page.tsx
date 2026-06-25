@@ -342,10 +342,10 @@ function InspiredCard({ name }: { name: string }) {
         </div>
       </div>
       <div className="px-[18px] py-3">
-        <h3 className="line-clamp-2 h-[35px] text-xs font-bold leading-[18px] text-[#00061E]">
+        <h3 className="line-clamp-2 h-[35px] font-body text-xs font-bold leading-[18px] text-[#00061E]">
           {name}
         </h3>
-        <p className="mt-3 text-center text-xl font-bold leading-[22px] text-[#012D69]">
+        <p className="mt-3 text-center font-body text-xl font-bold leading-[22px] text-[#012D69]">
           50 Dt
         </p>
       </div>

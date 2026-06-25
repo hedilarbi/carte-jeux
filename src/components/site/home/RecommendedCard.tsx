@@ -67,15 +67,15 @@ export function RecommendedCard({
                         name={product.platform}
                     />
 
-                    <h3 className="line-clamp-2 font-heading text-[13px] font-black leading-5 text-white">
+                    <h3 className="line-clamp-2 font-body text-[13px] font-black leading-5 text-white">
                         {product.name}
                     </h3>
                     <p className="mt-1 truncate font-body text-[11px] font-bold uppercase text-[#b3aac9]">
                         {product.platform} · Global
                     </p>
-                    <p className="mt-auto font-heading text-xl font-black text-white">
+                    <p className="mt-auto font-body text-xl font-black text-white">
                         {product.price}{" "}
-                        <span className="font-mono text-[11px] text-[#b3aac9]">TND</span>
+                        <span className="font-body text-[11px] text-[#b3aac9]">TND</span>
                     </p>
                 </div>
 
@@ -138,7 +138,7 @@ export function RecommendedCard({
 
                     <div className="relative z-[2] grid bg-transparent px-4 pb-3 pt-4 [grid-area:top]">
                         <div className="min-w-0">
-                            <h3 className="line-clamp-2 min-h-10 font-heading text-[13px] font-black leading-5 text-white">
+                            <h3 className="line-clamp-2 min-h-10 font-body text-[13px] font-black leading-5 text-white">
                                 {product.name}
                             </h3>
                             <p className="mt-2 truncate font-body text-xs font-bold uppercase text-[#b3aac9]">
@@ -153,14 +153,14 @@ export function RecommendedCard({
                                 <p className="font-body text-xs font-bold text-[#b3aac9]">
                                     À partir de
                                 </p>
-                                <p className="mt-1 font-heading text-3xl font-black text-white">
+                                <p className="mt-1 font-body text-3xl font-black text-white">
                                     {product.price}{" "}
-                                    <span className="font-mono text-[15px] text-[#b3aac9]">
+                                    <span className="font-body text-[15px] text-[#b3aac9]">
                                         TND
                                     </span>
                                 </p>
                                 {/* {product.originalPrice ? (
-                                    <p className="mt-1 font-mono text-[11px] text-[#b3aac9]/70 line-through">
+                                    <p className="mt-1 font-body text-[11px] text-[#b3aac9]/70 line-through">
                                         {product.originalPrice} TND
                                     </p>
                                 ) : null} */}
@@ -179,7 +179,7 @@ export function RecommendedCard({
                         <div className="relative z-40 mt-4 grid gap-2">
                             <AddToCartButton
                                 aria-label={`Ajouter au panier - ${product.name}`}
-                                className="rounded-md bg-brand-lavender px-3 py-3 text-center text-xs font-black text-white transition hover:bg-brand-electric-blue"
+                                className="rounded-md bg-brand-lavender px-3 py-3 text-center font-body text-xs font-black text-white transition hover:bg-brand-electric-blue"
                                 productId={productId}
                                 productSlug={product.slug}
                             >
@@ -187,7 +187,7 @@ export function RecommendedCard({
                             </AddToCartButton>
                             <Link
                                 aria-label={`Voir le produit - ${product.name}`}
-                                className="rounded-md border border-white/18 px-3 py-3 text-center text-xs font-black text-white transition hover:border-brand-lavender hover:text-brand-lavender"
+                                className="rounded-md border border-white/18 px-3 py-3 text-center font-body text-xs font-black text-white transition hover:border-brand-lavender hover:text-brand-lavender"
                                 href={productHref}
                             >
                                 Voir le produit

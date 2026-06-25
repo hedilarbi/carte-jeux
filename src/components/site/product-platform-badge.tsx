@@ -23,7 +23,7 @@ export function ProductPlatformBadge({
   return (
     <div
       className={cn(
-        "inline-flex items-center justify-between gap-2 bg-[linear-gradient(6.39deg,rgba(1,45,105,0.82)_5.02%,rgba(1,45,105,0.82)_123.09%)] font-bold uppercase leading-3 text-white",
+        "inline-flex items-center justify-between gap-2 bg-[linear-gradient(6.39deg,rgba(1,45,105,0.82)_5.02%,rgba(1,45,105,0.82)_123.09%)] font-body font-bold uppercase leading-3 text-white",
         className,
       )}
     >

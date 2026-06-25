@@ -105,12 +105,12 @@ function FavoriteCard({ item }: { item: FavoriteItem }) {
             refreshOnChange
           />
         </div>
-        <h2 className="mt-2 line-clamp-2 min-h-10 text-sm font-extrabold leading-5 text-[#1F0A4D]">
+        <h2 className="mt-2 line-clamp-2 min-h-10 font-body text-sm font-extrabold leading-5 text-[#1F0A4D]">
           {item.productTitle}
         </h2>
-        <p className="mt-4 font-heading text-xl font-black text-[#1F0A4D]">
+        <p className="mt-4 font-body text-xl font-black text-[#1F0A4D]">
           {formatPrice(item.price)}{" "}
-          <span className="font-mono text-[11px] text-[#6F6288]">
+          <span className="font-body text-[11px] text-[#6F6288]">
             {item.currency}
           </span>
         </p>

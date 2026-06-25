@@ -304,7 +304,7 @@ function RelatedProductCard({
 }) {
   return (
     <article
-      className="group relative mx-auto flex w-full max-w-[220px] flex-col overflow-hidden rounded-[15px] bg-white shadow-[0_18px_38px_rgba(1,45,105,0.14)] transition hover:-translate-y-1 hover:shadow-[0_24px_50px_rgba(1,45,105,0.18)] xl:max-w-[210px]"
+      className="group relative mx-auto flex w-full max-w-[220px] flex-col overflow-hidden rounded-[15px] bg-white font-body shadow-[0_18px_38px_rgba(1,45,105,0.14)] transition hover:-translate-y-1 hover:shadow-[0_24px_50px_rgba(1,45,105,0.18)] xl:max-w-[210px]"
     >
       <Link
         aria-label={`Voir le produit - ${product.title}`}
@@ -336,10 +336,10 @@ function RelatedProductCard({
         />
       </div>
       <div className="px-[18px] py-3">
-        <h3 className="line-clamp-2 h-[35px] text-xs font-bold leading-[18px] text-[#00061E]">
+        <h3 className="line-clamp-2 h-[35px] font-body text-xs font-bold leading-[18px] text-[#00061E]">
           {product.title}
         </h3>
-        <p className="mt-3 text-center text-xl font-bold leading-[22px] text-[#012D69]">
+        <p className="mt-3 text-center font-body text-xl font-bold leading-[22px] text-[#012D69]">
           {product.price} TND
         </p>
       </div>

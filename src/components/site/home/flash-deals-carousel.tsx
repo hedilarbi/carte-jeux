@@ -40,7 +40,7 @@ export function FlashDealCard({
   return (
     <article
       className={cn(
-        "group relative z-0 h-[154px] w-[min(88vw,360px)] shrink-0 overflow-hidden rounded-xl border-2 border-[#B3B3B3] bg-white font-extrabold leading-none text-[#00061E] shadow-[0_18px_45px_rgba(23,23,54,0.10)] md:h-[500px] md:w-[240px] lg:h-[565px]",
+        "group relative z-0 h-[154px] w-[min(88vw,360px)] shrink-0 overflow-hidden rounded-xl border-2 border-[#B3B3B3] bg-white font-body font-extrabold leading-none text-[#00061E] shadow-[0_18px_45px_rgba(23,23,54,0.10)] md:h-[500px] md:w-[240px] lg:h-[565px]",
         className,
       )}
     >
@@ -81,19 +81,19 @@ export function FlashDealCard({
             name={product.platform}
           />
 
-          <h3 className="line-clamp-2 text-[13px] font-black leading-5 text-[#00061E]">
+          <h3 className="line-clamp-2 font-body text-[13px] font-black leading-5 text-[#00061E]">
             {product.name}
           </h3>
-          <p className="mt-1 truncate text-[11px] font-bold uppercase text-[#012D69]">
+          <p className="mt-1 truncate font-body text-[11px] font-bold uppercase text-[#012D69]">
             {product.platform ?? "PlayStation Store"} · États Unis
           </p>
           <div className="mt-auto">
-            <p className="font-heading text-xl font-black text-[#1F0A4D]">
+            <p className="font-body text-xl font-black text-[#1F0A4D]">
               {product.price}{" "}
-              <span className="font-mono text-[11px] text-black/55">TND</span>
+              <span className="font-body text-[11px] text-black/55">TND</span>
             </p>
             {product.originalPrice ? (
-              <p className="mt-0.5 font-mono text-[10px] text-black/45 line-through">
+              <p className="mt-0.5 font-body text-[10px] text-black/45 line-through">
                 {product.originalPrice} TND
               </p>
             ) : null}
@@ -158,10 +158,10 @@ export function FlashDealCard({
           <div className="relative z-[2] grid bg-white px-4 pb-3 pt-4 [grid-area:top]">
             <div className="min-w-0">
 
-              <h3 className="line-clamp-2 min-h-10 text-[13px] font-black leading-5 text-[#00061E]">
+              <h3 className="line-clamp-2 min-h-10 font-body text-[13px] font-black leading-5 text-[#00061E]">
                 {product.name}
               </h3>
-              <p className="mt-2 truncate text-xs font-bold uppercase text-[#012D69]">
+              <p className="mt-2 truncate font-body text-xs font-bold uppercase text-[#012D69]">
                 États Unis
               </p>
             </div>
@@ -170,15 +170,15 @@ export function FlashDealCard({
           <div className="relative z-20 flex flex-col justify-between bg-white px-4 pb-4 [grid-area:bottom]">
             <div className="flex items-end justify-between gap-3">
               <div className="min-w-0">
-                <p className="text-xs font-bold text-black/55">Prix promo</p>
-                <p className="mt-1 font-heading text-3xl font-black text-[#1F0A4D]">
+                <p className="font-body text-xs font-bold text-black/55">Prix promo</p>
+                <p className="mt-1 font-body text-3xl font-black text-[#1F0A4D]">
                   {product.price}{" "}
-                  <span className="font-mono text-[15px] text-black/55">
+                  <span className="font-body text-[15px] text-black/55">
                     TND
                   </span>
                 </p>
                 {product.originalPrice ? (
-                  <p className="mt-1 font-mono text-[11px] text-black/45 line-through">
+                  <p className="mt-1 font-body text-[11px] text-black/45 line-through">
                     {product.originalPrice} TND
                   </p>
                 ) : null}
@@ -188,7 +188,7 @@ export function FlashDealCard({
             <div className="relative z-40 mt-4 grid gap-2">
               <AddToCartButton
                 aria-label={`Ajouter au panier - ${product.name}`}
-                className="rounded-lg bg-[#B0A4F5] px-3 py-3 text-center text-xs font-black text-[#1F0A4D] transition hover:bg-[#A681F0]"
+                className="rounded-lg bg-[#B0A4F5] px-3 py-3 text-center font-body text-xs font-black text-[#1F0A4D] transition hover:bg-[#A681F0]"
                 productId={productId}
                 productSlug={product.slug}
               >
@@ -196,7 +196,7 @@ export function FlashDealCard({
               </AddToCartButton>
               <Link
                 aria-label={`Voir le produit - ${product.name}`}
-                className="rounded-lg border border-[#B3B3B3] px-3 py-3 text-center text-xs font-black text-[#00061E] transition hover:border-[#A681F0] hover:text-[#1F0A4D]"
+                className="rounded-lg border border-[#B3B3B3] px-3 py-3 text-center font-body text-xs font-black text-[#00061E] transition hover:border-[#A681F0] hover:text-[#1F0A4D]"
                 href={productHref}
               >
                 Voir le produit
