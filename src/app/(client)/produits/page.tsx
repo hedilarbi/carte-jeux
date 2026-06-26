@@ -13,8 +13,10 @@ export default async function ProductsPage({
 }) {
   const params = await searchParams;
   const content = await catalogService.getProductsPageContent({
+    limit: readSearchParam(params.limit),
     max: readSearchParam(params.max),
     min: readSearchParam(params.min),
+    page: readSearchParam(params.page),
     platform: params.platform,
     q: readSearchParam(params.q),
     region: params.region,

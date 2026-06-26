@@ -13,3 +13,7 @@ export function calculateDiscountedPrice(price: number, discountPercent = 0) {
 
   return roundMoney(normalizedPrice - discountAmount);
 }
+
+export function formatProductPrice(value: number) {
+  return value.toFixed(3).replace(/\.?0+$/, "");
+}

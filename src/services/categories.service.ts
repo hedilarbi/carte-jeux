@@ -1,4 +1,5 @@
 import { serializeDocument } from "@/lib/utils/serialization";
+import { formatProductPrice } from "@/lib/utils/pricing";
 import { listCategories } from "@/repositories/category.repository";
 import { listProducts } from "@/repositories/product.repository";
 import type { Category, Product } from "@/types/entities";
@@ -27,10 +28,6 @@ export interface CategoriesPageContent {
   platforms: CategoriesPageCategory[];
   products: CategoriesPageProduct[];
   types: CategoriesPageCategory[];
-}
-
-function formatPrice(value: number) {
-  return value.toFixed(3);
 }
 
 function toPageCategory(category: Category): CategoriesPageCategory {
@@ -68,7 +65,7 @@ function toPageProduct(
     image: product.image,
     platformImage: platform?.image,
     platformName: platform?.name ?? "Global",
-    price: formatPrice(product.finalPrice),
+    price: formatProductPrice(product.finalPrice),
     slug: product.slug,
     title: product.title,
   };

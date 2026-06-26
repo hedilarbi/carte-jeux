@@ -252,14 +252,6 @@ textarea {
   background: transparent !important;
 }
 
-#home {
-  background-image: url(/hero.jpg);
-  background-size: cover;
-  background-position: center top;
-
-  background-repeat: no-repeat;
-}
-
 #recommended {
   background-image: url(/recomanded_section.png);
   background-size: cover;

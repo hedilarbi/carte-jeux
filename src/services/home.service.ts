@@ -1,4 +1,5 @@
 import { serializeDocument } from "@/lib/utils/serialization";
+import { formatProductPrice } from "@/lib/utils/pricing";
 import {
   listCategories,
   listCategoriesBySlugs,
@@ -26,10 +27,6 @@ const HOME_PRODUCT_SECTIONS: Array<{
   { key: "nintendo", categorySlug: "nintendo" },
   { key: "gamingPc", categorySlug: "gaming-pc" },
 ];
-
-function formatHomePrice(value: number) {
-  return value.toFixed(3);
-}
 
 function resolveIcon(label: string) {
   const normalized = label.toLowerCase();
@@ -74,7 +71,7 @@ function toProductPreview(
   const platform = platformFromCategories ?? categoryMap.get(product.platformId);
   const originalPrice =
     product.discountPercent > 0 && product.price > product.finalPrice
-      ? formatHomePrice(product.price)
+      ? formatProductPrice(product.price)
       : undefined;
   const badges: HomeProductBadge[] = ["instant"];
 
@@ -91,7 +88,7 @@ function toProductPreview(
     slug: product.slug,
     platform: platform?.name ?? "Global",
     name: product.title,
-    price: formatHomePrice(product.finalPrice),
+    price: formatProductPrice(product.finalPrice),
     originalPrice,
     currency: product.currency,
     image: product.image,

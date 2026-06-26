@@ -84,7 +84,7 @@ export function ProductCard({
         </div>
 
         <div className="mt-4 flex items-end justify-between gap-3">
-          <div>
+          <div className="flex flex-wrap items-baseline gap-x-2 gap-y-1">
             <p className="font-body text-base font-black text-brand-lavender">
               {product.price}{" "}
               <span className="font-body text-[10px] text-brand-periwinkle/60">

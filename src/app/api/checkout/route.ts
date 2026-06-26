@@ -37,7 +37,7 @@ export async function POST(request: NextRequest) {
       customerLastName: customerUser?.lastName ?? body.customerLastName,
       customerEmail:
         customerUser?.email ?? body.customerEmail ?? customerSession?.email,
-      paymentMethod: "floussi",
+      paymentMethod: body.paymentMethod,
     });
     const order = await orderService.createFromCart({
       customerEmail: parsed.customerEmail,

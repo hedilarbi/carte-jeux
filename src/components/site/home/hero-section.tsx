@@ -1,7 +1,36 @@
-import Link from "next/link";
-import { BadgeCheck, Clock3, Headphones, ShieldCheck } from "lucide-react";
-import { IoGameController, IoLogoWhatsapp } from "react-icons/io5";
 import Image from "next/image";
+import Link from "next/link";
+import {
+  ArrowRight,
+  BadgeCheck,
+  Clock3,
+  Headphones,
+  MessageCircle,
+  ShieldCheck,
+} from "lucide-react";
+
+const heroCards = [
+  {
+    alt: "Minecraft",
+    href: "/produits/minecraft-java-edition-pc",
+    src: "/minecraft-card.png",
+  },
+  {
+    alt: "EA Sports FC 26",
+    href: "/produits/fc-26-ps4-ps5",
+    src: "/fc26-card.png",
+  },
+  {
+    alt: "Grand Theft Auto V",
+    href: "/produits/gta-v-ps4-ps5-bundle",
+    src: "/gtav-card.png",
+  },
+  {
+    alt: "Red Dead Redemption",
+    href: "/produits/red-dead-redemption-2-pc",
+    src: "/rdd-card.png",
+  },
+];
 
 export function HeroSection() {
   const trustItems = [
@@ -26,95 +55,80 @@ export function HeroSection() {
       icon: BadgeCheck,
     },
   ];
+
   return (
     <div>
+      <section
+        className="relative isolate overflow-hidden"
+        id="home"
+      >
+        <Image
+          alt=""
+          className="-z-10 object-cover"
+          fill
+          priority
+          sizes="100vw"
+          src="/banner-bg-2.png"
+        />
 
-      <section className="relative min-h-[420px] w-full overflow-hidden py-10" id="home" >
+        <div className="mx-auto flex min-h-[60svh] max-w-[1350px] flex-col items-center px-6 pb-5 pt-12 text-center sm:pb-6 sm:pt-14 lg:pt-16">
+          <h1 className="max-w-4xl font-heading text-sm font-black leading-tight tracking-[0.03em] text-white drop-shadow-[0_4px_18px_rgba(1,45,105,0.32)] sm:text-lg lg:text-xl">
+            EXAMENS : TERMINÉ <span className="text-[#4D3B94]">&gt;&gt;</span>{" "}
+            MANETTE : EN MAIN
+          </h1>
+          <p className="mt-3 max-w-2xl text-sm font-semibold leading-6 text-[#4D3B94] sm:text-base">
+            Découvrez les jeux PlayStation à ne pas manquer cet été !
+          </p>
 
-
-        <div className="relative mx-auto grid min-h-[420px] max-w-[1350px]  gap-20 px-6 pt-8  lg:grid-cols-[1.4fr_0.6fr]">
-          <div>
-
-
-            <h1 className=" max-w-4xl font-heading text-xl font-black leading-tight text-white md:text-4xl">
-              Recharges Gaming en Tunisie <br />
-              <span className="text-white font-medium">
-                Codes Steam, PSN, Xbox & Nintendo instantanés
-                <br />
-              </span>
-              <span className="bg-[linear-gradient(90deg,var(--brand-lavender),var(--brand-periwinkle),var(--brand-electric-blue))] bg-clip-text font-medium text-transparent">
-                Global
-              </span>
-            </h1>
-            <p className="mt-5 max-w-xl text-base font-medium leading-8 text-white md:text-base md:max-w-[520px] ">
-              La plateforme #1 en Tunisie pour acheter vos cartes gaming et codes de recharge.
-              Steam, PlayStation, Xbox, Nintendo, Free Fire, PUBG — rechargez vos jeux préférés en quelques secondes. <br />
-
-
-            </p>
-
-            <div className="mt-6 flex flex-wrap gap-3">
-              <Link
-                className="inline-flex items-center justify-center gap-2 rounded-xl bg-[linear-gradient(90deg,var(--brand-orchid),var(--brand-blue-mist))] px-5 py-2 text-sm font-bold font-body uppercase text-black transition hover:shadow-[0_8px_28px_rgba(243,252,255,0.58)]"
-                href="/produits"
-              >
-                <IoGameController size={24} />
-                Voir les produits
-
-              </Link>
-              <Link
-                className="font-body inline-flex items-center justify-center gap-2 rounded-xl border border-brand-orchid px-5 py-2 text-sm font-bold uppercase text-brand-orchid transition hover:bg-brand-lavender/30"
-                href="https://wa.me/21600000000"
-                target="_blank"
-              >
-                <IoLogoWhatsapp size={24} />
-                WhatsApp
-              </Link>
-            </div>
-
-
-          </div>
-          <div className="grid grid-cols-2 gap-4">
-            <Image
-              alt="Carte PSN"
-              className="h-auto w-full"
-              src="/psnhero1.png"
-              width={150}
-              height={200}
-            />
-            <Image
-              alt="Carte PSN"
-              className="h-auto w-full"
-              src="/psnhero2.png"
-              width={207}
-              height={256}
-            />
-            <Image
-              alt="Carte PSN"
-              className="h-auto w-full"
-              src="/psnhero3.png"
-              width={207}
-              height={256}
-            />
-            <Image
-              alt="Carte PSN"
-              className="h-auto w-full"
-              src="/psnhero4.png"
-              width={207}
-              height={256}
-            />
-
-
+          <div className="mt-4 flex flex-wrap justify-center gap-2">
+            <Link
+              className="inline-flex h-9 items-center justify-center gap-1 rounded-lg bg-[#78DAFF] px-3 font-body text-[11px] font-bold uppercase text-[#012D69] shadow-[0_10px_24px_rgba(1,45,105,0.24)] transition hover:-translate-y-0.5 hover:bg-[#A2E8FF]"
+              href="/produits"
+            >
+              Voir les produits
+              <ArrowRight className="size-3" />
+            </Link>
+            <Link
+              className="inline-flex h-9 items-center justify-center gap-1 rounded-lg border border-[#012D69]/35 bg-white px-3 font-body text-[11px] font-bold uppercase text-[#012D69] transition hover:-translate-y-0.5 hover:bg-[#F3F0FF]"
+              href="/#faq"
+            >
+              <MessageCircle className="size-3" />
+              Contactez-nous
+            </Link>
           </div>
 
+          <div className="mt-auto flex w-full max-w-[1040px] items-end justify-center gap-2 pt-5 sm:gap-4 sm:pt-6">
+            {heroCards.map((card, index) => {
+              const isFeatured = index === 1 || index === 2;
 
-
+              return (
+                <Link
+                  aria-label={`Voir les produits ${card.alt}`}
+                  className={`group block shrink-0 transition duration-300 hover:-translate-y-2 ${
+                    isFeatured
+                      ? "w-[23%] max-w-[160px]"
+                      : "w-[20%] max-w-[138px]"
+                  }`}
+                  href={card.href}
+                  key={card.src}
+                >
+                  <Image
+                    alt={card.alt}
+                    className="h-auto w-full drop-shadow-[0_16px_24px_rgba(1,45,105,0.28)] transition duration-300 group-hover:scale-[1.03]"
+                    height={isFeatured ? 458 : 423}
+                    sizes="(max-width: 640px) 23vw, (max-width: 1024px) 20vw, 236px"
+                    src={card.src}
+                    width={isFeatured ? 311 : 286}
+                  />
+                </Link>
+              );
+            })}
+          </div>
         </div>
-
       </section>
-      <div className="bg-brand-navy/88  w-full">
 
-        <div className="mx-auto grid  px-6 md:grid-cols-2  xl:grid-cols-4 max-w-[1350px] justify-between ">
+      <div className="w-full bg-brand-navy/88">
+        <div className="mx-auto grid max-w-[1350px] justify-between px-6 md:grid-cols-2 xl:grid-cols-4">
           {trustItems.map((item) => (
             <div className="flex items-center gap-4 py-5 md:px-6" key={item.title}>
               <span className="flex size-11 shrink-0 items-center justify-center rounded-xl border border-brand-lavender/20 bg-brand-lavender text-black">
@@ -124,9 +138,7 @@ export function HeroSection() {
                 <h2 className="font-body text-sm font-bold text-white">
                   {item.title}
                 </h2>
-                <p className="mt-1 text-xs text-white">
-                  {item.description}
-                </p>
+                <p className="mt-1 text-xs text-white">{item.description}</p>
               </div>
             </div>
           ))}

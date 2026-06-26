@@ -1,46 +1,16 @@
 import Image from "next/image";
+import Link from "next/link";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 
 import {
     FlashDealCard,
     type FlashDealProduct,
 } from "@/components/site/home/flash-deals-carousel";
+import { ProductSortSelect } from "@/components/site/products/ProductSortSelect";
 import type { CatalogPageContent, CatalogProduct } from "@/types/catalog";
 
 interface MainSectionProps {
     content: CatalogPageContent;
-}
-
-function addHiddenInputs(content: CatalogPageContent) {
-    const { selected } = content;
-
-    return (
-        <>
-            {selected.types.map((type) => (
-                <input key={`type-${type}`} name="type" type="hidden" value={type} />
-            ))}
-            {selected.platforms.map((platform) => (
-                <input
-                    key={`platform-${platform}`}
-                    name="platform"
-                    type="hidden"
-                    value={platform}
-                />
-            ))}
-            {selected.regions.map((region) => (
-                <input
-                    key={`region-${region}`}
-                    name="region"
-                    type="hidden"
-                    value={region}
-                />
-            ))}
-            {selected.search ? (
-                <input name="search" type="hidden" value={selected.search} />
-            ) : null}
-            {selected.min ? <input name="min" type="hidden" value={selected.min} /> : null}
-            {selected.max ? <input name="max" type="hidden" value={selected.max} /> : null}
-        </>
-    );
 }
 
 function resolvePageTitle(content: CatalogPageContent) {
@@ -58,6 +28,48 @@ function resolvePageTitle(content: CatalogPageContent) {
     }
 
     return "Produits gaming Tunisie - Cartes, jeux et recharges";
+}
+
+function buildPaginationHref(content: CatalogPageContent, page: number) {
+    const { selected } = content;
+    const params = new URLSearchParams();
+
+    selected.types.forEach((type) => params.append("type", type));
+    selected.platforms.forEach((platform) => params.append("platform", platform));
+    selected.regions.forEach((region) => params.append("region", region));
+
+    if (selected.search) {
+        params.set("search", selected.search);
+    }
+
+    if (selected.min) {
+        params.set("min", selected.min);
+    }
+
+    if (selected.max) {
+        params.set("max", selected.max);
+    }
+
+    if (selected.sort !== "popular") {
+        params.set("sort", selected.sort);
+    }
+
+    params.set("page", String(page));
+    params.set("limit", String(content.pagination.limit));
+
+    return `/produits?${params.toString()}`;
+}
+
+function getPaginationPages(currentPage: number, totalPages: number) {
+    const pages = new Set([1, totalPages]);
+
+    for (let page = currentPage - 1; page <= currentPage + 1; page += 1) {
+        if (page > 0 && page <= totalPages) {
+            pages.add(page);
+        }
+    }
+
+    return Array.from(pages).sort((first, second) => first - second);
 }
 
 export default function MainSection({ content }: MainSectionProps) {
@@ -87,41 +99,24 @@ export default function MainSection({ content }: MainSectionProps) {
                         <span className="text-brand-dark">{content.totalItems}</span>
                     </p>
 
-                    <form
-                        action="/produits"
-                        className="flex w-full items-center justify-between gap-3 rounded-xl border border-brand-navy/10 bg-white px-4 py-3 text-sm font-semibold text-brand-dark md:w-auto"
-                        method="get"
-                    >
-                        {addHiddenInputs(content)}
+                    <div className="flex w-full items-center justify-between gap-3 rounded-xl border border-brand-navy/10 bg-white px-4 py-3 text-sm font-semibold text-brand-dark md:w-auto">
                         <span className="shrink-0 font-mono text-xs uppercase text-brand-navy/55">
                             Popularité :
                         </span>
-                        <select
-                            className="min-w-0 bg-transparent font-semibold outline-none"
-                            defaultValue={content.selected.sort}
-                            name="sort"
-                        >
-                            <option value="popular">Les plus populaires</option>
-                            <option value="price-asc">Prix croissant</option>
-                            <option value="price-desc">Prix décroissant</option>
-                            <option value="new">Nouveautés</option>
-                        </select>
-                        <button
-                            className="rounded-lg bg-brand-lavender px-3 py-2 text-xs font-black text-[#03030A]"
-                            type="submit"
-                        >
-                            OK
-                        </button>
-                    </form>
+                        <ProductSortSelect selected={content.selected} />
+                    </div>
                 </div>
             </div>
 
             {content.products.length > 0 ? (
-                <div className="mt-8 grid grid-cols-[repeat(auto-fill,minmax(240px,1fr))] gap-6">
-                    {content.products.map((product) => (
-                        <ProductResultCard key={product.id} product={product} />
-                    ))}
-                </div>
+                <>
+                    <div className="mt-8 grid grid-cols-[repeat(auto-fill,minmax(240px,1fr))] gap-6">
+                        {content.products.map((product) => (
+                            <ProductResultCard key={product.id} product={product} />
+                        ))}
+                    </div>
+                    <CatalogPagination content={content} />
+                </>
             ) : (
                 <div className="mt-8 rounded-[18px] border border-brand-ice/18 bg-white/72 p-8 text-center text-brand-dark shadow-[0_12px_34px_rgba(1,45,105,0.08)]">
                     <h2 className="font-heading text-xl font-black">
@@ -133,6 +128,82 @@ export default function MainSection({ content }: MainSectionProps) {
                 </div>
             )}
         </section>
+    );
+}
+
+function CatalogPagination({ content }: { content: CatalogPageContent }) {
+    const { pagination } = content;
+
+    if (pagination.totalPages <= 1) {
+        return null;
+    }
+
+    const pages = getPaginationPages(pagination.page, pagination.totalPages);
+
+    return (
+        <nav
+            aria-label="Pagination des produits"
+            className="mt-10 flex flex-wrap items-center justify-center gap-2"
+        >
+            {pagination.hasPreviousPage ? (
+                <Link
+                    aria-label="Page précédente"
+                    className="flex size-10 items-center justify-center rounded-lg border border-brand-navy/15 bg-white text-brand-navy transition hover:border-brand-lavender hover:bg-brand-lavender"
+                    href={buildPaginationHref(content, pagination.page - 1)}
+                >
+                    <ChevronLeft className="size-4" />
+                </Link>
+            ) : (
+                <span
+                    aria-disabled="true"
+                    className="flex size-10 items-center justify-center rounded-lg border border-brand-navy/10 bg-white/50 text-brand-navy/35"
+                >
+                    <ChevronLeft className="size-4" />
+                </span>
+            )}
+
+            {pages.map((page, index) => (
+                <span className="contents" key={page}>
+                    {index > 0 && page - pages[index - 1] > 1 ? (
+                        <span aria-hidden="true" className="px-1 text-brand-navy/55">
+                            …
+                        </span>
+                    ) : null}
+                    {page === pagination.page ? (
+                        <span
+                            aria-current="page"
+                            className="flex size-10 items-center justify-center rounded-lg bg-brand-lavender text-sm font-black text-[#03030A]"
+                        >
+                            {page}
+                        </span>
+                    ) : (
+                        <Link
+                            className="flex size-10 items-center justify-center rounded-lg border border-brand-navy/15 bg-white text-sm font-bold text-brand-navy transition hover:border-brand-lavender hover:bg-brand-lavender"
+                            href={buildPaginationHref(content, page)}
+                        >
+                            {page}
+                        </Link>
+                    )}
+                </span>
+            ))}
+
+            {pagination.hasNextPage ? (
+                <Link
+                    aria-label="Page suivante"
+                    className="flex size-10 items-center justify-center rounded-lg border border-brand-navy/15 bg-white text-brand-navy transition hover:border-brand-lavender hover:bg-brand-lavender"
+                    href={buildPaginationHref(content, pagination.page + 1)}
+                >
+                    <ChevronRight className="size-4" />
+                </Link>
+            ) : (
+                <span
+                    aria-disabled="true"
+                    className="flex size-10 items-center justify-center rounded-lg border border-brand-navy/10 bg-white/50 text-brand-navy/35"
+                >
+                    <ChevronRight className="size-4" />
+                </span>
+            )}
+        </nav>
     );
 }
 

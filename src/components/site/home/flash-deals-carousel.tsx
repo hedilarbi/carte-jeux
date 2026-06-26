@@ -87,13 +87,13 @@ export function FlashDealCard({
           <p className="mt-1 truncate font-body text-[11px] font-bold uppercase text-[#012D69]">
             {product.platform ?? "PlayStation Store"} · États Unis
           </p>
-          <div className="mt-auto">
+          <div className="mt-auto flex flex-wrap items-baseline gap-x-2 gap-y-1">
             <p className="font-body text-xl font-black text-[#1F0A4D]">
               {product.price}{" "}
               <span className="font-body text-[11px] text-black/55">TND</span>
             </p>
             {product.originalPrice ? (
-              <p className="mt-0.5 font-body text-[10px] text-black/45 line-through">
+              <p className="font-body text-[10px] text-black/45 line-through">
                 {product.originalPrice} TND
               </p>
             ) : null}
@@ -171,17 +171,19 @@ export function FlashDealCard({
             <div className="flex items-end justify-between gap-3">
               <div className="min-w-0">
                 <p className="font-body text-xs font-bold text-black/55">Prix promo</p>
-                <p className="mt-1 font-body text-3xl font-black text-[#1F0A4D]">
-                  {product.price}{" "}
-                  <span className="font-body text-[15px] text-black/55">
-                    TND
-                  </span>
-                </p>
-                {product.originalPrice ? (
-                  <p className="mt-1 font-body text-[11px] text-black/45 line-through">
-                    {product.originalPrice} TND
+                <div className="mt-1 flex flex-wrap items-baseline gap-x-2 gap-y-1">
+                  <p className="font-body text-3xl font-black text-[#1F0A4D]">
+                    {product.price}{" "}
+                    <span className="font-body text-[15px] text-black/55">
+                      TND
+                    </span>
                   </p>
-                ) : null}
+                  {product.originalPrice ? (
+                    <p className="font-body text-[11px] text-black/45 line-through">
+                      {product.originalPrice} TND
+                    </p>
+                  ) : null}
+                </div>
               </div>
             </div>
 

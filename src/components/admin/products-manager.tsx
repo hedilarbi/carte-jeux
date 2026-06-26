@@ -31,6 +31,15 @@ interface ProductsManagerProps {
   regions: Region[];
 }
 
+interface ProductCsvImportResult {
+  createdCount: number;
+  errors: Array<{
+    line: number;
+    message: string;
+  }>;
+  products: Product[];
+}
+
 interface ProductFormState {
   title: string;
   slug: string;
@@ -67,6 +76,10 @@ const defaultFormState: ProductFormState = {
 
 const PRODUCT_CURRENCY = "DTN";
 const DEFAULT_PRODUCT_TYPE: Product["productType"] = "gift_card";
+const CSV_TEMPLATE = [
+  "title;sku;category_slugs;platform_slug;region_codes;face_value;currency;price;product_type;discount_percent;is_featured;is_active;slug;short_description;description;image;gallery;seo_title;seo_description",
+  "Carte PlayStation Store 50 USD;PSN-US-50;type-produit-slug;platforme-slug;US;50;USD;50;gift_card;0;false;true;playstation-store-50-us;Description courte;Description complète;https://example.com/image.jpg;https://example.com/image-1.jpg|https://example.com/image-2.jpg;Titre SEO;Description SEO",
+].join("\n");
 
 function getProductCategoryIds(product: Product) {
   if (product.categoryIds?.length) {
@@ -113,6 +126,12 @@ export function ProductsManager({
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [isFormOpen, setIsFormOpen] = useState(false);
+  const [isCsvImportOpen, setIsCsvImportOpen] = useState(false);
+  const [csvFile, setCsvFile] = useState<File | null>(null);
+  const [csvImportError, setCsvImportError] = useState<string | null>(null);
+  const [csvImportResult, setCsvImportResult] =
+    useState<ProductCsvImportResult | null>(null);
+  const [isImportingCsv, setIsImportingCsv] = useState(false);
   const [search, setSearch] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -169,6 +188,74 @@ export function ProductsManager({
     setImagePreview(null);
     setError(null);
     setIsFormOpen(true);
+  }
+
+  function resetCsvImport() {
+    setCsvFile(null);
+    setCsvImportError(null);
+    setCsvImportResult(null);
+    setIsCsvImportOpen(false);
+  }
+
+  function startCsvImport() {
+    setCsvFile(null);
+    setCsvImportError(null);
+    setCsvImportResult(null);
+    setIsCsvImportOpen(true);
+  }
+
+  function downloadCsvTemplate() {
+    const blob = new Blob([CSV_TEMPLATE], {
+      type: "text/csv;charset=utf-8",
+    });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+
+    link.href = url;
+    link.download = "modele-import-produits.csv";
+    link.click();
+    URL.revokeObjectURL(url);
+  }
+
+  async function handleCsvImport(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    setCsvImportError(null);
+    setCsvImportResult(null);
+
+    if (!csvFile) {
+      setCsvImportError("Sélectionnez un fichier CSV.");
+      return;
+    }
+
+    setIsImportingCsv(true);
+
+    try {
+      const payload = new FormData();
+      payload.set("file", csvFile);
+
+      const result = await fetchJson<ProductCsvImportResult>(
+        "/api/admin/products/import",
+        {
+          method: "POST",
+          body: payload,
+        },
+      );
+
+      setCsvImportResult(result);
+
+      if (result.createdCount > 0) {
+        setProducts((current) => [...result.products, ...current]);
+        router.refresh();
+      }
+    } catch (importError) {
+      setCsvImportError(
+        importError instanceof Error
+          ? importError.message
+          : "Impossible d’importer le fichier CSV.",
+      );
+    } finally {
+      setIsImportingCsv(false);
+    }
   }
 
   function startEdit(product: Product) {
@@ -398,13 +485,16 @@ export function ProductsManager({
               Construisez la couche d’offre vendable tout en gardant une livraison strictement manuelle.
             </CardDescription>
           </div>
-          <div className="flex w-full gap-3 md:w-auto">
+          <div className="flex w-full flex-wrap gap-3 md:w-auto md:flex-nowrap">
             <Input
               value={search}
               onChange={(event) => setSearch(event.target.value)}
               placeholder="Rechercher des produits"
               className="md:w-72"
             />
+            <Button onClick={startCsvImport} type="button" variant="outline">
+              Importer CSV
+            </Button>
             <Button onClick={startCreate}>
               <Plus className="size-4" />
               Ajouter
@@ -898,6 +988,104 @@ export function ProductsManager({
               className="flex-1"
             >
               Annuler
+            </Button>
+          </div>
+        </form>
+      </Modal>
+
+      <Modal
+        description="Les catégories et plateformes sont identifiées par leurs slugs, les régions par leurs codes. Aucun produit n’est créé tant que le fichier contient une erreur."
+        isOpen={isCsvImportOpen}
+        onClose={resetCsvImport}
+        size="wide"
+        title="Importer des produits CSV"
+      >
+        <form className="space-y-5" onSubmit={handleCsvImport}>
+          <div className="rounded-2xl border border-border bg-slate-50 p-4 text-sm text-slate-700">
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+              <div>
+                <h3 className="font-semibold text-slate-800">Format du fichier</h3>
+                <p className="mt-1 text-xs leading-5 text-slate-500">
+                  CSV UTF-8, séparé par des virgules ou des points-virgules.
+                  Utilisez le caractère <code>|</code> pour plusieurs types,
+                  régions ou images de galerie.
+                </p>
+              </div>
+              <Button
+                onClick={downloadCsvTemplate}
+                type="button"
+                variant="outline"
+              >
+                Télécharger le modèle
+              </Button>
+            </div>
+            <p className="mt-4 font-mono text-xs leading-5 text-slate-600">
+              Colonnes obligatoires : title, sku, category_slugs, platform_slug,
+              region_codes, face_value, currency, price, product_type.
+            </p>
+            <p className="mt-2 text-xs leading-5 text-slate-500">
+              Valeurs autorisées pour <code>product_type</code> : gift_card,
+              subscription, game_credit. Les booléens acceptent true/false,
+              oui/non ou 1/0. Les colonnes restantes sont optionnelles.
+            </p>
+          </div>
+
+          <div>
+            <label className="mb-2 block text-sm font-medium text-slate-700">
+              Fichier CSV
+            </label>
+            <Input
+              accept=".csv,text/csv"
+              className="cursor-pointer file:mr-4 file:rounded-xl file:border-0 file:bg-sky-400/15 file:px-3 file:py-2 file:text-sm file:font-medium file:text-sky-700"
+              onChange={(event) => setCsvFile(event.target.files?.[0] ?? null)}
+              type="file"
+            />
+            <p className="mt-2 text-xs text-slate-500">
+              Maximum 200 produits et 2 Mo par fichier.
+            </p>
+          </div>
+
+          {csvImportError ? (
+            <p className="rounded-xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-700">
+              {csvImportError}
+            </p>
+          ) : null}
+
+          {csvImportResult ? (
+            <div
+              className={`rounded-xl border px-4 py-3 text-sm ${
+                csvImportResult.errors.length > 0
+                  ? "border-amber-200 bg-amber-50 text-amber-800"
+                  : "border-emerald-200 bg-emerald-50 text-emerald-700"
+              }`}
+            >
+              <p className="font-medium">
+                {csvImportResult.errors.length > 0
+                  ? `${csvImportResult.errors.length} erreur(s) détectée(s) : aucun produit créé.`
+                  : `${csvImportResult.createdCount} produit(s) créé(s).`}
+              </p>
+              {csvImportResult.errors.length > 0 ? (
+                <ul className="mt-3 max-h-44 space-y-1 overflow-y-auto text-xs leading-5">
+                  {csvImportResult.errors.map((item, index) => (
+                    <li key={`${item.line}-${index}`}>
+                      Ligne {item.line} : {item.message}
+                    </li>
+                  ))}
+                </ul>
+              ) : null}
+            </div>
+          ) : null}
+
+          <div className="flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
+            <Button
+              onClick={resetCsvImport}
+              type="button"
+              variant="outline"
+            >
+              Fermer
+            </Button>
+            <Button disabled={isImportingCsv} type="submit">
+              {isImportingCsv ? "Import en cours..." : "Importer les produits"}
             </Button>
           </div>
         </form>

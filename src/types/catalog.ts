@@ -35,6 +35,14 @@ export interface CatalogProduct {
   title: string;
 }
 
+export interface CatalogPagination {
+  hasNextPage: boolean;
+  hasPreviousPage: boolean;
+  limit: number;
+  page: number;
+  totalPages: number;
+}
+
 export interface CatalogPageContent {
   activeCategory?: CatalogCategoryFilter;
   activeFilters: {
@@ -47,6 +55,7 @@ export interface CatalogPageContent {
     regions: CatalogRegionFilter[];
     types: CatalogCategoryFilter[];
   };
+  pagination: CatalogPagination;
   products: CatalogProduct[];
   selected: CatalogSelectedFilters;
   totalItems: number;

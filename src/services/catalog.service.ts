@@ -1,4 +1,5 @@
 import { serializeDocument } from "@/lib/utils/serialization";
+import { formatProductPrice } from "@/lib/utils/pricing";
 import { listCategories } from "@/repositories/category.repository";
 import { listProducts } from "@/repositories/product.repository";
 import { listAllRegions } from "@/repositories/region.repository";
@@ -14,8 +15,10 @@ import type {
 type CatalogQueryValue = string | string[] | undefined;
 
 interface CatalogQueryInput {
+  limit?: CatalogQueryValue;
   max?: CatalogQueryValue;
   min?: CatalogQueryValue;
+  page?: CatalogQueryValue;
   platform?: CatalogQueryValue;
   q?: CatalogQueryValue;
   region?: CatalogQueryValue;
@@ -50,10 +53,6 @@ function normalizeSort(value?: CatalogQueryValue): string {
   return ["popular", "price-asc", "price-desc", "new"].includes(sort ?? "")
     ? (sort as string)
     : "popular";
-}
-
-function formatCatalogPrice(value: number) {
-  return value.toFixed(3);
 }
 
 function toCategoryFilter(category: Category): CatalogCategoryFilter {
@@ -97,7 +96,7 @@ function toCatalogProduct(
     product.regionIds.map((regionId) => regionMap.get(regionId)).find(Boolean);
   const originalPrice =
     product.discountPercent > 0 && product.price > product.finalPrice
-      ? formatCatalogPrice(product.price)
+      ? formatProductPrice(product.price)
       : undefined;
 
   return {
@@ -107,7 +106,7 @@ function toCatalogProduct(
     platform: platform?.name ?? "Global",
     platformImage: platform?.image,
     platformSlug: platform?.slug,
-    price: formatCatalogPrice(product.finalPrice),
+    price: formatProductPrice(product.finalPrice),
     region: region?.name ?? "Global",
     slug: product.slug,
     title: product.title,
@@ -177,9 +176,9 @@ export const catalogService = {
       ...selectedPlatformCategories,
       ...selectedTypeCategories,
     ];
-    const productResult = await listProducts({
-      page: 1,
-      limit: 60,
+    let productResult = await listProducts({
+      page: normalizeQueryValue(input.page),
+      limit: normalizeQueryValue(input.limit),
       isActive: true,
       search: selected.search,
       categoryIds: selectedTypeCategories.map((category) => category._id),
@@ -189,6 +188,27 @@ export const catalogService = {
       priceMax: selected.max,
       sort: selected.sort,
     });
+
+    const totalPages = Math.max(
+      1,
+      Math.ceil(productResult.totalItems / productResult.limit),
+    );
+
+    if (productResult.page > totalPages) {
+      productResult = await listProducts({
+        page: totalPages,
+        limit: productResult.limit,
+        isActive: true,
+        search: selected.search,
+        categoryIds: selectedTypeCategories.map((category) => category._id),
+        platformIds: selectedPlatformCategories.map((category) => category._id),
+        regionIds: selectedRegions.map((region) => region._id),
+        priceMin: selected.min,
+        priceMax: selected.max,
+        sort: selected.sort,
+      });
+    }
+
     const products = serializeDocument<Product[]>(productResult.items);
 
     return {
@@ -212,6 +232,13 @@ export const catalogService = {
       products: products.map((product) =>
         toCatalogProduct(product, categoryMap, regionMap),
       ),
+      pagination: {
+        hasNextPage: productResult.page < totalPages,
+        hasPreviousPage: productResult.page > 1,
+        limit: productResult.limit,
+        page: productResult.page,
+        totalPages,
+      },
       selected,
       totalItems: productResult.totalItems,
     };

@@ -57,7 +57,14 @@ export default async function CheckoutPage() {
   return (
     <main className="min-h-screen bg-[linear-gradient(90deg,#E3CDFF_0%,#D8E0FF_67.31%,#C9CAFF_100%)] text-[#00061E]">
       <CheckoutProgress />
-      <CheckoutOrderForm cart={cart} customer={customer} />
+      <CheckoutOrderForm
+        cart={cart}
+        customer={customer}
+        paymentConfig={{
+          flouciWalletUrl: process.env.NEXT_PUBLIC_FLOUCI_WALLET_URL,
+          whatsappOrderNumber: process.env.NEXT_PUBLIC_WHATSAPP_ORDER_NUMBER,
+        }}
+      />
     </main>
   );
 }

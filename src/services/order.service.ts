@@ -82,7 +82,7 @@ export const orderService = {
       firstName: string;
       lastName: string;
     };
-    paymentProvider: "floussi";
+    paymentProvider: "whatsapp" | "flouci";
     sessionId: string;
     userId?: string;
   }) {
@@ -123,7 +123,9 @@ export const orderService = {
       customerEmail: input.customerEmail,
       deliveryMethod: "email",
       paymentProvider: input.paymentProvider,
-      paymentReference: `FLOUSSI-${randomBytes(4).toString("hex").toUpperCase()}`,
+      paymentReference: `${input.paymentProvider.toUpperCase()}-${randomBytes(4)
+        .toString("hex")
+        .toUpperCase()}`,
     });
 
     await updateCartById(String(cart._id), {
