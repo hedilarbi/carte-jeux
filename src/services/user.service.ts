@@ -41,6 +41,7 @@ interface EnsureGuestUserInput {
   email: string;
   firstName: string;
   lastName: string;
+  phone: string;
 }
 
 function toAdminUserListItem(user: User): AdminUserListItem {
@@ -87,6 +88,7 @@ export const userService = {
         firstName: input.firstName,
         lastName: input.lastName,
         email,
+        phone: input.phone,
         role: "guest",
         isActive: true,
         authProviders: [],
@@ -99,6 +101,7 @@ export const userService = {
       firstName: input.firstName,
       lastName: input.lastName,
       email,
+      phone: input.phone,
       role: "guest",
       isActive: true,
       authProviders: [],

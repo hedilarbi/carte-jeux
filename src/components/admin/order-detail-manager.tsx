@@ -206,7 +206,8 @@ export function OrderDetailManager({
               Commande {order.orderNumber}
             </CardTitle>
             <CardDescription className="mt-2">
-              Client {customerName} · {order.customerEmail} · Créée le{" "}
+              Client {customerName} · {order.customerEmail}
+              {order.customerPhone ? ` · ${order.customerPhone}` : ""} · Créée le{" "}
               {formatDateTime(order.createdAt)}
             </CardDescription>
           </CardHeader>

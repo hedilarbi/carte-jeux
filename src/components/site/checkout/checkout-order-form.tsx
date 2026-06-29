@@ -11,6 +11,7 @@ import {
   UserRound,
 } from "lucide-react";
 
+import { PhoneNumberField } from "@/components/site/auth/phone-number-field";
 import { fetchJson } from "@/lib/utils/fetch-json";
 import type { Cart, CartItem, Order } from "@/types/entities";
 
@@ -22,16 +23,20 @@ function countItems(items: CartItem[]) {
   return items.reduce((sum, item) => sum + item.quantity, 0);
 }
 
+function formatMessageField(value?: string) {
+  return value?.trim() || "Non renseigné";
+}
+
 interface CheckoutCustomer {
   email: string;
   firstName: string;
   lastName: string;
+  phone?: string;
 }
 
-type PaymentMethod = "whatsapp" | "flouci";
+type PaymentMethod = "whatsapp";
 
 interface CheckoutPaymentConfig {
-  flouciWalletUrl?: string;
   whatsappOrderNumber?: string;
 }
 
@@ -41,19 +46,6 @@ function normalizeWhatsAppNumber(value?: string) {
   return normalized && /^\d{8,15}$/.test(normalized)
     ? normalized
     : undefined;
-}
-
-function normalizeFlouciWalletUrl(value?: string) {
-  if (!value) {
-    return undefined;
-  }
-
-  try {
-    const url = new URL(value);
-    return url.protocol === "https:" ? url.toString() : undefined;
-  } catch {
-    return undefined;
-  }
 }
 
 function buildWhatsAppCheckoutUrl({
@@ -68,6 +60,12 @@ function buildWhatsAppCheckoutUrl({
   const lines = [
     "Bonjour, je souhaite finaliser cette commande :",
     `Commande : ${order.orderNumber}`,
+    "",
+    "Client :",
+    `Prénom : ${formatMessageField(order.customerFirstName)}`,
+    `Nom : ${formatMessageField(order.customerLastName)}`,
+    `Email : ${formatMessageField(order.customerEmail)}`,
+    `Téléphone : ${formatMessageField(order.customerPhone)}`,
     "",
     "Panier :",
     ...cart.items.map(
@@ -97,21 +95,14 @@ export function CheckoutOrderForm({
   const [email, setEmail] = useState(customer?.email ?? "");
   const [error, setError] = useState<string | null>(null);
   const [isPending, setIsPending] = useState(false);
-  const [paymentMethod, setPaymentMethod] =
-    useState<PaymentMethod>("whatsapp");
+  const paymentMethod: PaymentMethod = "whatsapp";
   const isAuthenticated = Boolean(customer);
   const whatsAppNumber = normalizeWhatsAppNumber(
     paymentConfig.whatsappOrderNumber,
   );
-  const flouciWalletUrl = normalizeFlouciWalletUrl(
-    paymentConfig.flouciWalletUrl,
-  );
-  const isPaymentConfigured = paymentMethod === "whatsapp"
-    ? Boolean(whatsAppNumber)
-    : Boolean(flouciWalletUrl);
-  const paymentConfigurationMessage = paymentMethod === "whatsapp"
-    ? "Le numéro WhatsApp de commande doit être configuré avant de continuer."
-    : "Le lien du wallet Flouci doit être configuré avant de continuer.";
+  const isPaymentConfigured = Boolean(whatsAppNumber);
+  const paymentConfigurationMessage =
+    "Le numéro WhatsApp de commande doit être configuré avant de continuer.";
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -129,12 +120,15 @@ export function CheckoutOrderForm({
     setIsPending(true);
 
     try {
+      const formData = new FormData(event.currentTarget);
+      const customerPhone = String(formData.get("customerPhone") ?? "");
       const order = await fetchJson<Order>("/api/checkout", {
         method: "POST",
         body: JSON.stringify({
           customerFirstName: firstName,
           customerLastName: lastName,
           customerEmail: email,
+          customerPhone,
           paymentMethod,
         }),
       });
@@ -153,10 +147,6 @@ export function CheckoutOrderForm({
           }),
         );
         return;
-      }
-
-      if (paymentMethod === "flouci" && flouciWalletUrl) {
-        window.location.assign(flouciWalletUrl);
       }
     } catch (submitError) {
       setError(
@@ -180,9 +170,6 @@ export function CheckoutOrderForm({
     >
       <section className="grid gap-[15px]">
         <PaymentMethodsCard
-          flouciConfigured={Boolean(flouciWalletUrl)}
-          onChange={setPaymentMethod}
-          selected={paymentMethod}
           whatsAppConfigured={Boolean(whatsAppNumber)}
         />
         <CustomerInfoCard
@@ -193,6 +180,7 @@ export function CheckoutOrderForm({
           onEmailChange={setEmail}
           onFirstNameChange={setFirstName}
           onLastNameChange={setLastName}
+          phone={customer?.phone}
         />
       </section>
 
@@ -202,21 +190,14 @@ export function CheckoutOrderForm({
         isPaymentConfigured={isPaymentConfigured}
         isPending={isPending}
         paymentConfigurationMessage={paymentConfigurationMessage}
-        paymentMethod={paymentMethod}
       />
     </form>
   );
 }
 
 function PaymentMethodsCard({
-  flouciConfigured,
-  onChange,
-  selected,
   whatsAppConfigured,
 }: {
-  flouciConfigured: boolean;
-  onChange: (paymentMethod: PaymentMethod) => void;
-  selected: PaymentMethod;
   whatsAppConfigured: boolean;
 }) {
   return (
@@ -237,24 +218,7 @@ function PaymentMethodsCard({
           icon={<MessageCircle className="size-8" />}
           isConfigured={whatsAppConfigured}
           name="WhatsApp"
-          onClick={() => onChange("whatsapp")}
-          selected={selected === "whatsapp"}
-        />
-        <PaymentMethodOption
-          description="Poursuivez le règlement depuis votre wallet Flouci."
-          icon={
-            <Image
-              alt="Flouci"
-              className="h-auto w-[74px] object-contain"
-              height={50}
-              src="/floussi.png"
-              width={90}
-            />
-          }
-          isConfigured={flouciConfigured}
-          name="Flouci"
-          onClick={() => onChange("flouci")}
-          selected={selected === "flouci"}
+          selected
         />
       </div>
     </section>
@@ -266,14 +230,12 @@ function PaymentMethodOption({
   icon,
   isConfigured,
   name,
-  onClick,
   selected,
 }: {
   description: string;
   icon: React.ReactNode;
   isConfigured: boolean;
   name: string;
-  onClick: () => void;
   selected: boolean;
 }) {
   return (
@@ -284,7 +246,6 @@ function PaymentMethodOption({
           ? "border-[#A582ED] bg-white shadow-[0_8px_22px_rgba(165,130,237,0.16)]"
           : "border-white/70 bg-white/45 hover:border-[#A582ED]/55 hover:bg-white/70"
       }`}
-      onClick={onClick}
       type="button"
     >
       <span className="flex size-[72px] items-center justify-center rounded-2xl bg-white/80 text-[#012D69]">
@@ -322,6 +283,7 @@ function CustomerInfoCard({
   onEmailChange,
   onFirstNameChange,
   onLastNameChange,
+  phone,
 }: {
   email: string;
   firstName: string;
@@ -330,6 +292,7 @@ function CustomerInfoCard({
   onEmailChange: (value: string) => void;
   onFirstNameChange: (value: string) => void;
   onLastNameChange: (value: string) => void;
+  phone?: string;
 }) {
   return (
     <div className="grid gap-4 bg-white/37 px-8 py-7 shadow-[0_4px_4px_#B1A3F5]">
@@ -384,6 +347,11 @@ function CustomerInfoCard({
           value={email}
         />
       </label>
+      <PhoneNumberField
+        defaultValue={phone}
+        label="Numéro de téléphone"
+        name="customerPhone"
+      />
       {isAuthenticated ? (
         <p className="font-inter text-xs font-semibold leading-5 text-[#012D69]/60">
           Ces informations viennent de votre compte client.
@@ -399,14 +367,12 @@ function CheckoutSummary({
   isPaymentConfigured,
   isPending,
   paymentConfigurationMessage,
-  paymentMethod,
 }: {
   cart: Cart;
   error: string | null;
   isPaymentConfigured: boolean;
   isPending: boolean;
   paymentConfigurationMessage: string;
-  paymentMethod: PaymentMethod;
 }) {
   return (
     <aside className="rounded-2xl bg-white p-7 text-black shadow-[0_4px_4px_#B0A4F5] backdrop-blur-[2px] lg:min-h-[680px]">
@@ -451,9 +417,7 @@ function CheckoutSummary({
       >
         {isPending
           ? "Validation..."
-          : paymentMethod === "whatsapp"
-            ? "Continuer sur WhatsApp"
-            : "Payer avec Flouci"}
+          : "Continuer sur WhatsApp"}
       </button>
 
       {!isPaymentConfigured ? (

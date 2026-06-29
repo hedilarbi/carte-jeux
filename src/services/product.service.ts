@@ -23,6 +23,7 @@ import {
   existsProductSku,
   existsProductSlug,
   getProductById,
+  listActiveProductsForSelection,
   listProducts,
   type ProductListFilters,
   updateProductById,
@@ -121,6 +122,10 @@ export const productService = {
       result.totalItems,
       pagination,
     );
+  },
+
+  async listActiveForSelection() {
+    return serializeDocument<Product[]>(await listActiveProductsForSelection());
   },
 
   async getById(id: string) {

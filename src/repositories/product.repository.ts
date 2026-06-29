@@ -179,6 +179,51 @@ export async function listActiveProductsByCategoryOrPlatformId(
     .exec();
 }
 
+export async function listProductsByIds(
+  ids: string[],
+  options: { isActive?: boolean } = {},
+) {
+  await connectToDatabase();
+
+  const productObjectIds = resolveObjectIds(ids);
+
+  if (productObjectIds.length === 0) {
+    return [];
+  }
+
+  return ProductModel.find({
+    _id: { $in: productObjectIds },
+    ...(typeof options.isActive === "boolean"
+      ? { isActive: options.isActive }
+      : {}),
+  } as unknown as ProductFindQuery)
+    .lean()
+    .exec();
+}
+
+export async function listActiveProductsForSelection() {
+  await connectToDatabase();
+
+  return ProductModel.find({ isActive: true } as unknown as ProductFindQuery)
+    .sort({ title: 1, createdAt: -1 })
+    .lean()
+    .exec();
+}
+
+export async function countProductsByIds(ids: string[]) {
+  await connectToDatabase();
+
+  const productObjectIds = resolveObjectIds(ids);
+
+  if (productObjectIds.length === 0) {
+    return 0;
+  }
+
+  return ProductModel.countDocuments({
+    _id: { $in: productObjectIds },
+  } as unknown as ProductCountQuery);
+}
+
 export async function countProducts() {
   await connectToDatabase();
   return ProductModel.countDocuments();

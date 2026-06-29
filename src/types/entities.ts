@@ -157,6 +157,7 @@ export interface Order extends BaseEntity {
   customerFirstName?: string;
   customerLastName?: string;
   customerEmail: string;
+  customerPhone?: string;
   supplierPlatform?: string;
   supplierPurchaseReference?: string;
   supplierCost?: number;
@@ -178,6 +179,12 @@ export interface PromoCampaign extends BaseEntity {
   startsAt: string;
   endsAt: string;
   isActive: boolean;
+}
+
+export interface BestSellerItem extends BaseEntity {
+  productId: string;
+  product?: Product;
+  sortOrder: number;
 }
 
 export interface ContactSubmissionReply {

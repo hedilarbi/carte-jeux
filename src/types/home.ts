@@ -40,6 +40,7 @@ export interface HomeProductSection {
 }
 
 export interface HomePageContent {
+  bestSellers: ProductPreview[];
   categories: HomeCategoryPreview[];
   productSections: HomeProductSection[];
 }

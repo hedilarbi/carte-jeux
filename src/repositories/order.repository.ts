@@ -45,6 +45,7 @@ export async function listOrders(filters: OrderListFilters = {}) {
       { customerFirstName: searchRegex },
       { customerLastName: searchRegex },
       { customerEmail: searchRegex },
+      { customerPhone: searchRegex },
       { supplierPurchaseReference: searchRegex },
       { paymentReference: searchRegex },
     ];

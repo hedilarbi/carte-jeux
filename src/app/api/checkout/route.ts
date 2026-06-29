@@ -37,18 +37,21 @@ export async function POST(request: NextRequest) {
       customerLastName: customerUser?.lastName ?? body.customerLastName,
       customerEmail:
         customerUser?.email ?? body.customerEmail ?? customerSession?.email,
+      customerPhone: body.customerPhone ?? customerUser?.phone,
       paymentMethod: body.paymentMethod,
     });
     const order = await orderService.createFromCart({
       customerEmail: parsed.customerEmail,
       customerFirstName: parsed.customerFirstName,
       customerLastName: parsed.customerLastName,
+      customerPhone: parsed.customerPhone,
       guestCustomer: customerSession
         ? undefined
         : {
             email: parsed.customerEmail,
             firstName: parsed.customerFirstName,
             lastName: parsed.customerLastName,
+            phone: parsed.customerPhone,
           },
       paymentProvider: parsed.paymentMethod,
       sessionId: cartSession.sessionId,

@@ -42,6 +42,7 @@ async function getCurrentCustomer() {
       email: user.email,
       firstName: user.firstName,
       lastName: user.lastName,
+      phone: user.phone,
     };
   } catch {
     return undefined;
@@ -61,7 +62,6 @@ export default async function CheckoutPage() {
         cart={cart}
         customer={customer}
         paymentConfig={{
-          flouciWalletUrl: process.env.NEXT_PUBLIC_FLOUCI_WALLET_URL,
           whatsappOrderNumber: process.env.NEXT_PUBLIC_WHATSAPP_ORDER_NUMBER,
         }}
       />

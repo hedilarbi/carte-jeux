@@ -77,12 +77,14 @@ export const orderService = {
     customerEmail: string;
     customerFirstName: string;
     customerLastName: string;
+    customerPhone: string;
     guestCustomer?: {
       email: string;
       firstName: string;
       lastName: string;
+      phone: string;
     };
-    paymentProvider: "whatsapp" | "flouci";
+    paymentProvider: "whatsapp";
     sessionId: string;
     userId?: string;
   }) {
@@ -121,6 +123,7 @@ export const orderService = {
       customerFirstName: input.customerFirstName,
       customerLastName: input.customerLastName,
       customerEmail: input.customerEmail,
+      customerPhone: input.customerPhone,
       deliveryMethod: "email",
       paymentProvider: input.paymentProvider,
       paymentReference: `${input.paymentProvider.toUpperCase()}-${randomBytes(4)

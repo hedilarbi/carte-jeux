@@ -5,6 +5,7 @@ import {
   listCategoriesBySlugs,
 } from "@/repositories/category.repository";
 import { listActiveProductsByCategoryOrPlatformId } from "@/repositories/product.repository";
+import { bestSellerService } from "@/services/best-seller.service";
 import type { Category, Product } from "@/types/entities";
 import type {
   HomeCategoryPreview,
@@ -103,7 +104,7 @@ function toProductPreview(
 
 export const homeService = {
   async getHomePageContent(): Promise<HomePageContent> {
-    const [categoryResult, requestedCategories] = await Promise.all([
+    const [categoryResult, requestedCategories, bestSellerItems] = await Promise.all([
       listCategories({
         page: 1,
         limit: 100,
@@ -112,6 +113,7 @@ export const homeService = {
       listCategoriesBySlugs(
         HOME_PRODUCT_SECTIONS.map((section) => section.categorySlug),
       ),
+      bestSellerService.list({ activeOnly: true }),
     ]);
 
     const categories = serializeDocument<Category[]>(categoryResult.items);
@@ -153,6 +155,10 @@ export const homeService = {
     );
 
     return {
+      bestSellers: bestSellerItems
+        .map((item) => item.product)
+        .filter((product): product is Product => Boolean(product))
+        .map((product) => toProductPreview(product, categoryMap)),
       categories: categories.map(toHomeCategory),
       productSections,
     };

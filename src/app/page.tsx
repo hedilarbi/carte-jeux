@@ -4,6 +4,7 @@ import { BestSellersSection } from "@/components/site/home/best-sellers-section"
 import { CategoriesSection } from "@/components/site/home/categories-section";
 import { FaqSection } from "@/components/site/home/faq-section";
 import { HeroSection } from "@/components/site/home/hero-section";
+import { HomeBestSellersSection } from "@/components/site/home/home-best-sellers-section";
 import { ProductsSection } from "@/components/site/home/products-section";
 import { RecommendedProductsSection } from "@/components/site/home/recommended-products-section";
 import { SteamCardsSection } from "@/components/site/home/steam-cards-section";
@@ -42,6 +43,7 @@ export default async function Home() {
 
       {/* <PromoBannerSection /> */}
       <CategoriesSection categories={home.categories} />
+      <HomeBestSellersSection products={home.bestSellers} />
       <RecommendedProductsSection
         categorySlug={jeuMobileSection.categorySlug}
         products={jeuMobileSection.products}

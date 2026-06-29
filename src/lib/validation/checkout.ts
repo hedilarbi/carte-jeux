@@ -1,5 +1,7 @@
 import { z } from "zod";
 
+import { customerProfileCompletionSchema } from "@/lib/validation/auth";
+
 export const checkoutCreateSchema = z.object({
   customerFirstName: z
     .string()
@@ -16,7 +18,8 @@ export const checkoutCreateSchema = z.object({
     .trim()
     .email("Une adresse e-mail valide est requise.")
     .transform((value) => value.toLowerCase()),
-  paymentMethod: z.enum(["whatsapp", "flouci"], {
+  customerPhone: customerProfileCompletionSchema.shape.phone,
+  paymentMethod: z.enum(["whatsapp"], {
     error: "Le moyen de paiement sélectionné est invalide.",
   }),
 });

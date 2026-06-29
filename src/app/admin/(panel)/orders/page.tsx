@@ -55,6 +55,9 @@ export default async function AdminOrdersPage() {
                   </td>
                   <td className="px-6 py-4 text-xs text-slate-600">
                     <div>{order.customerEmail}</div>
+                    {order.customerPhone ? (
+                      <div className="mt-1">{order.customerPhone}</div>
+                    ) : null}
                     <div className="mt-1">{formatDateTime(order.createdAt)}</div>
                   </td>
                   <td className="px-6 py-4 text-xs">
