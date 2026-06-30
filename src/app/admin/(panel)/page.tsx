@@ -90,8 +90,8 @@ export default async function AdminDashboardPage() {
               les métadonnées fournisseur et le suivi des codes livrés.
             </div>
             <div className="rounded-2xl border border-border bg-slate-50 p-4">
-              Les utilisateurs et promotions restent des placeholders pour la
-              prochaine phase.
+              Les utilisateurs et codes promo disposent d&apos;interfaces dédiées
+              pour le suivi client et les réductions panier.
             </div>
           </CardContent>
         </Card>

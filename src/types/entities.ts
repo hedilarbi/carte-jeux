@@ -12,6 +12,7 @@ export type OrderStatus =
   | "failed";
 export type PaymentStatus = "pending" | "paid" | "failed" | "refunded";
 export type PromoCampaignType = "percentage";
+export type PromoCodeDiscountType = "percentage" | "fixed";
 export type CartStatus = "active" | "converted" | "abandoned";
 export type ContactSubmissionStatus = "new" | "replied";
 
@@ -110,8 +111,10 @@ export interface Cart extends BaseEntity {
   items: CartItem[];
   subtotal: number;
   totalDiscount: number;
+  promoDiscountAmount?: number;
   total: number;
   currency: string;
+  appliedPromoCode?: AppliedPromoCode | null;
 }
 
 export interface FavoriteItem {
@@ -154,6 +157,7 @@ export interface Order extends BaseEntity {
   totalDiscount: number;
   total: number;
   currency: string;
+  appliedPromoCode?: AppliedPromoCode | null;
   customerFirstName?: string;
   customerLastName?: string;
   customerEmail: string;
@@ -179,6 +183,26 @@ export interface PromoCampaign extends BaseEntity {
   startsAt: string;
   endsAt: string;
   isActive: boolean;
+}
+
+export interface PromoCode extends BaseEntity {
+  code: string;
+  type: PromoCodeDiscountType;
+  value: number;
+  expiresAt: string;
+  usageLimit?: number;
+  usageLimitPerUser?: number;
+  usedCount: number;
+}
+
+export interface AppliedPromoCode {
+  promoCodeId: string;
+  code: string;
+  type: PromoCodeDiscountType;
+  value: number;
+  discountAmount?: number;
+  initialTotal?: number;
+  discountedTotal?: number;
 }
 
 export interface BestSellerItem extends BaseEntity {

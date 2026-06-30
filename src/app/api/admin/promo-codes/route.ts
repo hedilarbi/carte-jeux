@@ -1,0 +1,46 @@
+import { revalidatePath } from "next/cache";
+import type { NextRequest } from "next/server";
+
+import { getAdminApiSession } from "@/lib/auth/admin";
+import {
+  errorResponse,
+  handleRouteError,
+  successResponse,
+} from "@/lib/utils/api-response";
+import { promoCodeService } from "@/services/promo-code.service";
+
+export async function GET(request: NextRequest) {
+  if (!(await getAdminApiSession(request))) {
+    return errorResponse("Non autorisé.", 401);
+  }
+
+  try {
+    const { searchParams } = new URL(request.url);
+    const data = await promoCodeService.list({
+      page: searchParams.get("page"),
+      limit: searchParams.get("limit"),
+      search: searchParams.get("search"),
+    });
+
+    return successResponse(data);
+  } catch (error) {
+    return handleRouteError(error);
+  }
+}
+
+export async function POST(request: NextRequest) {
+  if (!(await getAdminApiSession(request))) {
+    return errorResponse("Non autorisé.", 401);
+  }
+
+  try {
+    const body = await request.json();
+    const data = await promoCodeService.create(body);
+
+    revalidatePath("/admin/promos");
+
+    return successResponse(data, { status: 201 });
+  } catch (error) {
+    return handleRouteError(error);
+  }
+}

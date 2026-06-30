@@ -80,6 +80,15 @@ function buildOrderText(order: Order) {
     "",
     `Sous-total : ${formatMoney(order.subtotal, order.currency)}`,
     `Réduction : ${formatMoney(order.totalDiscount, order.currency)}`,
+    ...(order.appliedPromoCode
+      ? [
+          `Code promo : ${order.appliedPromoCode.code}`,
+          `Remise promo : ${formatMoney(
+            order.appliedPromoCode.discountAmount ?? 0,
+            order.currency,
+          )}`,
+        ]
+      : []),
     `Total : ${formatMoney(order.total, order.currency)}`,
     "",
     "Votre commande sera traitée dans les meilleurs délais.",
@@ -135,6 +144,21 @@ function buildOrderHtml(order: Order) {
             <span>Réduction</span>
             <strong>${escapeHtml(formatMoney(order.totalDiscount, order.currency))}</strong>
           </div>
+          ${
+            order.appliedPromoCode
+              ? `
+          <div style="display:flex;justify-content:space-between;margin-bottom:10px;color:#047857">
+            <span>Code promo ${escapeHtml(order.appliedPromoCode.code)}</span>
+            <strong>-${escapeHtml(
+              formatMoney(
+                order.appliedPromoCode.discountAmount ?? 0,
+                order.currency,
+              ),
+            )}</strong>
+          </div>
+          `
+              : ""
+          }
           <div style="display:flex;justify-content:space-between;font-size:18px;color:#012D69">
             <span>Total</span>
             <strong>${escapeHtml(formatMoney(order.total, order.currency))}</strong>

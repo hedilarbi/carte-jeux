@@ -2,13 +2,13 @@ import Image from "next/image";
 import Link from "next/link";
 import { cookies } from "next/headers";
 import {
-  BadgePercent,
   Gamepad2,
   Info,
   ShoppingBag,
 } from "lucide-react";
 
 import { CartItemActions } from "@/components/site/cart/cart-item-actions";
+import { PromoCodeForm } from "@/components/site/cart/promo-code-form";
 import { FavoriteButton } from "@/components/site/favorites/favorite-button";
 import { CART_SESSION_COOKIE } from "@/lib/auth/cart-session";
 import { cartService } from "@/services/cart.service";
@@ -284,6 +284,13 @@ function CartSummary({
               {formatPrice(cart?.subtotal ?? 0)} {cart?.currency ?? "TND"}
             </span>
           </div>
+          <PromoCodeForm
+            className="mt-0"
+            currency={cart?.currency}
+            disabled={!hasItems}
+            initialAppliedPromoCode={cart?.appliedPromoCode}
+            initialPromoDiscountAmount={cart?.promoDiscountAmount}
+          />
           <div className="flex items-center justify-between gap-4">
             <span>Réduction</span>
             <span className="font-black">
@@ -291,19 +298,6 @@ function CartSummary({
             </span>
           </div>
         </div>
-      </div>
-
-      <div className="mt-6">
-        <label className="font-inter text-sm font-medium tracking-[0.01em] text-black">
-          <span className="flex items-center gap-2">
-            <BadgePercent className="size-4 text-[#968AE0]" />
-            Vous avez un code promo ?
-          </span>
-          <input
-            className="mt-4 h-[57px] w-full bg-[#B0A4F5]/47 px-4 text-center font-inter text-lg font-semibold tracking-[0.01em] text-black outline-none placeholder:text-black/45"
-            placeholder="CODE"
-          />
-        </label>
       </div>
     </aside>
   );

@@ -6,7 +6,11 @@ import {
   type Types,
 } from "mongoose";
 
-import type { OrderStatus, PaymentStatus } from "@/types/entities";
+import type {
+  OrderStatus,
+  PaymentStatus,
+  PromoCodeDiscountType,
+} from "@/types/entities";
 
 export interface OrderItemRecord {
   productId?: Types.ObjectId;
@@ -20,6 +24,16 @@ export interface OrderItemRecord {
   currency: string;
 }
 
+export interface OrderAppliedPromoCodeRecord {
+  promoCodeId: Types.ObjectId;
+  code: string;
+  type: PromoCodeDiscountType;
+  value: number;
+  discountAmount: number;
+  initialTotal: number;
+  discountedTotal: number;
+}
+
 export interface OrderRecord {
   orderNumber: string;
   userId?: Types.ObjectId;
@@ -30,6 +44,7 @@ export interface OrderRecord {
   totalDiscount: number;
   total: number;
   currency: string;
+  appliedPromoCode?: OrderAppliedPromoCodeRecord | null;
   customerFirstName?: string;
   customerLastName?: string;
   customerEmail: string;
@@ -109,6 +124,50 @@ const orderItemSchema = new Schema<OrderItemRecord>(
   },
 );
 
+const orderAppliedPromoCodeSchema = new Schema<OrderAppliedPromoCodeRecord>(
+  {
+    promoCodeId: {
+      type: Schema.Types.ObjectId,
+      ref: "PromoCode",
+      required: true,
+    },
+    code: {
+      type: String,
+      required: true,
+      trim: true,
+      uppercase: true,
+    },
+    type: {
+      type: String,
+      enum: ["percentage", "fixed"],
+      required: true,
+    },
+    value: {
+      type: Number,
+      required: true,
+      min: 0,
+    },
+    discountAmount: {
+      type: Number,
+      required: true,
+      min: 0,
+    },
+    initialTotal: {
+      type: Number,
+      required: true,
+      min: 0,
+    },
+    discountedTotal: {
+      type: Number,
+      required: true,
+      min: 0,
+    },
+  },
+  {
+    _id: false,
+  },
+);
+
 const orderSchema = new Schema<OrderRecord>(
   {
     orderNumber: {
@@ -171,6 +230,10 @@ const orderSchema = new Schema<OrderRecord>(
       uppercase: true,
       minlength: 3,
       maxlength: 3,
+    },
+    appliedPromoCode: {
+      type: orderAppliedPromoCodeSchema,
+      default: null,
     },
     customerEmail: {
       type: String,

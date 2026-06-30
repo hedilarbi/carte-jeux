@@ -60,6 +60,7 @@ export async function POST(request: NextRequest) {
 
     revalidatePath("/admin");
     revalidatePath("/admin/orders");
+    revalidatePath("/admin/promos");
     revalidatePath("/admin/users");
     revalidatePath("/checkout");
     revalidatePath("/panier");

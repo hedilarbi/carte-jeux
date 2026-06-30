@@ -48,7 +48,7 @@ function BannerBlock() {
           fill
           priority
           sizes="(max-width: 1200px) 100vw, 1200px"
-          src="/banner_products.png"
+          src="/banner_products.jpg"
         />
       </div>
     </section>

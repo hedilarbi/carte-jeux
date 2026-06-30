@@ -7,6 +7,7 @@ import {
   addCartItemSchema,
   updateCartItemSchema,
 } from "@/lib/validation/cart";
+import { applyPromoCodeSchema } from "@/lib/validation/promo-code";
 import type { CartItemRecord, CartRecord } from "@/models/cart.model";
 import {
   createCart,
@@ -19,6 +20,10 @@ import {
   getProductById,
   getProductBySlug,
 } from "@/repositories/product.repository";
+import {
+  calculatePromoCodeDiscount,
+  promoCodeService,
+} from "@/services/promo-code.service";
 import type { Cart, Category, Product } from "@/types/entities";
 
 function roundMoney(value: number) {
@@ -32,35 +37,60 @@ function createEmptyCart(sessionId: string): Partial<CartRecord> {
     items: [],
     subtotal: 0,
     totalDiscount: 0,
+    promoDiscountAmount: 0,
     total: 0,
     currency: "TND",
+    appliedPromoCode: null,
   };
 }
 
-function calculateCartTotals(items: CartItemRecord[]) {
+function calculateCartTotals(cart: {
+  appliedPromoCode?: CartRecord["appliedPromoCode"];
+  items: CartItemRecord[];
+}) {
   const subtotal = roundMoney(
-    items.reduce((sum, item) => sum + item.unitPrice * item.quantity, 0),
+    cart.items.reduce((sum, item) => sum + item.unitPrice * item.quantity, 0),
   );
+  const totalBeforePromo = roundMoney(
+    cart.items.reduce(
+      (sum, item) => sum + item.finalUnitPrice * item.quantity,
+      0,
+    ),
+  );
+  const promoDiscountAmount = cart.appliedPromoCode
+    ? calculatePromoCodeDiscount({
+        amount: totalBeforePromo,
+        type: cart.appliedPromoCode.type,
+        value: cart.appliedPromoCode.value,
+      })
+    : 0;
   const total = roundMoney(
-    items.reduce((sum, item) => sum + item.finalUnitPrice * item.quantity, 0),
+    Math.max(0, totalBeforePromo - promoDiscountAmount),
   );
 
   return {
     subtotal,
     totalDiscount: roundMoney(Math.max(0, subtotal - total)),
+    promoDiscountAmount,
     total,
-    currency: items[0]?.currency ?? "TND",
+    currency: cart.items[0]?.currency ?? "TND",
   };
 }
 
 function normalizeCartPayload(cart: CartRecord): Partial<CartRecord> {
-  const totals = calculateCartTotals(cart.items);
+  const items = cart.items.map((item) => ({
+    ...item,
+    lineTotal: roundMoney(item.finalUnitPrice * item.quantity),
+  }));
+  const appliedPromoCode = items.length > 0 ? cart.appliedPromoCode ?? null : null;
+  const totals = calculateCartTotals({
+    appliedPromoCode,
+    items,
+  });
 
   return {
-    items: cart.items.map((item) => ({
-      ...item,
-      lineTotal: roundMoney(item.finalUnitPrice * item.quantity),
-    })),
+    appliedPromoCode,
+    items,
     ...totals,
   };
 }
@@ -168,7 +198,44 @@ async function persistCart(cart: CartRecord) {
 export const cartService = {
   async getCart(sessionId: string) {
     const cart = await getOrCreateCartRecord(sessionId);
-    return serializeDocument<Cart>(cart);
+    return serializeDocument<Cart>({
+      ...cart,
+      ...normalizeCartPayload(cart),
+    });
+  },
+
+  async applyPromoCode(
+    sessionId: string,
+    input: z.input<typeof applyPromoCodeSchema>,
+    userId?: string,
+  ) {
+    const cart = await getOrCreateCartRecord(sessionId);
+
+    if (cart.items.length === 0) {
+      throw new AppError("Votre panier est vide.", 409);
+    }
+
+    const appliedPromoCode = await promoCodeService.getApplicableByCode(
+      input,
+      userId,
+    );
+
+    cart.appliedPromoCode = {
+      promoCodeId: new Types.ObjectId(appliedPromoCode.promoCodeId),
+      code: appliedPromoCode.code,
+      type: appliedPromoCode.type,
+      value: appliedPromoCode.value,
+    };
+
+    return persistCart(cart);
+  },
+
+  async removePromoCode(sessionId: string) {
+    const cart = await getOrCreateCartRecord(sessionId);
+
+    cart.appliedPromoCode = null;
+
+    return persistCart(cart);
   },
 
   async addItem(

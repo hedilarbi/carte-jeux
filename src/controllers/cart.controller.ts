@@ -4,6 +4,7 @@ import {
   attachCartSessionCookie,
   resolveCartSession,
 } from "@/lib/auth/cart-session";
+import { getCustomerApiSession } from "@/lib/auth/customer";
 import {
   handleRouteError,
   successResponse,
@@ -81,6 +82,36 @@ export async function removeCartItemController(
 
   try {
     const data = await cartService.removeItem(session.sessionId, productReference);
+
+    return attachCartSessionCookie(successResponse(data), session);
+  } catch (error) {
+    return handleRouteError(error);
+  }
+}
+
+export async function applyPromoCodeController(request: NextRequest) {
+  const session = resolveCartSession(request);
+
+  try {
+    const body = await readJsonBody(request);
+    const customerSession = await getCustomerApiSession(request);
+    const data = await cartService.applyPromoCode(
+      session.sessionId,
+      body,
+      customerSession?.userId,
+    );
+
+    return attachCartSessionCookie(successResponse(data), session);
+  } catch (error) {
+    return handleRouteError(error);
+  }
+}
+
+export async function removePromoCodeController(request: NextRequest) {
+  const session = resolveCartSession(request);
+
+  try {
+    const data = await cartService.removePromoCode(session.sessionId);
 
     return attachCartSessionCookie(successResponse(data), session);
   } catch (error) {

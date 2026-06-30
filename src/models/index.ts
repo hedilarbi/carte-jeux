@@ -6,5 +6,6 @@ export * from "@/models/favorite-list.model";
 export * from "@/models/pending-customer-registration.model";
 export * from "@/models/product.model";
 export * from "@/models/promo-campaign.model";
+export * from "@/models/promo-code.model";
 export * from "@/models/region.model";
 export * from "@/models/user.model";

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Mail, PackageCheck, ReceiptText, Truck } from "lucide-react";
+import { BadgePercent, Mail, PackageCheck, ReceiptText, Truck } from "lucide-react";
 
 import { OrderStatusBadge } from "@/components/admin/order-status-badge";
 import { PaymentStatusBadge } from "@/components/admin/payment-status-badge";
@@ -238,6 +238,68 @@ export function OrderDetailManager({
                 Payée le {formatDateTime(order.paidAt)}
               </div>
             </div>
+            {order.appliedPromoCode ? (
+              <div className="rounded-2xl border border-emerald-200 bg-emerald-50 p-4 md:col-span-2">
+                <div className="flex items-center gap-2 text-xs uppercase tracking-[0.24em] text-emerald-700">
+                  <BadgePercent className="size-4" />
+                  Code promo
+                </div>
+                <div className="mt-3 grid gap-2 text-sm text-emerald-900 md:grid-cols-2">
+                  <div>
+                    Code :{" "}
+                    <span className="font-semibold">
+                      {order.appliedPromoCode.code}
+                    </span>
+                  </div>
+                  <div>
+                    Type :{" "}
+                    <span className="font-semibold">
+                      {order.appliedPromoCode.type === "percentage"
+                        ? "Pourcentage"
+                        : "Montant fixe"}
+                    </span>
+                  </div>
+                  <div>
+                    Valeur :{" "}
+                    <span className="font-semibold">
+                      {order.appliedPromoCode.type === "percentage"
+                        ? `${order.appliedPromoCode.value}%`
+                        : formatCurrency(
+                            order.appliedPromoCode.value,
+                            order.currency,
+                          )}
+                    </span>
+                  </div>
+                  <div>
+                    Remise :{" "}
+                    <span className="font-semibold">
+                      {formatCurrency(
+                        order.appliedPromoCode.discountAmount ?? 0,
+                        order.currency,
+                      )}
+                    </span>
+                  </div>
+                  <div>
+                    Prix initial :{" "}
+                    <span className="font-semibold">
+                      {formatCurrency(
+                        order.appliedPromoCode.initialTotal ?? order.subtotal,
+                        order.currency,
+                      )}
+                    </span>
+                  </div>
+                  <div>
+                    Prix réduit :{" "}
+                    <span className="font-semibold">
+                      {formatCurrency(
+                        order.appliedPromoCode.discountedTotal ?? order.total,
+                        order.currency,
+                      )}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            ) : null}
           </CardContent>
         </Card>
 

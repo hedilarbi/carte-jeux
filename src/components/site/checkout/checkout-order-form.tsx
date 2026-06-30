@@ -72,8 +72,15 @@ function buildWhatsAppCheckoutUrl({
       (item) =>
         `${item.quantity} × ${item.productTitle} — ${formatPrice(item.lineTotal)} ${item.currency}`,
     ),
+    ...(order.appliedPromoCode
+      ? [
+          "",
+          `Code promo : ${order.appliedPromoCode.code}`,
+          `Remise promo : ${formatPrice(order.appliedPromoCode.discountAmount ?? 0)} ${order.currency}`,
+        ]
+      : []),
     "",
-    `Total : ${formatPrice(cart.total)} ${cart.currency}`,
+    `Total : ${formatPrice(order.total)} ${order.currency}`,
   ];
 
   return `https://wa.me/${phoneNumber}?text=${encodeURIComponent(lines.join("\n"))}`;
@@ -398,6 +405,15 @@ function CheckoutSummary({
           <span className="text-right font-black">
             {formatPrice(cart.totalDiscount)} {cart.currency}
           </span>
+          {cart.appliedPromoCode ? (
+            <>
+              <span>Code promo</span>
+              <span className="text-right font-black text-[#012D69]">
+                {cart.appliedPromoCode.code} · -
+                {formatPrice(cart.promoDiscountAmount ?? 0)} {cart.currency}
+              </span>
+            </>
+          ) : null}
         </div>
       </div>
 

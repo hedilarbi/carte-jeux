@@ -84,7 +84,7 @@ export default function MainSection({ content }: MainSectionProps) {
                     fill
                     priority
                     sizes="(max-width: 1024px) 100vw, 883px"
-                    src="/banner_products.png"
+                    src="/banner_products.jpg"
                 />
             </div>
 

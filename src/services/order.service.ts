@@ -24,6 +24,7 @@ import {
   updateOrderById,
 } from "@/repositories/order.repository";
 import { emailService } from "@/services/email.service";
+import { promoCodeService } from "@/services/promo-code.service";
 import { userService } from "@/services/user.service";
 import type { Order } from "@/types/entities";
 
@@ -31,6 +32,10 @@ function generateOrderNumber() {
   return `GZ-${Date.now().toString(36).toUpperCase()}${randomBytes(2)
     .toString("hex")
     .toUpperCase()}`;
+}
+
+function roundMoney(value: number) {
+  return Math.round(value * 1000) / 1000;
 }
 
 export const orderService = {
@@ -99,13 +104,43 @@ export const orderService = {
         ? null
         : await userService.ensureGuestForOrder(input.guestCustomer);
     const orderUserId = input.userId ?? guestUser?._id;
+    const cartItems = cart.items as CartItemRecord[];
+    const subtotal = roundMoney(
+      cartItems.reduce(
+        (sum, item) => sum + item.unitPrice * item.quantity,
+        0,
+      ),
+    );
+    const totalBeforePromo = roundMoney(
+      cartItems.reduce(
+        (sum, item) => sum + item.finalUnitPrice * item.quantity,
+        0,
+      ),
+    );
+
+    if (cart.appliedPromoCode && !orderUserId) {
+      throw new AppError(
+        "Un utilisateur est requis pour utiliser ce code promo.",
+        409,
+      );
+    }
+
+    const appliedPromoCode = cart.appliedPromoCode
+      ? await promoCodeService.redeemForOrder({
+          amount: totalBeforePromo,
+          code: cart.appliedPromoCode.code,
+          promoCodeId: String(cart.appliedPromoCode.promoCodeId),
+          userId: String(orderUserId),
+        })
+      : null;
+    const total = appliedPromoCode?.discountedTotal ?? totalBeforePromo;
 
     const order = await createOrder({
       orderNumber: generateOrderNumber(),
       userId: orderUserId ? new Types.ObjectId(orderUserId) : undefined,
       status: "pending",
       paymentStatus: "pending",
-      items: cart.items.map((item: CartItemRecord) => ({
+      items: cartItems.map((item: CartItemRecord) => ({
         productId: item.productId,
         productTitle: item.productTitle,
         sku: item.sku,
@@ -116,10 +151,16 @@ export const orderService = {
         lineTotal: item.lineTotal,
         currency: item.currency,
       })),
-      subtotal: cart.subtotal,
-      totalDiscount: cart.totalDiscount,
-      total: cart.total,
+      subtotal,
+      totalDiscount: roundMoney(Math.max(0, subtotal - total)),
+      total,
       currency: cart.currency,
+      appliedPromoCode: appliedPromoCode
+        ? {
+            ...appliedPromoCode,
+            promoCodeId: new Types.ObjectId(appliedPromoCode.promoCodeId),
+          }
+        : null,
       customerFirstName: input.customerFirstName,
       customerLastName: input.customerLastName,
       customerEmail: input.customerEmail,

@@ -6,7 +6,16 @@ import {
   type Types,
 } from "mongoose";
 
+import type { PromoCodeDiscountType } from "@/types/entities";
+
 export type CartStatus = "active" | "converted" | "abandoned";
+
+export interface CartAppliedPromoCodeRecord {
+  promoCodeId: Types.ObjectId;
+  code: string;
+  type: PromoCodeDiscountType;
+  value: number;
+}
 
 export interface CartItemRecord {
   productId: Types.ObjectId;
@@ -32,8 +41,10 @@ export interface CartRecord {
   items: CartItemRecord[];
   subtotal: number;
   totalDiscount: number;
+  promoDiscountAmount: number;
   total: number;
   currency: string;
+  appliedPromoCode?: CartAppliedPromoCodeRecord | null;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -121,6 +132,35 @@ const cartItemSchema = new Schema<CartItemRecord>(
   },
 );
 
+const cartAppliedPromoCodeSchema = new Schema<CartAppliedPromoCodeRecord>(
+  {
+    promoCodeId: {
+      type: Schema.Types.ObjectId,
+      ref: "PromoCode",
+      required: true,
+    },
+    code: {
+      type: String,
+      required: true,
+      trim: true,
+      uppercase: true,
+    },
+    type: {
+      type: String,
+      enum: ["percentage", "fixed"],
+      required: true,
+    },
+    value: {
+      type: Number,
+      required: true,
+      min: 0,
+    },
+  },
+  {
+    _id: false,
+  },
+);
+
 const cartSchema = new Schema<CartRecord>(
   {
     sessionId: {
@@ -157,6 +197,12 @@ const cartSchema = new Schema<CartRecord>(
       min: 0,
       default: 0,
     },
+    promoDiscountAmount: {
+      type: Number,
+      required: true,
+      min: 0,
+      default: 0,
+    },
     total: {
       type: Number,
       required: true,
@@ -171,6 +217,10 @@ const cartSchema = new Schema<CartRecord>(
       minlength: 3,
       maxlength: 3,
       default: "TND",
+    },
+    appliedPromoCode: {
+      type: cartAppliedPromoCodeSchema,
+      default: null,
     },
   },
   {
