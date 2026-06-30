@@ -6,6 +6,7 @@ import { BadgePercent, X } from "lucide-react";
 
 import { fetchJson } from "@/lib/utils/fetch-json";
 import { cn } from "@/lib/utils/cn";
+import { formatProductPrice } from "@/lib/utils/pricing";
 import type { Cart } from "@/types/entities";
 
 interface PromoCodeFormProps {
@@ -47,7 +48,7 @@ export function PromoCodeForm({
   ]);
 
   function formatPrice(value: number) {
-    return value.toFixed(3);
+    return formatProductPrice(value);
   }
 
   function formatPromoValue() {

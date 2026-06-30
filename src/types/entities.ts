@@ -232,6 +232,14 @@ export interface ContactSubmission extends BaseEntity {
   replies: ContactSubmissionReply[];
 }
 
+export interface GtaPreorder extends BaseEntity {
+  product: "gta-vi";
+  firstName: string;
+  lastName: string;
+  email: string;
+  phone: string;
+}
+
 export interface DashboardStats {
   totalProducts: number;
   totalOrders: number;

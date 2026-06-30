@@ -8,6 +8,7 @@ import {
   createPaginatedResult,
   resolvePagination,
 } from "@/lib/utils/pagination";
+import { roundMoney } from "@/lib/utils/pricing";
 import { serializeDocument } from "@/lib/utils/serialization";
 import { orderUpdateSchema } from "@/lib/validation/order";
 import {
@@ -32,10 +33,6 @@ function generateOrderNumber() {
   return `GZ-${Date.now().toString(36).toUpperCase()}${randomBytes(2)
     .toString("hex")
     .toUpperCase()}`;
-}
-
-function roundMoney(value: number) {
-  return Math.round(value * 1000) / 1000;
 }
 
 export const orderService = {
@@ -104,7 +101,12 @@ export const orderService = {
         ? null
         : await userService.ensureGuestForOrder(input.guestCustomer);
     const orderUserId = input.userId ?? guestUser?._id;
-    const cartItems = cart.items as CartItemRecord[];
+    const cartItems = (cart.items as CartItemRecord[]).map((item) => ({
+      ...item,
+      unitPrice: roundMoney(item.unitPrice),
+      finalUnitPrice: roundMoney(item.finalUnitPrice),
+      lineTotal: roundMoney(roundMoney(item.finalUnitPrice) * item.quantity),
+    }));
     const subtotal = roundMoney(
       cartItems.reduce(
         (sum, item) => sum + item.unitPrice * item.quantity,

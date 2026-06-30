@@ -18,6 +18,7 @@ import { Modal } from "@/components/ui/modal";
 import { Select } from "@/components/ui/select";
 import { fetchJson } from "@/lib/utils/fetch-json";
 import { formatDateTime } from "@/lib/utils/format";
+import { formatProductPrice } from "@/lib/utils/pricing";
 import type { PromoCode, PromoCodeDiscountType } from "@/types/entities";
 
 interface PromoCodesManagerProps {
@@ -58,7 +59,7 @@ function toLimitLabel(value?: number) {
 }
 
 function formatPromoValue(type: PromoCodeDiscountType, value: number) {
-  return type === "percentage" ? `${value}%` : `${value.toFixed(3)} TND`;
+  return type === "percentage" ? `${value}%` : `${formatProductPrice(value)} TND`;
 }
 
 function buildPayload(form: PromoCodeFormState) {

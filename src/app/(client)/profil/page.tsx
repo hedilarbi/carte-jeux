@@ -13,6 +13,7 @@ import {
 import type { ReactElement, ReactNode } from "react";
 
 import { getCustomerPageSession } from "@/lib/auth/customer";
+import { formatProductPrice } from "@/lib/utils/pricing";
 import { customerAuthService } from "@/services/customer-auth.service";
 import { orderService } from "@/services/order.service";
 import type { Order, OrderStatus } from "@/types/entities";
@@ -350,5 +351,5 @@ function getStatusLabel(status: OrderStatus) {
 }
 
 function formatProfilePrice(value: number) {
-  return value.toFixed(3).replace(".", ",");
+  return formatProductPrice(value);
 }

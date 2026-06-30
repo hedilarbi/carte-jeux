@@ -13,10 +13,11 @@ import {
 
 import { PhoneNumberField } from "@/components/site/auth/phone-number-field";
 import { fetchJson } from "@/lib/utils/fetch-json";
+import { formatProductPrice } from "@/lib/utils/pricing";
 import type { Cart, CartItem, Order } from "@/types/entities";
 
 function formatPrice(value: number) {
-  return value.toFixed(3).replace(".", ",");
+  return formatProductPrice(value);
 }
 
 function countItems(items: CartItem[]) {
@@ -400,7 +401,7 @@ function CheckoutSummary({
             {formatPrice(cart.subtotal)} {cart.currency}
           </span>
           <span>Frais de service</span>
-          <span className="text-right font-black">0,000 {cart.currency}</span>
+          <span className="text-right font-black">0 {cart.currency}</span>
           <span>Réduction</span>
           <span className="text-right font-black">
             {formatPrice(cart.totalDiscount)} {cart.currency}

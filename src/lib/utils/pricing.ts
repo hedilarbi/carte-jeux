@@ -3,11 +3,11 @@ export function clampDiscountPercent(value: number) {
 }
 
 export function roundMoney(value: number) {
-  return Number(value.toFixed(2));
+  return Number.isFinite(value) ? Math.round(Math.max(0, value)) : 0;
 }
 
 export function calculateDiscountedPrice(price: number, discountPercent = 0) {
-  const normalizedPrice = Number.isFinite(price) ? Math.max(0, price) : 0;
+  const normalizedPrice = roundMoney(price);
   const normalizedDiscount = clampDiscountPercent(discountPercent);
   const discountAmount = normalizedPrice * (normalizedDiscount / 100);
 
@@ -15,5 +15,5 @@ export function calculateDiscountedPrice(price: number, discountPercent = 0) {
 }
 
 export function formatProductPrice(value: number) {
-  return value.toFixed(3).replace(/\.?0+$/, "");
+  return String(roundMoney(value));
 }

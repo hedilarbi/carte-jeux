@@ -24,7 +24,7 @@ export function getFormDataNumber(formData: FormData, key: string) {
     return undefined;
   }
 
-  return Number(value);
+  return Number(value.replace(/\s/g, "").replace(",", "."));
 }
 
 export function getFormDataBoolean(

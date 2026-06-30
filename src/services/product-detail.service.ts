@@ -1,4 +1,5 @@
 import { serializeDocument } from "@/lib/utils/serialization";
+import { formatProductPrice } from "@/lib/utils/pricing";
 import { listCategories } from "@/repositories/category.repository";
 import {
   getProductBySlug,
@@ -52,10 +53,6 @@ export interface ProductDetailPageContent {
   sku: string;
   slug: string;
   title: string;
-}
-
-function formatPrice(value: number) {
-  return value.toFixed(3);
 }
 
 function toDetailCategory(category: Category): ProductDetailCategory {
@@ -139,7 +136,7 @@ function toRelatedProduct(
     image: product.image,
     platformImage: platform?.image,
     platformName: platform?.name ?? "Global",
-    price: formatPrice(product.finalPrice),
+    price: formatProductPrice(product.finalPrice),
     slug: product.slug,
     title: product.title,
   };
@@ -205,7 +202,7 @@ export const productDetailService = {
       image: product.image,
       originalPrice:
         product.discountPercent > 0 && product.price > product.finalPrice
-          ? formatPrice(product.price)
+          ? formatProductPrice(product.price)
           : undefined,
       platform: platform
         ? toDetailCategory(platform)
@@ -215,7 +212,7 @@ export const productDetailService = {
             slug: "global",
           },
       points: Math.max(1, Math.round(product.finalPrice * 5)),
-      price: formatPrice(product.finalPrice),
+      price: formatProductPrice(product.finalPrice),
       regions: productRegions.map(toDetailRegion),
       relatedProducts,
       seoDescription: product.seoDescription,

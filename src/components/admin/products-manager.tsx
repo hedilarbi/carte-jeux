@@ -19,7 +19,7 @@ import { Input } from "@/components/ui/input";
 import { Modal } from "@/components/ui/modal";
 import { Textarea } from "@/components/ui/textarea";
 import { PRODUCT_TYPE_LABELS } from "@/constants/admin";
-import { calculateDiscountedPrice } from "@/lib/utils/pricing";
+import { calculateDiscountedPrice, roundMoney } from "@/lib/utils/pricing";
 import { formatCurrency } from "@/lib/utils/format";
 import { fetchJson } from "@/lib/utils/fetch-json";
 import type { Category, Product, ProductFaqItem, Region } from "@/types/entities";
@@ -267,7 +267,7 @@ export function ProductsManager({
       categoryIds: getProductCategoryIds(product),
       platformId: product.platformId,
       regionIds: getProductRegionIds(product),
-      price: String(product.price),
+      price: String(roundMoney(product.price)),
       discountPercent: String(product.discountPercent),
       sku: product.sku,
       isFeatured: product.isFeatured,
@@ -781,7 +781,7 @@ export function ProductsManager({
               <Input
                 type="number"
                 min="0"
-                step="0.01"
+                step="1"
                 value={form.price}
                 onChange={(event) =>
                   setForm((current) => ({

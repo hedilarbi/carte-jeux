@@ -7,6 +7,7 @@ import { AddToCartButton } from "@/components/site/add-to-cart-button";
 import { FavoriteButton } from "@/components/site/favorites/favorite-button";
 import { FAVORITE_SESSION_COOKIE } from "@/lib/auth/favorite-session";
 import { getCustomerPageSession } from "@/lib/auth/customer";
+import { formatProductPrice } from "@/lib/utils/pricing";
 import { favoritesService } from "@/services/favorites.service";
 import type { FavoriteItem, FavoriteList } from "@/types/entities";
 
@@ -21,10 +22,6 @@ async function getCurrentFavorites(): Promise<FavoriteList> {
     ...(customerSession ? { userId: customerSession.userId } : {}),
     ...(!customerSession && sessionId ? { sessionId } : {}),
   });
-}
-
-function formatPrice(value: number) {
-  return value.toFixed(3);
 }
 
 export default async function FavoritesPage() {
@@ -109,7 +106,7 @@ function FavoriteCard({ item }: { item: FavoriteItem }) {
           {item.productTitle}
         </h2>
         <p className="mt-4 font-body text-xl font-black text-[#1F0A4D]">
-          {formatPrice(item.price)}{" "}
+          {formatProductPrice(item.price)}{" "}
           <span className="font-body text-[11px] text-[#6F6288]">
             {item.currency}
           </span>

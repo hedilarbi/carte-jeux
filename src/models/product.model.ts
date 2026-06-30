@@ -6,7 +6,7 @@ import {
   type Types,
 } from "mongoose";
 
-import { calculateDiscountedPrice } from "@/lib/utils/pricing";
+import { calculateDiscountedPrice, roundMoney } from "@/lib/utils/pricing";
 import type { DeliveryMode, ProductFaqItem, ProductType } from "@/types/entities";
 
 export interface ProductRecord {
@@ -233,6 +233,7 @@ productSchema.pre("validate", function setFinalPrice() {
     product.regionId = product.regionIds[0];
   }
 
+  product.price = roundMoney(product.price);
   product.finalPrice = calculateDiscountedPrice(
     product.price,
     product.discountPercent,

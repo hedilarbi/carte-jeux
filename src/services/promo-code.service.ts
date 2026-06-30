@@ -6,6 +6,7 @@ import {
   createPaginatedResult,
   resolvePagination,
 } from "@/lib/utils/pagination";
+import { roundMoney } from "@/lib/utils/pricing";
 import { serializeDocument } from "@/lib/utils/serialization";
 import {
   applyPromoCodeSchema,
@@ -33,10 +34,6 @@ import type {
 type PromoCodeRecordWithId = PromoCodeRecord & {
   _id: unknown;
 };
-
-function roundMoney(value: number) {
-  return Math.round(value * 1000) / 1000;
-}
 
 function toPublicPromoCode(record: unknown) {
   const serialized = serializeDocument<

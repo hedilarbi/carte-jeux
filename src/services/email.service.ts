@@ -1,5 +1,6 @@
 import nodemailer from "nodemailer";
 
+import { formatProductPrice } from "@/lib/utils/pricing";
 import type { ContactSubmission, Order } from "@/types/entities";
 
 function getRequiredEnv(name: string) {
@@ -39,7 +40,7 @@ function getAdminContactRecipient() {
 }
 
 function formatMoney(value: number, currency: string) {
-  return `${value.toFixed(3).replace(".", ",")} ${currency}`;
+  return `${formatProductPrice(value)} ${currency}`;
 }
 
 function escapeHtml(value: string | number) {

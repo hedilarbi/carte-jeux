@@ -2,6 +2,7 @@ import { Types } from "mongoose";
 import { z } from "zod";
 
 import { AppError } from "@/lib/utils/app-error";
+import { roundMoney } from "@/lib/utils/pricing";
 import { serializeDocument } from "@/lib/utils/serialization";
 import {
   addCartItemSchema,
@@ -25,10 +26,6 @@ import {
   promoCodeService,
 } from "@/services/promo-code.service";
 import type { Cart, Category, Product } from "@/types/entities";
-
-function roundMoney(value: number) {
-  return Math.round(value * 1000) / 1000;
-}
 
 function createEmptyCart(sessionId: string): Partial<CartRecord> {
   return {
@@ -80,7 +77,9 @@ function calculateCartTotals(cart: {
 function normalizeCartPayload(cart: CartRecord): Partial<CartRecord> {
   const items = cart.items.map((item) => ({
     ...item,
-    lineTotal: roundMoney(item.finalUnitPrice * item.quantity),
+    unitPrice: roundMoney(item.unitPrice),
+    finalUnitPrice: roundMoney(item.finalUnitPrice),
+    lineTotal: roundMoney(roundMoney(item.finalUnitPrice) * item.quantity),
   }));
   const appliedPromoCode = items.length > 0 ? cart.appliedPromoCode ?? null : null;
   const totals = calculateCartTotals({
@@ -164,10 +163,10 @@ async function createCartItem(
     platformImage: platform.platformImage,
     sku: product.sku,
     quantity,
-    unitPrice: product.price,
+    unitPrice: roundMoney(product.price),
     discountPercent: product.discountPercent,
-    finalUnitPrice: product.finalPrice,
-    lineTotal: roundMoney(product.finalPrice * quantity),
+    finalUnitPrice: roundMoney(product.finalPrice),
+    lineTotal: roundMoney(roundMoney(product.finalPrice) * quantity),
     currency: product.currency,
   };
 }
@@ -252,11 +251,11 @@ export const cartService = {
         99,
         cart.items[existingItemIndex].quantity + parsed.quantity,
       );
-      cart.items[existingItemIndex].unitPrice = product.price;
+      cart.items[existingItemIndex].unitPrice = roundMoney(product.price);
       cart.items[existingItemIndex].discountPercent = product.discountPercent;
-      cart.items[existingItemIndex].finalUnitPrice = product.finalPrice;
+      cart.items[existingItemIndex].finalUnitPrice = roundMoney(product.finalPrice);
       cart.items[existingItemIndex].lineTotal = roundMoney(
-        product.finalPrice * cart.items[existingItemIndex].quantity,
+        roundMoney(product.finalPrice) * cart.items[existingItemIndex].quantity,
       );
     } else {
       cart.items.push(await createCartItem(product, parsed.quantity));
@@ -282,6 +281,10 @@ export const cartService = {
       cart.items.splice(itemIndex, 1);
     } else {
       cart.items[itemIndex].quantity = parsed.quantity;
+      cart.items[itemIndex].finalUnitPrice = roundMoney(
+        cart.items[itemIndex].finalUnitPrice,
+      );
+      cart.items[itemIndex].unitPrice = roundMoney(cart.items[itemIndex].unitPrice);
       cart.items[itemIndex].lineTotal = roundMoney(
         cart.items[itemIndex].finalUnitPrice * parsed.quantity,
       );

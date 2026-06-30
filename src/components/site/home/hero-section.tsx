@@ -1,8 +1,13 @@
+"use client";
+
 import Image from "next/image";
 import Link from "next/link";
+import { useEffect, useState } from "react";
 import {
   ArrowRight,
   BadgeCheck,
+  ChevronLeft,
+  ChevronRight,
   Clock3,
   Headphones,
   MessageCircle,
@@ -32,7 +37,41 @@ const heroCards = [
   },
 ];
 
+type ProductGridHeroSlide = {
+  background: string;
+  id: string;
+  kind: "product-grid";
+};
+
+type ImageLinkHeroSlide = {
+  alt: string;
+  href: string;
+  id: string;
+  image: string;
+  kind: "image-link";
+};
+
+type HeroSlide = ProductGridHeroSlide | ImageLinkHeroSlide;
+
+const heroSlides: HeroSlide[] = [
+  {
+    background: "/banner-bg-2.png",
+    id: "examens-ete",
+    kind: "product-grid",
+  },
+  {
+    alt: "Précommande GTA VI",
+    href: "/precommande-gta-vi",
+    id: "precommande-gta-vi",
+    image: "/banner_products.jpg",
+    kind: "image-link",
+  },
+];
+
 export function HeroSection() {
+  const [activeSlideIndex, setActiveSlideIndex] = useState(0);
+  const hasMultipleSlides = heroSlides.length > 1;
+  const activeSlide = heroSlides[activeSlideIndex] ?? heroSlides[0];
   const trustItems = [
     {
       title: "Livraison instantanée",
@@ -56,75 +95,83 @@ export function HeroSection() {
     },
   ];
 
+  useEffect(() => {
+    if (!hasMultipleSlides) {
+      return;
+    }
+
+    const interval = window.setInterval(() => {
+      setActiveSlideIndex((currentIndex) =>
+        currentIndex === heroSlides.length - 1 ? 0 : currentIndex + 1,
+      );
+    }, 6000);
+
+    return () => window.clearInterval(interval);
+  }, [hasMultipleSlides]);
+
+  function goToSlide(index: number) {
+    setActiveSlideIndex(index);
+  }
+
+  function goToPreviousSlide() {
+    setActiveSlideIndex((currentIndex) =>
+      currentIndex === 0 ? heroSlides.length - 1 : currentIndex - 1,
+    );
+  }
+
+  function goToNextSlide() {
+    setActiveSlideIndex((currentIndex) =>
+      currentIndex === heroSlides.length - 1 ? 0 : currentIndex + 1,
+    );
+  }
+
   return (
     <div>
       <section
         className="relative isolate overflow-hidden"
         id="home"
       >
-        <Image
-          alt=""
-          className="-z-10 object-cover"
-          fill
-          priority
-          sizes="100vw"
-          src="/banner-bg-2.png"
-        />
+        {activeSlide.kind === "product-grid" ? (
+          <ProductGridSlide slide={activeSlide} />
+        ) : (
+          <ImageLinkSlide slide={activeSlide} />
+        )}
 
-        <div className="mx-auto flex min-h-[60svh] max-w-[1350px] flex-col items-center px-6 pb-5 pt-12 text-center sm:pb-6 sm:pt-14 lg:pt-16">
-          <h1 className="max-w-4xl font-heading text-sm font-black leading-tight tracking-[0.03em] text-white drop-shadow-[0_4px_18px_rgba(1,45,105,0.32)] sm:text-lg lg:text-xl">
-            EXAMENS : TERMINÉ <span className="text-[#4D3B94]">&gt;&gt;</span>{" "}
-            MANETTE : EN MAIN
-          </h1>
-          <p className="mt-3 max-w-2xl text-sm font-semibold leading-6 text-[#4D3B94] sm:text-base">
-            Découvrez les jeux PlayStation à ne pas manquer cet été !
-          </p>
-
-          <div className="mt-4 flex flex-wrap justify-center gap-2">
-            <Link
-              className="inline-flex h-9 items-center justify-center gap-1 rounded-lg bg-[#78DAFF] px-3 font-body text-[11px] font-bold uppercase text-[#012D69] shadow-[0_10px_24px_rgba(1,45,105,0.24)] transition hover:-translate-y-0.5 hover:bg-[#A2E8FF]"
-              href="/produits"
+        {hasMultipleSlides ? (
+          <>
+            <button
+              aria-label="Slide précédent"
+              className="absolute left-4 top-1/2 hidden size-10 -translate-y-1/2 items-center justify-center rounded-full bg-white/75 text-[#012D69] shadow-lg transition hover:bg-white lg:flex"
+              onClick={goToPreviousSlide}
+              type="button"
             >
-              Voir les produits
-              <ArrowRight className="size-3" />
-            </Link>
-            <Link
-              className="inline-flex h-9 items-center justify-center gap-1 rounded-lg border border-[#012D69]/35 bg-white px-3 font-body text-[11px] font-bold uppercase text-[#012D69] transition hover:-translate-y-0.5 hover:bg-[#F3F0FF]"
-              href="/#faq"
+              <ChevronLeft className="size-5" />
+            </button>
+            <button
+              aria-label="Slide suivant"
+              className="absolute right-4 top-1/2 hidden size-10 -translate-y-1/2 items-center justify-center rounded-full bg-white/75 text-[#012D69] shadow-lg transition hover:bg-white lg:flex"
+              onClick={goToNextSlide}
+              type="button"
             >
-              <MessageCircle className="size-3" />
-              Contactez-nous
-            </Link>
-          </div>
-
-          <div className="mt-auto flex w-full max-w-[1040px] items-end justify-center gap-2 pt-5 sm:gap-4 sm:pt-6">
-            {heroCards.map((card, index) => {
-              const isFeatured = index === 1 || index === 2;
-
-              return (
-                <Link
-                  aria-label={`Voir les produits ${card.alt}`}
-                  className={`group block shrink-0 transition duration-300 hover:-translate-y-2 ${
-                    isFeatured
-                      ? "w-[23%] max-w-[160px]"
-                      : "w-[20%] max-w-[138px]"
+              <ChevronRight className="size-5" />
+            </button>
+            <div className="absolute bottom-4 left-1/2 flex -translate-x-1/2 items-center gap-2">
+              {heroSlides.map((slide, index) => (
+                <button
+                  aria-label={`Afficher le slide ${index + 1}`}
+                  className={`h-2.5 rounded-full transition ${
+                    index === activeSlideIndex
+                      ? "w-8 bg-[#78DAFF]"
+                      : "w-2.5 bg-white/70 hover:bg-white"
                   }`}
-                  href={card.href}
-                  key={card.src}
-                >
-                  <Image
-                    alt={card.alt}
-                    className="h-auto w-full drop-shadow-[0_16px_24px_rgba(1,45,105,0.28)] transition duration-300 group-hover:scale-[1.03]"
-                    height={isFeatured ? 458 : 423}
-                    sizes="(max-width: 640px) 23vw, (max-width: 1024px) 20vw, 236px"
-                    src={card.src}
-                    width={isFeatured ? 311 : 286}
-                  />
-                </Link>
-              );
-            })}
-          </div>
-        </div>
+                  key={slide.id}
+                  onClick={() => goToSlide(index)}
+                  type="button"
+                />
+              ))}
+            </div>
+          </>
+        ) : null}
       </section>
 
       <div className="w-full bg-brand-navy/88">
@@ -145,5 +192,87 @@ export function HeroSection() {
         </div>
       </div>
     </div>
+  );
+}
+
+function ProductGridSlide({ slide }: { slide: ProductGridHeroSlide }) {
+  return (
+    <>
+      <Image
+        alt=""
+        className="-z-10 object-cover"
+        fill
+        priority
+        sizes="100vw"
+        src={slide.background}
+      />
+
+      <div className="mx-auto grid h-[70svh] max-h-[70svh] max-w-[1350px] items-center gap-5 overflow-hidden px-6 py-5 sm:gap-6 sm:py-6 lg:grid-cols-[minmax(0,0.95fr)_minmax(360px,0.8fr)] lg:gap-12 lg:py-8">
+        <div className="max-w-xl pl-4 text-left sm:pl-8 lg:pl-12 xl:pl-16">
+          <h1 className="font-heading text-2xl font-black leading-tight tracking-[0.03em] text-white drop-shadow-[0_4px_18px_rgba(1,45,105,0.32)] sm:text-3xl lg:text-4xl">
+            EXAMENS : TERMINÉ{" "}
+            <span className="text-[#4D3B94]">&gt;&gt;</span> MANETTE : EN MAIN
+          </h1>
+          <p className="mt-4 max-w-lg text-base font-semibold leading-7 text-[#4D3B94] sm:text-lg">
+            Découvrez les jeux PlayStation à ne pas manquer cet été !
+          </p>
+
+          <div className="mt-6 flex flex-wrap gap-3">
+            <Link
+              className="inline-flex h-10 items-center justify-center gap-2 rounded-lg bg-[#78DAFF] px-4 font-body text-xs font-bold uppercase text-[#012D69] shadow-[0_10px_24px_rgba(1,45,105,0.24)] transition hover:-translate-y-0.5 hover:bg-[#A2E8FF]"
+              href="/produits"
+            >
+              Voir les produits
+              <ArrowRight className="size-3.5" />
+            </Link>
+            <Link
+              className="inline-flex h-10 items-center justify-center gap-2 rounded-lg border border-[#012D69]/35 bg-white px-4 font-body text-xs font-bold uppercase text-[#012D69] transition hover:-translate-y-0.5 hover:bg-[#F3F0FF]"
+              href="/#faq"
+            >
+              <MessageCircle className="size-3.5" />
+              Contactez-nous
+            </Link>
+          </div>
+        </div>
+
+        <div className="grid h-[32svh] max-h-[250px] min-h-0 w-full max-w-[360px] grid-cols-2 grid-rows-2 gap-2 justify-self-center sm:h-[36svh] sm:max-h-[320px] sm:max-w-[420px] sm:gap-3 lg:h-[calc(70svh-4rem)] lg:max-h-[520px] lg:max-w-[520px] lg:gap-4 lg:justify-self-end">
+          {heroCards.map((card) => (
+            <Link
+              aria-label={`Voir les produits ${card.alt}`}
+              className="group relative block h-full min-h-0 overflow-visible transition duration-300 hover:-translate-y-1"
+              href={card.href}
+              key={card.src}
+            >
+              <Image
+                alt={card.alt}
+                className="object-contain drop-shadow-[0_16px_24px_rgba(1,45,105,0.28)] transition duration-300 group-hover:scale-[1.06]"
+                fill
+                sizes="(max-width: 640px) 42vw, (max-width: 1024px) 220px, 250px"
+                src={card.src}
+              />
+            </Link>
+          ))}
+        </div>
+      </div>
+    </>
+  );
+}
+
+function ImageLinkSlide({ slide }: { slide: ImageLinkHeroSlide }) {
+  return (
+    <Link
+      aria-label={slide.alt}
+      className="relative block h-[70svh] max-h-[70svh] bg-[#00061E]"
+      href={slide.href}
+    >
+      <Image
+        alt={slide.alt}
+        className="object-cover transition duration-500 hover:scale-[1.01]"
+        fill
+        priority
+        sizes="100vw"
+        src={slide.image}
+      />
+    </Link>
   );
 }

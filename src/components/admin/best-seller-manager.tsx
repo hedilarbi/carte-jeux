@@ -16,6 +16,7 @@ import {
 import { ImagePreview } from "@/components/ui/image-preview";
 import { Input } from "@/components/ui/input";
 import { fetchJson } from "@/lib/utils/fetch-json";
+import { formatProductPrice } from "@/lib/utils/pricing";
 import type { BestSellerItem, Product } from "@/types/entities";
 
 interface BestSellerManagerProps {
@@ -414,7 +415,7 @@ export function BestSellerManager({
                   </td>
                   <td className="px-6 py-4 text-xs font-medium text-slate-700">
                     {product
-                      ? `${product.finalPrice.toFixed(3)} ${product.currency}`
+                      ? `${formatProductPrice(product.finalPrice)} ${product.currency}`
                       : "—"}
                   </td>
                   <td className="px-6 py-4">

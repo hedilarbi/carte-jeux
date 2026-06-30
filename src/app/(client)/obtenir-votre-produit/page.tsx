@@ -1,6 +1,7 @@
 import Image from "next/image";
 import { Check, CheckCircle2 } from "lucide-react";
 
+import { formatProductPrice } from "@/lib/utils/pricing";
 import { orderService } from "@/services/order.service";
 import type { Order, OrderItem } from "@/types/entities";
 
@@ -31,7 +32,7 @@ async function getOrder(searchParams: GetProductPageProps["searchParams"]) {
 }
 
 function formatPrice(value: number) {
-  return value.toFixed(3).replace(".", ",");
+  return formatProductPrice(value);
 }
 
 export default async function GetProductPage({
@@ -160,7 +161,7 @@ function OrderSummary({ order }: { order: Order | null }) {
             {formatPrice(order.subtotal)} {order.currency}
           </span>
           <span>Frais de service</span>
-          <span className="text-right font-black">0,000 {order.currency}</span>
+          <span className="text-right font-black">0 {order.currency}</span>
           <span>Réduction</span>
           <span className="text-right font-black">
             {formatPrice(order.totalDiscount)} {order.currency}

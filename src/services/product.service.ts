@@ -8,7 +8,7 @@ import {
   resolvePagination,
 } from "@/lib/utils/pagination";
 import { omitUndefined } from "@/lib/utils/object";
-import { calculateDiscountedPrice } from "@/lib/utils/pricing";
+import { calculateDiscountedPrice, roundMoney } from "@/lib/utils/pricing";
 import { serializeDocument } from "@/lib/utils/serialization";
 import { generateSlug, generateUniqueSlug } from "@/lib/utils/slug";
 import type { ProductRecord } from "@/models/product.model";
@@ -162,8 +162,10 @@ export const productService = {
     const slug = await resolveProductSlug(parsed.slug ?? parsed.title);
     const primaryCategoryId = toObjectId(categoryIds[0]);
     const primaryRegionId = toObjectId(regionIds[0]);
+    const price = roundMoney(parsed.price);
     const created = await createProduct({
       ...parsed,
+      price,
       gallery: normalizeGallery(parsed.gallery),
       categoryId: primaryCategoryId,
       categoryIds: categoryIds.map(toObjectId),
@@ -172,7 +174,7 @@ export const productService = {
       regionIds: regionIds.map(toObjectId),
       slug,
       sku: normalizedSku,
-      finalPrice: calculateDiscountedPrice(parsed.price, parsed.discountPercent),
+      finalPrice: calculateDiscountedPrice(price, parsed.discountPercent),
     });
 
     return serializeDocument<Product>(created);
@@ -202,7 +204,7 @@ export const productService = {
       throw new AppError("Le SKU produit existe déjà.", 409);
     }
 
-    const price = parsed.price ?? existing.price;
+    const price = roundMoney(parsed.price ?? existing.price);
     const discountPercent = parsed.discountPercent ?? existing.discountPercent;
     const slug = parsed.slug
       ? await resolveProductSlug(parsed.slug, id)
@@ -214,7 +216,7 @@ export const productService = {
       image: parsed.image,
       faceValue: parsed.faceValue,
       currency: parsed.currency,
-      price: parsed.price,
+      price: parsed.price !== undefined ? price : undefined,
       discountPercent: parsed.discountPercent,
       productType: parsed.productType,
       deliveryMode: parsed.deliveryMode,

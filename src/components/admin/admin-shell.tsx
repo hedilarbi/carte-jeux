@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
 import {
+  ClipboardList,
   LayoutDashboard,
   LogOut,
   Mail,
@@ -33,6 +34,7 @@ const navigation = [
   { href: "/admin/categories", label: "Catégories", icon: PanelsTopLeft },
   { href: "/admin/regions", label: "Régions", icon: PanelsTopLeft },
   { href: "/admin/orders", label: "Commandes", icon: ShoppingCart },
+  { href: "/admin/precommandes", label: "Précommandes", icon: ClipboardList },
   { href: "/admin/soumissions", label: "Soumissions", icon: Mail },
   { href: "/admin/users", label: "Utilisateurs", icon: Users },
   { href: "/admin/promos", label: "Promotions", icon: Percent },

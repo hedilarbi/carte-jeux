@@ -11,6 +11,7 @@ import { CartItemActions } from "@/components/site/cart/cart-item-actions";
 import { PromoCodeForm } from "@/components/site/cart/promo-code-form";
 import { FavoriteButton } from "@/components/site/favorites/favorite-button";
 import { CART_SESSION_COOKIE } from "@/lib/auth/cart-session";
+import { formatProductPrice } from "@/lib/utils/pricing";
 import { cartService } from "@/services/cart.service";
 import type { Cart, CartItem } from "@/types/entities";
 
@@ -38,10 +39,6 @@ async function getCurrentCart() {
     console.error(error);
     return null;
   }
-}
-
-function formatPrice(value: number) {
-  return value.toFixed(3);
 }
 
 export default async function CartPage() {
@@ -134,7 +131,7 @@ function EmptyCart() {
 function CartItemCard({ item }: { item: CartItem }) {
   const originalLineTotal =
     item.discountPercent > 0 && item.unitPrice > item.finalUnitPrice
-      ? formatPrice(item.unitPrice * item.quantity)
+      ? formatProductPrice(item.unitPrice * item.quantity)
       : undefined;
 
   return (
@@ -222,7 +219,7 @@ function CartItemCard({ item }: { item: CartItem }) {
               </span>
             ) : null}
             <span className="text-2xl font-bold tracking-[0.06em] text-[#191919]">
-              {formatPrice(item.lineTotal)} {item.currency}
+              {formatProductPrice(item.lineTotal)} {item.currency}
             </span>
           </div>
         </div>
@@ -272,7 +269,7 @@ function CartSummary({
           Total ({itemCount} produit{itemCount > 1 ? "s" : ""})
         </p>
         <div className="mt-3 flex min-h-[68px] w-full items-center justify-center bg-[#D9D9D9]/55 px-4 text-center text-2xl font-bold tracking-[0.06em]">
-          {formatPrice(cart?.total ?? 0)} {cart?.currency ?? "TND"}
+          {formatProductPrice(cart?.total ?? 0)} {cart?.currency ?? "TND"}
         </div>
       </div>
 
@@ -281,7 +278,7 @@ function CartSummary({
           <div className="flex items-center justify-between gap-4">
             <span>Sous-total</span>
             <span className="font-black">
-              {formatPrice(cart?.subtotal ?? 0)} {cart?.currency ?? "TND"}
+              {formatProductPrice(cart?.subtotal ?? 0)} {cart?.currency ?? "TND"}
             </span>
           </div>
           <PromoCodeForm
@@ -294,7 +291,7 @@ function CartSummary({
           <div className="flex items-center justify-between gap-4">
             <span>Réduction</span>
             <span className="font-black">
-              {formatPrice(cart?.totalDiscount ?? 0)} {cart?.currency ?? "TND"}
+              {formatProductPrice(cart?.totalDiscount ?? 0)} {cart?.currency ?? "TND"}
             </span>
           </div>
         </div>
