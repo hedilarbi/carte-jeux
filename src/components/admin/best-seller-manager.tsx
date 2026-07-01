@@ -28,9 +28,16 @@ function productIdOf(item: BestSellerItem) {
   return String(item.productId);
 }
 
+function reindexBestSellerItems(items: BestSellerItem[]) {
+  return items.map((item, index) => ({
+    ...item,
+    sortOrder: index + 1,
+  }));
+}
+
 function sortBestSellerItems(items: BestSellerItem[]) {
-  return [...items]
-    .sort((firstItem, secondItem) => {
+  return reindexBestSellerItems(
+    [...items].sort((firstItem, secondItem) => {
       const firstOrder = firstItem.sortOrder ?? Number.MAX_SAFE_INTEGER;
       const secondOrder = secondItem.sortOrder ?? Number.MAX_SAFE_INTEGER;
 
@@ -39,11 +46,8 @@ function sortBestSellerItems(items: BestSellerItem[]) {
       }
 
       return firstItem.createdAt.localeCompare(secondItem.createdAt);
-    })
-    .map((item, index) => ({
-      ...item,
-      sortOrder: index + 1,
-    }));
+    }),
+  );
 }
 
 function moveBestSellerItem(
@@ -71,7 +75,7 @@ function moveBestSellerItem(
 
   nextItems.splice(targetIndex, 0, draggedItem);
 
-  return sortBestSellerItems(nextItems);
+  return reindexBestSellerItems(nextItems);
 }
 
 export function BestSellerManager({

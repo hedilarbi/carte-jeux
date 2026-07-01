@@ -29,7 +29,7 @@ export function HomeBestSellersSection({
           </p>
         </div>
 
-        <FlashDealsCarousel products={products} />
+        <FlashDealsCarousel highlightOriginalPrice products={products} />
 
         <div className="mt-8 flex justify-center">
           <Link

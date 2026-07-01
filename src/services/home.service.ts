@@ -5,8 +5,9 @@ import {
   listCategoriesBySlugs,
 } from "@/repositories/category.repository";
 import { listActiveProductsByCategoryOrPlatformId } from "@/repositories/product.repository";
+import { listAllRegions } from "@/repositories/region.repository";
 import { bestSellerService } from "@/services/best-seller.service";
-import type { Category, Product } from "@/types/entities";
+import type { Category, Product, Region } from "@/types/entities";
 import type {
   HomeCategoryPreview,
   HomePageContent,
@@ -65,11 +66,15 @@ function toHomeCategory(category: Category): HomeCategoryPreview {
 function toProductPreview(
   product: Product,
   categoryMap: Map<string, Category>,
+  regionMap: Map<string, Region>,
 ): ProductPreview {
   const platformFromCategories = product.categoryIds
     .map((categoryId) => categoryMap.get(categoryId))
     .find((category) => category?.isPlateforme);
   const platform = platformFromCategories ?? categoryMap.get(product.platformId);
+  const region =
+    (product.regionId ? regionMap.get(product.regionId) : undefined) ??
+    product.regionIds.map((regionId) => regionMap.get(regionId)).find(Boolean);
   const originalPrice =
     product.discountPercent > 0 && product.price > product.finalPrice
       ? formatProductPrice(product.price)
@@ -95,6 +100,7 @@ function toProductPreview(
     image: product.image,
     platformImage: platform?.image,
     platformSlug: platform?.slug,
+    region: region?.name ?? "Global",
     icon: resolveIcon(platform?.name ?? product.title),
     gradient: "from-[#1b2838] to-[#2a475e]",
     badges,
@@ -104,7 +110,12 @@ function toProductPreview(
 
 export const homeService = {
   async getHomePageContent(): Promise<HomePageContent> {
-    const [categoryResult, requestedCategories, bestSellerItems] = await Promise.all([
+    const [
+      categoryResult,
+      requestedCategories,
+      regionDocuments,
+      bestSellerItems,
+    ] = await Promise.all([
       listCategories({
         page: 1,
         limit: 100,
@@ -113,13 +124,16 @@ export const homeService = {
       listCategoriesBySlugs(
         HOME_PRODUCT_SECTIONS.map((section) => section.categorySlug),
       ),
+      listAllRegions(),
       bestSellerService.list({ activeOnly: true }),
     ]);
 
     const categories = serializeDocument<Category[]>(categoryResult.items);
+    const regions = serializeDocument<Region[]>(regionDocuments);
     const categoryMap = new Map(
       categories.map((category) => [category._id, category]),
     );
+    const regionMap = new Map(regions.map((region) => [region._id, region]));
     const requestedCategoryMap = new Map(
       serializeDocument<Category[]>(requestedCategories).map((category) => [
         category.slug,
@@ -148,7 +162,7 @@ export const homeService = {
         return {
           ...section,
           products: products.map((product) =>
-            toProductPreview(product, categoryMap),
+            toProductPreview(product, categoryMap, regionMap),
           ),
         };
       }),
@@ -158,7 +172,7 @@ export const homeService = {
       bestSellers: bestSellerItems
         .map((item) => item.product)
         .filter((product): product is Product => Boolean(product))
-        .map((product) => toProductPreview(product, categoryMap)),
+        .map((product) => toProductPreview(product, categoryMap, regionMap)),
       categories: categories.map(toHomeCategory),
       productSections,
     };

@@ -11,6 +11,7 @@ export interface ProductPreview {
   image?: string;
   platformImage?: string;
   platformSlug?: string;
+  region?: string;
   icon: string;
   gradient: string;
   badges: HomeProductBadge[];

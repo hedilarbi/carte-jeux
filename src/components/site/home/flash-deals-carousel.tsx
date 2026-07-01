@@ -20,16 +20,19 @@ export type FlashDealProduct = {
   platformImage?: string;
   platformSlug?: string;
   price: string;
+  region?: string;
   slug?: string;
 };
 
 export function FlashDealCard({
   categorySlug,
   className,
+  highlightOriginalPrice = false,
   product,
 }: {
   categorySlug?: string;
   className?: string;
+  highlightOriginalPrice?: boolean;
   product: FlashDealProduct;
 }) {
   const productHref = product.slug
@@ -85,7 +88,8 @@ export function FlashDealCard({
             {product.name}
           </h3>
           <p className="mt-1 truncate font-body text-[11px] font-bold uppercase text-[#012D69]">
-            {product.platform ?? "PlayStation Store"} · États Unis
+            {product.platform ?? "PlayStation Store"} ·{" "}
+            {product.region ?? "Global"}
           </p>
           <div className="mt-auto flex flex-wrap items-baseline gap-x-2 gap-y-1">
             <p className="font-body text-xl font-black text-[#1F0A4D]">
@@ -93,7 +97,14 @@ export function FlashDealCard({
               <span className="font-body text-[11px] text-black/55">TND</span>
             </p>
             {product.originalPrice ? (
-              <p className="font-body text-[10px] text-black/45 line-through">
+              <p
+                className={cn(
+                  "font-body line-through",
+                  highlightOriginalPrice
+                    ? "text-xs font-black text-red-600"
+                    : "text-[10px] text-black/45",
+                )}
+              >
                 {product.originalPrice} TND
               </p>
             ) : null}
@@ -162,7 +173,7 @@ export function FlashDealCard({
                 {product.name}
               </h3>
               <p className="mt-2 truncate font-body text-xs font-bold uppercase text-[#012D69]">
-                États Unis
+                {product.region ?? "Global"}
               </p>
             </div>
           </div>
@@ -179,7 +190,14 @@ export function FlashDealCard({
                     </span>
                   </p>
                   {product.originalPrice ? (
-                    <p className="font-body text-[11px] text-black/45 line-through">
+                    <p
+                      className={cn(
+                        "font-body line-through",
+                        highlightOriginalPrice
+                          ? "text-sm font-black text-red-600"
+                          : "text-[11px] text-black/45",
+                      )}
+                    >
                       {product.originalPrice} TND
                     </p>
                   ) : null}
@@ -214,9 +232,11 @@ export function FlashDealCard({
 
 export function FlashDealsCarousel({
   categorySlug,
+  highlightOriginalPrice = false,
   products,
 }: {
   categorySlug?: string;
+  highlightOriginalPrice?: boolean;
   products: readonly FlashDealProduct[];
 }) {
   const carouselProducts = useMemo(() => products.slice(0, 8), [products]);
@@ -300,6 +320,7 @@ export function FlashDealsCarousel({
               <FlashDealCard
                 categorySlug={categorySlug}
                 className="lg:w-full"
+                highlightOriginalPrice={highlightOriginalPrice}
                 product={product}
               />
             </div>
