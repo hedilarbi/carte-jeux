@@ -13,7 +13,51 @@ function getRequiredEnv(name: string) {
   return value;
 }
 
-function createTransporter() {
+function getOptionalEnv(name: string) {
+  return process.env[name]?.trim() || undefined;
+}
+
+function getOptionalNumberEnv(name: string, fallback: number) {
+  const value = getOptionalEnv(name);
+
+  if (!value) {
+    return fallback;
+  }
+
+  const parsed = Number(value);
+
+  return Number.isFinite(parsed) ? parsed : fallback;
+}
+
+function getOptionalBooleanEnv(name: string, fallback: boolean) {
+  const value = getOptionalEnv(name);
+
+  if (!value) {
+    return fallback;
+  }
+
+  return ["1", "true", "yes"].includes(value.toLowerCase());
+}
+
+function createTransporter(
+  options: { smtpPassword?: string; smtpUser?: string } = {},
+) {
+  const smtpHost = getOptionalEnv("SMTP_HOST");
+
+  if (smtpHost) {
+    const port = getOptionalNumberEnv("SMTP_PORT", 465);
+
+    return nodemailer.createTransport({
+      host: smtpHost,
+      port,
+      secure: getOptionalBooleanEnv("SMTP_SECURE", port === 465),
+      auth: {
+        user: options.smtpUser || getRequiredEnv("SMTP_USER"),
+        pass: options.smtpPassword || getRequiredEnv("SMTP_PASSWORD"),
+      },
+    });
+  }
+
   return nodemailer.createTransport({
     service: "gmail",
     auth: {
@@ -23,11 +67,65 @@ function createTransporter() {
   });
 }
 
-function getSender() {
-  const fromEmail = getRequiredEnv("TICKETS_EMAIL_FROM");
-  const fromName = process.env.TICKETS_EMAIL_FROM_NAME?.trim() || "PlaySDepot";
-
+function formatSender(fromEmail: string, fromName: string) {
   return `"${fromName}" <${fromEmail}>`;
+}
+
+function getDefaultSenderEmail() {
+  return (
+    (getOptionalEnv("SMTP_HOST") ? getOptionalEnv("SMTP_USER") : undefined) ||
+    getRequiredEnv("TICKETS_EMAIL_FROM")
+  );
+}
+
+function getSender() {
+  return formatSender(
+    getDefaultSenderEmail(),
+    getOptionalEnv("TICKETS_EMAIL_FROM_NAME") || "PlaySDepot",
+  );
+}
+
+function createOrderTransporter() {
+  return createTransporter({
+    smtpPassword: getOptionalEnv("ORDERS_SMTP_PASSWORD"),
+    smtpUser:
+      getOptionalEnv("ORDERS_SMTP_USER") || getOptionalEnv("ORDERS_EMAIL_FROM"),
+  });
+}
+
+function getOrderSender() {
+  const fromEmail =
+    (getOptionalEnv("SMTP_HOST")
+      ? getOptionalEnv("ORDERS_EMAIL_FROM") || getOptionalEnv("ORDERS_SMTP_USER")
+      : undefined) || getDefaultSenderEmail();
+
+  return formatSender(
+    fromEmail,
+    getOptionalEnv("ORDERS_EMAIL_FROM_NAME") ||
+      getOptionalEnv("TICKETS_EMAIL_FROM_NAME") ||
+      "PlaySDepot",
+  );
+}
+
+function createOtpTransporter() {
+  return createTransporter({
+    smtpPassword: getOptionalEnv("OTP_SMTP_PASSWORD"),
+    smtpUser: getOptionalEnv("OTP_SMTP_USER") || getOptionalEnv("OTP_EMAIL_FROM"),
+  });
+}
+
+function getOtpSender() {
+  const fromEmail =
+    (getOptionalEnv("SMTP_HOST")
+      ? getOptionalEnv("OTP_EMAIL_FROM") || getOptionalEnv("OTP_SMTP_USER")
+      : undefined) || getDefaultSenderEmail();
+
+  return formatSender(
+    fromEmail,
+    getOptionalEnv("OTP_EMAIL_FROM_NAME") ||
+      getOptionalEnv("TICKETS_EMAIL_FROM_NAME") ||
+      "PlaySDepot",
+  );
 }
 
 function getAdminContactRecipient() {
@@ -274,10 +372,10 @@ export const emailService = {
     expiresInMinutes: number;
     otp: string;
   }) {
-    const transporter = createTransporter();
+    const transporter = createOtpTransporter();
 
     await transporter.sendMail({
-      from: getSender(),
+      from: getOtpSender(),
       to: input.email,
       subject: "Votre code de vérification PlaySDepot",
       text: `Votre code de vérification PlaySDepot est ${input.otp}. Il expire dans ${input.expiresInMinutes} minutes.`,
@@ -301,10 +399,10 @@ export const emailService = {
   },
 
   async sendOrderConfirmation(input: { order: Order }) {
-    const transporter = createTransporter();
+    const transporter = createOrderTransporter();
 
     await transporter.sendMail({
-      from: getSender(),
+      from: getOrderSender(),
       to: input.order.customerEmail,
       subject: `Récapitulatif de votre commande ${input.order.orderNumber}`,
       text: buildOrderText(input.order),
