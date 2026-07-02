@@ -85,14 +85,14 @@ export function ProductCard({
 
         <div className="mt-4 flex items-end justify-between gap-3">
           <div className="flex flex-wrap items-baseline gap-x-2 gap-y-1">
-            <p className="font-body text-base font-black text-brand-lavender">
+            <p className="font-body text-base font-black text-red-500">
               {product.price}{" "}
-              <span className="font-body text-[10px] text-brand-periwinkle/60">
+              <span className="font-body text-[10px] text-red-300">
                 TND
               </span>
             </p>
             {product.originalPrice ? (
-              <p className="font-body text-[11px] text-brand-periwinkle/45 line-through">
+              <p className="font-body text-[11px] text-brand-lavender line-through">
                 {product.originalPrice} TND
               </p>
             ) : null}

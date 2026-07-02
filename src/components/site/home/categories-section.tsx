@@ -91,7 +91,7 @@ export function CategoriesSection({
         <div className="relative">
           <button
             aria-label="Catégories précédentes"
-            className="absolute left-0 top-1/2 z-20 hidden size-10 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border border-[#B3B3B3] bg-white/95 text-[#00061E] shadow-[0_10px_28px_rgba(23,23,54,0.16)] transition hover:border-[#A681F0] hover:bg-[#B0A4F5] hover:text-[#1F0A4D] md:flex"
+            className="absolute left-0 top-1/2 z-20 hidden size-10 -translate-x-full -translate-y-1/2 items-center justify-center rounded-full border border-[#B3B3B3] bg-white/95 text-[#00061E] shadow-[0_10px_28px_rgba(23,23,54,0.16)] transition hover:border-[#A681F0] hover:bg-[#B0A4F5] hover:text-[#1F0A4D] md:flex xl:-translate-x-[140%]"
             onClick={() => scrollToCategory("previous")}
             type="button"
           >
@@ -102,7 +102,7 @@ export function CategoriesSection({
             className="scrollbar-none -mx-6 snap-x snap-mandatory overflow-x-auto scroll-smooth px-6 pb-2"
             ref={sliderRef}
           >
-            <div className="flex items-center gap-8">
+            <div className="flex items-center gap-3 md:gap-8">
               {categories.map((category, index) => (
                 <a
                   className={cn(
@@ -145,7 +145,7 @@ export function CategoriesSection({
 
           <button
             aria-label="Catégories suivantes"
-            className="absolute right-0 top-1/2 z-20 hidden size-10 translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border border-[#B3B3B3] bg-white/95 text-[#00061E] shadow-[0_10px_28px_rgba(23,23,54,0.16)] transition hover:border-[#A681F0] hover:bg-[#B0A4F5] hover:text-[#1F0A4D] md:flex"
+            className="absolute right-0 top-1/2 z-20 hidden size-10 translate-x-full -translate-y-1/2 items-center justify-center rounded-full border border-[#B3B3B3] bg-white/95 text-[#00061E] shadow-[0_10px_28px_rgba(23,23,54,0.16)] transition hover:border-[#A681F0] hover:bg-[#B0A4F5] hover:text-[#1F0A4D] md:flex xl:translate-x-[140%]"
             onClick={() => scrollToCategory("next")}
             type="button"
           >

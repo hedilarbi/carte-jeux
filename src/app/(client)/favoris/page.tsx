@@ -105,9 +105,9 @@ function FavoriteCard({ item }: { item: FavoriteItem }) {
         <h2 className="mt-2 line-clamp-2 min-h-10 font-body text-sm font-extrabold leading-5 text-[#1F0A4D]">
           {item.productTitle}
         </h2>
-        <p className="mt-4 font-body text-xl font-black text-[#1F0A4D]">
+        <p className="mt-4 font-body text-xl font-black text-red-600">
           {formatProductPrice(item.price)}{" "}
-          <span className="font-body text-[11px] text-[#6F6288]">
+          <span className="font-body text-[11px] text-red-600/70">
             {item.currency}
           </span>
         </p>

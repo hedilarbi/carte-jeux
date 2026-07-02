@@ -14,7 +14,7 @@ export function HomeBestSellersSection({
   }
 
   return (
-    <section className="bg-brand-light py-16" id="best-sellers">
+    <section className="bg-brand-light py-0 md:py-16" id="best-sellers">
       <div className="mx-auto max-w-[1350px] px-6">
         <div className="mb-7">
           <span className="font-mono text-[11px] font-bold uppercase text-brand-purple-deep">

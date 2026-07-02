@@ -43,11 +43,11 @@ export function FlashDealCard({
   return (
     <article
       className={cn(
-        "group relative z-0 h-[154px] w-[min(88vw,360px)] shrink-0 overflow-hidden rounded-xl border-2 border-[#B3B3B3] bg-white font-body font-extrabold leading-none text-[#00061E] shadow-[0_18px_45px_rgba(23,23,54,0.10)] md:h-[500px] md:w-[240px] lg:h-[565px]",
+        "group relative z-0 h-[154px] w-[calc(100vw_-_5rem)] max-w-[360px] shrink-0 overflow-hidden rounded-xl border-2 border-[#B3B3B3] bg-white font-body font-extrabold leading-none text-[#00061E] shadow-[0_18px_45px_rgba(23,23,54,0.10)] sm:w-[min(88vw,360px)] md:h-[500px] md:w-[240px] lg:h-[565px]",
         className,
       )}
     >
-      <div className="relative grid h-full grid-cols-[116px_1fr] md:hidden">
+      <div className="relative grid h-full grid-cols-[104px_1fr] min-[376px]:grid-cols-[116px_1fr] md:hidden">
         <Link
           aria-label={`Voir le produit - ${product.name}`}
           className="absolute inset-0 z-10"
@@ -60,49 +60,51 @@ export function FlashDealCard({
             className="object-cover"
             fill
             priority={product.id === 1}
-            sizes="116px"
+            sizes="(max-width: 375px) 104px, 116px"
             src={product.image ?? "/jeu1.jpg"}
           />
           <div className="absolute inset-0 bg-[linear-gradient(90deg,transparent_52%,rgba(255,255,255,0.94)_100%)]" />
         </div>
 
-        <div className="relative z-[2] flex min-w-0 flex-col bg-white p-3 pr-14">
+        <div className="relative z-[2] flex min-w-0 flex-col bg-white p-2.5 pr-12">
           <ProductPlatformBadge
             action={
               <FavoriteButton
                 aria-label={`Ajouter aux favoris - ${product.name}`}
                 activeClassName="bg-white text-danger"
-                className="flex size-7 items-center justify-center rounded-full bg-white/14 text-white transition hover:bg-white/24 hover:text-[#B0A4F5]"
-                iconClassName="size-4"
+                className="flex size-6 items-center justify-center rounded-full bg-white/14 text-white transition hover:bg-white/24 hover:text-[#B0A4F5]"
+                iconClassName="size-3.5"
                 productId={productId}
                 productSlug={product.slug}
               />
             }
-            className="mb-2 h-8 w-full max-w-full px-2.5 text-xs"
-            iconClassName="size-5"
+            className="mb-1.5 h-7 w-full max-w-full px-2 text-[10px]"
+            iconClassName="size-4"
             image={product.platformImage}
             name={product.platform}
           />
 
-          <h3 className="line-clamp-2 font-body text-[13px] font-black leading-5 text-[#00061E]">
+          <h3 className="line-clamp-2 font-body text-[11px] font-black leading-4 text-[#00061E] min-[376px]:text-xs min-[376px]:leading-[18px]">
             {product.name}
           </h3>
-          <p className="mt-1 truncate font-body text-[11px] font-bold uppercase text-[#012D69]">
+          <p className="mt-1 truncate font-body text-[9px] font-bold uppercase text-[#012D69] min-[376px]:text-[10px]">
             {product.platform ?? "PlayStation Store"} ·{" "}
             {product.region ?? "Global"}
           </p>
           <div className="mt-auto flex flex-wrap items-baseline gap-x-2 gap-y-1">
-            <p className="font-body text-xl font-black text-[#1F0A4D]">
+            <p className="font-body text-lg font-black text-red-600 min-[376px]:text-xl">
               {product.price}{" "}
-              <span className="font-body text-[11px] text-black/55">TND</span>
+              <span className="font-body text-[10px] text-red-600/70">
+                TND
+              </span>
             </p>
             {product.originalPrice ? (
               <p
                 className={cn(
                   "font-body line-through",
                   highlightOriginalPrice
-                    ? "text-xs font-black text-red-600"
-                    : "text-[10px] text-black/45",
+                    ? "text-[10px] font-black text-[#1F0A4D]"
+                    : "text-[9px] text-[#1F0A4D]/70",
                 )}
               >
                 {product.originalPrice} TND
@@ -113,7 +115,7 @@ export function FlashDealCard({
 
         <AddToCartButton
           aria-label={`Ajouter au panier - ${product.name}`}
-          className="absolute bottom-3 right-3 z-40 flex size-10 items-center justify-center rounded-xl bg-[#B0A4F5] text-[#1F0A4D] shadow-[0_6px_18px_rgba(176,164,245,0.34)] transition hover:bg-[#A681F0]"
+          className="absolute bottom-2.5 right-2.5 z-40 flex size-9 items-center justify-center rounded-xl bg-[#B0A4F5] text-[#1F0A4D] shadow-[0_6px_18px_rgba(176,164,245,0.34)] transition hover:bg-[#A681F0]"
           productId={productId}
           productSlug={product.slug}
         >
@@ -183,9 +185,9 @@ export function FlashDealCard({
               <div className="min-w-0">
                 <p className="font-body text-xs font-bold text-black/55">Prix promo</p>
                 <div className="mt-1 flex flex-wrap items-baseline gap-x-2 gap-y-1">
-                  <p className="font-body text-3xl font-black text-[#1F0A4D]">
+                  <p className="font-body text-3xl font-black text-red-600">
                     {product.price}{" "}
-                    <span className="font-body text-[15px] text-black/55">
+                    <span className="font-body text-[15px] text-red-600/70">
                       TND
                     </span>
                   </p>
@@ -194,8 +196,8 @@ export function FlashDealCard({
                       className={cn(
                         "font-body line-through",
                         highlightOriginalPrice
-                          ? "text-sm font-black text-red-600"
-                          : "text-[11px] text-black/45",
+                          ? "text-sm font-black text-[#1F0A4D]"
+                          : "text-[11px] text-[#1F0A4D]/70",
                       )}
                     >
                       {product.originalPrice} TND
@@ -295,10 +297,10 @@ export function FlashDealsCarousel({
   }, [scrollToCard]);
 
   return (
-    <div className="relative mt-10">
+    <div className="relative mt-10 max-w-full overflow-x-clip md:overflow-visible">
       <button
         aria-label="Offre précédente"
-        className="absolute left-0 top-1/2 z-30 flex size-11 -translate-x-full -translate-y-1/2 items-center justify-center rounded-full border border-[#B3B3B3] bg-white/95 text-[#00061E] shadow-[0_10px_28px_rgba(23,23,54,0.16)] backdrop-blur transition hover:border-[#A681F0] hover:bg-[#B0A4F5] hover:text-[#1F0A4D]"
+        className="absolute left-2 top-1/2 z-30 flex size-9 -translate-y-1/2 items-center justify-center rounded-full border border-[#B3B3B3] bg-white/95 text-[#00061E] shadow-[0_10px_28px_rgba(23,23,54,0.16)] backdrop-blur transition hover:border-[#A681F0] hover:bg-[#B0A4F5] hover:text-[#1F0A4D] md:left-0 md:size-11 md:-translate-x-[140%] xl:-translate-x-[180%]"
         onClick={() => scrollToCard("previous")}
         type="button"
       >
@@ -330,7 +332,7 @@ export function FlashDealsCarousel({
 
       <button
         aria-label="Offre suivante"
-        className="absolute right-0 top-1/2 z-30 flex size-11 translate-x-full -translate-y-1/2 items-center justify-center rounded-full border border-[#B3B3B3] bg-white/95 text-[#00061E] shadow-[0_10px_28px_rgba(23,23,54,0.16)] backdrop-blur transition hover:border-[#A681F0] hover:bg-[#B0A4F5] hover:text-[#1F0A4D]"
+        className="absolute right-2 top-1/2 z-30 flex size-9 -translate-y-1/2 items-center justify-center rounded-full border border-[#B3B3B3] bg-white/95 text-[#00061E] shadow-[0_10px_28px_rgba(23,23,54,0.16)] backdrop-blur transition hover:border-[#A681F0] hover:bg-[#B0A4F5] hover:text-[#1F0A4D] md:right-0 md:size-11 md:translate-x-[140%] xl:translate-x-[180%]"
         onClick={() => scrollToCard("next")}
         type="button"
       >

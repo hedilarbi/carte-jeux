@@ -203,7 +203,7 @@ function BestSellerCard({ product }: { product: CategoriesPageProduct }) {
         <h3 className="line-clamp-2 h-[35px] font-body text-xs font-bold leading-[18px] text-[#00061E]">
           {product.title}
         </h3>
-        <p className="mt-3 text-center font-body text-xl font-bold leading-[22px] text-[#012D69]">
+        <p className="mt-3 text-center font-body text-xl font-bold leading-[22px] text-red-600">
           {product.price} TND
         </p>
       </div>

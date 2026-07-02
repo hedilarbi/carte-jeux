@@ -26,11 +26,11 @@ export function RecommendedCard({
     return (
         <article
             className={cn(
-                "group relative z-0 h-[154px] w-[min(88vw,360px)] shrink-0 overflow-hidden rounded-xl border-2 border-[#A680F1] bg-[#0F0F28]/92 font-body font-extrabold leading-none text-white md:h-[500px] md:w-[240px] md:bg-transparent lg:h-[565px]",
+                "group relative z-0 h-[154px] w-[calc(100vw_-_5rem)] max-w-[360px] shrink-0 overflow-hidden rounded-xl border-2 border-[#A680F1] bg-[#0F0F28]/92 font-body font-extrabold leading-none text-white sm:w-[min(88vw,360px)] md:h-[500px] md:w-[240px] md:bg-transparent lg:h-[565px]",
                 className,
             )}
         >
-            <div className="relative grid h-full grid-cols-[116px_1fr] md:hidden">
+            <div className="relative grid h-full grid-cols-[104px_1fr] min-[376px]:grid-cols-[116px_1fr] md:hidden">
                 <Link
                     aria-label={`Voir le produit - ${product.name}`}
                     className="absolute inset-0 z-10"
@@ -43,45 +43,47 @@ export function RecommendedCard({
                         className="object-cover"
                         fill
                         priority={product.id === 1}
-                        sizes="116px"
+                        sizes="(max-width: 375px) 104px, 116px"
                         src={product.image ?? "/jeu1.jpg"}
                     />
                     <div className="absolute inset-0 bg-[linear-gradient(90deg,transparent_58%,rgba(15,15,40,0.86)_100%)]" />
                 </div>
 
-                <div className="relative z-[2] flex min-w-0 flex-col p-3 pr-14">
+                <div className="relative z-[2] flex min-w-0 flex-col p-2.5 pr-12">
                     <ProductPlatformBadge
                         action={
                             <FavoriteButton
                                 aria-label={`Ajouter aux favoris - ${product.name}`}
                                 activeClassName="bg-white text-danger"
-                                className="flex size-7 items-center justify-center rounded-full bg-white/14 text-white transition hover:bg-white/24 hover:text-brand-lavender"
-                                iconClassName="size-4"
+                                className="flex size-6 items-center justify-center rounded-full bg-white/14 text-white transition hover:bg-white/24 hover:text-brand-lavender"
+                                iconClassName="size-3.5"
                                 productId={productId}
                                 productSlug={product.slug}
                             />
                         }
-                        className="mb-2 h-8 w-full max-w-full px-2.5 text-xs"
-                        iconClassName="size-5"
+                        className="mb-1.5 h-7 w-full max-w-full px-2 text-[10px]"
+                        iconClassName="size-4"
                         image={product.platformImage}
                         name={product.platform}
                     />
 
-                    <h3 className="line-clamp-2 font-body text-[13px] font-black leading-5 text-white">
+                    <h3 className="line-clamp-2 font-body text-[11px] font-black leading-4 text-white min-[376px]:text-xs min-[376px]:leading-[18px]">
                         {product.name}
                     </h3>
-                    <p className="mt-1 truncate font-body text-[11px] font-bold uppercase text-[#b3aac9]">
-                        {product.platform} · Global
+                    <p className="mt-1 truncate font-body text-[9px] font-bold uppercase text-[#b3aac9] min-[376px]:text-[10px]">
+                        {product.platform} · {product.region ?? "Global"}
                     </p>
-                    <p className="mt-auto font-body text-xl font-black text-white">
+                    <p className="mt-auto font-body text-lg font-black text-red-500 min-[376px]:text-xl">
                         {product.price}{" "}
-                        <span className="font-body text-[11px] text-[#b3aac9]">TND</span>
+                        <span className="font-body text-[10px] text-red-300">
+                            TND
+                        </span>
                     </p>
                 </div>
 
                 <AddToCartButton
                     aria-label={`Ajouter au panier - ${product.name}`}
-                    className="absolute bottom-3 right-3 z-40 flex size-10 items-center justify-center rounded-xl bg-brand-lavender text-[#03030A] shadow-[0_6px_18px_rgba(185,152,241,0.35)] transition hover:bg-brand-blue-mist"
+                    className="absolute bottom-2.5 right-2.5 z-40 flex size-9 items-center justify-center rounded-xl bg-brand-lavender text-[#03030A] shadow-[0_6px_18px_rgba(185,152,241,0.35)] transition hover:bg-brand-blue-mist"
                     productId={productId}
                     productSlug={product.slug}
                 >
@@ -153,14 +155,14 @@ export function RecommendedCard({
                                 <p className="font-body text-xs font-bold text-[#b3aac9]">
                                     À partir de
                                 </p>
-                                <p className="mt-1 font-body text-3xl font-black text-white">
+                                <p className="mt-1 font-body text-3xl font-black text-red-500">
                                     {product.price}{" "}
-                                    <span className="font-body text-[15px] text-[#b3aac9]">
+                                    <span className="font-body text-[15px] text-red-300">
                                         TND
                                     </span>
                                 </p>
                                 {/* {product.originalPrice ? (
-                                    <p className="mt-1 font-body text-[11px] text-[#b3aac9]/70 line-through">
+                                    <p className="mt-1 font-body text-[11px] text-white line-through">
                                         {product.originalPrice} TND
                                     </p>
                                 ) : null} */}

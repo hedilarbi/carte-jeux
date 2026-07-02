@@ -69,10 +69,10 @@ export function RecommendedProductsCarousel({
   }, [scrollToCard]);
 
   return (
-    <div className="relative mt-10">
+    <div className="relative mt-10 max-w-full overflow-x-clip md:overflow-visible">
       <button
         aria-label="Produit précédent"
-        className="absolute left-0 top-1/2 z-30 flex size-11 -translate-x-full -translate-y-1/2 items-center justify-center rounded-full border border-white/15 bg-[#0F0F28]/90 text-white shadow-[0_10px_28px_rgba(0,0,0,0.35)] backdrop-blur transition hover:border-brand-lavender hover:bg-brand-lavender hover:text-[#03030A]"
+        className="absolute left-2 top-1/2 z-30 flex size-9 -translate-y-1/2 items-center justify-center rounded-full border border-white/15 bg-[#0F0F28]/90 text-white shadow-[0_10px_28px_rgba(0,0,0,0.35)] backdrop-blur transition hover:border-brand-lavender hover:bg-brand-lavender hover:text-[#03030A] md:left-0 md:size-11 md:-translate-x-[140%] xl:-translate-x-[180%]"
         onClick={() => scrollToCard("previous")}
         type="button"
       >
@@ -103,7 +103,7 @@ export function RecommendedProductsCarousel({
 
       <button
         aria-label="Produit suivant"
-        className="absolute right-0 top-1/2 z-30 flex size-11 translate-x-full -translate-y-1/2 items-center justify-center rounded-full border border-white/15 bg-[#0F0F28]/90 text-white shadow-[0_10px_28px_rgba(0,0,0,0.35)] backdrop-blur transition hover:border-brand-lavender hover:bg-brand-lavender hover:text-[#03030A]"
+        className="absolute right-2 top-1/2 z-30 flex size-9 -translate-y-1/2 items-center justify-center rounded-full border border-white/15 bg-[#0F0F28]/90 text-white shadow-[0_10px_28px_rgba(0,0,0,0.35)] backdrop-blur transition hover:border-brand-lavender hover:bg-brand-lavender hover:text-[#03030A] md:right-0 md:size-11 md:translate-x-[140%] xl:translate-x-[180%]"
         onClick={() => scrollToCard("next")}
         type="button"
       >

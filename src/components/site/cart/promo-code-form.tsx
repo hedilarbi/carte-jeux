@@ -139,22 +139,22 @@ export function PromoCodeForm({
   if (appliedPromoCode) {
     return (
       <div className={cn("mt-6", className)}>
-        <div className="flex items-center justify-between gap-3 rounded-[14px] border border-[#012D69]/12 bg-[#B0A4F5]/47 px-4 py-3 font-inter">
+        <div className="flex min-w-0 flex-col gap-3 rounded-[14px] border border-[#012D69]/12 bg-[#B0A4F5]/47 px-3 py-3 font-inter sm:flex-row sm:items-center sm:justify-between sm:px-4">
           <span className="min-w-0">
             <span className="flex items-center gap-2 text-xs font-bold uppercase tracking-[0.08em] text-[#012D69]">
               <BadgePercent className="size-4" />
               Code utilisé
             </span>
-            <span className="mt-1 block truncate text-lg font-black tracking-[0.08em] text-black">
+            <span className="mt-1 block truncate text-base font-black tracking-[0.04em] text-black sm:text-lg sm:tracking-[0.08em]">
               {appliedPromoCode.code} {formatPromoValue()}
             </span>
-            <span className="mt-1 block text-xs font-bold text-[#012D69]/70">
+            <span className="mt-1 block break-words text-xs font-bold text-[#012D69]/70">
               Remise : -{formatPrice(promoDiscountAmount)} {cartCurrency}
             </span>
           </span>
           <button
             aria-label="Retirer le code promo"
-            className="flex h-10 shrink-0 items-center justify-center gap-2 rounded-[12px] bg-white px-3 text-xs font-black uppercase text-[#012D69] transition hover:text-red-600 disabled:cursor-wait disabled:opacity-50"
+            className="flex h-10 w-full shrink-0 items-center justify-center gap-2 rounded-[12px] bg-white px-3 text-xs font-black uppercase text-[#012D69] transition hover:text-red-600 disabled:cursor-wait disabled:opacity-50 sm:w-auto"
             disabled={isPending || disabled}
             onClick={handleRemove}
             type="button"
@@ -179,7 +179,7 @@ export function PromoCodeForm({
           <BadgePercent className="size-4 text-[#968AE0]" />
           Vous avez un code promo ?
         </span>
-        <div className="mt-4 flex gap-2">
+        <div className="mt-4 flex min-w-0 flex-col gap-2 min-[360px]:flex-row">
           <input
             className="h-[57px] min-w-0 flex-1 bg-[#B0A4F5]/47 px-4 text-center font-inter text-lg font-semibold uppercase tracking-[0.01em] text-black outline-none placeholder:text-black/45 disabled:cursor-not-allowed disabled:opacity-60"
             disabled={isPending || disabled}

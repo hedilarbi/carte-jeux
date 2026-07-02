@@ -49,6 +49,7 @@ type ImageLinkHeroSlide = {
   id: string;
   image: string;
   kind: "image-link";
+  mobileImage?: string;
 };
 
 type PsPlusHeroSlide = {
@@ -92,6 +93,7 @@ const heroSlides: HeroSlide[] = [
     id: "precommande-gta-vi",
     image: "/banner_products.jpg",
     kind: "image-link",
+    mobileImage: "/hero_2_mobile.jpg",
   },
   {
     background: "/hero.jpg",
@@ -163,7 +165,7 @@ export function HeroSection() {
         id="home"
       >
         <div
-          className="flex h-[70svh] max-h-[70svh] transition-transform duration-700 ease-in-out"
+          className="flex h-[90svh] max-h-[90svh] transition-transform duration-700 ease-in-out sm:h-[70svh] sm:max-h-[70svh]"
           style={{ transform: `translateX(-${activeSlideIndex * 100}%)` }}
         >
           {heroSlides.map((slide) => (
@@ -254,27 +256,27 @@ function ProductGridSlide({ slide }: { slide: ProductGridHeroSlide }) {
 
       <div className="mx-auto grid h-full max-h-full max-w-[1350px] items-center gap-5 overflow-hidden px-6 py-5 sm:gap-6 sm:py-6 lg:grid-cols-[minmax(0,0.95fr)_minmax(360px,0.8fr)] lg:gap-12 lg:py-8">
         <div className="max-w-xl pl-4 text-left sm:pl-8 lg:pl-12 xl:pl-16">
-          <h1 className="font-heading text-2xl font-black leading-tight tracking-[0.03em] text-[#78DAFF] drop-shadow-[0_4px_18px_rgba(1,45,105,0.32)] sm:text-3xl lg:text-4xl">
+          <h1 className="font-heading text-xl font-black leading-tight tracking-[0.03em] text-[#78DAFF] drop-shadow-[0_4px_18px_rgba(1,45,105,0.32)] sm:text-3xl lg:text-4xl">
             EXAMENS : TERMINÉ{" "}
             <span>&gt;&gt;</span> MANETTE : EN MAIN
           </h1>
-          <p className="mt-4 max-w-lg text-lg font-semibold leading-8 text-white sm:text-xl">
+          <p className="mt-3 max-w-lg text-sm font-semibold leading-6 text-white sm:mt-4 sm:text-xl sm:leading-8">
             Découvrez les jeux PlayStation à ne pas manquer cet été !
           </p>
 
           <div className="mt-6 flex flex-wrap gap-3">
             <Link
-              className="inline-flex h-10 items-center justify-center gap-2 rounded-lg bg-[#78DAFF] px-4 font-body text-xs font-bold uppercase text-[#012D69] shadow-[0_10px_24px_rgba(1,45,105,0.24)] transition hover:-translate-y-0.5 hover:bg-[#A2E8FF]"
+              className="inline-flex h-9 items-center justify-center gap-1.5 rounded-lg bg-[#78DAFF] px-3 font-body text-[10px] font-bold uppercase text-[#012D69] shadow-[0_10px_24px_rgba(1,45,105,0.24)] transition hover:-translate-y-0.5 hover:bg-[#A2E8FF] sm:h-10 sm:gap-2 sm:px-4 sm:text-xs"
               href="/produits"
             >
               Voir les produits
-              <ArrowRight className="size-3.5" />
+              <ArrowRight className="size-3 sm:size-3.5" />
             </Link>
             <Link
-              className="inline-flex h-10 items-center justify-center gap-2 rounded-lg border border-[#012D69]/35 bg-white px-4 font-body text-xs font-bold uppercase text-[#012D69] transition hover:-translate-y-0.5 hover:bg-[#F3F0FF]"
+              className="inline-flex h-9 items-center justify-center gap-1.5 rounded-lg border border-[#012D69]/35 bg-white px-3 font-body text-[10px] font-bold uppercase text-[#012D69] transition hover:-translate-y-0.5 hover:bg-[#F3F0FF] sm:h-10 sm:gap-2 sm:px-4 sm:text-xs"
               href="/#faq"
             >
-              <MessageCircle className="size-3.5" />
+              <MessageCircle className="size-3 sm:size-3.5" />
               Contactez-nous
             </Link>
           </div>
@@ -310,14 +312,35 @@ function ImageLinkSlide({ slide }: { slide: ImageLinkHeroSlide }) {
       className="relative block h-full bg-[#00061E]"
       href={slide.href}
     >
-      <Image
-        alt={slide.alt}
-        className="object-cover transition duration-500 hover:scale-[1.01]"
-        fill
-        priority
-        sizes="100vw"
-        src={slide.image}
-      />
+      {slide.mobileImage ? (
+        <>
+          <Image
+            alt={slide.alt}
+            className="object-cover transition duration-500 hover:scale-[1.01] md:hidden"
+            fill
+            priority
+            sizes="100vw"
+            src={slide.mobileImage}
+          />
+          <Image
+            alt={slide.alt}
+            className="hidden object-cover transition duration-500 hover:scale-[1.01] md:block"
+            fill
+            priority
+            sizes="100vw"
+            src={slide.image}
+          />
+        </>
+      ) : (
+        <Image
+          alt={slide.alt}
+          className="object-cover transition duration-500 hover:scale-[1.01]"
+          fill
+          priority
+          sizes="100vw"
+          src={slide.image}
+        />
+      )}
     </Link>
   );
 }
@@ -335,12 +358,12 @@ function PsPlusSlide({ slide }: { slide: PsPlusHeroSlide }) {
 
       <div className="mx-auto grid h-full max-h-full max-w-[1350px] items-center gap-5 overflow-hidden px-6 py-5 sm:gap-6 sm:py-6 lg:grid-cols-[minmax(0,0.95fr)_minmax(360px,0.8fr)] lg:gap-12 lg:py-8">
         <div className="max-w-xl pl-4 text-left sm:pl-8 lg:pl-12 xl:pl-16">
-          <h1 className="font-heading text-2xl font-black leading-tight tracking-[0.02em] text-white drop-shadow-[0_4px_18px_rgba(0,0,0,0.35)] sm:text-3xl lg:text-4xl">
+          <h1 className="font-heading text-xl font-black leading-tight tracking-[0.02em] text-white drop-shadow-[0_4px_18px_rgba(0,0,0,0.35)] sm:text-3xl lg:text-4xl">
             Abonnement Carte <br />
             PlayStations Plus{" "}
             <span className="text-[#FFD600]">Global</span>
           </h1>
-          <p className="mt-4 max-w-xl text-base font-semibold leading-7 text-white sm:text-lg">
+          <p className="mt-3 max-w-xl text-sm font-semibold leading-6 text-white sm:mt-4 sm:text-lg sm:leading-7">
             Permet d&apos;accéder à des fonctionnalités en ligne exclusives
             <br />
             Abonnement carte 12 mois
@@ -348,17 +371,17 @@ function PsPlusSlide({ slide }: { slide: PsPlusHeroSlide }) {
 
           <div className="mt-6 flex flex-wrap gap-3">
             <Link
-              className="inline-flex h-10 items-center justify-center gap-2 rounded-lg bg-[#FFD600] px-4 font-body text-xs font-bold uppercase text-black shadow-[0_10px_24px_rgba(0,0,0,0.24)] transition hover:-translate-y-0.5 hover:bg-[#FFE766]"
+              className="inline-flex h-9 items-center justify-center gap-1.5 rounded-lg bg-[#FFD600] px-3 font-body text-[10px] font-bold uppercase text-black shadow-[0_10px_24px_rgba(0,0,0,0.24)] transition hover:-translate-y-0.5 hover:bg-[#FFE766] sm:h-10 sm:gap-2 sm:px-4 sm:text-xs"
               href="/produits"
             >
               Voir tous les produits
-              <ArrowRight className="size-3.5" />
+              <ArrowRight className="size-3 sm:size-3.5" />
             </Link>
             <Link
-              className="inline-flex h-10 items-center justify-center gap-2 rounded-lg bg-white px-4 font-body text-xs font-bold uppercase text-black transition hover:-translate-y-0.5 hover:bg-slate-100"
+              className="inline-flex h-9 items-center justify-center gap-1.5 rounded-lg bg-white px-3 font-body text-[10px] font-bold uppercase text-black transition hover:-translate-y-0.5 hover:bg-slate-100 sm:h-10 sm:gap-2 sm:px-4 sm:text-xs"
               href="/#faq"
             >
-              <MessageCircle className="size-3.5" />
+              <MessageCircle className="size-3 sm:size-3.5" />
               Contactez-nous
             </Link>
           </div>

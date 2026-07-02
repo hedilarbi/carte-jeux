@@ -38,7 +38,7 @@ export default async function Home() {
   const gamingPcSection = findSection(home.productSections, "gamingPc");
 
   return (
-    <main className="bg-brand-light text-brand-lilac">
+    <main className="overflow-x-clip bg-brand-light text-brand-lilac">
       <HeroSection />
 
       {/* <PromoBannerSection /> */}
