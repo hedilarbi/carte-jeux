@@ -82,7 +82,6 @@ function ProductTopBlock({ product }: { product: ProductDetailPageContent }) {
     product.regions.map((region) => region.label).join(", ") || "Global";
 
   const productFeatures = [
-    ["Produit", product.title],
     ["Type", typeLabel],
     ["Plateforme", product.platform.label],
     ["Région", regionLabel],

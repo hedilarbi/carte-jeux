@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Pencil, Plus, Trash2 } from "lucide-react";
 
@@ -22,6 +22,7 @@ import { PRODUCT_TYPE_LABELS } from "@/constants/admin";
 import { calculateDiscountedPrice, roundMoney } from "@/lib/utils/pricing";
 import { formatCurrency } from "@/lib/utils/format";
 import { fetchJson } from "@/lib/utils/fetch-json";
+import type { PaginatedResult } from "@/types/common";
 import type { Category, Product, ProductFaqItem, Region } from "@/types/entities";
 
 interface ProductsManagerProps {
@@ -121,6 +122,7 @@ export function ProductsManager({
 }: ProductsManagerProps) {
   const router = useRouter();
   const [products, setProducts] = useState(initialProducts);
+  const [defaultProducts, setDefaultProducts] = useState(initialProducts);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [form, setForm] = useState<ProductFormState>(defaultFormState);
   const [imageFile, setImageFile] = useState<File | null>(null);
@@ -133,6 +135,8 @@ export function ProductsManager({
     useState<ProductCsvImportResult | null>(null);
   const [isImportingCsv, setIsImportingCsv] = useState(false);
   const [search, setSearch] = useState("");
+  const [isSearching, setIsSearching] = useState(false);
+  const [searchError, setSearchError] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -146,26 +150,61 @@ export function ProductsManager({
     regions.map((region) => [region._id, region.name]),
   );
 
-  const filteredProducts = (() => {
-    const query = search.trim().toLowerCase();
+  useEffect(() => {
+    setDefaultProducts(initialProducts);
+  }, [initialProducts]);
+
+  useEffect(() => {
+    const query = search.trim();
 
     if (!query) {
-      return products;
+      setSearchError(null);
+      setIsSearching(false);
+      setProducts(defaultProducts);
+      return;
     }
 
-    return products.filter((product) =>
-      [
-        product.title,
-        product.slug,
-        product.sku,
-        product.shortDescription ?? "",
-        product.description ?? "",
-      ]
-        .join(" ")
-        .toLowerCase()
-        .includes(query),
-    );
-  })();
+    const controller = new AbortController();
+    const timeout = window.setTimeout(async () => {
+      setIsSearching(true);
+      setSearchError(null);
+
+      try {
+        const params = new URLSearchParams({
+          limit: "100",
+          page: "1",
+          search: query,
+        });
+        const result = await fetchJson<PaginatedResult<Product>>(
+          `/api/admin/products?${params.toString()}`,
+          { signal: controller.signal },
+        );
+
+        setProducts(result.items);
+      } catch (searchRequestError) {
+        if (controller.signal.aborted) {
+          return;
+        }
+
+        setSearchError(
+          searchRequestError instanceof Error
+            ? searchRequestError.message
+            : "Impossible de rechercher les produits.",
+        );
+      } finally {
+        if (!controller.signal.aborted) {
+          setIsSearching(false);
+        }
+      }
+    }, 250);
+
+    return () => {
+      window.clearTimeout(timeout);
+      controller.abort();
+    };
+  }, [defaultProducts, search]);
+
+  const filteredProducts = products;
 
   const pricePreview = calculateDiscountedPrice(
     Number(form.price) || 0,
@@ -244,7 +283,13 @@ export function ProductsManager({
       setCsvImportResult(result);
 
       if (result.createdCount > 0) {
-        setProducts((current) => [...result.products, ...current]);
+        const mergeImportedProducts = (current: Product[]) => [
+          ...result.products,
+          ...current,
+        ];
+
+        setProducts(mergeImportedProducts);
+        setDefaultProducts(mergeImportedProducts);
         router.refresh();
       }
     } catch (importError) {
@@ -374,13 +419,15 @@ export function ProductsManager({
         },
       );
 
-      setProducts((current) =>
+      const mergeSavedProduct = (current: Product[]) =>
         editingId
           ? current.map((product) =>
               product._id === editingId ? nextProduct : product,
             )
-          : [nextProduct, ...current],
-      );
+          : [nextProduct, ...current];
+
+      setProducts(mergeSavedProduct);
+      setDefaultProducts(mergeSavedProduct);
 
       resetForm();
       router.refresh();
@@ -404,7 +451,11 @@ export function ProductsManager({
       await fetchJson<{ success: boolean }>(`/api/admin/products/${id}`, {
         method: "DELETE",
       });
-      setProducts((current) => current.filter((product) => product._id !== id));
+      const removeDeletedProduct = (current: Product[]) =>
+        current.filter((product) => product._id !== id);
+
+      setProducts(removeDeletedProduct);
+      setDefaultProducts(removeDeletedProduct);
       if (editingId === id) {
         resetForm();
       }
@@ -502,6 +553,11 @@ export function ProductsManager({
           </div>
         </CardHeader>
         <CardContent className="overflow-x-auto p-0">
+          {searchError ? (
+            <div className="border-b border-rose-200 bg-rose-50 px-6 py-3 text-sm text-rose-700">
+              {searchError}
+            </div>
+          ) : null}
           <table className="min-w-full text-left text-sm">
             <thead className="border-b border-border bg-slate-50 text-xs uppercase tracking-[0.24em] text-slate-500">
               <tr>
@@ -592,7 +648,9 @@ export function ProductsManager({
                     className="px-6 py-10 text-center text-sm text-slate-500"
                     colSpan={5}
                   >
-                    Aucun produit ne correspond au filtre actuel.
+                    {isSearching
+                      ? "Recherche en cours..."
+                      : "Aucun produit ne correspond au filtre actuel."}
                   </td>
                 </tr>
               ) : null}

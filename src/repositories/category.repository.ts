@@ -115,9 +115,39 @@ export async function listCategoriesBySlugs(slugs: string[]) {
     .exec();
 }
 
+export async function listAllCategories() {
+  await connectToDatabase();
+  await ensureCategorySortOrders();
+
+  return CategoryModel.find({})
+    .sort({ sortOrder: 1, createdAt: 1 })
+    .lean()
+    .exec();
+}
+
+export async function listAllActiveCategories() {
+  await connectToDatabase();
+  await ensureCategorySortOrders();
+
+  return CategoryModel.find({ isActive: true })
+    .sort({ sortOrder: 1, createdAt: 1 })
+    .lean()
+    .exec();
+}
+
 export async function createCategory(payload: Partial<CategoryRecord>) {
   await connectToDatabase();
   return CategoryModel.create(payload);
+}
+
+export async function createCategories(payloads: Partial<CategoryRecord>[]) {
+  await connectToDatabase();
+
+  if (payloads.length === 0) {
+    return [];
+  }
+
+  return CategoryModel.create(payloads);
 }
 
 export async function countCategoriesByIds(ids: string[]) {
