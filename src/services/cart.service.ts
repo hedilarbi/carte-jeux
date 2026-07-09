@@ -168,6 +168,7 @@ async function createCartItem(
     finalUnitPrice: roundMoney(product.finalPrice),
     lineTotal: roundMoney(roundMoney(product.finalPrice) * quantity),
     currency: product.currency,
+    supplier: product.supplier,
   };
 }
 
@@ -254,6 +255,7 @@ export const cartService = {
       cart.items[existingItemIndex].unitPrice = roundMoney(product.price);
       cart.items[existingItemIndex].discountPercent = product.discountPercent;
       cart.items[existingItemIndex].finalUnitPrice = roundMoney(product.finalPrice);
+      cart.items[existingItemIndex].supplier = product.supplier;
       cart.items[existingItemIndex].lineTotal = roundMoney(
         roundMoney(product.finalPrice) * cart.items[existingItemIndex].quantity,
       );

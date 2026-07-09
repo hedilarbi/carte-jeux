@@ -81,7 +81,7 @@ export function CategoriesSection({
       <div className="mx-auto max-w-[1350px] px-6">
         <div className="mb-7">
           <span className="font-mono text-[11px] font-bold uppercase text-brand-purple-deep">
-            {"// Plateformes"}
+            {"Plateformes"}
           </span>
           <h2 className="mt-2 font-heading text-2xl font-bold text-brand-dark">
             Toutes les catégories
@@ -99,14 +99,14 @@ export function CategoriesSection({
           </button>
 
           <div
-            className="scrollbar-none -mx-6 snap-x snap-mandatory overflow-x-auto scroll-smooth px-6 pb-2"
+            className="scrollbar-none -mx-6 -mt-2 snap-x snap-mandatory overflow-x-auto scroll-smooth px-6 pb-2 pt-2"
             ref={sliderRef}
           >
             <div className="flex items-center gap-3 md:gap-8">
               {categories.map((category, index) => (
                 <a
                   className={cn(
-                    "flex min-w-[82px] shrink-0 snap-start flex-col items-center gap-2 text-center transition hover:-translate-y-1",
+                    "group flex min-w-[82px] shrink-0 snap-start flex-col items-center gap-2 text-center transition hover:-translate-y-1",
                     index === 0 && "text-brand-purple-deep",
                   )}
                   data-category-card
@@ -135,7 +135,7 @@ export function CategoriesSection({
                       }
                     />
                   )}
-                  <span className="font-heading text-xs font-bold text-brand-dark">
+                  <span className="font-heading text-xs font-bold text-[#5b5e72]">
                     {category.label}
                   </span>
                 </a>

@@ -17,23 +17,31 @@ import {
 const heroCards = [
   {
     alt: "Minecraft",
+    height: 354,
     href: "/produits/minecraft-java-edition-pc",
     src: "/minecraft-card.png",
+    width: 625,
   },
   {
     alt: "EA Sports FC 26",
+    height: 240,
     href: "/produits/fc-26-ps4-ps5",
     src: "/fc26-card.png",
+    width: 423,
   },
   {
     alt: "Grand Theft Auto V",
+    height: 355,
     href: "/produits/gta-v-ps4-ps5-bundle",
     src: "/gtav-card.png",
+    width: 625,
   },
   {
     alt: "Red Dead Redemption",
+    height: 361,
     href: "/produits/red-dead-redemption-2-pc",
     src: "/rdd-card.png",
+    width: 633,
   },
 ];
 
@@ -63,25 +71,38 @@ type HeroSlide = ProductGridHeroSlide | ImageLinkHeroSlide | PsPlusHeroSlide;
 const psPlusCards = [
   {
     alt: "PlayStation Plus Global",
+    height: 256,
     src: "/psnhero1.png",
+    width: 207,
   },
   {
     alt: "PlayStation Plus 12 mois",
+    height: 256,
     src: "/psnhero2.png",
+    width: 208,
   },
   {
     alt: "Carte PlayStation Plus",
+    height: 256,
     src: "/psnhero3.png",
+    width: 207,
   },
   {
     alt: "Abonnement PlayStation Plus",
+    height: 256,
     src: "/psnhero4.png",
+    width: 208,
   },
 ];
 
-const slideIntervalMs = 3500;
+const slideIntervalMs = 6500;
 
 const heroSlides: HeroSlide[] = [
+  {
+    background: "/hero.jpg",
+    id: "ps-plus-global",
+    kind: "ps-plus",
+  },
   {
     background: "/banner-bg-2.png",
     id: "examens-ete",
@@ -91,19 +112,15 @@ const heroSlides: HeroSlide[] = [
     alt: "Précommande GTA VI",
     href: "/precommande-gta-vi",
     id: "precommande-gta-vi",
-    image: "/banner_products.jpg",
+    image: "/banner-tga6.png",
     kind: "image-link",
     mobileImage: "/hero_2_mobile.jpg",
-  },
-  {
-    background: "/hero.jpg",
-    id: "ps-plus-global",
-    kind: "ps-plus",
   },
 ];
 
 export function HeroSection() {
   const [activeSlideIndex, setActiveSlideIndex] = useState(0);
+  const [isPaused, setIsPaused] = useState(false);
   const hasMultipleSlides = heroSlides.length > 1;
   const trustItems = [
     {
@@ -129,7 +146,7 @@ export function HeroSection() {
   ];
 
   useEffect(() => {
-    if (!hasMultipleSlides) {
+    if (!hasMultipleSlides || isPaused) {
       return;
     }
 
@@ -140,7 +157,7 @@ export function HeroSection() {
     }, slideIntervalMs);
 
     return () => window.clearTimeout(timeout);
-  }, [activeSlideIndex, hasMultipleSlides]);
+  }, [activeSlideIndex, hasMultipleSlides, isPaused]);
 
   function goToSlide(index: number) {
     setActiveSlideIndex(index);
@@ -161,8 +178,10 @@ export function HeroSection() {
   return (
     <div>
       <section
-        className="relative isolate mt-3 overflow-hidden"
+        className="relative isolate mt-6 overflow-hidden"
         id="home"
+        onMouseEnter={() => setIsPaused(true)}
+        onMouseLeave={() => setIsPaused(false)}
       >
         <div
           className="flex h-[90svh] max-h-[90svh] transition-transform duration-700 ease-in-out sm:h-[70svh] sm:max-h-[70svh]"
@@ -206,11 +225,10 @@ export function HeroSection() {
               {heroSlides.map((slide, index) => (
                 <button
                   aria-label={`Afficher le slide ${index + 1}`}
-                  className={`h-2.5 rounded-full transition ${
-                    index === activeSlideIndex
-                      ? "w-8 bg-[#78DAFF]"
-                      : "w-2.5 bg-white/70 hover:bg-white"
-                  }`}
+                  className={`h-2.5 rounded-full transition ${index === activeSlideIndex
+                    ? "w-8 bg-[#78DAFF]"
+                    : "w-2.5 bg-white/70 hover:bg-white"
+                    }`}
                   key={slide.id}
                   onClick={() => goToSlide(index)}
                   type="button"
@@ -255,25 +273,25 @@ function ProductGridSlide({ slide }: { slide: ProductGridHeroSlide }) {
       />
 
       <div className="mx-auto grid h-full max-h-full max-w-[1350px] items-center gap-5 overflow-hidden px-6 py-5 sm:gap-6 sm:py-6 lg:grid-cols-[minmax(0,0.95fr)_minmax(360px,0.8fr)] lg:gap-12 lg:py-8">
-        <div className="max-w-xl pl-4 text-left sm:pl-8 lg:pl-12 xl:pl-16">
-          <h1 className="font-heading text-xl font-black leading-tight tracking-[0.03em] text-[#78DAFF] drop-shadow-[0_4px_18px_rgba(1,45,105,0.32)] sm:text-3xl lg:text-4xl">
+        <div className="mx-auto max-w-xl text-center lg:mx-0 lg:pl-12 xl:pl-16">
+          <h1 className="font-heading text-2xl font-black leading-tight tracking-[0.03em] text-[#78DAFF] drop-shadow-[0_4px_18px_rgba(1,45,105,0.32)] sm:text-4xl lg:text-3xl">
             EXAMENS : TERMINÉ{" "}
             <span>&gt;&gt;</span> MANETTE : EN MAIN
           </h1>
-          <p className="mt-3 max-w-lg text-sm font-semibold leading-6 text-white sm:mt-4 sm:text-xl sm:leading-8">
+          <p className="mx-auto mt-3 max-w-lg text-base font-semibold leading-7 text-white sm:mt-4 sm:text-2xl sm:leading-9">
             Découvrez les jeux PlayStation à ne pas manquer cet été !
           </p>
 
-          <div className="mt-6 flex flex-wrap gap-3">
+          <div className="mt-6 flex flex-wrap justify-center gap-3">
             <Link
-              className="inline-flex h-9 items-center justify-center gap-1.5 rounded-lg bg-[#78DAFF] px-3 font-body text-[10px] font-bold uppercase text-[#012D69] shadow-[0_10px_24px_rgba(1,45,105,0.24)] transition hover:-translate-y-0.5 hover:bg-[#A2E8FF] sm:h-10 sm:gap-2 sm:px-4 sm:text-xs"
+              className="inline-flex h-9 items-center justify-center gap-1.5 rounded-lg bg-[#78DAFF] px-3 font-body text-xs font-bold uppercase text-[#012D69] shadow-[0_10px_24px_rgba(1,45,105,0.24)] transition hover:-translate-y-0.5 hover:bg-[#A2E8FF] sm:h-10 sm:gap-2 sm:px-4 sm:text-sm"
               href="/produits"
             >
               Voir les produits
               <ArrowRight className="size-3 sm:size-3.5" />
             </Link>
             <Link
-              className="inline-flex h-9 items-center justify-center gap-1.5 rounded-lg border border-[#012D69]/35 bg-white px-3 font-body text-[10px] font-bold uppercase text-[#012D69] transition hover:-translate-y-0.5 hover:bg-[#F3F0FF] sm:h-10 sm:gap-2 sm:px-4 sm:text-xs"
+              className="inline-flex h-9 items-center justify-center gap-1.5 rounded-lg border border-[#012D69]/35 bg-white px-3 font-body text-xs font-bold uppercase text-[#012D69] transition hover:-translate-y-0.5 hover:bg-[#F3F0FF] sm:h-10 sm:gap-2 sm:px-4 sm:text-sm"
               href="/#faq"
             >
               <MessageCircle className="size-3 sm:size-3.5" />
@@ -282,20 +300,21 @@ function ProductGridSlide({ slide }: { slide: ProductGridHeroSlide }) {
           </div>
         </div>
 
-        <div className="grid h-[32svh] max-h-[250px] min-h-0 w-full max-w-[360px] grid-cols-2 grid-rows-2 gap-2 justify-self-center sm:h-[36svh] sm:max-h-[320px] sm:max-w-[420px] sm:gap-3 lg:h-[calc(70svh-4rem)] lg:max-h-[520px] lg:max-w-[520px] lg:gap-4 lg:justify-self-end">
+        <div className="grid h-fit w-full auto-rows-min grid-cols-2 gap-1 justify-self-center sm:max-w-[500px] sm:gap-2 lg:max-w-[600px] lg:gap-3 lg:justify-self-end">
           {heroCards.map((card) => (
             <Link
               aria-label={`Voir les produits ${card.alt}`}
-              className="group relative block h-full min-h-0 overflow-visible transition duration-300 hover:-translate-y-1"
+              className="group relative block h-fit w-full overflow-visible transition duration-300 hover:-translate-y-1"
               href={card.href}
               key={card.src}
             >
               <Image
                 alt={card.alt}
-                className="object-contain drop-shadow-[0_16px_24px_rgba(1,45,105,0.28)] transition duration-300 group-hover:scale-[1.06]"
-                fill
+                className="block h-auto w-full drop-shadow-[0_16px_24px_rgba(1,45,105,0.28)] transition duration-300 group-hover:scale-[1.06]"
+                height={card.height}
                 sizes="(max-width: 640px) 42vw, (max-width: 1024px) 220px, 250px"
                 src={card.src}
+                width={card.width}
               />
             </Link>
           ))}
@@ -307,41 +326,75 @@ function ProductGridSlide({ slide }: { slide: ProductGridHeroSlide }) {
 
 function ImageLinkSlide({ slide }: { slide: ImageLinkHeroSlide }) {
   return (
-    <Link
-      aria-label={slide.alt}
-      className="relative block h-full bg-[#00061E]"
-      href={slide.href}
-    >
+    <>
       {slide.mobileImage ? (
-        <>
+        <Link
+          aria-label={slide.alt}
+          className="relative block h-full bg-[#00061E] md:hidden"
+          href={slide.href}
+        >
           <Image
             alt={slide.alt}
-            className="object-cover transition duration-500 hover:scale-[1.01] md:hidden"
+            className="object-cover transition duration-500 hover:scale-[1.01]"
             fill
             priority
             sizes="100vw"
             src={slide.mobileImage}
           />
+        </Link>
+      ) : (
+        <Link
+          aria-label={slide.alt}
+          className="relative block h-full bg-[#00061E] md:hidden"
+          href={slide.href}
+        >
           <Image
             alt={slide.alt}
-            className="hidden object-cover transition duration-500 hover:scale-[1.01] md:block"
+            className="object-cover transition duration-500 hover:scale-[1.01]"
             fill
             priority
             sizes="100vw"
             src={slide.image}
           />
-        </>
-      ) : (
+        </Link>
+      )}
+
+      <div className="relative hidden h-full bg-[#00061E] md:block">
         <Image
           alt={slide.alt}
-          className="object-cover transition duration-500 hover:scale-[1.01]"
+          className="object-cover"
           fill
           priority
           sizes="100vw"
           src={slide.image}
         />
-      )}
-    </Link>
+        <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(0,6,30,0.76)_0%,rgba(0,6,30,0.45)_43%,rgba(0,6,30,0)_74%)]" />
+
+        <div className="relative z-10 mx-auto flex h-full max-w-[1350px] items-center px-6 py-8">
+          <div className="max-w-[590px] text-left lg:pl-12 xl:pl-16">
+
+
+            <p className=" max-w-[560px] font-body text-2xl font-bold leading-9 text-white drop-shadow-[0_4px_16px_rgba(0,0,0,0.36)] lg:text-3xl lg:leading-[42px]">
+              Découvrez l&apos;évolution la plus vaste et la plus immersive de
+              la série Grand Theft Auto à ce jour
+            </p>
+
+            <p className="mt-5 font-heading text-2xl font-normal leading-tight text-[#FE50B3] drop-shadow-[0_4px_16px_rgba(0,0,0,0.36)] lg:text-xl">
+              Disponible le 19 Septembre
+            </p>
+            <div className="inline-flex  mt-7 border-2 border-[#73016F] bg-[linear-gradient(90deg,#E88F48_0%,#FE4EB5_52%,#3A5FD8_100%)] px-10 py-3 font-heading text-3xl font-black leading-none tracking-[0.03em] text-white shadow-[0_18px_38px_rgba(0,0,0,0.3)] lg:text-xl">
+              Grand Theft Auto VI
+            </div>
+            <Link
+              className="mt-8 inline-flex min-h-12 items-center justify-center rounded-[32px] border-2 border-black bg-white px-7 text-center font-body text-sm font-black uppercase tracking-[0.08em] text-black shadow-[0_14px_30px_rgba(0,0,0,0.26)] transition hover:-translate-y-0.5 hover:bg-[#F5F5F5] lg:min-h-14 lg:px-9 lg:text-base"
+              href={slide.href}
+            >
+              PRÉCOMMANDER MAINTENANT
+            </Link>
+          </div>
+        </div>
+      </div>
+    </>
   );
 }
 
@@ -357,28 +410,28 @@ function PsPlusSlide({ slide }: { slide: PsPlusHeroSlide }) {
       />
 
       <div className="mx-auto grid h-full max-h-full max-w-[1350px] items-center gap-5 overflow-hidden px-6 py-5 sm:gap-6 sm:py-6 lg:grid-cols-[minmax(0,0.95fr)_minmax(360px,0.8fr)] lg:gap-12 lg:py-8">
-        <div className="max-w-xl pl-4 text-left sm:pl-8 lg:pl-12 xl:pl-16">
-          <h1 className="font-heading text-xl font-black leading-tight tracking-[0.02em] text-white drop-shadow-[0_4px_18px_rgba(0,0,0,0.35)] sm:text-3xl lg:text-4xl">
+        <div className="mx-auto max-w-xl text-center lg:mx-0 lg:pl-12 xl:pl-16">
+          <h1 className="font-heading text-2xl font-black leading-tight tracking-[0.02em] text-white drop-shadow-[0_4px_18px_rgba(0,0,0,0.35)] sm:text-4xl lg:text-3xl">
             Abonnement Carte <br />
             PlayStations Plus{" "}
             <span className="text-[#FFD600]">Global</span>
           </h1>
-          <p className="mt-3 max-w-xl text-sm font-semibold leading-6 text-white sm:mt-4 sm:text-lg sm:leading-7">
+          <p className="mx-auto mt-3 max-w-xl text-base font-semibold leading-7 text-white sm:mt-4 sm:text-2xl sm:leading-9">
             Permet d&apos;accéder à des fonctionnalités en ligne exclusives
             <br />
             Abonnement carte 12 mois
           </p>
 
-          <div className="mt-6 flex flex-wrap gap-3">
+          <div className="mt-6 flex flex-wrap justify-center gap-3">
             <Link
-              className="inline-flex h-9 items-center justify-center gap-1.5 rounded-lg bg-[#FFD600] px-3 font-body text-[10px] font-bold uppercase text-black shadow-[0_10px_24px_rgba(0,0,0,0.24)] transition hover:-translate-y-0.5 hover:bg-[#FFE766] sm:h-10 sm:gap-2 sm:px-4 sm:text-xs"
+              className="inline-flex h-9 items-center justify-center gap-1.5 rounded-lg bg-[#FFD600] px-3 font-body text-xs font-bold uppercase text-black shadow-[0_10px_24px_rgba(0,0,0,0.24)] transition hover:-translate-y-0.5 hover:bg-[#FFE766] sm:h-10 sm:gap-2 sm:px-4 sm:text-sm"
               href="/produits"
             >
               Voir tous les produits
               <ArrowRight className="size-3 sm:size-3.5" />
             </Link>
             <Link
-              className="inline-flex h-9 items-center justify-center gap-1.5 rounded-lg bg-white px-3 font-body text-[10px] font-bold uppercase text-black transition hover:-translate-y-0.5 hover:bg-slate-100 sm:h-10 sm:gap-2 sm:px-4 sm:text-xs"
+              className="inline-flex h-9 items-center justify-center gap-1.5 rounded-lg bg-white px-3 font-body text-xs font-bold uppercase text-black transition hover:-translate-y-0.5 hover:bg-slate-100 sm:h-10 sm:gap-2 sm:px-4 sm:text-sm"
               href="/#faq"
             >
               <MessageCircle className="size-3 sm:size-3.5" />
@@ -387,18 +440,22 @@ function PsPlusSlide({ slide }: { slide: PsPlusHeroSlide }) {
           </div>
         </div>
 
-        <div className="grid h-[34svh] max-h-[270px] min-h-0 w-full max-w-[380px] grid-cols-2 grid-rows-2 gap-2 justify-self-center sm:h-[38svh] sm:max-h-[340px] sm:max-w-[450px] sm:gap-3 lg:h-[calc(70svh-4rem)] lg:max-h-[520px] lg:max-w-[540px] lg:gap-4 lg:justify-self-end">
+        <div
+          className="grid h-fit w-fit max-w-full auto-rows-min justify-center gap-1 justify-self-center sm:gap-2 lg:gap-3 lg:justify-self-end"
+          style={{ gridTemplateColumns: "repeat(2, max-content)" }}
+        >
           {psPlusCards.map((card) => (
             <div
-              className="group relative h-full min-h-0 transition duration-300 hover:-translate-y-1"
+              className="group relative h-fit w-fit transition duration-300 hover:-translate-y-1"
               key={card.src}
             >
               <Image
                 alt={card.alt}
-                className="object-contain drop-shadow-[0_16px_28px_rgba(0,0,0,0.32)] transition duration-300 group-hover:scale-[1.05]"
-                fill
+                className="block h-[min(18svh,150px)] max-h-[150px] w-auto max-w-[calc((100vw-3.5rem)/2)] drop-shadow-[0_16px_28px_rgba(0,0,0,0.32)] transition duration-300 group-hover:scale-[1.05] sm:h-[min(18svh,180px)] sm:max-h-[180px] sm:max-w-[200px] lg:h-[min(28svh,230px)] lg:max-h-[230px] lg:max-w-[190px]"
+                height={card.height}
                 sizes="(max-width: 640px) 42vw, (max-width: 1024px) 220px, 260px"
                 src={card.src}
+                width={card.width}
               />
             </div>
           ))}

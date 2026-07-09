@@ -5,6 +5,7 @@ import { BadgePercent, Mail, PackageCheck, ReceiptText, Truck } from "lucide-rea
 
 import { OrderStatusBadge } from "@/components/admin/order-status-badge";
 import { PaymentStatusBadge } from "@/components/admin/payment-status-badge";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -54,6 +55,10 @@ type OrderPatchPayload = Partial<StatusFormState> &
   Partial<DeliveryFormState> & {
     supplierCost?: number;
   };
+
+function getOrderItemSupplierLabel(item: Order["items"][number]) {
+  return item.supplier === "g2a" ? "G2A" : "playsdepots";
+}
 
 export function OrderDetailManager({
   initialOrder,
@@ -322,6 +327,11 @@ export function OrderDetailManager({
                     <div className="font-medium text-foreground">{item.productTitle}</div>
                     <div className="mt-1 text-xs text-slate-500">
                       {item.sku} · Qté {item.quantity}
+                    </div>
+                    <div className="mt-2">
+                      <Badge variant={item.supplier === "g2a" ? "default" : "muted"}>
+                        Fournisseur : {getOrderItemSupplierLabel(item)}
+                      </Badge>
                     </div>
                   </div>
                   <div className="text-right text-sm">

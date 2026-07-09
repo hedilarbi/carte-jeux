@@ -118,6 +118,36 @@ export async function fetchG2AProductOffers(page = 1, itemsPerPage = 100) {
   );
 }
 
+async function fetchG2AProductOffersByProductIdsBatch(productIds: string[]) {
+  const params = new URLSearchParams({
+    itemsPerPage: String(normalizeProductOffersItemsPerPage(100)),
+  });
+
+  productIds.forEach((productId) => {
+    params.append("productIds[]", productId);
+  });
+
+  if (!productIds.length) {
+    return null;
+  }
+
+  return g2aJsonRequest<G2APaginatedResponse<G2AProductOffer>>(
+    `/export/v1/product-offers?${params.toString()}`,
+  );
+}
+
+export async function fetchG2AProductOffersByProductIds(productIds: string[]) {
+  const normalizedProductIds = normalizeProductIds(productIds);
+  const productOffers: G2AProductOffer[] = [];
+
+  for (const batch of chunk(normalizedProductIds, 100)) {
+    const response = await fetchG2AProductOffersByProductIdsBatch(batch);
+    productOffers.push(...getResponseItems(response));
+  }
+
+  return productOffers;
+}
+
 async function fetchG2AProductDetailsBatch(productIds: string[]) {
   const params = new URLSearchParams();
 
@@ -148,6 +178,7 @@ export async function fetchG2AProductDetails(productIds: string[]) {
 
 export const g2aExportService = {
   fetchG2AProductOffers,
+  fetchG2AProductOffersByProductIds,
   fetchG2AProductDetails,
   chooseCheapestAvailableOffer,
   getG2AProductMainImage,

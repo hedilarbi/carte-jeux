@@ -41,14 +41,15 @@ export default async function CategoriesPage() {
 function BannerBlock() {
   return (
     <section className="mx-auto max-w-[1350px] px-6 py-10 md:py-12">
-      <div className="relative h-[180px] overflow-hidden bg-white shadow-[0_4px_4px_#B1A3F5] sm:h-[240px] lg:h-[300px]">
+      <div className="flex max-h-[240px] w-full max-w-full items-center justify-center overflow-hidden bg-white shadow-[0_4px_4px_#B1A3F5] sm:max-h-[320px] lg:max-h-[420px]">
         <Image
           alt="Jeux mobile et top up gaming en Tunisie"
-          className="object-cover"
-          fill
+          className="h-auto max-h-[240px] w-auto max-w-full object-contain sm:max-h-[320px] lg:max-h-[420px]"
+          height={1723}
           priority
           sizes="(max-width: 1200px) 100vw, 1200px"
           src="/banner_products.jpg"
+          width={3714}
         />
       </div>
     </section>

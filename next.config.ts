@@ -9,6 +9,11 @@ const nextConfig: NextConfig = {
         hostname: "firebasestorage.googleapis.com",
         pathname: "/**",
       },
+      {
+        protocol: "https",
+        hostname: "images.g2a.com",
+        pathname: "/**",
+      },
     ],
   },
   reactCompiler: true,

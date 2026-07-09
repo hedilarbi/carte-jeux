@@ -9,6 +9,7 @@ type ProductQuery = mongo.Filter<ProductRecord>;
 type ProductFindQuery = Parameters<typeof ProductModel.find>[0];
 type ProductCountQuery = Parameters<typeof ProductModel.countDocuments>[0];
 type ProductExistsQuery = Parameters<typeof ProductModel.exists>[0];
+type ProductBulkWriteOperations = Parameters<typeof ProductModel.bulkWrite>[0];
 
 export interface ProductListFilters extends SearchablePaginationInput {
   categoryId?: string;
@@ -261,9 +262,88 @@ export async function getProductBySlug(slug: string) {
   return ProductModel.findOne({ slug }).lean().exec();
 }
 
+export async function getProductBySku(sku: string) {
+  await connectToDatabase();
+  return ProductModel.findOne({ sku: sku.toUpperCase() }).lean().exec();
+}
+
+export async function getProductByG2AProductId(productId: string) {
+  await connectToDatabase();
+  return ProductModel.findOne({
+    "g2a.productId": productId,
+  } as unknown as ProductFindQuery)
+    .lean()
+    .exec();
+}
+
+export async function listProductsByG2AProductIdsOrSkus(
+  productIds: string[],
+  skus: string[],
+) {
+  await connectToDatabase();
+
+  const normalizedProductIds = Array.from(
+    new Set(productIds.map((productId) => productId.trim()).filter(Boolean)),
+  );
+  const normalizedSkus = Array.from(
+    new Set(skus.map((sku) => sku.trim().toUpperCase()).filter(Boolean)),
+  );
+  const filters: ProductQuery[] = [];
+
+  if (normalizedProductIds.length > 0) {
+    filters.push({ "g2a.productId": { $in: normalizedProductIds } });
+  }
+
+  if (normalizedSkus.length > 0) {
+    filters.push({ sku: { $in: normalizedSkus } });
+  }
+
+  if (filters.length === 0) {
+    return [];
+  }
+
+  return ProductModel.find({ $or: filters } as unknown as ProductFindQuery)
+    .lean()
+    .exec();
+}
+
+export async function listG2AProductsForStockSync(input: {
+  afterId?: string;
+  limit: number;
+}) {
+  await connectToDatabase();
+
+  const query: ProductQuery = {
+    supplier: "g2a",
+    "g2a.productId": { $exists: true, $ne: "" },
+  };
+
+  if (input.afterId && Types.ObjectId.isValid(input.afterId)) {
+    query._id = { $gt: new Types.ObjectId(input.afterId) };
+  }
+
+  return ProductModel.find(query as unknown as ProductFindQuery)
+    .sort({ _id: 1 })
+    .limit(Math.max(1, Math.min(Math.floor(input.limit), 100)))
+    .lean()
+    .exec();
+}
+
 export async function createProduct(payload: Partial<ProductRecord>) {
   await connectToDatabase();
   return ProductModel.create(payload);
+}
+
+export async function bulkWriteProducts(operations: ProductBulkWriteOperations) {
+  await connectToDatabase();
+
+  if (operations.length === 0) {
+    return null;
+  }
+
+  return ProductModel.bulkWrite(operations, {
+    ordered: false,
+  });
 }
 
 export async function updateProductById(id: string, payload: Partial<ProductRecord>) {

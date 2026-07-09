@@ -21,7 +21,7 @@ export function TopGamesSection({
         <div className="mb-7 flex items-end justify-between gap-4">
           <div>
             <span className="font-mono text-[11px] font-bold uppercase text-brand-dark">
-              {"// XBOX"}
+              {"XBOX"}
             </span>
             <h2 className="mt-2 font-heading text-2xl font-bold text-brand-dark">
               Xbox Tunisie – Cartes Xbox Live & Game Pass

@@ -6,7 +6,7 @@ import {
   type Types,
 } from "mongoose";
 
-import type { PromoCodeDiscountType } from "@/types/entities";
+import type { ProductSupplier, PromoCodeDiscountType } from "@/types/entities";
 
 export type CartStatus = "active" | "converted" | "abandoned";
 
@@ -31,6 +31,7 @@ export interface CartItemRecord {
   finalUnitPrice: number;
   lineTotal: number;
   currency: string;
+  supplier?: ProductSupplier;
 }
 
 export interface CartRecord {
@@ -125,6 +126,10 @@ const cartItemSchema = new Schema<CartItemRecord>(
       uppercase: true,
       minlength: 3,
       maxlength: 3,
+    },
+    supplier: {
+      type: String,
+      enum: ["internal", "g2a"],
     },
   },
   {

@@ -14,11 +14,11 @@ export function HomeBestSellersSection({
   }
 
   return (
-    <section className="bg-brand-light py-0 md:py-16" id="best-sellers">
+    <section className="bg-brand-light pb-12 pt-0 md:py-16" id="best-sellers">
       <div className="mx-auto max-w-[1350px] px-6">
         <div className="mb-7">
           <span className="font-mono text-[11px] font-bold uppercase text-brand-purple-deep">
-            {"// BEST SELLER"}
+            {"BEST SELLER"}
           </span>
           <h2 className="mt-2 font-heading text-2xl font-bold text-brand-dark">
             Les meilleurs vendus

@@ -24,15 +24,44 @@ import {
   type OrderListFilters,
   updateOrderById,
 } from "@/repositories/order.repository";
+import { listProductsByIds } from "@/repositories/product.repository";
 import { emailService } from "@/services/email.service";
 import { promoCodeService } from "@/services/promo-code.service";
 import { userService } from "@/services/user.service";
-import type { Order } from "@/types/entities";
+import type { Order, Product } from "@/types/entities";
 
 function generateOrderNumber() {
   return `GZ-${Date.now().toString(36).toUpperCase()}${randomBytes(2)
     .toString("hex")
     .toUpperCase()}`;
+}
+
+async function attachOrderItemSuppliers(order: Order): Promise<Order> {
+  const productIds = [
+    ...new Set(
+      order.items
+        .filter((item) => !item.supplier && item.productId)
+        .map((item) => item.productId as string),
+    ),
+  ];
+  const products =
+    productIds.length > 0
+      ? serializeDocument<Product[]>(await listProductsByIds(productIds))
+      : [];
+  const supplierByProductId = new Map(
+    products.map((product) => [product._id, product.supplier]),
+  );
+
+  return {
+    ...order,
+    items: order.items.map((item) => ({
+      ...item,
+      supplier:
+        item.supplier ??
+        (item.productId ? supplierByProductId.get(item.productId) : undefined) ??
+        "internal",
+    })),
+  };
 }
 
 export const orderService = {
@@ -56,7 +85,7 @@ export const orderService = {
       throw new AppError("Commande introuvable.", 404);
     }
 
-    return serializeDocument<Order>(order);
+    return attachOrderItemSuppliers(serializeDocument<Order>(order));
   },
 
   async getByOrderNumber(orderNumber: string) {
@@ -152,6 +181,7 @@ export const orderService = {
         finalUnitPrice: item.finalUnitPrice,
         lineTotal: item.lineTotal,
         currency: item.currency,
+        supplier: item.supplier,
       })),
       subtotal,
       totalDiscount: roundMoney(Math.max(0, subtotal - total)),
@@ -228,6 +258,6 @@ export const orderService = {
       throw new AppError("Commande introuvable.", 404);
     }
 
-    return serializeDocument<Order>(updated);
+    return attachOrderItemSuppliers(serializeDocument<Order>(updated));
   },
 };

@@ -37,6 +37,23 @@ export function RecommendedCard({
                     href={productHref}
                 />
 
+                <ProductPlatformBadge
+                    action={
+                        <FavoriteButton
+                            aria-label={`Ajouter aux favoris - ${product.name}`}
+                            activeClassName="bg-white text-danger"
+                            className="pointer-events-auto flex size-6 items-center justify-center rounded-full bg-white/14 text-white transition hover:bg-white/24 hover:text-brand-lavender"
+                            iconClassName="size-3.5"
+                            productId={productId}
+                            productSlug={product.slug}
+                        />
+                    }
+                    className="pointer-events-none absolute left-[104px] right-0 top-0 z-30 h-7 px-2 text-[10px] min-[376px]:left-[116px]"
+                    iconClassName="size-4"
+                    image={product.platformImage}
+                    name={product.platform}
+                />
+
                 <div className="relative h-full overflow-hidden bg-[#0F0F28]">
                     <Image
                         alt={product.name}
@@ -49,24 +66,7 @@ export function RecommendedCard({
                     <div className="absolute inset-0 bg-[linear-gradient(90deg,transparent_58%,rgba(15,15,40,0.86)_100%)]" />
                 </div>
 
-                <div className="relative z-[2] flex min-w-0 flex-col p-2.5 pr-12">
-                    <ProductPlatformBadge
-                        action={
-                            <FavoriteButton
-                                aria-label={`Ajouter aux favoris - ${product.name}`}
-                                activeClassName="bg-white text-danger"
-                                className="flex size-6 items-center justify-center rounded-full bg-white/14 text-white transition hover:bg-white/24 hover:text-brand-lavender"
-                                iconClassName="size-3.5"
-                                productId={productId}
-                                productSlug={product.slug}
-                            />
-                        }
-                        className="mb-1.5 h-7 w-full max-w-full px-2 text-[10px]"
-                        iconClassName="size-4"
-                        image={product.platformImage}
-                        name={product.platform}
-                    />
-
+                <div className="relative z-[2] flex min-w-0 flex-col p-2.5 pr-12 pt-10">
                     <h3 className="line-clamp-2 font-body text-[11px] font-black leading-4 text-white min-[376px]:text-xs min-[376px]:leading-[18px]">
                         {product.name}
                     </h3>
@@ -138,7 +138,7 @@ export function RecommendedCard({
                         tabIndex={-1}
                     />
 
-                    <div className="relative z-[2] grid bg-transparent px-4 pb-3 pt-4 [grid-area:top]">
+                    <div className="relative z-[2] grid bg-[#0F0F28]/95 px-4 pb-3 pt-4 [grid-area:top]">
                         <div className="min-w-0">
                             <h3 className="line-clamp-2 min-h-10 font-body text-[13px] font-black leading-5 text-white">
                                 {product.name}
@@ -149,7 +149,7 @@ export function RecommendedCard({
                         </div>
                     </div>
 
-                    <div className="relative z-20 flex flex-col justify-between bg-transparent px-4 pb-4 [grid-area:bottom]">
+                    <div className="relative z-20 flex flex-col justify-between bg-[#0F0F28]/95 px-4 pb-4 [grid-area:bottom]">
                         <div className="flex items-end justify-between gap-3">
                             <div className="min-w-0">
                                 <p className="font-body text-xs font-bold text-[#b3aac9]">

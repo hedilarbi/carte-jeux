@@ -4,10 +4,6 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import {
   CheckCircle2,
-  Info,
-  Minus,
-  Plus,
-  ShoppingCart,
   Star,
 } from "lucide-react";
 
@@ -19,7 +15,7 @@ import {
   type ProductDetailPageContent,
   type ProductDetailRelatedProduct,
 } from "@/services/product-detail.service";
-import { AddToCartButton } from "@/components/site/add-to-cart-button";
+import { ProductPurchaseCard } from "@/components/site/product-purchase-card";
 
 type ProductPageProps = {
   params: Promise<{ slug: string }>;
@@ -226,49 +222,16 @@ function ProductDetailsBlock({
 
 function PurchaseCard({ product }: { product: ProductDetailPageContent }) {
   return (
-    <aside className="rounded-[21px] bg-white p-7 text-black shadow-[0_4px_4px_#B0A4F5] backdrop-blur-[2px]">
-      <p className="text-xl font-semibold leading-5 tracking-[0.06em]">
-        Gagnez des points plus: {product.points}
-      </p>
-
-      <div className="mt-10 flex items-center justify-between gap-4">
-        <span className="text-xl font-bold tracking-[0.06em]">Quantité:</span>
-        <div className="flex h-11 w-[176px] items-center justify-between bg-[#D9D9D9]/60 px-7 text-base font-bold">
-          <Minus className="size-5 opacity-35" />
-          <span>1</span>
-          <Plus className="size-5 opacity-35" />
-        </div>
-      </div>
-
-      <div className="mt-8">
-        <p className="text-xl font-bold tracking-[0.06em]">Prix:</p>
-        <div className="mt-3 flex min-h-14 w-full flex-col items-center justify-center bg-[#D9D9D9]/55 px-4 text-center font-bold tracking-[0.06em]">
-          {product.originalPrice ? (
-            <span className="text-sm text-[#2D2D2D]/70 line-through">
-              {product.originalPrice} {product.currency}
-            </span>
-          ) : null}
-          <span className="text-xl">
-            {product.price} {product.currency}
-          </span>
-        </div>
-      </div>
-
-      <AddToCartButton
-        className="mt-10 flex w-full items-center justify-center gap-2 rounded-[14px] bg-[#B0A4F5] px-4 py-4 text-center text-lg font-bold uppercase leading-[1] text-black shadow-[0_4px_8.6px_-1px_rgba(1,45,105,0.63)] transition hover:bg-[#A582ED]"
-        productId={product.id}
-        productSlug={product.slug}
-        redirectTo="/panier"
-      >
-        <ShoppingCart className="size-5" />
-        Acheter maintenant
-      </AddToCartButton>
-
-      <p className="mt-5 flex items-start gap-2 text-xs font-semibold leading-5 text-[#012D69]/75">
-        <Info className="mt-0.5 size-4 shrink-0" />
-        Produit numérique livré après confirmation de paiement.
-      </p>
-    </aside>
+    <ProductPurchaseCard
+      product={{
+        currency: product.currency,
+        id: product.id,
+        originalPrice: product.originalPrice,
+        points: product.points,
+        price: product.price,
+        slug: product.slug,
+      }}
+    />
   );
 }
 

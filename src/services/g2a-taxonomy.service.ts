@@ -228,7 +228,69 @@ async function createMissingTaxonomies(input: {
   };
 }
 
+async function syncFromProductDetails(productDetails: G2AProductDetails[]) {
+  const detectedCategories = getUniqueNames(
+    productDetails.flatMap(getG2ACategoryNames),
+  );
+  const detectedPlatforms = getUniqueNames(
+    productDetails
+      .map(getG2APlatformName)
+      .filter((name): name is string => Boolean(name)),
+  );
+  const existingCategories = serializeDocument<
+    Array<CategoryRecord & { _id: unknown }>
+  >(await listAllCategories());
+  const existingSlugs = new Set(
+    existingCategories.map((category) => category.slug),
+  );
+  const existingKindNames = new Set(
+    existingCategories.map((category) =>
+      getKindKey(getCategoryKind(category), category.name),
+    ),
+  );
+  const nextSortOrder = {
+    value: await getNextCategorySortOrder(),
+  };
+  const platforms = await createMissingTaxonomies({
+    names: detectedPlatforms,
+    kind: "platform",
+    existingCategories,
+    existingSlugs,
+    existingKindNames,
+    nextSortOrder,
+  });
+  const categories = await createMissingTaxonomies({
+    names: detectedCategories,
+    kind: "category",
+    existingCategories,
+    existingSlugs,
+    existingKindNames,
+    nextSortOrder,
+  });
+
+  return {
+    detected: {
+      categories: detectedCategories,
+      platforms: detectedPlatforms,
+    },
+    created: {
+      categories: categories.created,
+      platforms: platforms.created,
+    },
+    existing: {
+      categories: categories.existing,
+      platforms: platforms.existing,
+    },
+    skipped: {
+      categories: categories.skipped,
+      platforms: platforms.skipped,
+    },
+  };
+}
+
 export const g2aTaxonomyService = {
+  syncFromProductDetails,
+
   async syncFromProductPage(input: SyncG2ATaxonomiesInput = {}) {
     const page = normalizePage(input.page);
     const itemsPerPage = normalizeItemsPerPage(input.itemsPerPage);
@@ -238,44 +300,7 @@ export const g2aTaxonomyService = {
       .map(getG2AProductId)
       .filter((productId): productId is string => Boolean(productId));
     const productDetails = await fetchG2AProductDetails(productIds);
-    const detectedCategories = getUniqueNames(
-      productDetails.flatMap(getG2ACategoryNames),
-    );
-    const detectedPlatforms = getUniqueNames(
-      productDetails
-        .map(getG2APlatformName)
-        .filter((name): name is string => Boolean(name)),
-    );
-    const existingCategories = serializeDocument<
-      Array<CategoryRecord & { _id: unknown }>
-    >(await listAllCategories());
-    const existingSlugs = new Set(
-      existingCategories.map((category) => category.slug),
-    );
-    const existingKindNames = new Set(
-      existingCategories.map((category) =>
-        getKindKey(getCategoryKind(category), category.name),
-      ),
-    );
-    const nextSortOrder = {
-      value: await getNextCategorySortOrder(),
-    };
-    const platforms = await createMissingTaxonomies({
-      names: detectedPlatforms,
-      kind: "platform",
-      existingCategories,
-      existingSlugs,
-      existingKindNames,
-      nextSortOrder,
-    });
-    const categories = await createMissingTaxonomies({
-      names: detectedCategories,
-      kind: "category",
-      existingCategories,
-      existingSlugs,
-      existingKindNames,
-      nextSortOrder,
-    });
+    const taxonomySync = await syncFromProductDetails(productDetails);
 
     return {
       page,
@@ -285,22 +310,7 @@ export const g2aTaxonomyService = {
         productIds: productIds.length,
         productDetails: productDetails.length,
       },
-      detected: {
-        categories: detectedCategories,
-        platforms: detectedPlatforms,
-      },
-      created: {
-        categories: categories.created,
-        platforms: platforms.created,
-      },
-      existing: {
-        categories: categories.existing,
-        platforms: platforms.existing,
-      },
-      skipped: {
-        categories: categories.skipped,
-        platforms: platforms.skipped,
-      },
+      ...taxonomySync,
     };
   },
 };

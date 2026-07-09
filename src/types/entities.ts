@@ -2,6 +2,7 @@ export type UserRole = "admin" | "customer" | "guest";
 export type AuthProvider = "local" | "google" | "facebook";
 export type ProductType = "gift_card" | "subscription" | "game_credit";
 export type DeliveryMode = "manual_email";
+export type ProductSupplier = "internal" | "g2a";
 export type OrderStatus =
   | "pending"
   | "paid"
@@ -15,6 +16,12 @@ export type PromoCampaignType = "percentage";
 export type PromoCodeDiscountType = "percentage" | "fixed";
 export type CartStatus = "active" | "converted" | "abandoned";
 export type ContactSubmissionStatus = "new" | "replied";
+export type G2AImportJobStatus =
+  | "queued"
+  | "running"
+  | "paused"
+  | "completed"
+  | "failed";
 
 export interface BaseEntity {
   _id: string;
@@ -76,11 +83,30 @@ export interface Product extends BaseEntity {
   sku: string;
   productType: ProductType;
   deliveryMode: DeliveryMode;
+  supplier: ProductSupplier;
+  stock: number;
+  autoPricing: boolean;
+  g2a?: ProductG2AData;
   isFeatured: boolean;
   isActive: boolean;
   faqItems: ProductFaqItem[];
   seoTitle?: string;
   seoDescription?: string;
+}
+
+export interface ProductG2AData {
+  productId: string;
+  selectedOfferId?: string;
+  buyPrice?: number;
+  supplierStock: number;
+  currency?: string;
+  platform?: string;
+  region?: string;
+  developer?: string;
+  publisher?: string;
+  releaseDate?: string;
+  lastSyncedAt?: string;
+  lastCatalogSyncedAt?: string;
 }
 
 export interface ProductFaqItem {
@@ -102,6 +128,7 @@ export interface CartItem {
   finalUnitPrice: number;
   lineTotal: number;
   currency: string;
+  supplier?: ProductSupplier;
 }
 
 export interface Cart extends BaseEntity {
@@ -145,6 +172,7 @@ export interface OrderItem {
   finalUnitPrice: number;
   lineTotal: number;
   currency: string;
+  supplier?: ProductSupplier;
 }
 
 export interface Order extends BaseEntity {
@@ -217,6 +245,40 @@ export interface ContactSubmissionReply {
   sentTo: string;
   sentAt: string;
   adminEmail?: string;
+}
+
+export interface G2AImportJobError {
+  page?: number;
+  message: string;
+  details?: unknown;
+  occurredAt: string;
+}
+
+export interface G2AImportJob extends BaseEntity {
+  status: G2AImportJobStatus;
+  startPage: number;
+  currentPage: number;
+  lastProcessedPage?: number;
+  itemsPerPage: number;
+  maxPages?: number;
+  processedPages: number;
+  scannedProductOffers: number;
+  scannedProductIds: number;
+  scannedProductDetails: number;
+  createdCount: number;
+  updatedCount: number;
+  skippedCount: number;
+  errorCount: number;
+  taxonomyCreatedCategoriesCount: number;
+  taxonomyCreatedPlatformsCount: number;
+  syncTaxonomies: boolean;
+  delayMs: number;
+  lastError?: string;
+  recentErrors: G2AImportJobError[];
+  startedAt?: string;
+  pausedAt?: string;
+  finishedAt?: string;
+  requestedByEmail?: string;
 }
 
 export interface ContactSubmission extends BaseEntity {

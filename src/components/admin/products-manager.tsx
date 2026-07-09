@@ -98,6 +98,10 @@ function getProductRegionIds(product: Product) {
   return product.regionId ? [product.regionId] : [];
 }
 
+function getProductSupplierLabel(product: Product) {
+  return product.supplier === "g2a" ? "G2A" : "playsdepots";
+}
+
 function readImagePreview(file: File) {
   return new Promise<string>((resolve, reject) => {
     const reader = new FileReader();
@@ -563,6 +567,7 @@ export function ProductsManager({
               <tr>
                 <th className="px-6 py-4">Produit</th>
                 <th className="px-6 py-4">Catalogue</th>
+                <th className="px-6 py-4">Fournisseur</th>
                 <th className="px-6 py-4">Tarification</th>
                 <th className="px-6 py-4">État</th>
                 <th className="px-6 py-4 text-right">Actions</th>
@@ -605,6 +610,11 @@ export function ProductsManager({
                         .join(", ") || "—"}
                     </div>
                   </td>
+                  <td className="px-6 py-4">
+                    <Badge variant={product.supplier === "g2a" ? "default" : "muted"}>
+                      {getProductSupplierLabel(product)}
+                    </Badge>
+                  </td>
                   <td className="px-6 py-4 text-xs">
                     <div className="text-foreground">
                       {formatCurrency(product.finalPrice, product.currency)}
@@ -646,7 +656,7 @@ export function ProductsManager({
                 <tr>
                   <td
                     className="px-6 py-10 text-center text-sm text-slate-500"
-                    colSpan={5}
+                    colSpan={6}
                   >
                     {isSearching
                       ? "Recherche en cours..."

@@ -22,7 +22,7 @@ export function RecommendedProductsSection({
         <div className="mb-7 flex items-end justify-between gap-4">
           <div>
             <span className="font-mono text-[11px] font-bold uppercase text-white">
-              {"// GAMING MOBILE"}
+              {"GAMING MOBILE"}
             </span>
             <h2 className="mt-2 font-heading text-2xl font-bold text-white">
               Gaming mobile & recharges jeux en ligne en Tunisie

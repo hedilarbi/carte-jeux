@@ -9,6 +9,7 @@ import {
 import type {
   OrderStatus,
   PaymentStatus,
+  ProductSupplier,
   PromoCodeDiscountType,
 } from "@/types/entities";
 
@@ -22,6 +23,7 @@ export interface OrderItemRecord {
   finalUnitPrice: number;
   lineTotal: number;
   currency: string;
+  supplier?: ProductSupplier;
 }
 
 export interface OrderAppliedPromoCodeRecord {
@@ -117,6 +119,10 @@ const orderItemSchema = new Schema<OrderItemRecord>(
       uppercase: true,
       minlength: 3,
       maxlength: 3,
+    },
+    supplier: {
+      type: String,
+      enum: ["internal", "g2a"],
     },
   },
   {

@@ -79,7 +79,7 @@ export default function MainSection({ content }: MainSectionProps) {
         <section className="min-w-0 flex-1">
             <Link
                 aria-label="Précommander GTA VI"
-                className="relative block h-[180px] overflow-hidden border border-brand-ice/20 bg-brand-navy shadow-[0_18px_44px_rgba(1,45,105,0.22)] transition hover:-translate-y-0.5 hover:shadow-[0_22px_52px_rgba(1,45,105,0.28)] sm:h-[240px] lg:h-[284px]"
+                className="relative block h-[240px] overflow-hidden border border-brand-ice/20 bg-brand-navy shadow-[0_18px_44px_rgba(1,45,105,0.22)] transition hover:-translate-y-0.5 hover:shadow-[0_22px_52px_rgba(1,45,105,0.28)] sm:h-[320px] lg:h-[420px]"
                 href="/precommande-gta-vi"
             >
                 <Image

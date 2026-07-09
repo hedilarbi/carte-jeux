@@ -22,7 +22,7 @@ export function SteamCardsSection({
         <div className="mb-7 flex items-end justify-between gap-4">
           <div>
             <span className="font-mono text-[11px] font-bold uppercase text-brand-dark">
-              {"// PSN"}
+              {"PSN"}
             </span>
             <h2 className="mt-2 font-heading text-2xl font-bold text-brand-dark">
               Cartes PSN Tunisie – Recharges PlayStation & jeux PS4 / PS5

@@ -1,0 +1,8 @@
+{
+  "crons": [
+    {
+      "path": "/api/cron/g2a-stock-sync",
+      "schedule": "*/2 * * * *"
+    }
+  ]
+}

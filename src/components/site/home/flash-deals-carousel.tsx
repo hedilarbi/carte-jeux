@@ -43,7 +43,7 @@ export function FlashDealCard({
   return (
     <article
       className={cn(
-        "group relative z-0 h-[154px] w-[calc(100vw_-_5rem)] max-w-[360px] shrink-0 overflow-hidden rounded-xl border-2 border-[#B3B3B3] bg-white font-body font-extrabold leading-none text-[#00061E] shadow-[0_18px_45px_rgba(23,23,54,0.10)] sm:w-[min(88vw,360px)] md:h-[500px] md:w-[240px] lg:h-[565px]",
+        "group relative z-0 h-[154px] w-[calc(100vw_-_5rem)] max-w-[360px] shrink-0 overflow-hidden rounded-xl border-2 border-[#B3B3B3] bg-white font-body font-extrabold leading-none text-[#00061E] sm:w-[min(88vw,360px)] md:h-[500px] md:w-[240px] lg:h-[565px]",
         className,
       )}
     >
@@ -52,6 +52,23 @@ export function FlashDealCard({
           aria-label={`Voir le produit - ${product.name}`}
           className="absolute inset-0 z-10"
           href={productHref}
+        />
+
+        <ProductPlatformBadge
+          action={
+            <FavoriteButton
+              aria-label={`Ajouter aux favoris - ${product.name}`}
+              activeClassName="bg-white text-danger"
+              className="pointer-events-auto flex size-6 items-center justify-center rounded-full bg-white/14 text-white transition hover:bg-white/24 hover:text-[#B0A4F5]"
+              iconClassName="size-3.5"
+              productId={productId}
+              productSlug={product.slug}
+            />
+          }
+          className="pointer-events-none absolute left-[104px] right-0 top-0 z-30 h-7 px-2 text-[10px] min-[376px]:left-[116px]"
+          iconClassName="size-4"
+          image={product.platformImage}
+          name={product.platform}
         />
 
         <div className="relative h-full overflow-hidden bg-white">
@@ -66,24 +83,7 @@ export function FlashDealCard({
           <div className="absolute inset-0 bg-[linear-gradient(90deg,transparent_52%,rgba(255,255,255,0.94)_100%)]" />
         </div>
 
-        <div className="relative z-[2] flex min-w-0 flex-col bg-white p-2.5 pr-12">
-          <ProductPlatformBadge
-            action={
-              <FavoriteButton
-                aria-label={`Ajouter aux favoris - ${product.name}`}
-                activeClassName="bg-white text-danger"
-                className="flex size-6 items-center justify-center rounded-full bg-white/14 text-white transition hover:bg-white/24 hover:text-[#B0A4F5]"
-                iconClassName="size-3.5"
-                productId={productId}
-                productSlug={product.slug}
-              />
-            }
-            className="mb-1.5 h-7 w-full max-w-full px-2 text-[10px]"
-            iconClassName="size-4"
-            image={product.platformImage}
-            name={product.platform}
-          />
-
+        <div className="relative z-[2] flex min-w-0 flex-col bg-white p-2.5 pr-12 pt-10">
           <h3 className="line-clamp-2 font-body text-[11px] font-black leading-4 text-[#00061E] min-[376px]:text-xs min-[376px]:leading-[18px]">
             {product.name}
           </h3>
@@ -91,7 +91,7 @@ export function FlashDealCard({
             {product.platform ?? "PlayStation Store"} ·{" "}
             {product.region ?? "Global"}
           </p>
-          <div className="mt-auto flex flex-wrap items-baseline gap-x-2 gap-y-1">
+          <div className="mt-1.5 flex flex-wrap items-baseline gap-x-2 gap-y-1">
             <p className="font-body text-lg font-black text-red-600 min-[376px]:text-xl">
               {product.price}{" "}
               <span className="font-body text-[10px] text-red-600/70">
@@ -168,13 +168,13 @@ export function FlashDealCard({
             tabIndex={-1}
           />
 
-          <div className="relative z-[2] grid bg-white px-4 pb-3 pt-4 [grid-area:top]">
+          <div className="relative z-[2] grid bg-white px-4 pb-1 pt-4 [grid-area:top]">
             <div className="min-w-0">
 
               <h3 className="line-clamp-2 min-h-10 font-body text-[13px] font-black leading-5 text-[#00061E]">
                 {product.name}
               </h3>
-              <p className="mt-2 truncate font-body text-xs font-bold uppercase text-[#012D69]">
+              <p className="mt-1 truncate font-body text-xs font-bold uppercase text-[#012D69]">
                 {product.region ?? "Global"}
               </p>
             </div>
@@ -183,7 +183,7 @@ export function FlashDealCard({
           <div className="relative z-20 flex flex-col justify-between bg-white px-4 pb-4 [grid-area:bottom]">
             <div className="flex items-end justify-between gap-3">
               <div className="min-w-0">
-                <p className="font-body text-xs font-bold text-black/55">Prix promo</p>
+
                 <div className="mt-1 flex flex-wrap items-baseline gap-x-2 gap-y-1">
                   <p className="font-body text-3xl font-black text-red-600">
                     {product.price}{" "}
@@ -297,10 +297,10 @@ export function FlashDealsCarousel({
   }, [scrollToCard]);
 
   return (
-    <div className="relative mt-10 max-w-full overflow-x-clip md:overflow-visible">
+    <div className="relative mt-10 max-w-full overflow-visible">
       <button
         aria-label="Offre précédente"
-        className="absolute left-2 top-1/2 z-30 flex size-9 -translate-y-1/2 items-center justify-center rounded-full border border-[#B3B3B3] bg-white/95 text-[#00061E] shadow-[0_10px_28px_rgba(23,23,54,0.16)] backdrop-blur transition hover:border-[#A681F0] hover:bg-[#B0A4F5] hover:text-[#1F0A4D] md:left-0 md:size-11 md:-translate-x-[140%] xl:-translate-x-[180%]"
+        className="absolute -left-5 top-1/2 z-30 flex size-9 -translate-y-1/2 items-center justify-center rounded-full border border-[#B3B3B3] bg-white/95 text-[#00061E] shadow-[0_10px_28px_rgba(23,23,54,0.16)] backdrop-blur transition hover:border-[#A681F0] hover:bg-[#B0A4F5] hover:text-[#1F0A4D] md:left-0 md:size-11 md:-translate-x-[180%] xl:-translate-x-[240%]"
         onClick={() => scrollToCard("previous")}
         type="button"
       >
@@ -332,7 +332,7 @@ export function FlashDealsCarousel({
 
       <button
         aria-label="Offre suivante"
-        className="absolute right-2 top-1/2 z-30 flex size-9 -translate-y-1/2 items-center justify-center rounded-full border border-[#B3B3B3] bg-white/95 text-[#00061E] shadow-[0_10px_28px_rgba(23,23,54,0.16)] backdrop-blur transition hover:border-[#A681F0] hover:bg-[#B0A4F5] hover:text-[#1F0A4D] md:right-0 md:size-11 md:translate-x-[140%] xl:translate-x-[180%]"
+        className="absolute -right-5 top-1/2 z-30 flex size-9 -translate-y-1/2 items-center justify-center rounded-full border border-[#B3B3B3] bg-white/95 text-[#00061E] shadow-[0_10px_28px_rgba(23,23,54,0.16)] backdrop-blur transition hover:border-[#A681F0] hover:bg-[#B0A4F5] hover:text-[#1F0A4D] md:right-0 md:size-11 md:translate-x-[180%] xl:translate-x-[240%]"
         onClick={() => scrollToCard("next")}
         type="button"
       >

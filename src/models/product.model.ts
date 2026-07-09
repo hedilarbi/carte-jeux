@@ -7,7 +7,27 @@ import {
 } from "mongoose";
 
 import { calculateDiscountedPrice, roundMoney } from "@/lib/utils/pricing";
-import type { DeliveryMode, ProductFaqItem, ProductType } from "@/types/entities";
+import type {
+  DeliveryMode,
+  ProductFaqItem,
+  ProductSupplier,
+  ProductType,
+} from "@/types/entities";
+
+export interface ProductG2ARecord {
+  productId: string;
+  selectedOfferId?: string;
+  buyPrice?: number;
+  supplierStock: number;
+  currency?: string;
+  platform?: string;
+  region?: string;
+  developer?: string;
+  publisher?: string;
+  releaseDate?: string;
+  lastSyncedAt?: Date;
+  lastCatalogSyncedAt?: Date;
+}
 
 export interface ProductRecord {
   title: string;
@@ -29,6 +49,10 @@ export interface ProductRecord {
   sku: string;
   productType: ProductType;
   deliveryMode: DeliveryMode;
+  supplier: ProductSupplier;
+  stock: number;
+  autoPricing: boolean;
+  g2a?: ProductG2ARecord;
   isFeatured: boolean;
   isActive: boolean;
   faqItems: ProductFaqItem[];
@@ -164,6 +188,83 @@ const productSchema = new Schema<ProductRecord>(
       default: "manual_email",
       required: true,
     },
+    supplier: {
+      type: String,
+      enum: ["internal", "g2a"],
+      default: "internal",
+      required: true,
+      index: true,
+    },
+    stock: {
+      type: Number,
+      default: 0,
+      min: 0,
+      index: true,
+    },
+    autoPricing: {
+      type: Boolean,
+      default: false,
+      index: true,
+    },
+    g2a: {
+      type: new Schema<ProductG2ARecord>(
+        {
+          productId: {
+            type: String,
+            required: true,
+            trim: true,
+            index: true,
+          },
+          selectedOfferId: {
+            type: String,
+            trim: true,
+          },
+          buyPrice: {
+            type: Number,
+            min: 0,
+          },
+          supplierStock: {
+            type: Number,
+            required: true,
+            min: 0,
+          },
+          currency: {
+            type: String,
+            trim: true,
+            uppercase: true,
+          },
+          platform: {
+            type: String,
+            trim: true,
+          },
+          region: {
+            type: String,
+            trim: true,
+          },
+          developer: {
+            type: String,
+            trim: true,
+          },
+          publisher: {
+            type: String,
+            trim: true,
+          },
+          releaseDate: {
+            type: String,
+            trim: true,
+          },
+          lastSyncedAt: {
+            type: Date,
+          },
+          lastCatalogSyncedAt: {
+            type: Date,
+          },
+        },
+        {
+          _id: false,
+        },
+      ),
+    },
     isFeatured: {
       type: Boolean,
       default: false,
@@ -211,6 +312,14 @@ const productSchema = new Schema<ProductRecord>(
   },
   {
     timestamps: true,
+  },
+);
+
+productSchema.index(
+  { "g2a.productId": 1 },
+  {
+    unique: true,
+    sparse: true,
   },
 );
 

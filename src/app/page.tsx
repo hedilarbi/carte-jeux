@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { connection } from "next/server";
 
 import { BestSellersSection } from "@/components/site/home/best-sellers-section";
@@ -11,6 +12,14 @@ import { SteamCardsSection } from "@/components/site/home/steam-cards-section";
 import { TopGamesSection } from "@/components/site/home/top-games-section";
 import { homeService } from "@/services/home.service";
 import type { HomeProductSection, HomeProductSectionKey } from "@/types/home";
+
+export const metadata: Metadata = {
+  title: {
+    absolute: "PlayDepot | Jeux Vidéo & Cartes Cadeaux en Dinar",
+  },
+  description:
+    "La référence en Tunisie pour acheter des jeux vidéo, cartes PSN, Steam, Xbox, Nintendo et abonnements gaming. Paiement rapide en dinars.",
+};
 
 function findSection(
   sections: Awaited<

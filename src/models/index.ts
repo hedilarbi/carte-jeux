@@ -4,6 +4,8 @@ export * from "@/models/contact-submission.model";
 export * from "@/models/order.model";
 export * from "@/models/favorite-list.model";
 export * from "@/models/g2a-auth-token.model";
+export * from "@/models/g2a-import-job.model";
+export * from "@/models/g2a-stock-sync-state.model";
 export * from "@/models/pending-customer-registration.model";
 export * from "@/models/product.model";
 export * from "@/models/promo-campaign.model";
