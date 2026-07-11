@@ -4,7 +4,7 @@ import Link from "next/link";
 import Image from "next/image";
 import type { ComponentType } from "react";
 import { useEffect, useRef, useState } from "react";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import {
   Heart,
   LogOut,
@@ -24,14 +24,35 @@ const navItems = [
   { href: "/#faq", label: "FAQ" },
 ];
 
+function isNavItemActive(pathname: string, activeHash: string, href: string) {
+  const [hrefPath = "/", hrefHash] = href.split("#");
+  const normalizedHrefPath = hrefPath || "/";
+  const normalizedHrefHash = hrefHash ? `#${hrefHash}` : "";
+
+  if (normalizedHrefHash) {
+    return pathname === normalizedHrefPath && activeHash === normalizedHrefHash;
+  }
+
+  if (normalizedHrefPath === "/") {
+    return pathname === "/" && activeHash !== "#faq";
+  }
+
+  return (
+    pathname === normalizedHrefPath ||
+    pathname.startsWith(`${normalizedHrefPath}/`)
+  );
+}
+
 type HeaderUser = {
   email: string;
 };
 
 export function SiteHeader() {
   const router = useRouter();
+  const pathname = usePathname();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
+  const [activeHash, setActiveHash] = useState("");
   const [user, setUser] = useState<HeaderUser | null>(null);
   const { cartCount, favoriteCount } = useHeaderCounters();
 
@@ -89,6 +110,21 @@ export function SiteHeader() {
     };
   }, []);
 
+  useEffect(() => {
+    function refreshActiveHash() {
+      setActiveHash(window.location.hash);
+    }
+
+    refreshActiveHash();
+    window.addEventListener("hashchange", refreshActiveHash);
+    window.addEventListener("popstate", refreshActiveHash);
+
+    return () => {
+      window.removeEventListener("hashchange", refreshActiveHash);
+      window.removeEventListener("popstate", refreshActiveHash);
+    };
+  }, [pathname]);
+
   return (
     <header className="fixed inset-x-0 top-0 z-50 max-w-screen h-10">
       <nav className="border-b border-brand-lavender/25 bg-brand-navy/88 backdrop-blur-2xl">
@@ -123,15 +159,25 @@ export function SiteHeader() {
           </form>
 
           <div className="hidden items-center gap-1 lg:flex">
-            {navItems.map((item) => (
-              <Link
-                className="rounded-lg px-3 py-2 text-sm font-semibold text-brand-periwinkle transition hover:bg-brand-lilac/8 hover:text-brand-lilac"
-                href={item.href}
-                key={item.href}
-              >
-                {item.label}
-              </Link>
-            ))}
+            {navItems.map((item) => {
+              const isActive = isNavItemActive(pathname, activeHash, item.href);
+
+              return (
+                <Link
+                  aria-current={isActive ? "page" : undefined}
+                  className={cn(
+                    "rounded-lg border border-transparent px-3 py-2 text-sm font-semibold transition",
+                    isActive
+                      ? "border-brand-lavender/65 bg-brand-lavender text-[#03030A] shadow-[0_8px_20px_rgba(185,152,241,0.22)]"
+                      : "text-brand-periwinkle hover:bg-brand-lilac/8 hover:text-brand-lilac",
+                  )}
+                  href={item.href}
+                  key={item.href}
+                >
+                  {item.label}
+                </Link>
+              );
+            })}
           </div>
 
           <div className="ml-auto flex items-center gap-2">
@@ -208,16 +254,26 @@ export function SiteHeader() {
             </button>
           </form>
           <div className="grid gap-2">
-            {navItems.map((item) => (
-              <Link
-                className="rounded-xl px-4 py-3 text-sm font-semibold text-brand-periwinkle transition hover:bg-brand-lilac/8 hover:text-brand-lilac"
-                href={item.href}
-                key={item.href}
-                onClick={() => setMobileMenuOpen(false)}
-              >
-                {item.label}
-              </Link>
-            ))}
+            {navItems.map((item) => {
+              const isActive = isNavItemActive(pathname, activeHash, item.href);
+
+              return (
+                <Link
+                  aria-current={isActive ? "page" : undefined}
+                  className={cn(
+                    "rounded-xl border border-transparent px-4 py-3 text-sm font-semibold transition",
+                    isActive
+                      ? "border-brand-lavender/65 bg-brand-lavender text-[#03030A] shadow-[0_10px_24px_rgba(185,152,241,0.2)]"
+                      : "text-brand-periwinkle hover:bg-brand-lilac/8 hover:text-brand-lilac",
+                  )}
+                  href={item.href}
+                  key={item.href}
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  {item.label}
+                </Link>
+              );
+            })}
             <div className="mt-2 grid grid-cols-2 gap-2 border-t border-brand-ice/12 pt-3">
               {user ? (
                 <>

@@ -2,7 +2,8 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import type { MouseEvent, TouchEvent } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   ArrowRight,
   BadgeCheck,
@@ -60,13 +61,27 @@ type ImageLinkHeroSlide = {
   mobileImage?: string;
 };
 
+type ImageCtaHeroSlide = {
+  alt: string;
+  ctaLabel: string;
+  href: string;
+  id: string;
+  image: string;
+  kind: "image-cta";
+  mobileImage: string;
+};
+
 type PsPlusHeroSlide = {
   background: string;
   id: string;
   kind: "ps-plus";
 };
 
-type HeroSlide = ProductGridHeroSlide | ImageLinkHeroSlide | PsPlusHeroSlide;
+type HeroSlide =
+  | ProductGridHeroSlide
+  | ImageLinkHeroSlide
+  | ImageCtaHeroSlide
+  | PsPlusHeroSlide;
 
 const psPlusCards = [
   {
@@ -96,8 +111,23 @@ const psPlusCards = [
 ];
 
 const slideIntervalMs = 6500;
+const swipeThresholdPx = 48;
+
+type SwipePoint = {
+  x: number;
+  y: number;
+};
 
 const heroSlides: HeroSlide[] = [
+  {
+    alt: "EA Sports FC 26",
+    ctaLabel: "J'EN PROFITE",
+    href: "/produits/fc-26-ps4-ps5",
+    id: "fc-26",
+    image: "/fc-26-banner.jpg",
+    kind: "image-cta",
+    mobileImage: "/fc-26-banner-mobile.jpg",
+  },
   {
     background: "/hero.jpg",
     id: "ps-plus-global",
@@ -121,6 +151,10 @@ const heroSlides: HeroSlide[] = [
 export function HeroSection() {
   const [activeSlideIndex, setActiveSlideIndex] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
+  const swipeStartRef = useRef<SwipePoint | null>(null);
+  const swipeCurrentRef = useRef<SwipePoint | null>(null);
+  const suppressNextClickRef = useRef(false);
+  const suppressClickTimeoutRef = useRef<number | null>(null);
   const hasMultipleSlides = heroSlides.length > 1;
   const trustItems = [
     {
@@ -159,6 +193,14 @@ export function HeroSection() {
     return () => window.clearTimeout(timeout);
   }, [activeSlideIndex, hasMultipleSlides, isPaused]);
 
+  useEffect(() => {
+    return () => {
+      if (suppressClickTimeoutRef.current !== null) {
+        window.clearTimeout(suppressClickTimeoutRef.current);
+      }
+    };
+  }, []);
+
   function goToSlide(index: number) {
     setActiveSlideIndex(index);
   }
@@ -175,13 +217,111 @@ export function HeroSection() {
     );
   }
 
+  function suppressNextClick() {
+    suppressNextClickRef.current = true;
+
+    if (suppressClickTimeoutRef.current !== null) {
+      window.clearTimeout(suppressClickTimeoutRef.current);
+    }
+
+    suppressClickTimeoutRef.current = window.setTimeout(() => {
+      suppressNextClickRef.current = false;
+      suppressClickTimeoutRef.current = null;
+    }, 350);
+  }
+
+  function resetSwipe() {
+    swipeStartRef.current = null;
+    swipeCurrentRef.current = null;
+    setIsPaused(false);
+  }
+
+  function handleTouchStart(event: TouchEvent<HTMLElement>) {
+    if (!hasMultipleSlides) {
+      return;
+    }
+
+    const touch = event.touches[0];
+
+    swipeStartRef.current = {
+      x: touch.clientX,
+      y: touch.clientY,
+    };
+    swipeCurrentRef.current = null;
+    setIsPaused(true);
+  }
+
+  function handleTouchMove(event: TouchEvent<HTMLElement>) {
+    if (!swipeStartRef.current) {
+      return;
+    }
+
+    const touch = event.touches[0];
+
+    swipeCurrentRef.current = {
+      x: touch.clientX,
+      y: touch.clientY,
+    };
+  }
+
+  function handleTouchEnd(event: TouchEvent<HTMLElement>) {
+    const swipeStart = swipeStartRef.current;
+    const finalTouch = event.changedTouches[0];
+    const swipeEnd =
+      swipeCurrentRef.current ??
+      (finalTouch
+        ? {
+            x: finalTouch.clientX,
+            y: finalTouch.clientY,
+          }
+        : null);
+
+    if (!swipeStart || !swipeEnd) {
+      resetSwipe();
+      return;
+    }
+
+    const deltaX = swipeEnd.x - swipeStart.x;
+    const deltaY = swipeEnd.y - swipeStart.y;
+    const isHorizontalSwipe =
+      Math.abs(deltaX) >= swipeThresholdPx &&
+      Math.abs(deltaX) > Math.abs(deltaY) * 1.2;
+
+    if (isHorizontalSwipe) {
+      suppressNextClick();
+
+      if (deltaX < 0) {
+        goToNextSlide();
+      } else {
+        goToPreviousSlide();
+      }
+    }
+
+    resetSwipe();
+  }
+
+  function handleSlideClickCapture(event: MouseEvent<HTMLElement>) {
+    if (!suppressNextClickRef.current) {
+      return;
+    }
+
+    event.preventDefault();
+    event.stopPropagation();
+    suppressNextClickRef.current = false;
+  }
+
   return (
     <div>
       <section
-        className="relative isolate mt-6 overflow-hidden"
+        className="relative isolate mt-6 touch-pan-y overflow-hidden"
         id="home"
+        onClickCapture={handleSlideClickCapture}
         onMouseEnter={() => setIsPaused(true)}
         onMouseLeave={() => setIsPaused(false)}
+        onTouchCancel={resetSwipe}
+        onTouchEnd={handleTouchEnd}
+        onTouchMove={handleTouchMove}
+        onTouchStart={handleTouchStart}
       >
         <div
           className="flex h-[90svh] max-h-[90svh] transition-transform duration-700 ease-in-out sm:h-[70svh] sm:max-h-[70svh]"
@@ -194,6 +334,8 @@ export function HeroSection() {
             >
               {slide.kind === "product-grid" ? (
                 <ProductGridSlide slide={slide} />
+              ) : slide.kind === "image-cta" ? (
+                <ImageCtaSlide slide={slide} />
               ) : slide.kind === "image-link" ? (
                 <ImageLinkSlide slide={slide} />
               ) : (
@@ -318,6 +460,49 @@ function ProductGridSlide({ slide }: { slide: ProductGridHeroSlide }) {
               />
             </Link>
           ))}
+        </div>
+      </div>
+    </>
+  );
+}
+
+function ImageCtaSlide({ slide }: { slide: ImageCtaHeroSlide }) {
+  return (
+    <>
+      <Link
+        aria-label={slide.alt}
+        className="relative block h-full bg-black md:hidden"
+        href={slide.href}
+      >
+        <Image
+          alt={slide.alt}
+          className="object-cover"
+          fill
+          priority
+          sizes="100vw"
+          src={slide.mobileImage}
+        />
+        <span className="absolute bottom-16 left-1/2 z-30 inline-flex min-h-11 -translate-x-1/2 items-center justify-center whitespace-nowrap rounded-full bg-white px-7 text-center font-body text-xs font-black uppercase tracking-[0.08em] text-black shadow-[0_14px_30px_rgba(0,0,0,0.28)]">
+          {slide.ctaLabel}
+        </span>
+      </Link>
+
+      <div className="relative hidden h-full bg-black md:block">
+        <Image
+          alt={slide.alt}
+          className="object-cover"
+          fill
+          priority
+          sizes="100vw"
+          src={slide.image}
+        />
+        <div className="absolute bottom-0 left-[300px] z-30 flex pb-8 lg:pb-12">
+          <Link
+            className="inline-flex min-h-12 items-center justify-center rounded-full bg-white px-7 text-center font-body text-sm font-black uppercase tracking-[0.08em] text-black shadow-[0_14px_30px_rgba(0,0,0,0.28)] transition hover:-translate-y-0.5 hover:bg-[#F5F5F5] lg:min-h-14 lg:px-9 lg:text-base"
+            href={slide.href}
+          >
+            {slide.ctaLabel}
+          </Link>
         </div>
       </div>
     </>
