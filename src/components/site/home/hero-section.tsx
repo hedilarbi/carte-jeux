@@ -129,9 +129,12 @@ const heroSlides: HeroSlide[] = [
     mobileImage: "/fc-26-banner-mobile.jpg",
   },
   {
-    background: "/hero.jpg",
-    id: "ps-plus-global",
-    kind: "ps-plus",
+    alt: "Précommande GTA VI",
+    href: "/precommande-gta-vi",
+    id: "precommande-gta-vi",
+    image: "/banner-tga6.png",
+    kind: "image-link",
+    mobileImage: "/hero_2_mobile.jpg",
   },
   {
     background: "/banner-bg-2.png",
@@ -139,12 +142,9 @@ const heroSlides: HeroSlide[] = [
     kind: "product-grid",
   },
   {
-    alt: "Précommande GTA VI",
-    href: "/precommande-gta-vi",
-    id: "precommande-gta-vi",
-    image: "/banner-tga6.png",
-    kind: "image-link",
-    mobileImage: "/hero_2_mobile.jpg",
+    background: "/hero.jpg",
+    id: "ps-plus-global",
+    kind: "ps-plus",
   },
 ];
 
