@@ -28,11 +28,11 @@ const inter = Inter({
 
 export const metadata: Metadata = {
   title: {
-    default: "GameZone TN - Recharges & Gift Cards",
-    template: "%s | GameZone TN",
+    default: "PlayDepot | Jeux Vidéo & Cartes Cadeaux en Dinar",
+    template: "%s | PlayDepot",
   },
   description:
-    "Plateforme tunisienne de recharges gaming, gift cards et abonnements avec paiement en TND.",
+    "La référence en Tunisie pour acheter des jeux vidéo, cartes PSN, Steam, Xbox, Nintendo et abonnements gaming. Paiement rapide en dinars.",
 };
 
 export default function RootLayout({

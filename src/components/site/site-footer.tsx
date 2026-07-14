@@ -94,7 +94,7 @@ export function SiteFooter() {
         </div>
 
         <div className="mt-10 flex flex-col gap-4 border-t border-brand-ice/14 pt-6 text-xs text-brand-periwinkle/70 md:flex-row md:items-center md:justify-between">
-          <p className="font-mono">© 2026 GameZone TN — Tous droits réservés</p>
+          <p className="font-mono">© 2026 Playsdepot — Tous droits réservés</p>
           <div className="flex flex-wrap gap-4">
             <span className="inline-flex items-center gap-2">
               <Zap className="size-3 text-brand-lavender" />
