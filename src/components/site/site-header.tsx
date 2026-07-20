@@ -166,10 +166,10 @@ export function SiteHeader() {
                 <Link
                   aria-current={isActive ? "page" : undefined}
                   className={cn(
-                    "rounded-lg border border-transparent px-3 py-2 text-sm font-semibold transition",
+                    "px-3 py-2 text-sm font-semibold transition-colors",
                     isActive
-                      ? "border-brand-lavender/65 bg-brand-lavender text-[#03030A] shadow-[0_8px_20px_rgba(185,152,241,0.22)]"
-                      : "text-brand-periwinkle hover:bg-brand-lilac/8 hover:text-brand-lilac",
+                      ? "text-brand-lavender"
+                      : "text-brand-periwinkle hover:text-white",
                   )}
                   href={item.href}
                   key={item.href}
@@ -261,10 +261,10 @@ export function SiteHeader() {
                 <Link
                   aria-current={isActive ? "page" : undefined}
                   className={cn(
-                    "rounded-xl border border-transparent px-4 py-3 text-sm font-semibold transition",
+                    "px-4 py-3 text-sm font-semibold transition-colors",
                     isActive
-                      ? "border-brand-lavender/65 bg-brand-lavender text-[#03030A] shadow-[0_10px_24px_rgba(185,152,241,0.2)]"
-                      : "text-brand-periwinkle hover:bg-brand-lilac/8 hover:text-brand-lilac",
+                      ? "text-brand-lavender"
+                      : "text-brand-periwinkle hover:text-white",
                   )}
                   href={item.href}
                   key={item.href}

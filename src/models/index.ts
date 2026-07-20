@@ -1,4 +1,5 @@
 export * from "@/models/category.model";
+export * from "@/models/home-category-section.model";
 export * from "@/models/cart.model";
 export * from "@/models/contact-submission.model";
 export * from "@/models/order.model";

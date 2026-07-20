@@ -7,6 +7,7 @@ import {
 import { listActiveProductsByCategoryOrPlatformId } from "@/repositories/product.repository";
 import { listAllRegions } from "@/repositories/region.repository";
 import { bestSellerService } from "@/services/best-seller.service";
+import { homeCategorySectionService } from "@/services/home-category-section.service";
 import type { Category, Product, Region } from "@/types/entities";
 import type {
   HomeCategoryPreview,
@@ -115,6 +116,7 @@ export const homeService = {
       requestedCategories,
       regionDocuments,
       bestSellerItems,
+      homeCategorySelection,
     ] = await Promise.all([
       listCategories({
         page: 1,
@@ -126,6 +128,7 @@ export const homeService = {
       ),
       listAllRegions(),
       bestSellerService.list({ activeOnly: true }),
+      homeCategorySectionService.list({ activeOnly: true }),
     ]);
 
     const categories = serializeDocument<Category[]>(categoryResult.items);
@@ -173,7 +176,10 @@ export const homeService = {
         .map((item) => item.product)
         .filter((product): product is Product => Boolean(product))
         .map((product) => toProductPreview(product, categoryMap, regionMap)),
-      categories: categories.map(toHomeCategory),
+      categories: (homeCategorySelection.isConfigured
+        ? homeCategorySelection.categories
+        : categories.slice(0, 16)
+      ).map(toHomeCategory),
       productSections,
     };
   },

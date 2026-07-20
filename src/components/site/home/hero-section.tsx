@@ -132,7 +132,7 @@ const heroSlides: HeroSlide[] = [
     alt: "Précommande GTA VI",
     href: "/precommande-gta-vi",
     id: "precommande-gta-vi",
-    image: "/banner-tga6.png",
+    image: "/banner-tga6.jpg",
     kind: "image-link",
     mobileImage: "/hero_2_mobile.jpg",
   },
@@ -271,9 +271,9 @@ export function HeroSection() {
       swipeCurrentRef.current ??
       (finalTouch
         ? {
-            x: finalTouch.clientX,
-            y: finalTouch.clientY,
-          }
+          x: finalTouch.clientX,
+          y: finalTouch.clientY,
+        }
         : null);
 
     if (!swipeStart || !swipeEnd) {
@@ -324,7 +324,7 @@ export function HeroSection() {
         onTouchStart={handleTouchStart}
       >
         <div
-          className="flex h-[90svh] max-h-[90svh] transition-transform duration-700 ease-in-out sm:h-[70svh] sm:max-h-[70svh]"
+          className="flex h-[95svh] max-h-[95svh] transition-transform duration-700 ease-in-out sm:h-[75svh] sm:max-h-[75svh]"
           style={{ transform: `translateX(-${activeSlideIndex * 100}%)` }}
         >
           {heroSlides.map((slide) => (
@@ -482,7 +482,7 @@ function ImageCtaSlide({ slide }: { slide: ImageCtaHeroSlide }) {
           sizes="100vw"
           src={slide.mobileImage}
         />
-        <span className="absolute bottom-16 left-1/2 z-30 inline-flex min-h-11 -translate-x-1/2 items-center justify-center whitespace-nowrap rounded-full bg-white px-7 text-center font-body text-xs font-black uppercase tracking-[0.08em] text-black shadow-[0_14px_30px_rgba(0,0,0,0.28)]">
+        <span className="absolute bottom-10 left-1/2 z-30 inline-flex min-h-11 -translate-x-1/2 items-center justify-center whitespace-nowrap rounded-full bg-white px-7 text-center font-body text-xs font-black uppercase tracking-[0.08em] text-black shadow-[0_14px_30px_rgba(0,0,0,0.28)]">
           {slide.ctaLabel}
         </span>
       </Link>

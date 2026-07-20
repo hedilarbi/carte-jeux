@@ -1,8 +1,9 @@
 "use client";
 
 import Image from "next/image";
+import Link from "next/link";
 import { useCallback, useEffect, useRef } from "react";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { ArrowRight, ChevronLeft, ChevronRight } from "lucide-react";
 
 import { categories as fallbackCategories } from "@/components/site/home/home-data";
 import { HomeIcon } from "@/components/site/home/home-icons";
@@ -79,13 +80,22 @@ export function CategoriesSection({
   return (
     <section className="bg-brand-light py-8" id="categories">
       <div className="mx-auto max-w-[1350px] px-6">
-        <div className="mb-7">
-          <span className="font-mono text-[11px] font-bold uppercase text-brand-purple-deep">
-            {"Plateformes"}
-          </span>
-          <h2 className="mt-2 font-heading text-2xl font-bold text-brand-dark">
-            Toutes les catégories
-          </h2>
+        <div className="mb-7 flex items-end justify-between gap-4">
+          <div>
+            <span className="font-mono text-[11px] font-bold uppercase text-brand-purple-deep">
+              {"Sélection"}
+            </span>
+            <h2 className="mt-2 font-heading text-2xl font-bold text-brand-dark">
+              Nos catégories
+            </h2>
+          </div>
+          <Link
+            className="group flex shrink-0 items-center gap-2 rounded-full border border-brand-purple-deep px-4 py-2 font-heading text-xs font-bold text-brand-purple-deep transition-colors hover:bg-brand-purple-deep hover:text-white sm:text-sm"
+            href="/categories"
+          >
+            Voir toutes les catégories
+            <ArrowRight className="size-4 transition-transform group-hover:translate-x-0.5" />
+          </Link>
         </div>
 
         <div className="relative">

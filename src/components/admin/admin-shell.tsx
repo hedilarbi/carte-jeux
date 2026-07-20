@@ -31,6 +31,11 @@ const navigation = [
   { href: "/admin", label: "Tableau de bord", icon: LayoutDashboard },
   { href: "/admin/products", label: "Produits", icon: Package2 },
   { href: "/admin/best-seller", label: "Best seller", icon: Star },
+  {
+    href: "/admin/section-categorie",
+    label: "Section catégorie",
+    icon: PanelsTopLeft,
+  },
   { href: "/admin/categories", label: "Catégories", icon: PanelsTopLeft },
   { href: "/admin/regions", label: "Régions", icon: PanelsTopLeft },
   { href: "/admin/orders", label: "Commandes", icon: ShoppingCart },

@@ -115,6 +115,27 @@ export async function listCategoriesBySlugs(slugs: string[]) {
     .exec();
 }
 
+export async function listCategoriesByIds(
+  ids: string[],
+  options: { isActive?: boolean } = {},
+) {
+  await connectToDatabase();
+
+  if (ids.length === 0) {
+    return [];
+  }
+
+  const query: CategoryQuery = {
+    _id: { $in: ids.map((id) => new Types.ObjectId(id)) },
+  };
+
+  if (typeof options.isActive === "boolean") {
+    query.isActive = options.isActive;
+  }
+
+  return CategoryModel.find(query).lean().exec();
+}
+
 export async function listAllCategories() {
   await connectToDatabase();
   await ensureCategorySortOrders();

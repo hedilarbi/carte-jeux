@@ -26,11 +26,11 @@ export function RecommendedCard({
     return (
         <article
             className={cn(
-                "group relative z-0 h-[154px] w-[calc(100vw_-_5rem)] max-w-[360px] shrink-0 overflow-hidden rounded-xl border-2 border-[#A680F1] bg-[#0F0F28]/92 font-body font-extrabold leading-none text-white sm:w-[min(88vw,360px)] md:h-[500px] md:w-[240px] md:bg-transparent lg:h-[565px]",
+                "group relative z-0 h-[290px] w-full shrink-0 overflow-hidden rounded-xl border-2 border-[#A680F1] bg-[#0F0F28]/92 font-body font-extrabold leading-none text-white md:h-[500px] md:w-[240px] md:bg-transparent lg:h-[565px]",
                 className,
             )}
         >
-            <div className="relative grid h-full grid-cols-[104px_1fr] min-[376px]:grid-cols-[116px_1fr] md:hidden">
+            <div className="hidden">
                 <Link
                     aria-label={`Voir le produit - ${product.name}`}
                     className="absolute inset-0 z-10"
@@ -91,16 +91,16 @@ export function RecommendedCard({
                 </AddToCartButton>
             </div>
 
-            <div className="relative hidden h-full md:grid md:[grid-template-areas:'img']">
+            <div className="relative grid h-full [grid-template-areas:'img']">
                 <Link
                     aria-label={`Voir le produit - ${product.name}`}
-                    className="absolute inset-0 z-10 cursor-pointer"
+                    className="absolute inset-0 z-50 cursor-pointer md:z-10"
                     href={productHref}
                 />
 
                 <div className="relative h-full [grid-area:img]">
 
-                    <div className="relative aspect-[625/873] w-full overflow-hidden bg-[#0F0F28] transition-[clip-path] duration-500 ease-out [clip-path:inset(0_0_0_0)] group-hover:[clip-path:inset(0_0_112px_0)]">
+                    <div className="relative aspect-[625/873] h-auto w-full overflow-hidden bg-[#0F0F28] transition-[clip-path] duration-500 ease-out [clip-path:inset(0_0_0_0)] md:group-hover:[clip-path:inset(0_0_112px_0)]">
                         <Image
                             alt={product.name}
                             className="object-cover transition duration-500"
@@ -114,7 +114,7 @@ export function RecommendedCard({
 
                 </div>
 
-                <div className="absolute inset-x-0 bottom-0 z-20 grid translate-y-[112px] transition-transform duration-500 ease-out [grid-template-areas:'flag'_'top'_'bottom'] group-hover:translate-y-0">
+                <div className="absolute inset-x-0 bottom-0 z-20 grid translate-y-0 transition-transform duration-500 ease-out [grid-template-areas:'flag'_'top'_'bottom'] md:translate-y-[112px] md:group-hover:translate-y-0">
                     <ProductPlatformBadge
                         action={
                             <FavoriteButton
@@ -126,8 +126,8 @@ export function RecommendedCard({
                                 productSlug={product.slug}
                             />
                         }
-                        className="relative z-[2] h-[38px] px-[13px] text-base shadow-[inset_0_1px_0_rgba(255,255,255,0.08)] [grid-area:flag]"
-                        iconClassName="size-[27px]"
+                        className="relative z-[2] h-7 px-2 text-[10px] shadow-[inset_0_1px_0_rgba(255,255,255,0.08)] [grid-area:flag] md:h-[38px] md:px-[13px] md:text-base"
+                        iconClassName="size-4 md:size-[27px]"
                         image={product.platformImage}
                         name={product.platform}
                     />
@@ -138,26 +138,26 @@ export function RecommendedCard({
                         tabIndex={-1}
                     />
 
-                    <div className="relative z-[2] grid bg-[#0F0F28]/95 px-4 pb-3 pt-4 [grid-area:top]">
+                    <div className="relative z-[2] grid bg-[#0F0F28]/95 px-3 pb-2 pt-3 [grid-area:top] md:px-4 md:pb-3 md:pt-4">
                         <div className="min-w-0">
-                            <h3 className="line-clamp-2 min-h-10 font-body text-[13px] font-black leading-5 text-white">
+                            <h3 className="line-clamp-2 min-h-8 font-body text-[10px] font-black leading-4 text-white md:min-h-10 md:text-[13px] md:leading-5">
                                 {product.name}
                             </h3>
-                            <p className="mt-2 truncate font-body text-xs font-bold uppercase text-[#b3aac9]">
+                            <p className="mt-1 truncate font-body text-[9px] font-bold uppercase text-[#b3aac9] md:mt-2 md:text-xs">
                                 {product.platform}
                             </p>
                         </div>
                     </div>
 
-                    <div className="relative z-20 flex flex-col justify-between bg-[#0F0F28]/95 px-4 pb-4 [grid-area:bottom]">
+                    <div className="relative z-20 flex flex-col justify-between bg-[#0F0F28]/95 px-3 pb-3 [grid-area:bottom] md:px-4 md:pb-4">
                         <div className="flex items-end justify-between gap-3">
                             <div className="min-w-0">
-                                <p className="font-body text-xs font-bold text-[#b3aac9]">
+                                <p className="font-body text-[9px] font-bold text-[#b3aac9] md:text-xs">
                                     À partir de
                                 </p>
-                                <p className="mt-1 font-body text-3xl font-black text-red-500">
+                                <p className="mt-1 font-body text-base font-black text-red-500 md:text-3xl">
                                     {product.price}{" "}
-                                    <span className="font-body text-[15px] text-red-300">
+                                    <span className="font-body text-[10px] text-red-300 md:text-[15px]">
                                         TND
                                     </span>
                                 </p>
@@ -178,10 +178,10 @@ export function RecommendedCard({
                             </button> */}
                         </div>
 
-                        <div className="relative z-40 mt-4 grid gap-2">
+                        <div className="relative z-40 mt-4 hidden gap-2 md:grid">
                             <AddToCartButton
                                 aria-label={`Ajouter au panier - ${product.name}`}
-                                className="rounded-md bg-brand-lavender px-3 py-3 text-center font-body text-xs font-black text-white transition hover:bg-brand-electric-blue"
+                                className="rounded-md bg-brand-lavender px-2 py-2.5 text-center font-body text-[10px] font-black text-white transition hover:bg-brand-electric-blue md:px-3 md:py-3 md:text-xs"
                                 productId={productId}
                                 productSlug={product.slug}
                             >
@@ -189,7 +189,7 @@ export function RecommendedCard({
                             </AddToCartButton>
                             <Link
                                 aria-label={`Voir le produit - ${product.name}`}
-                                className="rounded-md border border-white/18 px-3 py-3 text-center font-body text-xs font-black text-white transition hover:border-brand-lavender hover:text-brand-lavender"
+                                className="rounded-md border border-white/18 px-2 py-2.5 text-center font-body text-[10px] font-black text-white transition hover:border-brand-lavender hover:text-brand-lavender md:px-3 md:py-3 md:text-xs"
                                 href={productHref}
                             >
                                 Voir le produit

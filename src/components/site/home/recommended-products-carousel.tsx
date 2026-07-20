@@ -87,13 +87,13 @@ export function RecommendedProductsCarousel({
         <div className="flex items-start gap-4">
           {carouselProducts.map((product) => (
             <div
-              className="shrink-0 snap-start lg:basis-[calc((100%_-_3rem)_/_4)]"
+              className="min-w-0 basis-[calc((100%_-_1rem)_/_2)] shrink-0 snap-start lg:basis-[calc((100%_-_3rem)_/_4)]"
               data-carousel-card
               key={product.id}
             >
               <RecommendedCard
                 categorySlug={categorySlug}
-                className="lg:w-full"
+                className="w-full"
                 product={product}
               />
             </div>
