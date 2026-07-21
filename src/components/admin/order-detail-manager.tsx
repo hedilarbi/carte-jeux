@@ -144,7 +144,16 @@ export function OrderDetailManager({
     setActivePanel("status");
 
     try {
-      await applyPatch(statusForm, "status");
+      await applyPatch(
+        statusForm.status === "delivered"
+          ? {
+              ...statusForm,
+              deliveredCode: deliveryForm.deliveredCode,
+              deliveryNote: deliveryForm.deliveryNote,
+            }
+          : statusForm,
+        "status",
+      );
     } catch (error) {
       setStatusError(
         error instanceof Error
@@ -360,6 +369,8 @@ export function OrderDetailManager({
                 <CardTitle>Statut et paiement</CardTitle>
                 <CardDescription className="mt-2">
                   Mettez à jour l’étape opérationnelle et les métadonnées de suivi du paiement.
+                  Le code saisi dans les détails de livraison sera aussi
+                  enregistré si vous passez la commande au statut livré.
                 </CardDescription>
               </div>
             </div>
