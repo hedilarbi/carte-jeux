@@ -24,6 +24,7 @@ import {
   existsProductSlug,
   getProductById,
   listActiveProductsForSelection,
+  listProductsForCsvExport,
   listProducts,
   type ProductListFilters,
   updateProductById,
@@ -126,6 +127,12 @@ export const productService = {
 
   async listActiveForSelection() {
     return serializeDocument<Product[]>(await listActiveProductsForSelection());
+  },
+
+  async listForCsvExport() {
+    return serializeDocument<Array<Pick<Product, "slug" | "title">>>(
+      await listProductsForCsvExport(),
+    );
   },
 
   async getById(id: string) {

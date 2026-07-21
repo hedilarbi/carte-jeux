@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { Pencil, Plus, Trash2 } from "lucide-react";
+import { Download, Pencil, Plus, Trash2 } from "lucide-react";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -549,6 +549,14 @@ export function ProductsManager({
             />
             <Button onClick={startCsvImport} type="button" variant="outline">
               Importer CSV
+            </Button>
+            <Button
+              onClick={() => window.location.assign("/api/admin/products/export")}
+              type="button"
+              variant="outline"
+            >
+              <Download className="size-4" />
+              Exporter CSV
             </Button>
             <Button onClick={startCreate}>
               <Plus className="size-4" />

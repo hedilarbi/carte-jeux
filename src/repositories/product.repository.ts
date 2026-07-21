@@ -211,6 +211,16 @@ export async function listActiveProductsForSelection() {
     .exec();
 }
 
+export async function listProductsForCsvExport() {
+  await connectToDatabase();
+
+  return ProductModel.find({} as ProductFindQuery)
+    .select({ _id: 0, slug: 1, title: 1 })
+    .sort({ title: 1 })
+    .lean()
+    .exec();
+}
+
 export async function countProductsByIds(ids: string[]) {
   await connectToDatabase();
 
