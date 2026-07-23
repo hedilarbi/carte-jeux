@@ -93,7 +93,7 @@ export function RecommendedProductsCarousel({
             >
               <RecommendedCard
                 categorySlug={categorySlug}
-                className="w-full"
+                className="w-full md:w-full lg:w-full"
                 product={product}
               />
             </div>

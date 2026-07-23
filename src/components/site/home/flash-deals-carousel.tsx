@@ -131,7 +131,7 @@ export function FlashDealCard({
         />
 
         <div className="relative h-full [grid-area:img]">
-          <div className="relative aspect-[625/873] h-auto w-full overflow-hidden bg-white transition-[clip-path] duration-500 ease-out [clip-path:inset(0_0_0_0)] md:group-hover:[clip-path:inset(0_0_112px_0)]">
+          <div className="relative aspect-[625/873] w-full overflow-hidden bg-white transition-[clip-path] duration-500 ease-out [clip-path:inset(0_0_0_0)] md:group-hover:[clip-path:inset(0_0_112px_0)]">
             <Image
               alt={product.name}
               className="object-cover transition duration-500"
@@ -321,7 +321,7 @@ export function FlashDealsCarousel({
             >
               <FlashDealCard
                 categorySlug={categorySlug}
-                className="w-full"
+                className="w-full md:w-full lg:w-full"
                 highlightOriginalPrice={highlightOriginalPrice}
                 product={product}
               />
