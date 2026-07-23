@@ -126,7 +126,7 @@ const heroSlides: HeroSlide[] = [
     id: "fc-26",
     image: "/fc-26-banner.jpg",
     kind: "image-cta",
-    mobileImage: "/fc-26-banner-mobile.jpg",
+    mobileImage: "/fc-26-banner-mobile-v2.jpg",
   },
   {
     alt: "Précommande GTA VI",
