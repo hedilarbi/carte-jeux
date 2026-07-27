@@ -1,12 +1,10 @@
 import Link from "next/link";
 import type { ComponentType } from "react";
 import {
-  Camera,
-  Globe,
-  MessageCircle,
   ShieldCheck,
   Zap,
 } from "lucide-react";
+import { FaFacebookF, FaInstagram, FaTiktok } from "react-icons/fa6";
 import Image from "next/image";
 
 const footerColumns = [
@@ -62,13 +60,20 @@ export function SiteFooter() {
             </p>
 
             <div className="mt-5 flex flex-wrap gap-2">
-              <SocialLink ariaLabel="Facebook" href="/" icon={Globe} />
-              <SocialLink ariaLabel="Instagram" href="/" icon={Camera} />
               <SocialLink
-                ariaLabel="WhatsApp"
-                className="border-[#25d366]/35 bg-[#25d366]/12 text-[#25d366]"
-                href="/#faq"
-                icon={MessageCircle}
+                ariaLabel="TikTok"
+                href="https://www.tiktok.com/@playsdepot?_r=1&_t=ZS-98OFSx2YVce"
+                icon={FaTiktok}
+              />
+              <SocialLink
+                ariaLabel="Instagram"
+                href="https://www.instagram.com/playsdepot?igsh=MTUwbjJrY3NyMHAydw%3D%3D"
+                icon={FaInstagram}
+              />
+              <SocialLink
+                ariaLabel="Facebook"
+                href="https://www.facebook.com/share/18omLxJuGe/"
+                icon={FaFacebookF}
               />
             </div>
           </div>
@@ -127,6 +132,8 @@ function SocialLink({
       aria-label={ariaLabel}
       className={`flex size-9 items-center justify-center rounded-lg border border-brand-ice/14 bg-brand-lilac/8 text-brand-periwinkle transition hover:border-brand-lavender hover:text-brand-lavender ${className ?? ""}`}
       href={href}
+      rel="noopener noreferrer"
+      target="_blank"
     >
       <Icon className="size-4" />
     </Link>
