@@ -133,6 +133,12 @@ export function FaqSection({
         method: "POST",
       });
 
+      if (typeof window !== "undefined" && (window as any).gtag) {
+        (window as any).gtag("event", "manual_event_SUBMIT_LEAD_FORM", {
+          form_name: "FAQ Contact Form",
+        });
+      }
+
       form.reset();
       setIsSuccessOpen(true);
     } catch (submitError) {

@@ -38,6 +38,12 @@ export function GtaViPreorderForm() {
         method: "POST",
       });
 
+      if (typeof window !== "undefined" && (window as any).gtag) {
+        (window as any).gtag("event", "manual_event_SUBMIT_LEAD_FORM", {
+          form_name: "GTA VI Preorder Form",
+        });
+      }
+
       form.reset();
       setResetKey((current) => current + 1);
       setIsSuccess(true);
