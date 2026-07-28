@@ -4,6 +4,7 @@ import { connection } from "next/server";
 import { BestSellersSection } from "@/components/site/home/best-sellers-section";
 import { CategoriesSection } from "@/components/site/home/categories-section";
 import { FaqSection } from "@/components/site/home/faq-section";
+import { GoogleReviewsSection } from "@/components/site/home/google-reviews-section";
 import { HeroSection } from "@/components/site/home/hero-section";
 import { HomeBestSellersSection } from "@/components/site/home/home-best-sellers-section";
 import { ProductsSection } from "@/components/site/home/products-section";
@@ -74,6 +75,7 @@ export default async function Home() {
         products={gamingPcSection.products}
       />
       {/* <PaymentMethodsSection /> */}
+      <GoogleReviewsSection />
       <FaqSection />
     </main>
   );
