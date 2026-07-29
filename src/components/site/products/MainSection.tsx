@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { ChevronLeft, ChevronRight } from "lucide-react";
+import type { ReactNode } from "react";
 
 import {
     FlashDealCard,
@@ -11,6 +12,7 @@ import type { CatalogPageContent, CatalogProduct } from "@/types/catalog";
 
 interface MainSectionProps {
     content: CatalogPageContent;
+    mobileFilters?: ReactNode;
 }
 
 function resolvePageTitle(content: CatalogPageContent) {
@@ -72,14 +74,14 @@ function getPaginationPages(currentPage: number, totalPages: number) {
     return Array.from(pages).sort((first, second) => first - second);
 }
 
-export default function MainSection({ content }: MainSectionProps) {
+export default function MainSection({ content, mobileFilters }: MainSectionProps) {
     const title = resolvePageTitle(content);
 
     return (
         <section className="min-w-0 flex-1">
             <Link
                 aria-label="Précommander GTA VI"
-                className="relative block h-[240px] overflow-hidden border border-brand-ice/20 bg-brand-navy shadow-[0_18px_44px_rgba(1,45,105,0.22)] transition hover:-translate-y-0.5 hover:shadow-[0_22px_52px_rgba(1,45,105,0.28)] sm:h-[320px] lg:h-[420px]"
+                className="relative block h-[140px] overflow-hidden border border-brand-ice/20 bg-brand-navy shadow-[0_18px_44px_rgba(1,45,105,0.22)] transition hover:-translate-y-0.5 hover:shadow-[0_22px_52px_rgba(1,45,105,0.28)] sm:h-[320px] lg:h-[420px]"
                 href="/precommande-gta-vi"
             >
                 <Image
@@ -93,9 +95,11 @@ export default function MainSection({ content }: MainSectionProps) {
             </Link>
 
             <div className="mt-8">
-                <h1 className="font-heading text-2xl font-black leading-tight text-brand-dark sm:text-3xl">
+                <h1 className="font-heading text-lg font-black leading-tight text-brand-dark sm:text-3xl">
                     {title}
                 </h1>
+
+                {mobileFilters}
 
                 <div className="mt-5 flex flex-col gap-4 rounded-[18px] border border-brand-ice/18 bg-white/72 p-4 shadow-[0_12px_34px_rgba(1,45,105,0.08)] backdrop-blur md:flex-row md:items-center md:justify-between">
                     <p className="font-mono text-xs font-bold uppercase tracking-[0.08em] text-brand-navy/72">
@@ -103,7 +107,7 @@ export default function MainSection({ content }: MainSectionProps) {
                         <span className="text-brand-dark">{content.totalItems}</span>
                     </p>
 
-                    <div className="flex w-full items-center justify-between gap-3 rounded-xl border border-brand-navy/10 bg-white px-4 py-3 text-sm font-semibold text-brand-dark md:w-auto">
+                    <div className="hidden w-full items-center justify-between gap-3 rounded-xl border border-brand-navy/10 bg-white px-4 py-3 text-sm font-semibold text-brand-dark md:flex md:w-auto">
                         <span className="shrink-0 font-mono text-xs uppercase text-brand-navy/55">
                             Popularité :
                         </span>
@@ -114,7 +118,7 @@ export default function MainSection({ content }: MainSectionProps) {
 
             {content.products.length > 0 ? (
                 <>
-                    <div className="mt-8 grid grid-cols-[repeat(auto-fill,minmax(240px,1fr))] gap-6">
+                    <div className="mt-8 grid grid-cols-2 gap-4 md:grid-cols-[repeat(auto-fill,minmax(240px,1fr))] md:gap-6">
                         {content.products.map((product) => (
                             <ProductResultCard key={product.id} product={product} />
                         ))}

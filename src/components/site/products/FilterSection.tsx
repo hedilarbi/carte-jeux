@@ -9,6 +9,8 @@ import type {
 } from "@/types/catalog";
 
 interface FilterSectionProps {
+    className?: string;
+    groupsOpenByDefault?: boolean;
     platforms: CatalogCategoryFilter[];
     regions: CatalogRegionFilter[];
     selected: CatalogSelectedFilters;
@@ -151,13 +153,20 @@ function hasActiveFilters(selected: CatalogSelectedFilters) {
 }
 
 export default function FilterSection({
+    className,
+    groupsOpenByDefault = true,
     platforms,
     regions,
     selected,
     types,
 }: FilterSectionProps) {
     return (
-        <aside className="w-[285px] shrink-0 bg-[#064FB1] p-5 text-white shadow-[0_18px_48px_rgba(1,45,105,0.28)]">
+        <aside
+            className={cn(
+                "w-[285px] shrink-0 bg-[#064FB1] p-5 text-white shadow-[0_18px_48px_rgba(1,45,105,0.28)]",
+                className,
+            )}
+        >
             <div className="flex items-center justify-between gap-3">
                 <div>
                     <span className="font-mono text-[10px] font-bold uppercase tracking-[0.14em] text-brand-lilac/75">
@@ -197,12 +206,14 @@ export default function FilterSection({
 
             <FilterGroup
                 filterKey="types"
+                openByDefault={groupsOpenByDefault}
                 options={types}
                 selected={selected}
                 title="Type"
             />
             <FilterGroup
                 filterKey="platforms"
+                openByDefault={groupsOpenByDefault}
                 options={platforms}
                 selected={selected}
                 title="Plateforme"
@@ -277,17 +288,22 @@ export default function FilterSection({
 
 function FilterGroup({
     filterKey,
+    openByDefault,
     options,
     selected,
     title,
 }: {
     filterKey: "platforms" | "types";
+    openByDefault: boolean;
     options: CatalogCategoryFilter[];
     selected: CatalogSelectedFilters;
     title: string;
 }) {
     return (
-        <details className="group mt-5 border-t border-white/10 pt-4" open>
+        <details
+            className="group mt-5 border-t border-white/10 pt-4"
+            open={openByDefault}
+        >
             <summary className="flex cursor-pointer list-none items-center justify-between gap-3 [&::-webkit-details-marker]:hidden">
                 <span className="font-mono text-[14px] font-bold uppercase tracking-[0.12em] text-brand-lilac/70">
                     {title}

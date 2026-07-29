@@ -77,7 +77,16 @@ type PsPlusHeroSlide = {
   kind: "ps-plus";
 };
 
+type AssassinsCreedHeroSlide = {
+  desktopImage: string;
+  href: string;
+  id: string;
+  kind: "assassins-creed";
+  mobileImage: string;
+};
+
 type HeroSlide =
+  | AssassinsCreedHeroSlide
   | ProductGridHeroSlide
   | ImageLinkHeroSlide
   | ImageCtaHeroSlide
@@ -119,6 +128,13 @@ type SwipePoint = {
 };
 
 const heroSlides: HeroSlide[] = [
+  {
+    desktopImage: "/bg-ac-desktop.jpg",
+    href: "/produits?search=Assassin%27s%20Creed%20Black%20Flag%20Resynced",
+    id: "assassins-creed-black-flag-resynced",
+    kind: "assassins-creed",
+    mobileImage: "/bg-ac-mobile.jpg",
+  },
   {
     alt: "EA Sports FC 26",
     ctaLabel: "J'EN PROFITE",
@@ -332,7 +348,9 @@ export function HeroSection() {
               className="relative isolate h-full min-w-full overflow-hidden"
               key={slide.id}
             >
-              {slide.kind === "product-grid" ? (
+              {slide.kind === "assassins-creed" ? (
+                <AssassinsCreedSlide slide={slide} />
+              ) : slide.kind === "product-grid" ? (
                 <ProductGridSlide slide={slide} />
               ) : slide.kind === "image-cta" ? (
                 <ImageCtaSlide slide={slide} />
@@ -399,6 +417,85 @@ export function HeroSection() {
         </div>
       </div>
     </div>
+  );
+}
+
+function AssassinsCreedSlide({
+  slide,
+}: {
+  slide: AssassinsCreedHeroSlide;
+}) {
+  const ctaClassName =
+    "inline-flex min-h-12 items-center justify-center rounded-[11px] bg-[linear-gradient(274.47deg,#B99CF1_-12.06%,#7FCCFF_110.42%)] px-7 text-center font-heading text-sm font-bold uppercase tracking-[0.04em] text-[#03030A] shadow-[0_10px_28px_rgba(185,156,241,0.35)] transition hover:-translate-y-0.5 hover:shadow-[0_12px_32px_rgba(127,204,255,0.48)] lg:min-h-14 lg:px-9 lg:text-base";
+
+  return (
+    <>
+      <Link
+        aria-label="Acheter Assassin's Creed Black Flag Resynced"
+        className="relative block h-full bg-black md:hidden"
+        href={slide.href}
+      >
+        <Image
+          alt="Assassin's Creed Black Flag Resynced"
+          className="object-cover"
+          fill
+          priority
+          sizes="100vw"
+          src={slide.mobileImage}
+        />
+        <span className={`${ctaClassName} absolute bottom-10 left-1/2 z-20 -translate-x-1/2 whitespace-nowrap`}>
+          Achetez maintenant
+        </span>
+      </Link>
+
+      <div className="relative hidden h-full bg-black md:block">
+        <Image
+          alt="Assassin's Creed Black Flag Resynced"
+          className="object-cover"
+          fill
+          priority
+          sizes="100vw"
+          src={slide.desktopImage}
+        />
+
+        <div className="relative z-10 mx-auto flex h-full max-w-[1350px] items-center px-6 py-8">
+          <div className="max-w-[720px] text-left lg:pl-12 xl:pl-16">
+            <p className="font-heading text-sm font-bold uppercase tracking-[0.04em] text-brand-lilac-soft drop-shadow-[0_3px_12px_rgba(0,0,0,0.7)] lg:text-base">
+              Meilleure offre
+            </p>
+
+            <h2 className="mt-3 whitespace-nowrap font-heading text-[clamp(1.25rem,2.2vw,2rem)] font-black leading-tight tracking-[0.01em] drop-shadow-[0_4px_16px_rgba(0,0,0,0.8)]">
+              <span className="text-white">Assassin&apos;s Creed </span>
+              <span className="text-brand-purple-strong">
+                Black Flag Resynced
+              </span>
+            </h2>
+
+            <p className="mt-6 max-w-[590px] font-body text-xl leading-8 text-white drop-shadow-[0_4px_16px_rgba(0,0,0,0.8)] lg:text-2xl lg:leading-9">
+              Une clé{" "}
+              <strong className="font-extrabold text-brand-purple-strong">
+                Assassin&apos;s Creed Black Flag Resynced
+              </strong>{" "}
+              est un code d&apos;activation officiel qui permet de débloquer,
+              télécharger et jouer.
+            </p>
+
+            <p className="mt-7 flex items-baseline gap-4 font-heading drop-shadow-[0_4px_16px_rgba(0,0,0,0.8)]">
+              <span className="text-xl text-white line-through decoration-2 lg:text-2xl">
+                290 DTN
+              </span>
+              <span className="text-3xl font-black text-brand-purple-strong lg:text-4xl">
+                250 DTN
+              </span>
+            </p>
+
+            <Link className={`${ctaClassName} mt-8`} href={slide.href}>
+              Achetez maintenant
+            </Link>
+          </div>
+        </div>
+      </div>
+    </>
   );
 }
 
