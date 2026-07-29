@@ -90,7 +90,7 @@ export default function MainSection({ content, mobileFilters }: MainSectionProps
                     fill
                     priority
                     sizes="(max-width: 1024px) 100vw, 883px"
-                    src="/banner_products.jpg"
+                    src="/banner-tga6.jpg"
                 />
             </Link>
 
