@@ -93,7 +93,7 @@ export function CategoriesSection({
             className="group flex shrink-0 items-center gap-2 rounded-full border border-brand-purple-deep px-4 py-2 font-heading text-xs font-bold text-brand-purple-deep transition-colors hover:bg-brand-purple-deep hover:text-white sm:text-sm"
             href="/categories"
           >
-            Voir toutes les catégories
+            Voir tout
             <ArrowRight className="size-4 transition-transform group-hover:translate-x-0.5" />
           </Link>
         </div>

@@ -43,7 +43,7 @@ export function FlashDealCard({
   return (
     <article
       className={cn(
-        "group relative z-0 h-[290px] w-full shrink-0 overflow-hidden rounded-xl border-2 border-[#B3B3B3] bg-white font-body font-extrabold leading-none text-[#00061E] md:h-[500px] md:w-[240px] lg:h-[565px]",
+        "group relative z-0 aspect-[5/9] h-auto w-full shrink-0 overflow-hidden rounded-xl border-2 border-[#B3B3B3] bg-white font-body font-extrabold leading-none text-[#00061E] md:aspect-auto md:h-[500px] md:w-[240px] lg:h-[565px]",
         className,
       )}
     >

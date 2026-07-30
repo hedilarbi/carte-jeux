@@ -26,7 +26,7 @@ export function RecommendedCard({
     return (
         <article
             className={cn(
-                "group relative z-0 h-[290px] w-full shrink-0 overflow-hidden rounded-xl border-2 border-[#A680F1] bg-[#0F0F28]/92 font-body font-extrabold leading-none text-white md:h-[500px] md:w-[240px] md:bg-transparent lg:h-[565px]",
+                "group relative z-0 aspect-[5/9] h-auto w-full shrink-0 overflow-hidden rounded-xl border-2 border-[#A680F1] bg-[#0F0F28]/92 font-body font-extrabold leading-none text-white md:aspect-auto md:h-[500px] md:w-[240px] md:bg-transparent lg:h-[565px]",
                 className,
             )}
         >

@@ -150,7 +150,7 @@ const heroSlides: HeroSlide[] = [
     id: "precommande-gta-vi",
     image: "/banner-tga6.jpg",
     kind: "image-link",
-    mobileImage: "/hero_2_mobile.jpg",
+    mobileImage: "/gta6-bg-mobile.jpg",
   },
   {
     background: "/banner-bg-2.png",
@@ -443,7 +443,7 @@ function AssassinsCreedSlide({
           sizes="100vw"
           src={slide.mobileImage}
         />
-        <span className={`${ctaClassName} absolute bottom-24 left-1/2 z-20 -translate-x-1/2 whitespace-nowrap`}>
+        <span className={`${ctaClassName} absolute bottom-[8%] left-1/2 z-20 -translate-x-1/2 whitespace-nowrap`}>
           Achetez maintenant
         </span>
       </Link>
@@ -523,14 +523,14 @@ function ProductGridSlide({ slide }: { slide: ProductGridHeroSlide }) {
 
           <div className="mt-6 flex flex-wrap justify-center gap-3">
             <Link
-              className="inline-flex h-9 items-center justify-center gap-1.5 rounded-lg bg-[#78DAFF] px-3 font-body text-xs font-bold uppercase text-[#012D69] shadow-[0_10px_24px_rgba(1,45,105,0.24)] transition hover:-translate-y-0.5 hover:bg-[#A2E8FF] sm:h-10 sm:gap-2 sm:px-4 sm:text-sm"
+              className="inline-flex h-9 items-center justify-center gap-1.5 rounded-[11px] bg-[#78DAFF] px-3 font-body text-xs font-bold uppercase text-[#012D69] shadow-[0_10px_24px_rgba(1,45,105,0.24)] transition hover:-translate-y-0.5 hover:bg-[#A2E8FF] sm:h-10 sm:gap-2 sm:px-4 sm:text-sm"
               href="/produits"
             >
               Voir les produits
               <ArrowRight className="size-3 sm:size-3.5" />
             </Link>
             <Link
-              className="inline-flex h-9 items-center justify-center gap-1.5 rounded-lg border border-[#012D69]/35 bg-white px-3 font-body text-xs font-bold uppercase text-[#012D69] transition hover:-translate-y-0.5 hover:bg-[#F3F0FF] sm:h-10 sm:gap-2 sm:px-4 sm:text-sm"
+              className="inline-flex h-9 items-center justify-center gap-1.5 rounded-[11px] border border-[#012D69]/35 bg-white px-3 font-body text-xs font-bold uppercase text-[#012D69] transition hover:-translate-y-0.5 hover:bg-[#F3F0FF] sm:h-10 sm:gap-2 sm:px-4 sm:text-sm"
               href="/#faq"
             >
               <MessageCircle className="size-3 sm:size-3.5" />
@@ -579,7 +579,7 @@ function ImageCtaSlide({ slide }: { slide: ImageCtaHeroSlide }) {
           sizes="100vw"
           src={slide.mobileImage}
         />
-        <span className="absolute bottom-10 left-1/2 z-30 inline-flex min-h-11 -translate-x-1/2 items-center justify-center whitespace-nowrap rounded-full bg-white px-7 text-center font-body text-xs font-black uppercase tracking-[0.08em] text-black shadow-[0_14px_30px_rgba(0,0,0,0.28)]">
+        <span className="absolute bottom-10 left-1/2 z-30 inline-flex min-h-11 -translate-x-1/2 items-center justify-center whitespace-nowrap rounded-[11px] bg-white px-7 text-center font-body text-xs font-bold uppercase tracking-[0.08em] text-black shadow-[0_14px_30px_rgba(0,0,0,0.28)]">
           {slide.ctaLabel}
         </span>
       </Link>
@@ -595,7 +595,7 @@ function ImageCtaSlide({ slide }: { slide: ImageCtaHeroSlide }) {
         />
         <div className="absolute bottom-0 left-[300px] z-30 flex pb-8 lg:pb-12">
           <Link
-            className="inline-flex min-h-12 items-center justify-center rounded-full bg-white px-7 text-center font-body text-sm font-black uppercase tracking-[0.08em] text-black shadow-[0_14px_30px_rgba(0,0,0,0.28)] transition hover:-translate-y-0.5 hover:bg-[#F5F5F5] lg:min-h-14 lg:px-9 lg:text-base"
+            className="inline-flex min-h-12 items-center justify-center rounded-[11px] bg-white px-7 text-center font-body text-sm font-bold uppercase tracking-[0.08em] text-black shadow-[0_14px_30px_rgba(0,0,0,0.28)] transition hover:-translate-y-0.5 hover:bg-[#F5F5F5] lg:min-h-14 lg:px-9 lg:text-base"
             href={slide.href}
           >
             {slide.ctaLabel}
@@ -623,6 +623,9 @@ function ImageLinkSlide({ slide }: { slide: ImageLinkHeroSlide }) {
             sizes="100vw"
             src={slide.mobileImage}
           />
+          <span className="absolute bottom-[5%] left-1/2 z-30 inline-flex min-h-11 -translate-x-1/2 items-center justify-center whitespace-nowrap rounded-[11px] border-2 border-black bg-white px-7 text-center font-body text-xs font-bold uppercase tracking-[0.08em] text-black shadow-[0_14px_30px_rgba(0,0,0,0.28)]">
+            PRÉCOMMANDER MAINTENANT
+          </span>
         </Link>
       ) : (
         <Link
@@ -668,7 +671,7 @@ function ImageLinkSlide({ slide }: { slide: ImageLinkHeroSlide }) {
               Grand Theft Auto VI
             </div>
             <Link
-              className="mt-8 inline-flex min-h-12 items-center justify-center rounded-[32px] border-2 border-black bg-white px-7 text-center font-body text-sm font-black uppercase tracking-[0.08em] text-black shadow-[0_14px_30px_rgba(0,0,0,0.26)] transition hover:-translate-y-0.5 hover:bg-[#F5F5F5] lg:min-h-14 lg:px-9 lg:text-base"
+              className="mt-8 inline-flex min-h-12 items-center justify-center rounded-[11px] border-2 border-black bg-white px-7 text-center font-body text-sm font-bold uppercase tracking-[0.08em] text-black shadow-[0_14px_30px_rgba(0,0,0,0.26)] transition hover:-translate-y-0.5 hover:bg-[#F5F5F5] lg:min-h-14 lg:px-9 lg:text-base"
               href={slide.href}
             >
               PRÉCOMMANDER MAINTENANT
@@ -706,14 +709,14 @@ function PsPlusSlide({ slide }: { slide: PsPlusHeroSlide }) {
 
           <div className="mt-6 flex flex-wrap justify-center gap-3">
             <Link
-              className="inline-flex h-9 items-center justify-center gap-1.5 rounded-lg bg-[#FFD600] px-3 font-body text-xs font-bold uppercase text-black shadow-[0_10px_24px_rgba(0,0,0,0.24)] transition hover:-translate-y-0.5 hover:bg-[#FFE766] sm:h-10 sm:gap-2 sm:px-4 sm:text-sm"
+              className="inline-flex h-9 items-center justify-center gap-1.5 rounded-[11px] bg-[#FFD600] px-3 font-body text-xs font-bold uppercase text-black shadow-[0_10px_24px_rgba(0,0,0,0.24)] transition hover:-translate-y-0.5 hover:bg-[#FFE766] sm:h-10 sm:gap-2 sm:px-4 sm:text-sm"
               href="/produits"
             >
               Voir tous les produits
               <ArrowRight className="size-3 sm:size-3.5" />
             </Link>
             <Link
-              className="inline-flex h-9 items-center justify-center gap-1.5 rounded-lg bg-white px-3 font-body text-xs font-bold uppercase text-black transition hover:-translate-y-0.5 hover:bg-slate-100 sm:h-10 sm:gap-2 sm:px-4 sm:text-sm"
+              className="inline-flex h-9 items-center justify-center gap-1.5 rounded-[11px] bg-white px-3 font-body text-xs font-bold uppercase text-black transition hover:-translate-y-0.5 hover:bg-slate-100 sm:h-10 sm:gap-2 sm:px-4 sm:text-sm"
               href="/#faq"
             >
               <MessageCircle className="size-3 sm:size-3.5" />
