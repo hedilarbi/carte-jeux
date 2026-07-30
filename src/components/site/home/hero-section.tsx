@@ -426,7 +426,7 @@ function AssassinsCreedSlide({
   slide: AssassinsCreedHeroSlide;
 }) {
   const ctaClassName =
-    "inline-flex min-h-12 items-center justify-center rounded-[11px] bg-[linear-gradient(274.47deg,#B99CF1_-12.06%,#7FCCFF_110.42%)] px-7 text-center font-heading text-sm font-bold uppercase tracking-[0.04em] text-[#03030A] shadow-[0_10px_28px_rgba(185,156,241,0.35)] transition hover:-translate-y-0.5 hover:shadow-[0_12px_32px_rgba(127,204,255,0.48)] lg:min-h-14 lg:px-9 lg:text-base";
+    "inline-flex min-h-12 items-center justify-center rounded-[11px] bg-[linear-gradient(274.47deg,#B99CF1_-12.06%,#7FCCFF_110.42%)] px-7 text-center font-body text-sm font-bold uppercase tracking-[0.04em] text-[#03030A] shadow-[0_10px_28px_rgba(185,156,241,0.35)] transition hover:-translate-y-0.5 hover:shadow-[0_12px_32px_rgba(127,204,255,0.48)] lg:min-h-14 lg:px-9 lg:text-base";
 
   return (
     <>
@@ -443,7 +443,7 @@ function AssassinsCreedSlide({
           sizes="100vw"
           src={slide.mobileImage}
         />
-        <span className={`${ctaClassName} absolute bottom-10 left-1/2 z-20 -translate-x-1/2 whitespace-nowrap`}>
+        <span className={`${ctaClassName} absolute bottom-16 left-1/2 z-20 -translate-x-1/2 whitespace-nowrap`}>
           Achetez maintenant
         </span>
       </Link>
@@ -460,11 +460,11 @@ function AssassinsCreedSlide({
 
         <div className="relative z-10 mx-auto flex h-full max-w-[1350px] items-center px-6 py-8">
           <div className="max-w-[720px] text-left lg:pl-12 xl:pl-16">
-            <p className="font-heading text-sm font-bold uppercase tracking-[0.04em] text-brand-lilac-soft drop-shadow-[0_3px_12px_rgba(0,0,0,0.7)] lg:text-base">
+            <p className="font-body text-sm font-bold uppercase tracking-[0.04em] text-brand-lilac-soft drop-shadow-[0_3px_12px_rgba(0,0,0,0.7)] lg:text-base">
               Meilleure offre
             </p>
 
-            <h2 className="mt-3 whitespace-nowrap font-heading text-[clamp(1.25rem,2.2vw,2rem)] font-black leading-tight tracking-[0.01em] drop-shadow-[0_4px_16px_rgba(0,0,0,0.8)]">
+            <h2 className="mt-3 whitespace-nowrap font-body text-[clamp(1.25rem,2.2vw,2rem)] font-black leading-tight tracking-[0.01em] drop-shadow-[0_4px_16px_rgba(0,0,0,0.8)]">
               <span className="text-white">Assassin&apos;s Creed </span>
               <span className="text-brand-purple-strong">
                 Black Flag Resynced
@@ -480,7 +480,7 @@ function AssassinsCreedSlide({
               télécharger et jouer.
             </p>
 
-            <p className="mt-7 flex items-baseline gap-4 font-heading drop-shadow-[0_4px_16px_rgba(0,0,0,0.8)]">
+            <p className="mt-7 flex items-baseline gap-4 font-body drop-shadow-[0_4px_16px_rgba(0,0,0,0.8)]">
               <span className="text-xl text-white line-through decoration-2 lg:text-2xl">
                 290 DTN
               </span>
@@ -489,7 +489,7 @@ function AssassinsCreedSlide({
               </span>
             </p>
 
-            <Link className={`${ctaClassName} mt-8`} href={slide.href}>
+            <Link className={`${ctaClassName} mt-6`} href={slide.href}>
               Achetez maintenant
             </Link>
           </div>
@@ -513,7 +513,7 @@ function ProductGridSlide({ slide }: { slide: ProductGridHeroSlide }) {
 
       <div className="mx-auto grid h-full max-h-full max-w-[1350px] items-center gap-5 overflow-hidden px-6 py-5 sm:gap-6 sm:py-6 lg:grid-cols-[minmax(0,0.95fr)_minmax(360px,0.8fr)] lg:gap-12 lg:py-8">
         <div className="mx-auto max-w-xl text-center lg:mx-0 lg:pl-12 xl:pl-16">
-          <h1 className="font-heading text-2xl font-black leading-tight tracking-[0.03em] text-[#78DAFF] drop-shadow-[0_4px_18px_rgba(1,45,105,0.32)] sm:text-4xl lg:text-3xl">
+          <h1 className="font-body text-2xl font-black leading-tight tracking-[0.03em] text-[#78DAFF] drop-shadow-[0_4px_18px_rgba(1,45,105,0.32)] sm:text-4xl lg:text-3xl">
             EXAMENS : TERMINÉ{" "}
             <span>&gt;&gt;</span> MANETTE : EN MAIN
           </h1>
@@ -661,10 +661,10 @@ function ImageLinkSlide({ slide }: { slide: ImageLinkHeroSlide }) {
               la série Grand Theft Auto à ce jour
             </p>
 
-            <p className="mt-5 font-heading text-2xl font-normal leading-tight text-[#FE50B3] drop-shadow-[0_4px_16px_rgba(0,0,0,0.36)] lg:text-xl">
+            <p className="mt-5 font-body text-2xl font-normal leading-tight text-[#FE50B3] drop-shadow-[0_4px_16px_rgba(0,0,0,0.36)] lg:text-xl">
               Disponible le 19 Septembre
             </p>
-            <div className="inline-flex  mt-7 border-2 border-[#73016F] bg-[linear-gradient(90deg,#E88F48_0%,#FE4EB5_52%,#3A5FD8_100%)] px-10 py-3 font-heading text-3xl font-black leading-none tracking-[0.03em] text-white shadow-[0_18px_38px_rgba(0,0,0,0.3)] lg:text-xl">
+            <div className="inline-flex  mt-7 border-2 border-[#73016F] bg-[linear-gradient(90deg,#E88F48_0%,#FE4EB5_52%,#3A5FD8_100%)] px-10 py-3 font-body text-3xl font-black leading-none tracking-[0.03em] text-white shadow-[0_18px_38px_rgba(0,0,0,0.3)] lg:text-xl">
               Grand Theft Auto VI
             </div>
             <Link
@@ -693,7 +693,7 @@ function PsPlusSlide({ slide }: { slide: PsPlusHeroSlide }) {
 
       <div className="mx-auto grid h-full max-h-full max-w-[1350px] items-center gap-5 overflow-hidden px-6 py-5 sm:gap-6 sm:py-6 lg:grid-cols-[minmax(0,0.95fr)_minmax(360px,0.8fr)] lg:gap-12 lg:py-8">
         <div className="mx-auto max-w-xl text-center lg:mx-0 lg:pl-12 xl:pl-16">
-          <h1 className="font-heading text-2xl font-black leading-tight tracking-[0.02em] text-white drop-shadow-[0_4px_18px_rgba(0,0,0,0.35)] sm:text-4xl lg:text-3xl">
+          <h1 className="font-body text-2xl font-black leading-tight tracking-[0.02em] text-white drop-shadow-[0_4px_18px_rgba(0,0,0,0.35)] sm:text-4xl lg:text-3xl">
             Abonnement Carte <br />
             PlayStations Plus{" "}
             <span className="text-[#FFD600]">Global</span>
