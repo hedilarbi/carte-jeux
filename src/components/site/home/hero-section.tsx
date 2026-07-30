@@ -443,7 +443,7 @@ function AssassinsCreedSlide({
           sizes="100vw"
           src={slide.mobileImage}
         />
-        <span className={`${ctaClassName} absolute bottom-16 left-1/2 z-20 -translate-x-1/2 whitespace-nowrap`}>
+        <span className={`${ctaClassName} absolute bottom-24 left-1/2 z-20 -translate-x-1/2 whitespace-nowrap`}>
           Achetez maintenant
         </span>
       </Link>
@@ -489,7 +489,7 @@ function AssassinsCreedSlide({
               </span>
             </p>
 
-            <Link className={`${ctaClassName} mt-6`} href={slide.href}>
+            <Link className={`${ctaClassName} mt-4`} href={slide.href}>
               Achetez maintenant
             </Link>
           </div>
