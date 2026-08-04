@@ -33,6 +33,9 @@ export const metadata: Metadata = {
   },
   description:
     "La référence en Tunisie pour acheter des jeux vidéo, cartes PSN, Steam, Xbox, Nintendo et abonnements gaming. Paiement rapide en dinars.",
+  verification: {
+    google: "sS1D7_f2AaqxymBvXZeIAPloqL00G9_dyHExx6RZAbw",
+  },
 };
 
 export default function RootLayout({
@@ -71,4 +74,3 @@ export default function RootLayout({
     </html>
   );
 }
-
