@@ -19,7 +19,10 @@ export const checkoutCreateSchema = z.object({
     .email("Une adresse e-mail valide est requise.")
     .transform((value) => value.toLowerCase()),
   customerPhone: customerProfileCompletionSchema.shape.phone,
-  paymentMethod: z.enum(["whatsapp", "stripe"], {
+  // STRIPE DÉSACTIVÉ: enum d'origine `["whatsapp", "stripe"]`. Restreint à
+  // whatsapp pour qu'une commande "stripe" soit refusée explicitement plutôt
+  // que créée sans lien de paiement.
+  paymentMethod: z.enum(["whatsapp"], {
     error: "Le moyen de paiement sélectionné est invalide.",
   }),
 });

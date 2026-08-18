@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useEffect, useState, type FormEvent } from "react";
 import {
   CheckCircle2,
-  CreditCard,
+  // STRIPE DÉSACTIVÉ: CreditCard,
   Mail,
   MessageCircle,
   ShoppingBag,
@@ -112,11 +112,13 @@ export function CheckoutOrderForm({
       .then((res) => res.json())
       .then((data) => {
         setCountryCode(data.country_code);
-        if (data.country_code !== "TN") {
-          setPaymentMethod("stripe");
-        } else {
-          setPaymentMethod("whatsapp");
-        }
+        // STRIPE DÉSACTIVÉ: hors Tunisie on basculait sur Stripe.
+        // if (data.country_code !== "TN") {
+        //   setPaymentMethod("stripe");
+        // } else {
+        //   setPaymentMethod("whatsapp");
+        // }
+        setPaymentMethod("whatsapp");
       })
       .catch(() => {
         // Fallback to Tunisia if IP detection fails
@@ -168,10 +170,11 @@ export function CheckoutOrderForm({
         }),
       );
 
-      if (paymentMethod === "stripe" && result.checkoutUrl) {
-        window.location.assign(result.checkoutUrl);
-        return;
-      }
+      // STRIPE DÉSACTIVÉ: l'API ne renvoie plus de checkoutUrl.
+      // if (paymentMethod === "stripe" && result.checkoutUrl) {
+      //   window.location.assign(result.checkoutUrl);
+      //   return;
+      // }
 
       if (paymentMethod === "whatsapp" && whatsAppNumber) {
         window.location.assign(
@@ -222,10 +225,12 @@ export function CheckoutOrderForm({
         />
       </section>
 
+      {/* STRIPE DÉSACTIVÉ: isPaymentConfigured valait
+          `paymentMethod === "stripe" || isPaymentConfigured` */}
       <CheckoutSummary
         cart={cart}
         error={error}
-        isPaymentConfigured={paymentMethod === "stripe" || isPaymentConfigured}
+        isPaymentConfigured={isPaymentConfigured}
         isPending={isPending || countryCode === null}
         paymentConfigurationMessage={paymentConfigurationMessage}
         paymentMethod={paymentMethod}
@@ -261,7 +266,10 @@ function PaymentMethodsCard({
         {countryCode === null && (
           <p className="font-inter text-sm font-semibold text-black/50">Chargement...</p>
         )}
-        {countryCode === "TN" && (
+        {/* STRIPE DÉSACTIVÉ: WhatsApp était réservé à la Tunisie
+            (`countryCode === "TN"`), le reste du monde passait par Stripe.
+            Tant que Stripe est coupé, WhatsApp est proposé à tout le monde. */}
+        {countryCode !== null && (
           <PaymentMethodOption
             description="Envoyez votre commande préremplie à notre équipe via WhatsApp."
             icon={<MessageCircle className="size-8" />}
@@ -271,7 +279,7 @@ function PaymentMethodsCard({
             onClick={() => onPaymentMethodChange("whatsapp")}
           />
         )}
-        {countryCode !== null && countryCode !== "TN" && (
+        {/* {countryCode !== null && countryCode !== "TN" && (
           <PaymentMethodOption
             description="Payez en toute sécurité par carte bancaire avec Stripe."
             icon={<CreditCard className="size-8" />}
@@ -280,7 +288,7 @@ function PaymentMethodsCard({
             selected={paymentMethod === "stripe"}
             onClick={() => onPaymentMethodChange("stripe")}
           />
-        )}
+        )} */}
       </div>
     </section>
   );
@@ -490,11 +498,9 @@ function CheckoutSummary({
         disabled={isPending || !isPaymentConfigured}
         type="submit"
       >
-        {isPending
-          ? "Validation..."
-          : paymentMethod === "stripe"
-            ? "Payer par carte"
-            : "Continuer sur WhatsApp"}
+        {/* STRIPE DÉSACTIVÉ: le libellé "Payer par carte" s'affichait quand
+            paymentMethod === "stripe". */}
+        {isPending ? "Validation..." : "Continuer sur WhatsApp"}
       </button>
 
       {paymentMethod === "whatsapp" && !isPaymentConfigured ? (

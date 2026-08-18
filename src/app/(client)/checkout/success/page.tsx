@@ -1,9 +1,8 @@
 import { CheckCircle2 } from "lucide-react";
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import Stripe from "stripe";
-
-import { stripe } from "@/lib/stripe";
+// STRIPE DÉSACTIVÉ: import Stripe from "stripe";
+// STRIPE DÉSACTIVÉ: import { stripe } from "@/lib/stripe";
 
 export default async function CheckoutSuccessPage({
   searchParams,
@@ -16,16 +15,20 @@ export default async function CheckoutSuccessPage({
     redirect("/");
   }
 
-  try {
-    const session = await stripe.checkout.sessions.retrieve(session_id);
-
-    if (session.payment_status !== "paid") {
-      redirect("/");
-    }
-  } catch (error) {
-    console.error("Error retrieving Stripe session", error);
-    redirect("/");
-  }
+  // --- VÉRIFICATION STRIPE DÉSACTIVÉE TEMPORAIREMENT ---
+  // Sans elle, cette page ne prouve plus que la commande a été payée : elle
+  // n'est atteignable que via une redirection Stripe, donc inaccessible tant
+  // que Stripe est coupé.
+  // try {
+  //   const session = await stripe.checkout.sessions.retrieve(session_id);
+  //
+  //   if (session.payment_status !== "paid") {
+  //     redirect("/");
+  //   }
+  // } catch (error) {
+  //   console.error("Error retrieving Stripe session", error);
+  //   redirect("/");
+  // }
 
   return (
     <main className="flex min-h-screen items-center justify-center bg-[linear-gradient(90deg,#E3CDFF_0%,#D8E0FF_67.31%,#C9CAFF_100%)] px-6 py-12">
