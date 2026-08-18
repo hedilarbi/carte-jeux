@@ -5,7 +5,7 @@ import Stripe from "stripe";
 
 import { stripe } from "@/lib/stripe";
 import { OrderModel } from "@/models/order.model";
-import { connectToDatabase } from "@/lib/db";
+import { connectToDatabase } from "@/lib/db/mongoose";
 
 export async function POST(request: NextRequest) {
   const body = await request.text();
