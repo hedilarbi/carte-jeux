@@ -2,9 +2,10 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useState, type FormEvent } from "react";
+import { useEffect, useState, type FormEvent } from "react";
 import {
   CheckCircle2,
+  CreditCard,
   Mail,
   MessageCircle,
   ShoppingBag,
@@ -35,7 +36,7 @@ interface CheckoutCustomer {
   phone?: string;
 }
 
-type PaymentMethod = "whatsapp";
+type PaymentMethod = "whatsapp" | "stripe";
 
 interface CheckoutPaymentConfig {
   whatsappOrderNumber?: string;
@@ -103,7 +104,27 @@ export function CheckoutOrderForm({
   const [email, setEmail] = useState(customer?.email ?? "");
   const [error, setError] = useState<string | null>(null);
   const [isPending, setIsPending] = useState(false);
-  const paymentMethod: PaymentMethod = "whatsapp";
+  const [countryCode, setCountryCode] = useState<string | null>(null);
+  const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>("whatsapp");
+  
+  useEffect(() => {
+    fetch("https://ipapi.co/json/")
+      .then((res) => res.json())
+      .then((data) => {
+        setCountryCode(data.country_code);
+        if (data.country_code !== "TN") {
+          setPaymentMethod("stripe");
+        } else {
+          setPaymentMethod("whatsapp");
+        }
+      })
+      .catch(() => {
+        // Fallback to Tunisia if IP detection fails
+        setCountryCode("TN");
+        setPaymentMethod("whatsapp");
+      });
+  }, []);
+
   const isAuthenticated = Boolean(customer);
   const whatsAppNumber = normalizeWhatsAppNumber(
     paymentConfig.whatsappOrderNumber,
@@ -119,7 +140,7 @@ export function CheckoutOrderForm({
       return;
     }
 
-    if (!isPaymentConfigured) {
+    if (paymentMethod === "whatsapp" && !isPaymentConfigured) {
       setError(paymentConfigurationMessage);
       return;
     }
@@ -130,7 +151,7 @@ export function CheckoutOrderForm({
     try {
       const formData = new FormData(event.currentTarget);
       const customerPhone = String(formData.get("customerPhone") ?? "");
-      const order = await fetchJson<Order>("/api/checkout", {
+      const result = await fetchJson<{ order: Order; checkoutUrl: string | null }>("/api/checkout", {
         method: "POST",
         body: JSON.stringify({
           customerFirstName: firstName,
@@ -146,11 +167,17 @@ export function CheckoutOrderForm({
           detail: { items: [] },
         }),
       );
+
+      if (paymentMethod === "stripe" && result.checkoutUrl) {
+        window.location.assign(result.checkoutUrl);
+        return;
+      }
+
       if (paymentMethod === "whatsapp" && whatsAppNumber) {
         window.location.assign(
           buildWhatsAppCheckoutUrl({
             cart,
-            order,
+            order: result.order,
             phoneNumber: whatsAppNumber,
           }),
         );
@@ -179,6 +206,9 @@ export function CheckoutOrderForm({
       <section className="grid gap-[15px]">
         <PaymentMethodsCard
           whatsAppConfigured={Boolean(whatsAppNumber)}
+          countryCode={countryCode}
+          paymentMethod={paymentMethod}
+          onPaymentMethodChange={setPaymentMethod}
         />
         <CustomerInfoCard
           email={email}
@@ -195,9 +225,10 @@ export function CheckoutOrderForm({
       <CheckoutSummary
         cart={cart}
         error={error}
-        isPaymentConfigured={isPaymentConfigured}
-        isPending={isPending}
+        isPaymentConfigured={paymentMethod === "stripe" || isPaymentConfigured}
+        isPending={isPending || countryCode === null}
         paymentConfigurationMessage={paymentConfigurationMessage}
+        paymentMethod={paymentMethod}
       />
     </form>
   );
@@ -205,8 +236,14 @@ export function CheckoutOrderForm({
 
 function PaymentMethodsCard({
   whatsAppConfigured,
+  countryCode,
+  paymentMethod,
+  onPaymentMethodChange,
 }: {
   whatsAppConfigured: boolean;
+  countryCode: string | null;
+  paymentMethod: PaymentMethod;
+  onPaymentMethodChange: (method: PaymentMethod) => void;
 }) {
   return (
     <section className="grid gap-4 bg-white/37 p-5 shadow-[0_4px_4px_#B1A3F5] sm:p-8">
@@ -221,13 +258,29 @@ function PaymentMethodsCard({
       </div>
 
       <div className="grid gap-3">
-        <PaymentMethodOption
-          description="Envoyez votre commande préremplie à notre équipe via WhatsApp."
-          icon={<MessageCircle className="size-8" />}
-          isConfigured={whatsAppConfigured}
-          name="WhatsApp"
-          selected
-        />
+        {countryCode === null && (
+          <p className="font-inter text-sm font-semibold text-black/50">Chargement...</p>
+        )}
+        {countryCode === "TN" && (
+          <PaymentMethodOption
+            description="Envoyez votre commande préremplie à notre équipe via WhatsApp."
+            icon={<MessageCircle className="size-8" />}
+            isConfigured={whatsAppConfigured}
+            name="WhatsApp"
+            selected={paymentMethod === "whatsapp"}
+            onClick={() => onPaymentMethodChange("whatsapp")}
+          />
+        )}
+        {countryCode !== null && countryCode !== "TN" && (
+          <PaymentMethodOption
+            description="Payez en toute sécurité par carte bancaire avec Stripe."
+            icon={<CreditCard className="size-8" />}
+            isConfigured={true}
+            name="Carte Bancaire"
+            selected={paymentMethod === "stripe"}
+            onClick={() => onPaymentMethodChange("stripe")}
+          />
+        )}
       </div>
     </section>
   );
@@ -239,16 +292,19 @@ function PaymentMethodOption({
   isConfigured,
   name,
   selected,
+  onClick,
 }: {
   description: string;
   icon: React.ReactNode;
   isConfigured: boolean;
   name: string;
   selected: boolean;
+  onClick: () => void;
 }) {
   return (
     <button
       aria-pressed={selected}
+      onClick={onClick}
       className={`grid min-h-[112px] w-full grid-cols-[72px_minmax(0,1fr)_32px] items-center gap-4 rounded-2xl border px-5 text-left transition ${
         selected
           ? "border-[#A582ED] bg-white shadow-[0_8px_22px_rgba(165,130,237,0.16)]"
@@ -375,12 +431,14 @@ function CheckoutSummary({
   isPaymentConfigured,
   isPending,
   paymentConfigurationMessage,
+  paymentMethod,
 }: {
   cart: Cart;
   error: string | null;
   isPaymentConfigured: boolean;
   isPending: boolean;
   paymentConfigurationMessage: string;
+  paymentMethod: PaymentMethod;
 }) {
   return (
     <aside className="rounded-2xl bg-white p-7 text-black shadow-[0_4px_4px_#B0A4F5] backdrop-blur-[2px] lg:min-h-[680px]">
@@ -434,10 +492,12 @@ function CheckoutSummary({
       >
         {isPending
           ? "Validation..."
-          : "Continuer sur WhatsApp"}
+          : paymentMethod === "stripe"
+            ? "Payer par carte"
+            : "Continuer sur WhatsApp"}
       </button>
 
-      {!isPaymentConfigured ? (
+      {paymentMethod === "whatsapp" && !isPaymentConfigured ? (
         <p className="mt-3 font-inter text-xs font-semibold leading-5 text-amber-700">
           {paymentConfigurationMessage}
         </p>

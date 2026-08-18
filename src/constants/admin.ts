@@ -14,6 +14,8 @@ export const MAX_PAGE_SIZE = 100;
 
 export const USER_ROLE_OPTIONS: UserRole[] = ["admin", "customer", "guest"];
 
+export const USERS_CSV_EXPORT_ADMIN_EMAIL = "houssam@playsdepot.com";
+
 export const PRODUCT_TYPE_OPTIONS: ProductType[] = [
   "gift_card",
   "subscription",

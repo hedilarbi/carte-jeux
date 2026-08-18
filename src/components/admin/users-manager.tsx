@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Trash2 } from "lucide-react";
+import { Download, Trash2 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -19,6 +19,7 @@ import { formatDateTime } from "@/lib/utils/format";
 import type { AdminUserListItem } from "@/services/user.service";
 
 interface UsersManagerProps {
+  canExportCsv: boolean;
   initialTotalItems: number;
   initialUsers: AdminUserListItem[];
 }
@@ -61,6 +62,7 @@ function UserStatusBadge({ isActive }: { isActive: boolean }) {
 }
 
 export function UsersManager({
+  canExportCsv,
   initialTotalItems,
   initialUsers,
 }: UsersManagerProps) {
@@ -119,13 +121,25 @@ export function UsersManager({
   return (
     <>
       <Card>
-        <CardHeader>
-          <CardTitle>Comptes enregistrés</CardTitle>
-          <CardDescription className="mt-2">
-            {totalItems} utilisateur{totalItems > 1 ? "s" : ""}, dont{" "}
-            {customerCount} client{customerCount > 1 ? "s" : ""} et{" "}
-            {guestCount} invité{guestCount > 1 ? "s" : ""}.
-          </CardDescription>
+        <CardHeader className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+          <div>
+            <CardTitle>Comptes enregistrés</CardTitle>
+            <CardDescription className="mt-2">
+              {totalItems} utilisateur{totalItems > 1 ? "s" : ""}, dont{" "}
+              {customerCount} client{customerCount > 1 ? "s" : ""} et{" "}
+              {guestCount} invité{guestCount > 1 ? "s" : ""}.
+            </CardDescription>
+          </div>
+          {canExportCsv ? (
+            <Button
+              onClick={() => window.location.assign("/api/admin/users/export")}
+              type="button"
+              variant="outline"
+            >
+              <Download className="size-4" />
+              Exporter CSV
+            </Button>
+          ) : null}
         </CardHeader>
         <CardContent className="overflow-x-auto p-0">
           <table className="min-w-full text-left text-sm">

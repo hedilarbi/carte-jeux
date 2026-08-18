@@ -69,6 +69,25 @@ export async function listUsers(filters: UserListFilters = {}) {
   };
 }
 
+export async function listUsersForCsvExport() {
+  await connectToDatabase();
+
+  return UserModel.find({} as UserFindQuery)
+    .select({
+      authProviders: 1,
+      createdAt: 1,
+      email: 1,
+      firstName: 1,
+      isActive: 1,
+      lastName: 1,
+      phone: 1,
+      role: 1,
+    })
+    .sort({ createdAt: -1 })
+    .lean()
+    .exec();
+}
+
 export async function getUserByEmail(email: string) {
   await connectToDatabase();
   return UserModel.findOne({ email: email.toLowerCase() }).lean().exec();

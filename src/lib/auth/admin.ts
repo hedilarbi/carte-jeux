@@ -5,6 +5,7 @@ import { SignJWT, jwtVerify } from "jose";
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
+import { USERS_CSV_EXPORT_ADMIN_EMAIL } from "@/constants/admin";
 import { AppError } from "@/lib/utils/app-error";
 import { getUserByEmail } from "@/repositories/user.repository";
 import type { AdminSession } from "@/types/entities";
@@ -156,6 +157,32 @@ export async function authenticateAdminUser(email: string, password: string) {
     email: user.email,
     role: "admin" as const,
   };
+}
+
+/**
+ * L'export CSV des utilisateurs est réservé à un seul compte administrateur.
+ * On exige une session issue du cookie JWT signé et on revérifie en base que
+ * l'identifiant de session correspond bien à ce compte : les sessions
+ * "header" et le jeton statique ne peuvent donc pas usurper cet accès.
+ */
+export async function canExportUsersCsv(session: AdminSession | null) {
+  if (
+    !session ||
+    session.source !== "cookie" ||
+    !session.userId ||
+    session.email.trim().toLowerCase() !== USERS_CSV_EXPORT_ADMIN_EMAIL
+  ) {
+    return false;
+  }
+
+  const user = await getUserByEmail(USERS_CSV_EXPORT_ADMIN_EMAIL);
+
+  return Boolean(
+    user &&
+      user.role === "admin" &&
+      user.isActive &&
+      String(user._id) === session.userId,
+  );
 }
 
 export async function createAdminSessionToken(payload: {

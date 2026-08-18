@@ -1,5 +1,6 @@
 import { revalidatePath } from "next/cache";
 import type { NextRequest } from "next/server";
+import Stripe from "stripe";
 
 import {
   attachCartSessionCookie,
@@ -13,6 +14,7 @@ import {
 import { checkoutCreateSchema } from "@/lib/validation/checkout";
 import { customerAuthService } from "@/services/customer-auth.service";
 import { orderService } from "@/services/order.service";
+import { stripe } from "@/lib/stripe";
 
 async function readJsonBody(request: NextRequest) {
   try {
@@ -66,8 +68,38 @@ export async function POST(request: NextRequest) {
     revalidatePath("/panier");
     revalidatePath("/profil");
 
+    if (parsed.paymentMethod === "stripe") {
+      const origin = request.nextUrl.origin;
+      const session = await stripe.checkout.sessions.create({
+        payment_method_types: ["card"],
+        mode: "payment",
+        customer_email: parsed.customerEmail,
+        client_reference_id: order.paymentReference,
+        line_items: order.items.map((item) => ({
+          price_data: {
+            currency: item.currency.toLowerCase(),
+            product_data: {
+              name: item.productTitle,
+              metadata: {
+                sku: item.sku,
+              },
+            },
+            unit_amount: Math.round(item.finalUnitPrice * 100),
+          },
+          quantity: item.quantity,
+        })),
+        success_url: `${origin}/checkout/success?session_id={CHECKOUT_SESSION_ID}&order_number=${order.orderNumber}`,
+        cancel_url: `${origin}/checkout`,
+      });
+
+      return attachCartSessionCookie(
+        successResponse({ order, checkoutUrl: session.url }, { status: 201 }),
+        cartSession,
+      );
+    }
+
     return attachCartSessionCookie(
-      successResponse(order, { status: 201 }),
+      successResponse({ order, checkoutUrl: null }, { status: 201 }),
       cartSession,
     );
   } catch (error) {

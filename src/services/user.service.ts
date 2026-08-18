@@ -8,6 +8,7 @@ import {
   getUserByEmail,
   getUserById,
   listUsers,
+  listUsersForCsvExport,
   type UserListFilters,
   updateUserById,
   upsertUserByEmail,
@@ -26,6 +27,18 @@ export interface AdminUserListItem {
   phone?: string;
   role: UserRole;
   updatedAt: string;
+}
+
+export interface AdminUserExportItem {
+  _id: string;
+  authProviders?: AuthProvider[];
+  createdAt: string;
+  email: string;
+  firstName: string;
+  isActive: boolean;
+  lastName: string;
+  phone?: string;
+  role: UserRole;
 }
 
 interface CreateUserInput {
@@ -73,6 +86,12 @@ export const userService = {
       ...result,
       items: users.map(toAdminUserListItem),
     };
+  },
+
+  async listForCsvExport() {
+    return serializeDocument<AdminUserExportItem[]>(
+      await listUsersForCsvExport(),
+    );
   },
 
   async ensureGuestForOrder(input: EnsureGuestUserInput) {

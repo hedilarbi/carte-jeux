@@ -115,7 +115,7 @@ export const orderService = {
       lastName: string;
       phone: string;
     };
-    paymentProvider: "whatsapp";
+    paymentProvider: "whatsapp" | "stripe";
     sessionId: string;
     userId?: string;
   }) {

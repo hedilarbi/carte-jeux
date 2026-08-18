@@ -1,13 +1,17 @@
 import { AdminPageHeader } from "@/components/admin/admin-page-header";
 import { UsersManager } from "@/components/admin/users-manager";
+import { canExportUsersCsv, getAdminPageSession } from "@/lib/auth/admin";
 import { userService } from "@/services/user.service";
 
 export default async function AdminUsersPage() {
-  const users = await userService.list({
-    page: 1,
-    limit: 100,
-    roles: ["customer", "guest"],
-  });
+  const [users, session] = await Promise.all([
+    userService.list({
+      page: 1,
+      limit: 100,
+      roles: ["customer", "guest"],
+    }),
+    getAdminPageSession(),
+  ]);
 
   return (
     <>
@@ -17,6 +21,7 @@ export default async function AdminUsersPage() {
         title="Utilisateurs"
       />
       <UsersManager
+        canExportCsv={await canExportUsersCsv(session)}
         initialTotalItems={users.totalItems}
         initialUsers={users.items}
       />
