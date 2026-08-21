@@ -77,10 +77,10 @@ function buildWhatsAppCheckoutUrl({
     ),
     ...(order.appliedPromoCode
       ? [
-          "",
-          `Code promo : ${order.appliedPromoCode.code}`,
-          `Remise promo : ${formatPrice(order.appliedPromoCode.discountAmount ?? 0)} ${order.currency}`,
-        ]
+        "",
+        `Code promo : ${order.appliedPromoCode.code}`,
+        `Remise promo : ${formatPrice(order.appliedPromoCode.discountAmount ?? 0)} ${order.currency}`,
+      ]
       : []),
     "",
     `Total : ${formatPrice(order.total)} ${order.currency}`,
@@ -107,7 +107,7 @@ export function CheckoutOrderForm({
   const [isPending, setIsPending] = useState(false);
   const [countryCode, setCountryCode] = useState<string | null>(null);
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>("whatsapp");
-  
+
   useEffect(() => {
     fetch("https://ipapi.co/json/")
       .then((res) => res.json())
@@ -292,7 +292,7 @@ function PaymentMethodsCard({
             description="Payez par carte bancaire tunisienne sur la page sécurisée ClicToPay."
             icon={<CreditCard className="size-8" />}
             isConfigured={clicToPayConfigured}
-            name="Carte bancaire ClicToPay (en maintenance)"
+            name="Carte bancaire ClicToPay "
             selected={paymentMethod === "clictopay"}
             onClick={() => onPaymentMethodChange("clictopay")}
           />
@@ -323,11 +323,10 @@ function PaymentMethodOption({
     <button
       aria-pressed={selected}
       onClick={onClick}
-      className={`grid min-h-[112px] w-full grid-cols-[72px_minmax(0,1fr)_32px] items-center gap-4 rounded-2xl border px-5 text-left transition ${
-        selected
+      className={`grid min-h-[112px] w-full grid-cols-[72px_minmax(0,1fr)_32px] items-center gap-4 rounded-2xl border px-5 text-left transition ${selected
           ? "border-[#A582ED] bg-white shadow-[0_8px_22px_rgba(165,130,237,0.16)]"
           : "border-white/70 bg-white/45 hover:border-[#A582ED]/55 hover:bg-white/70"
-      }`}
+        }`}
       type="button"
     >
       <span className="flex size-[72px] items-center justify-center rounded-2xl bg-white/80 text-[#012D69]">
@@ -347,9 +346,8 @@ function PaymentMethodOption({
         </span>
       </span>
       <span
-        className={`flex size-7 items-center justify-center rounded-full border-2 ${
-          selected ? "border-[#B0A4F5] bg-white" : "border-[#012D69]/25 bg-white/48"
-        }`}
+        className={`flex size-7 items-center justify-center rounded-full border-2 ${selected ? "border-[#B0A4F5] bg-white" : "border-[#012D69]/25 bg-white/48"
+          }`}
       >
         {selected ? <span className="size-3.5 rounded-full bg-[#B0A4F5]" /> : null}
       </span>
