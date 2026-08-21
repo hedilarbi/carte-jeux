@@ -85,6 +85,7 @@ export function RecommendedCard({
                     aria-label={`Ajouter au panier - ${product.name}`}
                     className="absolute bottom-2.5 right-2.5 z-40 flex size-9 items-center justify-center rounded-xl bg-brand-lavender text-[#03030A] shadow-[0_6px_18px_rgba(185,152,241,0.35)] transition hover:bg-brand-blue-mist"
                     productId={productId}
+                    productName={product.name}
                     productSlug={product.slug}
                 >
                     <ShoppingCart className="size-4" />
@@ -183,6 +184,7 @@ export function RecommendedCard({
                                 aria-label={`Ajouter au panier - ${product.name}`}
                                 className="rounded-md bg-brand-lavender px-2 py-2.5 text-center font-body text-[10px] font-black text-white transition hover:bg-brand-electric-blue md:px-3 md:py-3 md:text-xs"
                                 productId={productId}
+                                productName={product.name}
                                 productSlug={product.slug}
                             >
                                 Ajouter au panier

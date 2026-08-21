@@ -1,16 +1,18 @@
 "use client";
 
 import type { ButtonHTMLAttributes, MouseEvent, ReactNode } from "react";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useState } from "react";
+import { createPortal } from "react-dom";
 import { useRouter } from "next/navigation";
-import { CheckCircle2 } from "lucide-react";
 
+import { AddedToCartModal } from "@/components/site/cart/added-to-cart-modal";
 import { cn } from "@/lib/utils/cn";
 
 interface AddToCartButtonProps
   extends Omit<ButtonHTMLAttributes<HTMLButtonElement>, "children" | "onClick"> {
   children: ReactNode;
   productId?: string;
+  productName?: string;
   productSlug?: string;
   quantity?: number;
   redirectTo?: string;
@@ -21,6 +23,7 @@ export function AddToCartButton({
   className,
   disabled,
   productId,
+  productName,
   productSlug,
   quantity = 1,
   redirectTo,
@@ -30,16 +33,9 @@ export function AddToCartButton({
   const [isPending, setIsPending] = useState(false);
   const [hasError, setHasError] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
-  const successTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const canSubmit = Boolean(productId || productSlug);
 
-  useEffect(() => {
-    return () => {
-      if (successTimeoutRef.current) {
-        clearTimeout(successTimeoutRef.current);
-      }
-    };
-  }, []);
+  const closeSuccess = useCallback(() => setShowSuccess(false), []);
 
   async function handleClick(event: MouseEvent<HTMLButtonElement>) {
     event.preventDefault();
@@ -88,14 +84,6 @@ export function AddToCartButton({
         router.refresh();
       } else {
         setShowSuccess(true);
-
-        if (successTimeoutRef.current) {
-          clearTimeout(successTimeoutRef.current);
-        }
-
-        successTimeoutRef.current = setTimeout(() => {
-          setShowSuccess(false);
-        }, 3000);
       }
     } catch (error) {
       setHasError(true);
@@ -119,17 +107,18 @@ export function AddToCartButton({
         {children}
       </button>
 
-      {showSuccess ? (
-        <div className="pointer-events-none fixed inset-x-0 top-20 z-[120] flex justify-center px-4">
-          <div
-            className="pointer-events-auto flex min-h-14 max-w-[360px] items-center gap-3 rounded-[16px] border border-emerald-200 bg-white px-5 py-4 font-inter text-sm font-black text-[#012D69] shadow-[0_18px_45px_rgba(1,45,105,0.2)]"
-            role="status"
-          >
-            <CheckCircle2 className="size-5 shrink-0 text-emerald-500" />
-            Produit ajouté au panier
-          </div>
-        </div>
-      ) : null}
+      {/* Monté sur document.body : les cartes produit ont un ancêtre
+          `transform`, qui devient le bloc conteneur d'un enfant `fixed` et le
+          fait rogner par le `overflow-hidden` de la carte. */}
+      {showSuccess && typeof document !== "undefined"
+        ? createPortal(
+            <AddedToCartModal
+              onClose={closeSuccess}
+              productName={productName}
+            />,
+            document.body,
+          )
+        : null}
     </>
   );
 }

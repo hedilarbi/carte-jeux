@@ -1,9 +1,10 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useRef } from "react";
+import { useMemo } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
 import { RecommendedCard } from "@/components/site/home/RecommendedCard";
+import { useCarouselAutoplay } from "@/components/site/home/use-carousel-autoplay";
 import type { ProductPreview } from "@/types/home";
 
 export function RecommendedProductsCarousel({
@@ -14,59 +15,7 @@ export function RecommendedProductsCarousel({
   products: ProductPreview[];
 }) {
   const carouselProducts = useMemo(() => products.slice(0, 8), [products]);
-  const scrollRef = useRef<HTMLDivElement>(null);
-
-  const scrollToCard = useCallback((direction: "previous" | "next") => {
-    const scroller = scrollRef.current;
-
-    if (!scroller) {
-      return;
-    }
-
-    const cards = Array.from(scroller.querySelectorAll<HTMLElement>("[data-carousel-card]"));
-    const maxScrollLeft = scroller.scrollWidth - scroller.clientWidth;
-
-    if (!cards.length || maxScrollLeft <= 0) {
-      return;
-    }
-
-    const currentLeft = scroller.scrollLeft;
-
-    if (direction === "next" && currentLeft >= maxScrollLeft - 4) {
-      scroller.scrollTo({ left: 0, behavior: "smooth" });
-      return;
-    }
-
-    if (direction === "previous" && currentLeft <= 4) {
-      scroller.scrollTo({ left: maxScrollLeft, behavior: "smooth" });
-      return;
-    }
-
-    const currentIndex = cards.reduce((closestIndex, card, index) => {
-      const closestDistance = Math.abs(cards[closestIndex].offsetLeft - currentLeft);
-      const distance = Math.abs(card.offsetLeft - currentLeft);
-
-      return distance < closestDistance ? index : closestIndex;
-    }, 0);
-
-    const nextIndex =
-      direction === "next"
-        ? Math.min(currentIndex + 1, cards.length - 1)
-        : Math.max(currentIndex - 1, 0);
-
-    scroller.scrollTo({
-      left: Math.min(cards[nextIndex].offsetLeft, maxScrollLeft),
-      behavior: "smooth",
-    });
-  }, []);
-
-  useEffect(() => {
-    const intervalId = window.setInterval(() => {
-      scrollToCard("next");
-    }, 3000);
-
-    return () => window.clearInterval(intervalId);
-  }, [scrollToCard]);
+  const { scrollRef, scrollToCard } = useCarouselAutoplay();
 
   return (
     <div className="relative mt-10 max-w-full overflow-visible">

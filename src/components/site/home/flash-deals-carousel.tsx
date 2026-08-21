@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useCallback, useEffect, useMemo, useRef } from "react";
+import { useMemo } from "react";
 import { ChevronLeft, ChevronRight, ShoppingCart } from "lucide-react";
 
 import { cn } from "@/lib/utils/cn";
@@ -10,6 +10,7 @@ import { buildProductsHref } from "@/lib/utils/catalog-links";
 import { AddToCartButton } from "@/components/site/add-to-cart-button";
 import { FavoriteButton } from "@/components/site/favorites/favorite-button";
 import { ProductPlatformBadge } from "@/components/site/product-platform-badge";
+import { useCarouselAutoplay } from "@/components/site/home/use-carousel-autoplay";
 
 export type FlashDealProduct = {
   id?: number | string;
@@ -117,6 +118,7 @@ export function FlashDealCard({
           aria-label={`Ajouter au panier - ${product.name}`}
           className="absolute bottom-2.5 right-2.5 z-40 flex size-9 items-center justify-center rounded-xl bg-[#B0A4F5] text-[#1F0A4D] shadow-[0_6px_18px_rgba(176,164,245,0.34)] transition hover:bg-[#A681F0]"
           productId={productId}
+          productName={product.name}
           productSlug={product.slug}
         >
           <ShoppingCart className="size-4" />
@@ -212,6 +214,7 @@ export function FlashDealCard({
                 aria-label={`Ajouter au panier - ${product.name}`}
                 className="rounded-lg bg-[#B0A4F5] px-2 py-2.5 text-center font-body text-[10px] font-black text-[#1F0A4D] transition hover:bg-[#A681F0] md:px-3 md:py-3 md:text-xs"
                 productId={productId}
+                productName={product.name}
                 productSlug={product.slug}
               >
                 Ajouter au panier
@@ -242,59 +245,7 @@ export function FlashDealsCarousel({
   products: readonly FlashDealProduct[];
 }) {
   const carouselProducts = useMemo(() => products.slice(0, 8), [products]);
-  const scrollRef = useRef<HTMLDivElement>(null);
-
-  const scrollToCard = useCallback((direction: "previous" | "next") => {
-    const scroller = scrollRef.current;
-
-    if (!scroller) {
-      return;
-    }
-
-    const cards = Array.from(scroller.querySelectorAll<HTMLElement>("[data-carousel-card]"));
-    const maxScrollLeft = scroller.scrollWidth - scroller.clientWidth;
-
-    if (!cards.length || maxScrollLeft <= 0) {
-      return;
-    }
-
-    const currentLeft = scroller.scrollLeft;
-
-    if (direction === "next" && currentLeft >= maxScrollLeft - 4) {
-      scroller.scrollTo({ left: 0, behavior: "smooth" });
-      return;
-    }
-
-    if (direction === "previous" && currentLeft <= 4) {
-      scroller.scrollTo({ left: maxScrollLeft, behavior: "smooth" });
-      return;
-    }
-
-    const currentIndex = cards.reduce((closestIndex, card, index) => {
-      const closestDistance = Math.abs(cards[closestIndex].offsetLeft - currentLeft);
-      const distance = Math.abs(card.offsetLeft - currentLeft);
-
-      return distance < closestDistance ? index : closestIndex;
-    }, 0);
-
-    const nextIndex =
-      direction === "next"
-        ? Math.min(currentIndex + 1, cards.length - 1)
-        : Math.max(currentIndex - 1, 0);
-
-    scroller.scrollTo({
-      left: Math.min(cards[nextIndex].offsetLeft, maxScrollLeft),
-      behavior: "smooth",
-    });
-  }, []);
-
-  useEffect(() => {
-    const intervalId = window.setInterval(() => {
-      scrollToCard("next");
-    }, 3000);
-
-    return () => window.clearInterval(intervalId);
-  }, [scrollToCard]);
+  const { scrollRef, scrollToCard } = useCarouselAutoplay();
 
   return (
     <div className="relative mt-10 max-w-full overflow-visible">
