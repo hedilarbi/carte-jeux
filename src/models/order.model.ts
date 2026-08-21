@@ -61,6 +61,7 @@ export interface OrderRecord {
   deliveredAt?: Date;
   paymentProvider?: string;
   paymentReference?: string;
+  paymentTransactionId?: string;
   paidAt?: Date;
   createdAt: Date;
   updatedAt: Date;
@@ -310,6 +311,14 @@ const orderSchema = new Schema<OrderRecord>(
       type: String,
       trim: true,
       maxlength: 180,
+    },
+    // Identifiant de transaction renvoyé par la passerelle (orderId ClicToPay).
+    paymentTransactionId: {
+      type: String,
+      trim: true,
+      maxlength: 180,
+      index: true,
+      sparse: true,
     },
     paidAt: {
       type: Date,

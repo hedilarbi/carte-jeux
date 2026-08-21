@@ -200,6 +200,7 @@ export interface Order extends BaseEntity {
   deliveredAt?: string;
   paymentProvider?: string;
   paymentReference?: string;
+  paymentTransactionId?: string;
   paidAt?: string;
 }
 

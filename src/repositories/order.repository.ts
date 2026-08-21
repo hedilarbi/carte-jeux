@@ -93,6 +93,13 @@ export async function getOrderByOrderNumber(orderNumber: string) {
   return OrderModel.findOne({ orderNumber: orderNumber.trim() }).lean().exec();
 }
 
+export async function getOrderByPaymentTransactionId(transactionId: string) {
+  await connectToDatabase();
+  return OrderModel.findOne({ paymentTransactionId: transactionId.trim() })
+    .lean()
+    .exec();
+}
+
 export async function updateOrderById(id: string, payload: Partial<OrderRecord>) {
   await connectToDatabase();
   return OrderModel.findByIdAndUpdate(id, payload, {

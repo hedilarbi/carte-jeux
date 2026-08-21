@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useEffect, useState, type FormEvent } from "react";
 import {
   CheckCircle2,
-  // STRIPE DÉSACTIVÉ: CreditCard,
+  CreditCard,
   Mail,
   MessageCircle,
   ShoppingBag,
@@ -36,10 +36,11 @@ interface CheckoutCustomer {
   phone?: string;
 }
 
-type PaymentMethod = "whatsapp" | "stripe";
+type PaymentMethod = "whatsapp" | "stripe" | "clictopay";
 
 interface CheckoutPaymentConfig {
   whatsappOrderNumber?: string;
+  clicToPayConfigured?: boolean;
 }
 
 function normalizeWhatsAppNumber(value?: string) {
@@ -131,9 +132,15 @@ export function CheckoutOrderForm({
   const whatsAppNumber = normalizeWhatsAppNumber(
     paymentConfig.whatsappOrderNumber,
   );
-  const isPaymentConfigured = Boolean(whatsAppNumber);
+  const isClicToPayConfigured = Boolean(paymentConfig.clicToPayConfigured);
+  const isPaymentConfigured =
+    paymentMethod === "clictopay"
+      ? isClicToPayConfigured
+      : Boolean(whatsAppNumber);
   const paymentConfigurationMessage =
-    "Le numéro WhatsApp de commande doit être configuré avant de continuer.";
+    paymentMethod === "clictopay"
+      ? "Le paiement par carte bancaire doit être configuré avant de continuer."
+      : "Le numéro WhatsApp de commande doit être configuré avant de continuer.";
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -142,7 +149,7 @@ export function CheckoutOrderForm({
       return;
     }
 
-    if (paymentMethod === "whatsapp" && !isPaymentConfigured) {
+    if (!isPaymentConfigured) {
       setError(paymentConfigurationMessage);
       return;
     }
@@ -170,11 +177,11 @@ export function CheckoutOrderForm({
         }),
       );
 
-      // STRIPE DÉSACTIVÉ: l'API ne renvoie plus de checkoutUrl.
-      // if (paymentMethod === "stripe" && result.checkoutUrl) {
-      //   window.location.assign(result.checkoutUrl);
-      //   return;
-      // }
+      // ClicToPay : l'API renvoie le formUrl de la page de paiement hébergée.
+      if (paymentMethod === "clictopay" && result.checkoutUrl) {
+        window.location.assign(result.checkoutUrl);
+        return;
+      }
 
       if (paymentMethod === "whatsapp" && whatsAppNumber) {
         window.location.assign(
@@ -208,6 +215,7 @@ export function CheckoutOrderForm({
     >
       <section className="grid gap-[15px]">
         <PaymentMethodsCard
+          clicToPayConfigured={isClicToPayConfigured}
           whatsAppConfigured={Boolean(whatsAppNumber)}
           countryCode={countryCode}
           paymentMethod={paymentMethod}
@@ -225,8 +233,6 @@ export function CheckoutOrderForm({
         />
       </section>
 
-      {/* STRIPE DÉSACTIVÉ: isPaymentConfigured valait
-          `paymentMethod === "stripe" || isPaymentConfigured` */}
       <CheckoutSummary
         cart={cart}
         error={error}
@@ -240,11 +246,13 @@ export function CheckoutOrderForm({
 }
 
 function PaymentMethodsCard({
+  clicToPayConfigured,
   whatsAppConfigured,
   countryCode,
   paymentMethod,
   onPaymentMethodChange,
 }: {
+  clicToPayConfigured: boolean;
   whatsAppConfigured: boolean;
   countryCode: string | null;
   paymentMethod: PaymentMethod;
@@ -279,16 +287,18 @@ function PaymentMethodsCard({
             onClick={() => onPaymentMethodChange("whatsapp")}
           />
         )}
-        {/* {countryCode !== null && countryCode !== "TN" && (
+        {countryCode !== null && (
           <PaymentMethodOption
-            description="Payez en toute sécurité par carte bancaire avec Stripe."
+            description="Payez par carte bancaire tunisienne sur la page sécurisée ClicToPay."
             icon={<CreditCard className="size-8" />}
-            isConfigured={true}
-            name="Carte Bancaire"
-            selected={paymentMethod === "stripe"}
-            onClick={() => onPaymentMethodChange("stripe")}
+            isConfigured={clicToPayConfigured}
+            name="Carte bancaire ClicToPay (en maintenance)"
+            selected={paymentMethod === "clictopay"}
+            onClick={() => onPaymentMethodChange("clictopay")}
           />
-        )} */}
+        )}
+        {/* STRIPE DÉSACTIVÉ: l'option carte internationale passait par Stripe
+            (`countryCode !== "TN"`). */}
       </div>
     </section>
   );
@@ -498,12 +508,14 @@ function CheckoutSummary({
         disabled={isPending || !isPaymentConfigured}
         type="submit"
       >
-        {/* STRIPE DÉSACTIVÉ: le libellé "Payer par carte" s'affichait quand
-            paymentMethod === "stripe". */}
-        {isPending ? "Validation..." : "Continuer sur WhatsApp"}
+        {isPending
+          ? "Validation..."
+          : paymentMethod === "clictopay"
+            ? "Payer par carte"
+            : "Continuer sur WhatsApp"}
       </button>
 
-      {paymentMethod === "whatsapp" && !isPaymentConfigured ? (
+      {!isPaymentConfigured ? (
         <p className="mt-3 font-inter text-xs font-semibold leading-5 text-amber-700">
           {paymentConfigurationMessage}
         </p>

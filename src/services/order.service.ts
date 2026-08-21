@@ -8,6 +8,10 @@ import {
   createPaginatedResult,
   resolvePagination,
 } from "@/lib/utils/pagination";
+import {
+  registerPayment as registerClicToPayPayment,
+  verifyPayment as verifyClicToPayPayment,
+} from "@/lib/payment/clictopay";
 import { roundMoney } from "@/lib/utils/pricing";
 import { serializeDocument } from "@/lib/utils/serialization";
 import { orderUpdateSchema } from "@/lib/validation/order";
@@ -20,6 +24,7 @@ import {
   createOrder,
   getOrderById,
   getOrderByOrderNumber,
+  getOrderByPaymentTransactionId,
   listOrders,
   type OrderListFilters,
   updateOrderById,
@@ -115,7 +120,7 @@ export const orderService = {
       lastName: string;
       phone: string;
     };
-    paymentProvider: "whatsapp" | "stripe";
+    paymentProvider: "whatsapp" | "stripe" | "clictopay";
     sessionId: string;
     userId?: string;
   }) {
@@ -220,6 +225,129 @@ export const orderService = {
     }
 
     return serializedOrder;
+  },
+
+  /**
+   * Enregistre la commande auprès de ClicToPay et renvoie l'URL du formulaire
+   * de paiement. L'identifiant de transaction est persisté pour permettre la
+   * vérification au retour du client.
+   */
+  async startClicToPayPayment(input: {
+    orderId: string;
+    returnUrl: string;
+    failUrl?: string;
+  }) {
+    assertObjectId(input.orderId, "Identifiant de commande");
+
+    const order = await getOrderById(input.orderId);
+
+    if (!order) {
+      throw new AppError("Commande introuvable.", 404);
+    }
+
+    if (order.paymentStatus !== "pending") {
+      throw new AppError("Cette commande n'est plus en attente de paiement.", 409);
+    }
+
+    if (order.total <= 0) {
+      throw new AppError("Le montant à payer est invalide.", 422);
+    }
+
+    const registration = await registerClicToPayPayment({
+      amount: order.total,
+      currency: order.currency,
+      customerEmail: order.customerEmail,
+      description: `Commande ${order.orderNumber}`,
+      failUrl: input.failUrl,
+      orderNumber: order.orderNumber,
+      returnUrl: input.returnUrl,
+    });
+
+    await updateOrderById(input.orderId, {
+      paymentProvider: "clictopay",
+      paymentTransactionId: registration.orderId,
+    });
+
+    return {
+      formUrl: registration.formUrl,
+      transactionId: registration.orderId,
+    };
+  },
+
+  /**
+   * Interroge ClicToPay au retour du client et applique le résultat à la
+   * commande. L'opération est idempotente : une commande déjà réglée ou déjà
+   * échouée n'est pas remise à jour.
+   */
+  async confirmClicToPayPayment(transactionId: string) {
+    const normalizedTransactionId = transactionId.trim();
+
+    if (!normalizedTransactionId) {
+      throw new AppError("Identifiant de transaction manquant.", 400);
+    }
+
+    const order = await getOrderByPaymentTransactionId(normalizedTransactionId);
+
+    if (!order) {
+      throw new AppError("Commande introuvable.", 404);
+    }
+
+    if (order.paymentStatus !== "pending") {
+      return {
+        alreadyProcessed: true,
+        order: serializeDocument<Order>(order),
+        paymentStatus: order.paymentStatus,
+      };
+    }
+
+    const verification = await verifyClicToPayPayment({
+      transactionId: normalizedTransactionId,
+    });
+
+    // Résumé lisible du verdict, succès comme échec : la réponse brute de la
+    // passerelle est déjà tracée, mais elle est trop volumineuse pour être
+    // exploitable d'un coup d'oeil.
+    if (verification.isPaid) {
+      console.log(
+        `[clictopay] Paiement confirmé pour ${order.orderNumber} ` +
+          `(orderStatus=${verification.orderStatus}, ` +
+          `${verification.amount} ${order.currency}, transaction ${normalizedTransactionId})`,
+      );
+    } else {
+      // Le libellé brut de la passerelle est en anglais : on le garde côté
+      // serveur pour le support, le client ne voit que la version traduite.
+      console.warn(
+        `[clictopay] Paiement non abouti pour ${order.orderNumber} ` +
+          `(orderStatus=${verification.orderStatus}, actionCode=${verification.actionCode ?? "?"}): ` +
+          `${verification.rawDescription ?? "sans motif"}`,
+      );
+    }
+
+    const updated = await updateOrderById(String(order._id),
+      verification.isPaid
+        ? {
+            paidAt: new Date(),
+            paymentStatus: "paid",
+            status: "paid",
+          }
+        : {
+            paymentStatus: "failed",
+            status: "failed",
+          },
+    );
+
+    if (!updated) {
+      throw new AppError("Commande introuvable.", 404);
+    }
+
+    return {
+      alreadyProcessed: false,
+      failureReason: verification.failureReason,
+      order: serializeDocument<Order>(updated),
+      paymentStatus: verification.isPaid
+        ? ("paid" as const)
+        : ("failed" as const),
+    };
   },
 
   async update(id: string, input: z.input<typeof orderUpdateSchema>) {

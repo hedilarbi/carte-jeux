@@ -2,6 +2,7 @@ import { cookies } from "next/headers";
 import { Check } from "lucide-react";
 
 import { CheckoutOrderForm } from "@/components/site/checkout/checkout-order-form";
+import { isClicToPayConfigured } from "@/lib/payment/clictopay";
 import { CART_SESSION_COOKIE } from "@/lib/auth/cart-session";
 import { getCustomerPageSession } from "@/lib/auth/customer";
 import { cartService } from "@/services/cart.service";
@@ -62,6 +63,7 @@ export default async function CheckoutPage() {
         cart={cart}
         customer={customer}
         paymentConfig={{
+          clicToPayConfigured: isClicToPayConfigured(),
           whatsappOrderNumber: process.env.NEXT_PUBLIC_WHATSAPP_ORDER_NUMBER,
         }}
       />

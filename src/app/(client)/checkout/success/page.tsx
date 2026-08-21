@@ -4,6 +4,18 @@ import { redirect } from "next/navigation";
 // STRIPE DÉSACTIVÉ: import Stripe from "stripe";
 // STRIPE DÉSACTIVÉ: import { stripe } from "@/lib/stripe";
 
+import { orderService } from "@/services/order.service";
+
+async function isOrderPaid(orderNumber: string) {
+  try {
+    const order = await orderService.getByOrderNumber(orderNumber);
+
+    return order.paymentStatus === "paid";
+  } catch {
+    return false;
+  }
+}
+
 export default async function CheckoutSuccessPage({
   searchParams,
 }: {
@@ -11,8 +23,12 @@ export default async function CheckoutSuccessPage({
 }) {
   const { session_id, order_number } = await searchParams;
 
+  // Retour ClicToPay : la commande n'est affichée que si elle est réellement
+  // réglée en base, ce que seule la vérification serveur a pu écrire.
   if (!session_id) {
-    redirect("/");
+    if (!order_number || !(await isOrderPaid(order_number))) {
+      redirect("/");
+    }
   }
 
   // --- VÉRIFICATION STRIPE DÉSACTIVÉE TEMPORAIREMENT ---

@@ -14,6 +14,7 @@ import {
 import { checkoutCreateSchema } from "@/lib/validation/checkout";
 import { customerAuthService } from "@/services/customer-auth.service";
 import { orderService } from "@/services/order.service";
+import { getSiteBaseUrl } from "@/lib/utils/site-url";
 // STRIPE DÉSACTIVÉ: import { stripe } from "@/lib/stripe";
 
 async function readJsonBody(request: NextRequest) {
@@ -67,6 +68,21 @@ export async function POST(request: NextRequest) {
     revalidatePath("/checkout");
     revalidatePath("/panier");
     revalidatePath("/profil");
+
+    if (parsed.paymentMethod === "clictopay") {
+      const baseUrl = getSiteBaseUrl(request);
+      const returnUrl = `${baseUrl}/checkout/verification`;
+      const { formUrl } = await orderService.startClicToPayPayment({
+        orderId: order._id,
+        returnUrl,
+        failUrl: returnUrl,
+      });
+
+      return attachCartSessionCookie(
+        successResponse({ order, checkoutUrl: formUrl }, { status: 201 }),
+        cartSession,
+      );
+    }
 
     // --- STRIPE DÉSACTIVÉ TEMPORAIREMENT ---
     // if (parsed.paymentMethod === "stripe") {
