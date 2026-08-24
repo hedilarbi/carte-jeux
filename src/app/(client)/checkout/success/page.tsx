@@ -4,15 +4,17 @@ import { redirect } from "next/navigation";
 // STRIPE DÉSACTIVÉ: import Stripe from "stripe";
 // STRIPE DÉSACTIVÉ: import { stripe } from "@/lib/stripe";
 
+import { PurchaseTracker } from "@/components/site/checkout/purchase-tracker";
 import { orderService } from "@/services/order.service";
+import type { Order } from "@/types/entities";
 
-async function isOrderPaid(orderNumber: string) {
+async function getOrderIfPaid(orderNumber: string): Promise<Order | null> {
   try {
     const order = await orderService.getByOrderNumber(orderNumber);
 
-    return order.paymentStatus === "paid";
+    return order.paymentStatus === "paid" ? order : null;
   } catch {
-    return false;
+    return null;
   }
 }
 
@@ -23,10 +25,17 @@ export default async function CheckoutSuccessPage({
 }) {
   const { session_id, order_number } = await searchParams;
 
+  let order: Order | null = null;
+
   // Retour ClicToPay : la commande n'est affichée que si elle est réellement
   // réglée en base, ce que seule la vérification serveur a pu écrire.
   if (!session_id) {
-    if (!order_number || !(await isOrderPaid(order_number))) {
+    if (!order_number) {
+      redirect("/");
+    }
+    
+    order = await getOrderIfPaid(order_number);
+    if (!order) {
       redirect("/");
     }
   }
@@ -48,6 +57,13 @@ export default async function CheckoutSuccessPage({
 
   return (
     <main className="flex min-h-screen items-center justify-center bg-[linear-gradient(90deg,#E3CDFF_0%,#D8E0FF_67.31%,#C9CAFF_100%)] px-6 py-12">
+      {order && (
+        <PurchaseTracker 
+          orderNumber={order.orderNumber} 
+          value={order.total} 
+          currency={order.currency} 
+        />
+      )}
       <div className="w-full max-w-[600px] rounded-2xl bg-white/55 p-10 text-center shadow-[0_4px_4px_#B1A3F5] backdrop-blur-sm">
         <span className="mx-auto flex size-20 items-center justify-center rounded-full bg-green-500 text-white shadow-lg">
           <CheckCircle2 className="size-10" />

@@ -123,6 +123,7 @@ export const orderService = {
     paymentProvider: "whatsapp" | "stripe" | "clictopay";
     sessionId: string;
     userId?: string;
+    gclid?: string;
   }) {
     const cart = await getActiveCartBySessionId(input.sessionId);
 
@@ -207,6 +208,7 @@ export const orderService = {
       paymentReference: `${input.paymentProvider.toUpperCase()}-${randomBytes(4)
         .toString("hex")
         .toUpperCase()}`,
+      gclid: input.gclid,
     });
 
     await updateCartById(String(cart._id), {
@@ -384,6 +386,29 @@ export const orderService = {
 
     if (!updated) {
       throw new AppError("Commande introuvable.", 404);
+    }
+
+    if (
+      existing.paymentStatus !== "paid" &&
+      parsed.paymentStatus === "paid" &&
+      updated.gclid &&
+      process.env.GOOGLE_ADS_WEBHOOK_URL
+    ) {
+      try {
+        await fetch(process.env.GOOGLE_ADS_WEBHOOK_URL, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            gclid: updated.gclid,
+            value: updated.total,
+            currency: updated.currency,
+            transaction_id: updated.orderNumber,
+            timestamp: new Date().toISOString(),
+          }),
+        });
+      } catch (webhookError) {
+        console.error("Erreur lors de l'appel au webhook Google Ads:", webhookError);
+      }
     }
 
     return attachOrderItemSuppliers(serializeDocument<Order>(updated));

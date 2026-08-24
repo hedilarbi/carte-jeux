@@ -59,6 +59,7 @@ export async function POST(request: NextRequest) {
       paymentProvider: parsed.paymentMethod,
       sessionId: cartSession.sessionId,
       userId: customerSession?.userId,
+      gclid: request.cookies.get("playsdepot_gclid")?.value,
     });
 
     revalidatePath("/admin");

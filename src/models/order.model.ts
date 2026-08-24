@@ -65,6 +65,7 @@ export interface OrderRecord {
   paidAt?: Date;
   createdAt: Date;
   updatedAt: Date;
+  gclid?: string;
 }
 
 export type OrderDocument = HydratedDocument<OrderRecord>;
@@ -322,6 +323,11 @@ const orderSchema = new Schema<OrderRecord>(
     },
     paidAt: {
       type: Date,
+    },
+    gclid: {
+      type: String,
+      trim: true,
+      maxlength: 1000,
     },
   },
   {

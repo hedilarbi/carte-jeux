@@ -202,6 +202,7 @@ export interface Order extends BaseEntity {
   paymentReference?: string;
   paymentTransactionId?: string;
   paidAt?: string;
+  gclid?: string;
 }
 
 export interface PromoCampaign extends BaseEntity {

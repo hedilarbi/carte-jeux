@@ -5,6 +5,8 @@ import Script from "next/script";
 import { PublicShell } from "@/components/site/public-shell";
 import "./globals.css";
 
+import { GclidTracker } from "@/components/site/gclid-tracker";
+
 const GOOGLE_TAG_MANAGER_ID = "GTM-N6TLR6P6";
 const GOOGLE_ANALYTICS_ID = "G-RM7SCXRTE7";
 
@@ -50,6 +52,7 @@ export default function RootLayout({
       className={`${exo2.variable} ${orbitron.variable} ${inter.variable} h-full antialiased`}
     >
       <body className="min-h-full bg-background text-foreground font-sans max-w-screen">
+        <GclidTracker />
         <noscript>
           <iframe
             height="0"
