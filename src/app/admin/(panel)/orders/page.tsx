@@ -10,8 +10,9 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { formatCurrency, formatDateTime } from "@/lib/utils/format";
+import { formatDateTime, formatOrderCharge } from "@/lib/utils/format";
 import { orderService } from "@/services/order.service";
+import type { Order } from "@/types/entities";
 
 export default async function AdminOrdersPage() {
   const orders = await orderService.list({ page: 1, limit: 100 });
@@ -61,12 +62,7 @@ export default async function AdminOrdersPage() {
                     <div className="mt-1">{formatDateTime(order.createdAt)}</div>
                   </td>
                   <td className="px-6 py-4 text-xs">
-                    <div className="font-medium text-foreground">
-                      {formatCurrency(order.total, order.currency)}
-                    </div>
-                    <div className="mt-1 text-slate-500">
-                      {order.paymentProvider || "Fournisseur de paiement en attente"}
-                    </div>
+                    <OrderChargeCell order={order} />
                   </td>
                   <td className="px-6 py-4 text-xs text-slate-600">
                     <div>{order.supplierPlatform || "Pas encore acheté"}</div>
@@ -98,6 +94,26 @@ export default async function AdminOrdersPage() {
           </table>
         </CardContent>
       </Card>
+    </>
+  );
+}
+
+function OrderChargeCell({ order }: { order: Order }) {
+  const charge = formatOrderCharge(order);
+
+  return (
+    <>
+      <div className="font-medium text-foreground">{charge.charged}</div>
+      <div className="mt-1 text-slate-500">
+        {order.paymentProvider ? (
+          <>
+            {order.paymentProvider}
+            {charge.isConverted ? ` · payé en ${charge.chargedCurrency}` : null}
+          </>
+        ) : (
+          "Fournisseur de paiement en attente"
+        )}
+      </div>
     </>
   );
 }

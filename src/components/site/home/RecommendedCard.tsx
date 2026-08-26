@@ -7,6 +7,7 @@ import { buildProductsHref } from "@/lib/utils/catalog-links";
 import { AddToCartButton } from "@/components/site/add-to-cart-button";
 import { FavoriteButton } from "@/components/site/favorites/favorite-button";
 import { ProductPlatformBadge } from "@/components/site/product-platform-badge";
+import { ProductPrice } from "@/components/site/product-price";
 import type { ProductPreview } from "@/types/home";
 
 export function RecommendedCard({
@@ -74,10 +75,7 @@ export function RecommendedCard({
                         {product.platform} · {product.region ?? "Global"}
                     </p>
                     <p className="mt-auto font-body text-lg font-black text-red-500 min-[376px]:text-xl">
-                        {product.price}{" "}
-                        <span className="font-body text-[10px] text-red-300">
-                            TND
-                        </span>
+                        <ProductPrice amount={product.rawPrice} />
                     </p>
                 </div>
 
@@ -157,10 +155,7 @@ export function RecommendedCard({
                                     À partir de
                                 </p>
                                 <p className="mt-1 font-body text-base font-black text-red-500 md:text-3xl">
-                                    {product.price}{" "}
-                                    <span className="font-body text-[10px] text-red-300 md:text-[15px]">
-                                        TND
-                                    </span>
+                                    <ProductPrice amount={product.rawPrice} />
                                 </p>
                                 {/* {product.originalPrice ? (
                                     <p className="mt-1 font-body text-[11px] text-white line-through">

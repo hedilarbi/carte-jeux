@@ -70,47 +70,80 @@ export interface ClicToPayVerification {
 }
 
 /**
+ * Motif d'échec présenté au client, avec la marche à suivre quand elle existe.
+ *
  * ClicToPay renvoie `actionCodeDescription` en anglais quelle que soit la
- * valeur du paramètre `language`. Ce texte n'est jamais montré au client : on
- * traduit les motifs courants, et tout ce qui n'est pas reconnu retombe sur un
- * message générique en français — jamais sur l'anglais d'origine.
+ * valeur de `language`, et son texte contient presque toujours le mot
+ * « Rejected » : un simple filtrage textuel range donc tout dans la même case.
+ * On s'appuie d'abord sur `actionCode`, qui est numérique et non ambigu.
  */
-const FAILURE_TRANSLATIONS: ReadonlyArray<readonly [RegExp, string]> = [
+const FAILURE_BY_ACTION_CODE = new Map<number, string>([
+  [
+    -100,
+    "Aucun paiement n'a été effectué : la transaction a été abandonnée avant d'être validée.",
+  ],
+  [
+    -2006,
+    "L'authentification 3-D Secure n'a pas abouti. Le code de confirmation envoyé par votre banque n'a pas été validé : réessayez en saisissant le code reçu par SMS.",
+  ],
+  [
+    76,
+    "Votre banque n'a pas pu traiter la transaction. Contactez-la ou utilisez une autre carte.",
+  ],
+  [
+    116,
+    "Le solde de votre carte est insuffisant pour ce paiement.",
+  ],
+  [
+    100827,
+    "Votre banque a refusé le paiement sans en préciser le motif. C'est le plus souvent parce que le paiement en ligne n'est pas activé sur la carte : contactez votre banque pour l'autoriser.",
+  ],
+]);
+
+/**
+ * Repli sur le libellé anglais pour les codes que nous n'avons pas encore
+ * rencontrés. Les motifs vont du plus précis au plus général, car le libellé
+ * de ClicToPay cumule souvent plusieurs formulations.
+ */
+const FAILURE_BY_DESCRIPTION: ReadonlyArray<readonly [RegExp, string]> = [
   [
     /no payment attempted/i,
     "Aucun paiement n'a été effectué : la transaction a été abandonnée avant d'être validée.",
   ],
   [
-    /insufficient funds|not sufficient/i,
-    "La provision sur votre carte est insuffisante.",
-  ],
-  [/expired card|card has expired/i, "La carte utilisée est expirée."],
-  [
-    /issuer bank is not able|unable to process|cannot process transaction/i,
-    "Votre banque n'a pas pu traiter la transaction. Contactez-la ou utilisez une autre carte.",
+    /tds_auth_failed|ares\.status|not authenticated|authentication (failed|unavailable)|3-?d ?secure/i,
+    "L'authentification 3-D Secure n'a pas abouti. Le code de confirmation envoyé par votre banque n'a pas été validé : réessayez en saisissant le code reçu par SMS.",
   ],
   [
-    /lost card|stolen card|restricted card|blocked/i,
-    "Cette carte ne permet pas de réaliser ce paiement. Contactez votre banque.",
+    /low balance|not enough money|insufficient funds|not sufficient/i,
+    "Le solde de votre carte est insuffisant pour ce paiement.",
   ],
   [
-    /invalid card|incorrect card|invalid card number|invalid cvc|invalid cvv/i,
-    "Les informations de la carte saisies sont invalides.",
+    /expired card|card has expired/i,
+    "La carte utilisée est expirée.",
   ],
   [
     /exceeds.*limit|limit exceeded|withdrawal limit/i,
     "Le plafond de paiement de votre carte est atteint.",
   ],
   [
-    /3-?d ?secure|authentication failed|authentication unavailable/i,
-    "L'authentification 3-D Secure n'a pas abouti.",
+    /lost card|stolen card|restricted card|blocked/i,
+    "Cette carte ne permet pas de réaliser ce paiement. Contactez votre banque.",
   ],
   [
-    /timed out|time-?out|session (has )?expired/i,
-    "La session de paiement a expiré. Merci de recommencer votre commande.",
+    /invalid card|incorrect card|invalid cvc|invalid cvv|invalid expir/i,
+    "Les informations de la carte sont invalides. Vérifiez le numéro, la date d'expiration et le cryptogramme.",
   ],
   [
-    /do not honou?r|declined|rejected|refused/i,
+    /issuer bank is not able|unable to process|cannot process transaction/i,
+    "Votre banque n'a pas pu traiter la transaction. Contactez-la ou utilisez une autre carte.",
+  ],
+  [
+    /do not honou?r/i,
+    "Votre banque a refusé le paiement sans en préciser le motif. C'est le plus souvent parce que le paiement en ligne n'est pas activé sur la carte : contactez votre banque pour l'autoriser.",
+  ],
+  [
+    /declined|rejected|refused/i,
     "La transaction a été refusée par votre banque.",
   ],
 ];
@@ -119,12 +152,25 @@ const GENERIC_FAILURE_REASON =
   "Le paiement n'a pas abouti. Aucun montant ne vous a été débité.";
 
 /** Traduit en français le motif d'échec renvoyé par la passerelle. */
-export function translateFailureReason(description?: string) {
-  if (!description?.trim()) {
+export function translateFailureReason(input: {
+  actionCode?: number | null;
+  description?: string;
+}) {
+  if (typeof input.actionCode === "number") {
+    const known = FAILURE_BY_ACTION_CODE.get(input.actionCode);
+
+    if (known) {
+      return known;
+    }
+  }
+
+  const description = input.description?.trim();
+
+  if (!description) {
     return GENERIC_FAILURE_REASON;
   }
 
-  for (const [pattern, message] of FAILURE_TRANSLATIONS) {
+  for (const [pattern, message] of FAILURE_BY_DESCRIPTION) {
     if (pattern.test(description)) {
       return message;
     }
@@ -302,7 +348,10 @@ export async function verifyPayment(input: {
     actionCode: payload.actionCode,
     failureReason: isPaid
       ? undefined
-      : translateFailureReason(payload.actionCodeDescription),
+      : translateFailureReason({
+          actionCode: payload.actionCode,
+          description: payload.actionCodeDescription,
+        }),
     rawDescription: payload.actionCodeDescription,
   };
 }

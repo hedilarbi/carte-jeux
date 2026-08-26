@@ -28,6 +28,7 @@ export async function POST(request: NextRequest) {
     }
 
     return successResponse({
+      failureCode: result.failureCode ?? null,
       failureReason: result.failureReason ?? null,
       orderNumber: result.order.orderNumber,
       paymentStatus: result.paymentStatus,

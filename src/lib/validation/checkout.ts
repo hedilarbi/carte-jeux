@@ -19,10 +19,8 @@ export const checkoutCreateSchema = z.object({
     .email("Une adresse e-mail valide est requise.")
     .transform((value) => value.toLowerCase()),
   customerPhone: customerProfileCompletionSchema.shape.phone,
-  // STRIPE DÉSACTIVÉ: enum d'origine `["whatsapp", "stripe"]`. "stripe" reste
-  // refusé explicitement plutôt que créé sans lien de paiement ; "clictopay"
-  // couvre le paiement par carte bancaire via la monétique tunisienne.
-  paymentMethod: z.enum(["whatsapp", "clictopay"], {
+  paymentMethod: z.enum(["whatsapp", "stripe", "clictopay"], {
     error: "Le moyen de paiement sélectionné est invalide.",
   }),
+  currency: z.enum(["TND", "EUR"]).default("TND"),
 });

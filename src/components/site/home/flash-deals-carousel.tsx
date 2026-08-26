@@ -10,6 +10,7 @@ import { buildProductsHref } from "@/lib/utils/catalog-links";
 import { AddToCartButton } from "@/components/site/add-to-cart-button";
 import { FavoriteButton } from "@/components/site/favorites/favorite-button";
 import { ProductPlatformBadge } from "@/components/site/product-platform-badge";
+import { ProductPrice } from "@/components/site/product-price";
 import { useCarouselAutoplay } from "@/components/site/home/use-carousel-autoplay";
 
 export type FlashDealProduct = {
@@ -17,10 +18,12 @@ export type FlashDealProduct = {
   image?: string;
   name: string;
   originalPrice?: string;
+  rawOriginalPrice?: number;
   platform?: string;
   platformImage?: string;
   platformSlug?: string;
   price: string;
+  rawPrice: number;
   region?: string;
   slug?: string;
 };
@@ -94,12 +97,9 @@ export function FlashDealCard({
           </p>
           <div className="mt-1.5 flex flex-wrap items-baseline gap-x-2 gap-y-1">
             <p className="font-body text-lg font-black text-red-600 min-[376px]:text-xl">
-              {product.price}{" "}
-              <span className="font-body text-[10px] text-red-600/70">
-                TND
-              </span>
+              <ProductPrice amount={product.rawPrice} />
             </p>
-            {product.originalPrice ? (
+            {product.rawOriginalPrice ? (
               <p
                 className={cn(
                   "font-body line-through",
@@ -108,7 +108,7 @@ export function FlashDealCard({
                     : "text-[9px] text-[#1F0A4D]/70",
                 )}
               >
-                {product.originalPrice} TND
+                <ProductPrice amount={product.rawOriginalPrice} />
               </p>
             ) : null}
           </div>
@@ -188,12 +188,9 @@ export function FlashDealCard({
 
                 <div className="mt-1 flex flex-wrap items-baseline gap-x-2 gap-y-1">
                   <p className="font-body text-base font-black text-red-600 md:text-3xl">
-                    {product.price}{" "}
-                    <span className="font-body text-[10px] text-red-600/70 md:text-[15px]">
-                      TND
-                    </span>
+                    <ProductPrice amount={product.rawPrice} />
                   </p>
-                  {product.originalPrice ? (
+                  {product.rawOriginalPrice ? (
                     <p
                       className={cn(
                         "font-body line-through",
@@ -202,7 +199,7 @@ export function FlashDealCard({
                           : "text-[11px] text-[#1F0A4D]/70",
                       )}
                     >
-                      {product.originalPrice} TND
+                      <ProductPrice amount={product.rawOriginalPrice} />
                     </p>
                   ) : null}
                 </div>

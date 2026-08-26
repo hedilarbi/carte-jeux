@@ -1,6 +1,5 @@
 import { revalidatePath } from "next/cache";
 import type { NextRequest } from "next/server";
-// STRIPE DÉSACTIVÉ: import Stripe from "stripe";
 
 import {
   attachCartSessionCookie,
@@ -15,7 +14,9 @@ import { checkoutCreateSchema } from "@/lib/validation/checkout";
 import { customerAuthService } from "@/services/customer-auth.service";
 import { orderService } from "@/services/order.service";
 import { getSiteBaseUrl } from "@/lib/utils/site-url";
-// STRIPE DÉSACTIVÉ: import { stripe } from "@/lib/stripe";
+// Force Next.js to recompile this route
+import { stripe } from "@/lib/stripe";
+import { convertPrice, type Currency } from "@/lib/utils/currency";
 
 async function readJsonBody(request: NextRequest) {
   try {
@@ -42,6 +43,7 @@ export async function POST(request: NextRequest) {
         customerUser?.email ?? body.customerEmail ?? customerSession?.email,
       customerPhone: body.customerPhone ?? customerUser?.phone,
       paymentMethod: body.paymentMethod,
+      currency: body.currency,
     });
     const order = await orderService.createFromCart({
       customerEmail: parsed.customerEmail,
@@ -85,36 +87,57 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // --- STRIPE DÉSACTIVÉ TEMPORAIREMENT ---
-    // if (parsed.paymentMethod === "stripe") {
-    //   const origin = request.nextUrl.origin;
-    //   const session = await stripe.checkout.sessions.create({
-    //     payment_method_types: ["card"],
-    //     mode: "payment",
-    //     customer_email: parsed.customerEmail,
-    //     client_reference_id: order.paymentReference,
-    //     line_items: order.items.map((item) => ({
-    //       price_data: {
-    //         currency: item.currency.toLowerCase(),
-    //         product_data: {
-    //           name: item.productTitle,
-    //           metadata: {
-    //             sku: item.sku,
-    //           },
-    //         },
-    //         unit_amount: Math.round(item.finalUnitPrice * 100),
-    //       },
-    //       quantity: item.quantity,
-    //     })),
-    //     success_url: `${origin}/checkout/success?session_id={CHECKOUT_SESSION_ID}&order_number=${order.orderNumber}`,
-    //     cancel_url: `${origin}/checkout`,
-    //   });
-    //
-    //   return attachCartSessionCookie(
-    //     successResponse({ order, checkoutUrl: session.url }, { status: 201 }),
-    //     cartSession,
-    //   );
-    // }
+    if (parsed.paymentMethod === "stripe") {
+      const origin = request.nextUrl.origin;
+      const chargeCurrency = parsed.currency as Currency;
+      // La conversion est faite à l'unité puis multipliée par la quantité :
+      // le total facturé n'est donc pas exactement la conversion du total de
+      // la commande. On additionne les lignes réellement envoyées à Stripe.
+      const lineItems = order.items.map((item) => ({
+        price_data: {
+          currency: chargeCurrency.toLowerCase(),
+          product_data: {
+            name: item.productTitle,
+            metadata: {
+              sku: item.sku,
+            },
+          },
+          unit_amount: Math.round(
+            convertPrice(item.finalUnitPrice, chargeCurrency) * 100,
+          ),
+        },
+        quantity: item.quantity,
+      }));
+      const chargeTotal =
+        lineItems.reduce(
+          (sum, line) => sum + line.price_data.unit_amount * line.quantity,
+          0,
+        ) / 100;
+
+      const session = await stripe.checkout.sessions.create({
+        payment_method_types: ["card"],
+        mode: "payment",
+        customer_email: parsed.customerEmail,
+        client_reference_id: order.paymentReference,
+        line_items: lineItems,
+        success_url: `${origin}/checkout/success?session_id={CHECKOUT_SESSION_ID}&order_number=${order.orderNumber}`,
+        cancel_url: `${origin}/checkout`,
+      });
+
+      const chargedOrder = await orderService.recordPaymentCharge({
+        orderId: order._id,
+        paymentCurrency: chargeCurrency,
+        paymentTotal: chargeTotal,
+      });
+
+      return attachCartSessionCookie(
+        successResponse(
+          { order: chargedOrder, checkoutUrl: session.url },
+          { status: 201 },
+        ),
+        cartSession,
+      );
+    }
 
     return attachCartSessionCookie(
       successResponse({ order, checkoutUrl: null }, { status: 201 }),

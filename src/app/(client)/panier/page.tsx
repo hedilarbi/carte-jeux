@@ -12,6 +12,7 @@ import { CartSummary } from "@/components/site/cart/cart-summary";
 import { FavoriteButton } from "@/components/site/favorites/favorite-button";
 import { CART_SESSION_COOKIE } from "@/lib/auth/cart-session";
 import { formatProductPrice } from "@/lib/utils/pricing";
+import { ProductPrice } from "@/components/site/product-price";
 import { cartService } from "@/services/cart.service";
 import type { CartItem } from "@/types/entities";
 
@@ -131,7 +132,7 @@ function EmptyCart() {
 function CartItemCard({ item }: { item: CartItem }) {
   const originalLineTotal =
     item.discountPercent > 0 && item.unitPrice > item.finalUnitPrice
-      ? formatProductPrice(item.unitPrice * item.quantity)
+      ? item.unitPrice * item.quantity
       : undefined;
 
   return (
@@ -215,11 +216,11 @@ function CartItemCard({ item }: { item: CartItem }) {
           <div className="flex items-center justify-end gap-3">
             {originalLineTotal ? (
               <span className="text-lg text-[#2D2D2D] line-through opacity-80">
-                {originalLineTotal}
+                <ProductPrice amount={originalLineTotal} />
               </span>
             ) : null}
             <span className="text-2xl font-bold tracking-[0.06em] text-[#191919]">
-              {formatProductPrice(item.lineTotal)} {item.currency}
+              <ProductPrice amount={item.lineTotal} />
             </span>
           </div>
         </div>
@@ -265,7 +266,7 @@ function InspiredCard({ name }: { name: string }) {
           {name}
         </h3>
         <p className="mt-3 text-center font-body text-xl font-bold leading-[22px] text-[#012D69]">
-          50 Dt
+          <ProductPrice amount={50} />
         </p>
       </div>
     </article>

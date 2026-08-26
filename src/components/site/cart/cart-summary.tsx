@@ -4,7 +4,8 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 
 import { PromoCodeForm } from "@/components/site/cart/promo-code-form";
-import { formatProductPrice } from "@/lib/utils/pricing";
+import { useCurrency } from "@/components/site/providers/currency-provider";
+import { formatPriceWithCurrency } from "@/lib/utils/currency";
 import type { Cart } from "@/types/entities";
 
 interface CartSummaryProps {
@@ -42,9 +43,9 @@ export function CartSummary({
     };
   }, []);
 
+  const { currency, isLoading } = useCurrency();
   const itemCount = cart ? countItems(cart) : initialItemCount;
   const hasItems = itemCount > 0;
-  const currency = cart?.currency ?? "TND";
   const promoDiscountAmount = cart?.appliedPromoCode
     ? cart.promoDiscountAmount ?? 0
     : 0;
@@ -85,7 +86,11 @@ export function CartSummary({
           Total ({itemCount} produit{itemCount > 1 ? "s" : ""})
         </p>
         <div className="mt-3 flex min-h-[68px] w-full min-w-0 items-center justify-center overflow-hidden bg-[#D9D9D9]/55 px-3 text-center text-xl font-bold leading-tight tracking-[0.04em] sm:px-4 sm:text-2xl sm:tracking-[0.06em]">
-          {formatProductPrice(cart?.total ?? 0)} {currency}
+          {isLoading ? (
+            <span className="opacity-50">Calcul...</span>
+          ) : (
+            formatPriceWithCurrency(cart?.total ?? 0, currency)
+          )}
         </div>
       </div>
 
@@ -94,7 +99,7 @@ export function CartSummary({
           <div className="flex min-w-0 flex-wrap items-center justify-between gap-2">
             <span>Sous-total</span>
             <span className="break-words text-right font-black">
-              {formatProductPrice(cart?.subtotal ?? 0)} {currency}
+              {isLoading ? "..." : formatPriceWithCurrency(cart?.subtotal ?? 0, currency)}
             </span>
           </div>
           <PromoCodeForm
@@ -108,7 +113,7 @@ export function CartSummary({
             <div className="flex min-w-0 flex-wrap items-center justify-between gap-2">
               <span>Réduction produits</span>
               <span className="break-words text-right font-black">
-                {formatProductPrice(productDiscountAmount)} {currency}
+                {isLoading ? "..." : formatPriceWithCurrency(productDiscountAmount, currency)}
               </span>
             </div>
           ) : null}

@@ -16,6 +16,8 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils/cn";
 import { useHeaderCounters } from "@/components/site/site-header-counters";
+import { useCurrency } from "@/components/site/providers/currency-provider";
+import type { Currency } from "@/lib/utils/currency";
 
 const navItems = [
   { href: "/", label: "Accueil" },
@@ -181,7 +183,7 @@ export function SiteHeader() {
           </div>
 
           <div className="ml-auto flex items-center gap-2">
-
+            <CurrencySelector />
             <HeaderAction
               ariaLabel="Favoris"
               badge={String(favoriteCount)}
@@ -275,6 +277,10 @@ export function SiteHeader() {
               );
             })}
             <div className="mt-2 grid grid-cols-2 gap-2 border-t border-brand-ice/12 pt-3">
+              <div className="col-span-2 flex items-center justify-between px-4 py-2">
+                <span className="text-sm font-semibold text-brand-periwinkle">Devise</span>
+                <CurrencySelector />
+              </div>
               {user ? (
                 <>
                   <Link
@@ -442,5 +448,23 @@ function ProfileDropdown({
         </div>
       ) : null}
     </div>
+  );
+}
+
+function CurrencySelector() {
+  const { currency, setCurrency, isLoading } = useCurrency();
+
+  if (isLoading) return null;
+
+  return (
+    <select
+      value={currency}
+      onChange={(e) => setCurrency(e.target.value as Currency)}
+      className="h-10 rounded-xl border border-brand-ice/15 bg-brand-lilac/8 px-3 py-2 text-sm font-bold text-brand-periwinkle outline-none transition hover:border-brand-lavender hover:text-brand-lavender cursor-pointer"
+      aria-label="Sélectionner la devise"
+    >
+      <option value="TND" className="bg-[#0D0D22] text-white">TND</option>
+      <option value="EUR" className="bg-[#0D0D22] text-white">EUR</option>
+    </select>
   );
 }

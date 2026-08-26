@@ -62,6 +62,10 @@ export interface OrderRecord {
   paymentProvider?: string;
   paymentReference?: string;
   paymentTransactionId?: string;
+  /** Devise réellement débitée au client (EUR via Stripe, TND via ClicToPay). */
+  paymentCurrency?: string;
+  /** Montant réellement débité, exprimé dans `paymentCurrency`. */
+  paymentTotal?: number;
   paidAt?: Date;
   createdAt: Date;
   updatedAt: Date;
@@ -312,6 +316,17 @@ const orderSchema = new Schema<OrderRecord>(
       type: String,
       trim: true,
       maxlength: 180,
+    },
+    paymentCurrency: {
+      type: String,
+      trim: true,
+      uppercase: true,
+      minlength: 3,
+      maxlength: 3,
+    },
+    paymentTotal: {
+      type: Number,
+      min: 0,
     },
     // Identifiant de transaction renvoyé par la passerelle (orderId ClicToPay).
     paymentTransactionId: {

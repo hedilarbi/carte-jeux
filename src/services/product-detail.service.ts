@@ -27,6 +27,7 @@ export interface ProductDetailRelatedProduct {
   platformImage?: string;
   platformName: string;
   price: string;
+  rawPrice: number;
   slug: string;
   title: string;
 }
@@ -42,9 +43,11 @@ export interface ProductDetailPageContent {
   id: string;
   image?: string;
   originalPrice?: string;
+  rawOriginalPrice?: number;
   platform: ProductDetailCategory;
   points: number;
   price: string;
+  rawPrice: number;
   regions: ProductDetailRegion[];
   relatedProducts: ProductDetailRelatedProduct[];
   seoDescription?: string;
@@ -137,6 +140,7 @@ function toRelatedProduct(
     platformImage: platform?.image,
     platformName: platform?.name ?? "Global",
     price: formatProductPrice(product.finalPrice),
+    rawPrice: product.finalPrice,
     slug: product.slug,
     title: product.title,
   };
@@ -204,6 +208,10 @@ export const productDetailService = {
         product.discountPercent > 0 && product.price > product.finalPrice
           ? formatProductPrice(product.price)
           : undefined,
+      rawOriginalPrice:
+        product.discountPercent > 0 && product.price > product.finalPrice
+          ? product.price
+          : undefined,
       platform: platform
         ? toDetailCategory(platform)
         : {
@@ -213,6 +221,7 @@ export const productDetailService = {
           },
       points: Math.max(1, Math.round(product.finalPrice * 5)),
       price: formatProductPrice(product.finalPrice),
+      rawPrice: product.finalPrice,
       regions: productRegions.map(toDetailRegion),
       relatedProducts,
       seoDescription: product.seoDescription,

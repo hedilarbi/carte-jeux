@@ -16,6 +16,7 @@ import {
   type ProductDetailRelatedProduct,
 } from "@/services/product-detail.service";
 import { ProductPurchaseCard } from "@/components/site/product-purchase-card";
+import { ProductPrice } from "@/components/site/product-price";
 
 type ProductPageProps = {
   params: Promise<{ slug: string }>;
@@ -227,8 +228,10 @@ function PurchaseCard({ product }: { product: ProductDetailPageContent }) {
         currency: product.currency,
         id: product.id,
         originalPrice: product.originalPrice,
+        rawOriginalPrice: product.rawOriginalPrice,
         points: product.points,
         price: product.price,
+        rawPrice: product.rawPrice,
         slug: product.slug,
       }}
     />
@@ -302,7 +305,7 @@ function RelatedProductCard({
           {product.title}
         </h3>
         <p className="mt-3 text-center font-body text-xl font-bold leading-[22px] text-red-600">
-          {product.price} TND
+          <ProductPrice amount={product.rawPrice} />
         </p>
       </div>
     </article>

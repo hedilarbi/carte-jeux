@@ -23,7 +23,11 @@ import {
   PAYMENT_STATUS_LABELS,
   PAYMENT_STATUS_OPTIONS,
 } from "@/constants/admin";
-import { formatCurrency, formatDateTime } from "@/lib/utils/format";
+import {
+  formatCurrency,
+  formatDateTime,
+  formatOrderCharge,
+} from "@/lib/utils/format";
 import { fetchJson } from "@/lib/utils/fetch-json";
 import type { Order } from "@/types/entities";
 
@@ -64,6 +68,7 @@ export function OrderDetailManager({
   initialOrder,
 }: OrderDetailManagerProps) {
   const [order, setOrder] = useState(initialOrder);
+  const orderCharge = formatOrderCharge(order);
   const customerName =
     [order.customerFirstName, order.customerLastName]
       .map((value) => value?.trim())
@@ -228,11 +233,17 @@ export function OrderDetailManager({
           <CardContent className="grid gap-4 md:grid-cols-2">
             <div className="rounded-2xl border border-border bg-slate-50 p-4">
               <div className="text-xs uppercase tracking-[0.24em] text-slate-500">
-                Total
+                {orderCharge.isConverted ? "Montant encaissé" : "Total"}
               </div>
               <div className="mt-2 text-2xl font-semibold text-foreground">
-                {formatCurrency(order.total, order.currency)}
+                {orderCharge.charged}
               </div>
+              {orderCharge.isConverted ? (
+                <div className="mt-1 text-sm text-slate-500">
+                  Payé en {orderCharge.chargedCurrency}
+                  {order.paymentProvider ? ` via ${order.paymentProvider}` : ""}
+                </div>
+              ) : null}
               <div className="mt-2 text-sm text-slate-600">
                 Sous-total {formatCurrency(order.subtotal, order.currency)} ·
                 Remise {formatCurrency(order.totalDiscount, order.currency)}

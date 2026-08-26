@@ -3,6 +3,7 @@ import { Heart, Plus, Star, Zap } from "lucide-react";
 import { cn } from "@/lib/utils/cn";
 import type { ProductPreview } from "@/components/site/home/home-data";
 import { HomeIcon } from "@/components/site/home/home-icons";
+import { ProductPrice } from "@/components/site/product-price";
 
 const badgeStyles = {
   instant:
@@ -86,14 +87,11 @@ export function ProductCard({
         <div className="mt-4 flex items-end justify-between gap-3">
           <div className="flex flex-wrap items-baseline gap-x-2 gap-y-1">
             <p className="font-body text-base font-black text-red-500">
-              {product.price}{" "}
-              <span className="font-body text-[10px] text-red-300">
-                TND
-              </span>
+              <ProductPrice amount={product.rawPrice} />
             </p>
-            {product.originalPrice ? (
+            {product.rawOriginalPrice ? (
               <p className="font-body text-[11px] text-brand-lavender line-through">
-                {product.originalPrice} TND
+                <ProductPrice amount={product.rawOriginalPrice} />
               </p>
             ) : null}
           </div>

@@ -8,6 +8,7 @@ import { FavoriteButton } from "@/components/site/favorites/favorite-button";
 import { FAVORITE_SESSION_COOKIE } from "@/lib/auth/favorite-session";
 import { getCustomerPageSession } from "@/lib/auth/customer";
 import { formatProductPrice } from "@/lib/utils/pricing";
+import { ProductPrice } from "@/components/site/product-price";
 import { favoritesService } from "@/services/favorites.service";
 import type { FavoriteItem, FavoriteList } from "@/types/entities";
 
@@ -106,10 +107,7 @@ function FavoriteCard({ item }: { item: FavoriteItem }) {
           {item.productTitle}
         </h2>
         <p className="mt-4 font-body text-xl font-black text-red-600">
-          {formatProductPrice(item.price)}{" "}
-          <span className="font-body text-[11px] text-red-600/70">
-            {item.currency}
-          </span>
+          <ProductPrice amount={item.price} />
         </p>
 
         <AddToCartButton

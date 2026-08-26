@@ -107,6 +107,8 @@ function toCatalogProduct(
     platformImage: platform?.image,
     platformSlug: platform?.slug,
     price: formatProductPrice(product.finalPrice),
+    rawPrice: product.finalPrice,
+    rawOriginalPrice: product.discountPercent > 0 && product.price > product.finalPrice ? product.price : undefined,
     region: region?.name ?? "Global",
     slug: product.slug,
     title: product.title,

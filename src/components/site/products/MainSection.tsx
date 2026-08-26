@@ -225,10 +225,12 @@ function ProductResultCard({
         image: product.image,
         name: product.title,
         originalPrice: product.originalPrice,
+        rawOriginalPrice: product.rawOriginalPrice,
         platform: product.platform,
         platformImage: product.platformImage,
         platformSlug: product.platformSlug,
         price: product.price,
+        rawPrice: product.rawPrice,
         slug: product.slug,
     };
 

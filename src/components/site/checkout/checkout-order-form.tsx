@@ -15,11 +15,9 @@ import {
 import { PhoneNumberField } from "@/components/site/auth/phone-number-field";
 import { fetchJson } from "@/lib/utils/fetch-json";
 import { formatProductPrice } from "@/lib/utils/pricing";
+import { useCurrency } from "@/components/site/providers/currency-provider";
+import { formatPriceWithCurrency, type Currency } from "@/lib/utils/currency";
 import type { Cart, CartItem, Order } from "@/types/entities";
-
-function formatPrice(value: number) {
-  return formatProductPrice(value);
-}
 
 function countItems(items: CartItem[]) {
   return items.reduce((sum, item) => sum + item.quantity, 0);
@@ -55,10 +53,12 @@ function buildWhatsAppCheckoutUrl({
   cart,
   order,
   phoneNumber,
+  currency,
 }: {
   cart: Cart;
   order: Order;
   phoneNumber: string;
+  currency: Currency;
 }) {
   const lines = [
     "Bonjour, je souhaite finaliser cette commande :",
@@ -73,17 +73,17 @@ function buildWhatsAppCheckoutUrl({
     "Panier :",
     ...cart.items.map(
       (item) =>
-        `${item.quantity} × ${item.productTitle} — ${formatPrice(item.lineTotal)} ${item.currency}`,
+        `${item.quantity} × ${item.productTitle} — ${formatPriceWithCurrency(item.lineTotal, currency)}`,
     ),
     ...(order.appliedPromoCode
       ? [
         "",
         `Code promo : ${order.appliedPromoCode.code}`,
-        `Remise promo : ${formatPrice(order.appliedPromoCode.discountAmount ?? 0)} ${order.currency}`,
+        `Remise promo : ${formatPriceWithCurrency(order.appliedPromoCode.discountAmount ?? 0, currency)}`,
       ]
       : []),
     "",
-    `Total : ${formatPrice(order.total)} ${order.currency}`,
+    `Total : ${formatPriceWithCurrency(order.total, currency)}`,
   ];
 
   return `https://wa.me/${phoneNumber}?text=${encodeURIComponent(lines.join("\n"))}`;
@@ -105,28 +105,17 @@ export function CheckoutOrderForm({
   const [email, setEmail] = useState(customer?.email ?? "");
   const [error, setError] = useState<string | null>(null);
   const [isPending, setIsPending] = useState(false);
-  const [countryCode, setCountryCode] = useState<string | null>(null);
+  const { currency, isLoading: isCurrencyLoading } = useCurrency();
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>("whatsapp");
 
   useEffect(() => {
-    fetch("https://ipapi.co/json/")
-      .then((res) => res.json())
-      .then((data) => {
-        setCountryCode(data.country_code);
-        // STRIPE DÉSACTIVÉ: hors Tunisie on basculait sur Stripe.
-        // if (data.country_code !== "TN") {
-        //   setPaymentMethod("stripe");
-        // } else {
-        //   setPaymentMethod("whatsapp");
-        // }
-        setPaymentMethod("whatsapp");
-      })
-      .catch(() => {
-        // Fallback to Tunisia if IP detection fails
-        setCountryCode("TN");
-        setPaymentMethod("whatsapp");
-      });
-  }, []);
+    // Si la devise est EUR, on force Stripe. Sinon, on garde whatsapp par défaut ou le choix de l'utilisateur.
+    if (currency === "EUR") {
+      setPaymentMethod("stripe");
+    } else if (paymentMethod === "stripe") {
+      setPaymentMethod("whatsapp");
+    }
+  }, [currency]);
 
   const isAuthenticated = Boolean(customer);
   const whatsAppNumber = normalizeWhatsAppNumber(
@@ -168,6 +157,7 @@ export function CheckoutOrderForm({
           customerEmail: email,
           customerPhone,
           paymentMethod,
+          currency,
         }),
       });
 
@@ -189,8 +179,15 @@ export function CheckoutOrderForm({
             cart,
             order: result.order,
             phoneNumber: whatsAppNumber,
+            currency,
           }),
         );
+        return;
+      }
+
+      // Stripe : l'API renvoie l'URL de la session Checkout
+      if (paymentMethod === "stripe" && result.checkoutUrl) {
+        window.location.assign(result.checkoutUrl);
         return;
       }
     } catch (submitError) {
@@ -217,7 +214,7 @@ export function CheckoutOrderForm({
         <PaymentMethodsCard
           clicToPayConfigured={isClicToPayConfigured}
           whatsAppConfigured={Boolean(whatsAppNumber)}
-          countryCode={countryCode}
+          currency={currency}
           paymentMethod={paymentMethod}
           onPaymentMethodChange={setPaymentMethod}
         />
@@ -237,9 +234,11 @@ export function CheckoutOrderForm({
         cart={cart}
         error={error}
         isPaymentConfigured={isPaymentConfigured}
-        isPending={isPending || countryCode === null}
+        isPending={isPending || isCurrencyLoading}
         paymentConfigurationMessage={paymentConfigurationMessage}
         paymentMethod={paymentMethod}
+        currency={currency}
+        isCurrencyLoading={isCurrencyLoading}
       />
     </form>
   );
@@ -248,13 +247,13 @@ export function CheckoutOrderForm({
 function PaymentMethodsCard({
   clicToPayConfigured,
   whatsAppConfigured,
-  countryCode,
+  currency,
   paymentMethod,
   onPaymentMethodChange,
 }: {
   clicToPayConfigured: boolean;
   whatsAppConfigured: boolean;
-  countryCode: string | null;
+  currency: Currency;
   paymentMethod: PaymentMethod;
   onPaymentMethodChange: (method: PaymentMethod) => void;
 }) {
@@ -271,13 +270,7 @@ function PaymentMethodsCard({
       </div>
 
       <div className="grid gap-3">
-        {countryCode === null && (
-          <p className="font-inter text-sm font-semibold text-black/50">Chargement...</p>
-        )}
-        {/* STRIPE DÉSACTIVÉ: WhatsApp était réservé à la Tunisie
-            (`countryCode === "TN"`), le reste du monde passait par Stripe.
-            Tant que Stripe est coupé, WhatsApp est proposé à tout le monde. */}
-        {countryCode !== null && (
+        {currency === "TND" && (
           <PaymentMethodOption
             description="Envoyez votre commande préremplie à notre équipe via WhatsApp."
             icon={<MessageCircle className="size-8" />}
@@ -287,7 +280,7 @@ function PaymentMethodsCard({
             onClick={() => onPaymentMethodChange("whatsapp")}
           />
         )}
-        {countryCode !== null && (
+        {currency === "TND" && (
           <PaymentMethodOption
             description="Payez par carte bancaire tunisienne sur la page sécurisée ClicToPay."
             icon={<CreditCard className="size-8" />}
@@ -297,8 +290,16 @@ function PaymentMethodsCard({
             onClick={() => onPaymentMethodChange("clictopay")}
           />
         )}
-        {/* STRIPE DÉSACTIVÉ: l'option carte internationale passait par Stripe
-            (`countryCode !== "TN"`). */}
+        {currency === "EUR" && (
+          <PaymentMethodOption
+            description="Payez en toute sécurité par carte bancaire avec Stripe."
+            icon={<CreditCard className="size-8" />}
+            isConfigured={true}
+            name="Carte Bancaire Internationale (Stripe)"
+            selected={paymentMethod === "stripe"}
+            onClick={() => onPaymentMethodChange("stripe")}
+          />
+        )}
       </div>
     </section>
   );
@@ -448,6 +449,8 @@ function CheckoutSummary({
   isPending,
   paymentConfigurationMessage,
   paymentMethod,
+  currency,
+  isCurrencyLoading,
 }: {
   cart: Cart;
   error: string | null;
@@ -455,12 +458,14 @@ function CheckoutSummary({
   isPending: boolean;
   paymentConfigurationMessage: string;
   paymentMethod: PaymentMethod;
+  currency: Currency;
+  isCurrencyLoading: boolean;
 }) {
   return (
     <aside className="rounded-2xl bg-white p-7 text-black shadow-[0_4px_4px_#B0A4F5] backdrop-blur-[2px] lg:min-h-[680px]">
       <div className="grid gap-[10px]">
         {cart.items.map((item) => (
-          <SummaryLine item={item} key={item.productId} />
+          <SummaryLine item={item} key={item.productId} currency={currency} isCurrencyLoading={isCurrencyLoading} />
         ))}
       </div>
 
@@ -472,20 +477,20 @@ function CheckoutSummary({
           </span>
           <span>Total</span>
           <span className="text-right font-black">
-            {formatPrice(cart.subtotal)} {cart.currency}
+            {isCurrencyLoading ? "..." : formatPriceWithCurrency(cart.subtotal, currency)}
           </span>
           <span>Frais de service</span>
-          <span className="text-right font-black">0 {cart.currency}</span>
+          <span className="text-right font-black">0 {currency}</span>
           <span>Réduction</span>
           <span className="text-right font-black">
-            {formatPrice(cart.totalDiscount)} {cart.currency}
+            {isCurrencyLoading ? "..." : formatPriceWithCurrency(cart.totalDiscount, currency)}
           </span>
           {cart.appliedPromoCode ? (
             <>
               <span>Code promo</span>
               <span className="text-right font-black text-[#012D69]">
                 {cart.appliedPromoCode.code} · -
-                {formatPrice(cart.promoDiscountAmount ?? 0)} {cart.currency}
+                {isCurrencyLoading ? "..." : formatPriceWithCurrency(cart.promoDiscountAmount ?? 0, currency)}
               </span>
             </>
           ) : null}
@@ -497,7 +502,7 @@ function CheckoutSummary({
           Total:
         </p>
         <div className="mt-3 flex h-[68px] w-full items-center justify-center bg-[#D9D9D9]/55 text-center font-inter text-2xl font-bold tracking-[0.06em]">
-          {formatPrice(cart.total)} {cart.currency}
+          {isCurrencyLoading ? "Calcul..." : formatPriceWithCurrency(cart.total, currency)}
         </div>
       </div>
 
@@ -508,12 +513,12 @@ function CheckoutSummary({
       >
         {isPending
           ? "Validation..."
-          : paymentMethod === "clictopay"
+          : paymentMethod === "clictopay" || paymentMethod === "stripe"
             ? "Payer par carte"
             : "Continuer sur WhatsApp"}
       </button>
 
-      {!isPaymentConfigured ? (
+      {paymentMethod === "whatsapp" && !isPaymentConfigured ? (
         <p className="mt-3 font-inter text-xs font-semibold leading-5 text-amber-700">
           {paymentConfigurationMessage}
         </p>
@@ -540,7 +545,7 @@ function CheckoutSummary({
   );
 }
 
-function SummaryLine({ item }: { item: CartItem }) {
+function SummaryLine({ item, currency, isCurrencyLoading }: { item: CartItem, currency: Currency, isCurrencyLoading: boolean }) {
   return (
     <article className="grid grid-cols-[87px_minmax(0,1fr)_26px] gap-5">
       <div className="relative aspect-[625/873] w-[87px] overflow-hidden bg-white shadow-[0_4px_12px_rgba(1,45,105,0.12)]">
@@ -561,17 +566,19 @@ function SummaryLine({ item }: { item: CartItem }) {
           Produit : {item.sku}
         </p>
         <p className="mt-4 font-body text-sm tracking-[0.06em] text-black">
-          {item.discountPercent > 0 ? (
+          {isCurrencyLoading ? (
+             <span>Calcul...</span>
+          ) : item.discountPercent > 0 ? (
             <>
               <span className="mr-2 font-medium line-through">
-                {formatPrice(item.unitPrice)}
+                {formatPriceWithCurrency(item.unitPrice, currency)}
               </span>
               <span className="font-bold no-underline">
-                {formatPrice(item.finalUnitPrice)}
+                {formatPriceWithCurrency(item.finalUnitPrice, currency)}
               </span>
             </>
           ) : (
-            <span className="font-bold">{formatPrice(item.finalUnitPrice)}</span>
+            <span className="font-bold">{formatPriceWithCurrency(item.finalUnitPrice, currency)}</span>
           )}
         </p>
       </div>

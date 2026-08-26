@@ -25,11 +25,11 @@ export interface CatalogSelectedFilters {
 export interface CatalogProduct {
   id: string;
   image?: string;
-  originalPrice?: string;
-  platform: string;
-  platformImage?: string;
   platformSlug?: string;
   price: string;
+  rawPrice: number;
+  originalPrice?: string;
+  rawOriginalPrice?: number;
   region: string;
   slug: string;
   title: string;

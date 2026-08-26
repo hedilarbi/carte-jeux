@@ -6,7 +6,9 @@ export interface ProductPreview {
   platform: string;
   name: string;
   price: string;
+  rawPrice: number;
   originalPrice?: string;
+  rawOriginalPrice?: number;
   currency?: string;
   image?: string;
   platformImage?: string;

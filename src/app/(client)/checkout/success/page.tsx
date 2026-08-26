@@ -1,8 +1,8 @@
 import { CheckCircle2 } from "lucide-react";
 import Link from "next/link";
 import { redirect } from "next/navigation";
-// STRIPE DÉSACTIVÉ: import Stripe from "stripe";
-// STRIPE DÉSACTIVÉ: import { stripe } from "@/lib/stripe";
+import Stripe from "stripe";
+import { stripe } from "@/lib/stripe";
 
 import { PurchaseTracker } from "@/components/site/checkout/purchase-tracker";
 import { orderService } from "@/services/order.service";
@@ -40,20 +40,18 @@ export default async function CheckoutSuccessPage({
     }
   }
 
-  // --- VÉRIFICATION STRIPE DÉSACTIVÉE TEMPORAIREMENT ---
-  // Sans elle, cette page ne prouve plus que la commande a été payée : elle
-  // n'est atteignable que via une redirection Stripe, donc inaccessible tant
-  // que Stripe est coupé.
-  // try {
-  //   const session = await stripe.checkout.sessions.retrieve(session_id);
-  //
-  //   if (session.payment_status !== "paid") {
-  //     redirect("/");
-  //   }
-  // } catch (error) {
-  //   console.error("Error retrieving Stripe session", error);
-  //   redirect("/");
-  // }
+  if (session_id) {
+    try {
+      const session = await stripe.checkout.sessions.retrieve(session_id);
+
+      if (session.payment_status !== "paid") {
+        redirect("/");
+      }
+    } catch (error) {
+      console.error("Error retrieving Stripe session", error);
+      redirect("/");
+    }
+  }
 
   return (
     <main className="flex min-h-screen items-center justify-center bg-[linear-gradient(90deg,#E3CDFF_0%,#D8E0FF_67.31%,#C9CAFF_100%)] px-6 py-12">

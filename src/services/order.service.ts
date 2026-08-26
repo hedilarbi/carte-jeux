@@ -12,7 +12,7 @@ import {
   registerPayment as registerClicToPayPayment,
   verifyPayment as verifyClicToPayPayment,
 } from "@/lib/payment/clictopay";
-import { roundMoney } from "@/lib/utils/pricing";
+import { roundMoney, roundToCents } from "@/lib/utils/pricing";
 import { serializeDocument } from "@/lib/utils/serialization";
 import { orderUpdateSchema } from "@/lib/validation/order";
 import {
@@ -230,6 +230,30 @@ export const orderService = {
   },
 
   /**
+   * Mémorise la devise et le montant réellement présentés à la passerelle,
+   * qui peuvent différer du total de la commande : le catalogue est libellé en
+   * dinars, mais un client hors Tunisie est débité en euros.
+   */
+  async recordPaymentCharge(input: {
+    orderId: string;
+    paymentCurrency: string;
+    paymentTotal: number;
+  }) {
+    assertObjectId(input.orderId, "Identifiant de commande");
+
+    const updated = await updateOrderById(input.orderId, {
+      paymentCurrency: input.paymentCurrency.toUpperCase(),
+      paymentTotal: roundToCents(input.paymentTotal),
+    });
+
+    if (!updated) {
+      throw new AppError("Commande introuvable.", 404);
+    }
+
+    return serializeDocument<Order>(updated);
+  },
+
+  /**
    * Enregistre la commande auprès de ClicToPay et renvoie l'URL du formulaire
    * de paiement. L'identifiant de transaction est persisté pour permettre la
    * vérification au retour du client.
@@ -268,6 +292,10 @@ export const orderService = {
     await updateOrderById(input.orderId, {
       paymentProvider: "clictopay",
       paymentTransactionId: registration.orderId,
+      // ClicToPay débite en dinars (ISO 788), quelle que soit la graphie
+      // enregistrée sur la commande.
+      paymentCurrency: "TND",
+      paymentTotal: order.total,
     });
 
     return {
@@ -344,6 +372,7 @@ export const orderService = {
 
     return {
       alreadyProcessed: false,
+      failureCode: verification.actionCode,
       failureReason: verification.failureReason,
       order: serializeDocument<Order>(updated),
       paymentStatus: verification.isPaid

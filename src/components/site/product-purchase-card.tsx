@@ -5,12 +5,17 @@ import { Info, Minus, Plus, ShoppingCart } from "lucide-react";
 
 import { AddToCartButton } from "@/components/site/add-to-cart-button";
 
+import { useCurrency } from "@/components/site/providers/currency-provider";
+import { formatPriceWithCurrency } from "@/lib/utils/currency";
+
 type ProductPurchaseCardProduct = {
   currency: string;
   id: string;
   originalPrice?: string;
+  rawOriginalPrice?: number;
   points: number;
   price: string;
+  rawPrice: number;
   slug: string;
 };
 
@@ -23,6 +28,7 @@ export function ProductPurchaseCard({
   product: ProductPurchaseCardProduct;
 }) {
   const [quantity, setQuantity] = useState(minQuantity);
+  const { currency, isLoading } = useCurrency();
 
   function decrementQuantity() {
     setQuantity((currentQuantity) =>
@@ -35,6 +41,15 @@ export function ProductPurchaseCard({
       Math.min(maxQuantity, currentQuantity + 1),
     );
   }
+
+  // Precompute formatted prices
+  const displayOriginalPrice = product.rawOriginalPrice 
+    ? formatPriceWithCurrency(product.rawOriginalPrice, currency)
+    : product.originalPrice ? `${product.originalPrice} ${currency}` : undefined;
+    
+  const displayPrice = product.rawPrice 
+    ? formatPriceWithCurrency(product.rawPrice, currency)
+    : `${product.price} ${currency}`;
 
   return (
     <aside className="rounded-[21px] bg-white p-7 text-black shadow-[0_4px_4px_#B0A4F5] backdrop-blur-[2px]">
@@ -70,14 +85,20 @@ export function ProductPurchaseCard({
       <div className="mt-8">
         <p className="text-xl font-bold tracking-[0.06em]">Prix:</p>
         <div className="mt-3 flex min-h-14 w-full flex-col items-center justify-center bg-[#D9D9D9]/55 px-4 text-center font-bold tracking-[0.06em]">
-          {product.originalPrice ? (
-            <span className="text-sm text-[#2D2D2D]/70 line-through">
-              {product.originalPrice} {product.currency}
-            </span>
-          ) : null}
-          <span className="text-xl">
-            {product.price} {product.currency}
-          </span>
+          {isLoading ? (
+            <span className="text-xl opacity-50">Calcul...</span>
+          ) : (
+            <>
+              {displayOriginalPrice ? (
+                <span className="text-sm text-[#2D2D2D]/70 line-through">
+                  {displayOriginalPrice}
+                </span>
+              ) : null}
+              <span className="text-xl">
+                {displayPrice}
+              </span>
+            </>
+          )}
         </div>
       </div>
 
