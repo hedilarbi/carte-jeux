@@ -25,6 +25,8 @@ export interface CatalogSelectedFilters {
 export interface CatalogProduct {
   id: string;
   image?: string;
+  platform: string;
+  platformImage?: string;
   platformSlug?: string;
   price: string;
   rawPrice: number;
