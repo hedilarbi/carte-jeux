@@ -71,13 +71,21 @@ export async function uploadImageToFirebaseStorage(
       resumable: false,
     });
   } catch (error) {
+    const storageError = error as {
+      code?: unknown;
+      errors?: unknown;
+      message?: unknown;
+      response?: { data?: unknown; status?: unknown };
+    };
+
     console.error("Firebase Storage image upload failed", {
       bucket: bucket.name,
       folder,
-      code:
-        typeof error === "object" && error && "code" in error
-          ? String(error.code)
-          : undefined,
+      code: storageError.code,
+      message: storageError.message,
+      errors: storageError.errors,
+      responseStatus: storageError.response?.status,
+      responseData: storageError.response?.data,
     });
 
     throw new AppError(
