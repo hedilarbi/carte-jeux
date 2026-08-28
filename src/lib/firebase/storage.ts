@@ -59,16 +59,32 @@ export async function uploadImageToFirebaseStorage(
   const storageFile = bucket.file(destination);
   const buffer = Buffer.from(await file.arrayBuffer());
 
-  await storageFile.save(buffer, {
-    metadata: {
-      cacheControl: "public, max-age=31536000, immutable",
-      contentType: file.type,
+  try {
+    await storageFile.save(buffer, {
       metadata: {
-        firebaseStorageDownloadTokens: token,
+        cacheControl: "public, max-age=31536000, immutable",
+        contentType: file.type,
+        metadata: {
+          firebaseStorageDownloadTokens: token,
+        },
       },
-    },
-    resumable: false,
-  });
+      resumable: false,
+    });
+  } catch (error) {
+    console.error("Firebase Storage image upload failed", {
+      bucket: bucket.name,
+      folder,
+      code:
+        typeof error === "object" && error && "code" in error
+          ? String(error.code)
+          : undefined,
+    });
+
+    throw new AppError(
+      "Le serveur ne peut pas enregistrer l'image dans Firebase Storage. Vérifiez le bucket et les droits du compte de service.",
+      503,
+    );
+  }
 
   return buildDownloadUrl(bucket.name, destination, token);
 }

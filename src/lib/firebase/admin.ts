@@ -7,25 +7,42 @@ import {
 } from "firebase-admin/app";
 import { getStorage } from "firebase-admin/storage";
 
+import { AppError } from "@/lib/utils/app-error";
+
 function getFirebaseCredentials(): ServiceAccount {
   const rawCredentials = process.env.FIREBASE_CREDENTIALS;
 
   if (!rawCredentials) {
-    throw new Error("Variable d'environnement FIREBASE_CREDENTIALS manquante.");
+    throw new AppError(
+      "Le stockage des images n'est pas configuré sur le serveur (FIREBASE_CREDENTIALS manquante).",
+      503,
+    );
   }
 
-  const credentials = JSON.parse(rawCredentials) as {
+  let credentials: {
     client_email?: string;
     private_key?: string;
     project_id?: string;
   };
+
+  try {
+    credentials = JSON.parse(rawCredentials) as typeof credentials;
+  } catch {
+    throw new AppError(
+      "La configuration FIREBASE_CREDENTIALS du serveur n'est pas un JSON valide.",
+      503,
+    );
+  }
 
   if (
     !credentials.project_id ||
     !credentials.client_email ||
     !credentials.private_key
   ) {
-    throw new Error("FIREBASE_CREDENTIALS est incomplet.");
+    throw new AppError(
+      "La configuration FIREBASE_CREDENTIALS du serveur est incomplète.",
+      503,
+    );
   }
 
   return {
@@ -39,8 +56,9 @@ function getStorageBucketName() {
   const bucket = process.env.FIREBASE_STORAGE_BUCKET;
 
   if (!bucket) {
-    throw new Error(
-      "Variable d'environnement FIREBASE_STORAGE_BUCKET manquante.",
+    throw new AppError(
+      "Le stockage des images n'est pas configuré sur le serveur (FIREBASE_STORAGE_BUCKET manquante).",
+      503,
     );
   }
 
