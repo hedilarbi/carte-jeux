@@ -14,12 +14,15 @@ import {
 import type { GtaPreorder } from "@/types/entities";
 
 export const gtaPreorderService = {
-  async create(input: z.input<typeof gtaPreorderCreateSchema>) {
+  async create(
+    input: z.input<typeof gtaPreorderCreateSchema>,
+    product: "fc-27" | "gta-vi" = "gta-vi",
+  ) {
     const parsed = gtaPreorderCreateSchema.parse(input);
 
     const preorder = await createGtaPreorder({
       ...parsed,
-      product: "gta-vi",
+      product,
     });
 
     return serializeDocument<GtaPreorder>(preorder);

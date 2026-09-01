@@ -299,7 +299,7 @@ export interface ContactSubmission extends BaseEntity {
 }
 
 export interface GtaPreorder extends BaseEntity {
-  product: "gta-vi";
+  product: "fc-27" | "gta-vi";
   firstName: string;
   lastName: string;
   email: string;

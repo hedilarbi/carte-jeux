@@ -19,8 +19,8 @@ export default async function AdminPreordersPage() {
     <>
       <AdminPageHeader
         eyebrow="Précommandes"
-        title="Précommandes GTA VI"
-        description="Consultez les coordonnées laissées depuis la page de précommande GTA VI."
+        title="Précommandes"
+        description="Consultez les coordonnées laissées depuis les pages de précommande."
       />
 
       <Card>
@@ -55,7 +55,7 @@ export default async function AdminPreordersPage() {
                       {preorder.firstName} {preorder.lastName}
                     </div>
                     <div className="mt-1 text-xs font-semibold text-[#4D3B94]">
-                      GTA VI
+                      {preorder.product === "fc-27" ? "FC27" : "GTA VI"}
                     </div>
                   </td>
                   <td className="px-6 py-4 text-xs text-slate-600">
@@ -82,8 +82,7 @@ export default async function AdminPreordersPage() {
                     className="px-6 py-10 text-center text-sm text-slate-500"
                     colSpan={4}
                   >
-                    Aucune précommande GTA VI n&apos;est disponible pour le
-                    moment.
+                    Aucune précommande n&apos;est disponible pour le moment.
                   </td>
                 </tr>
               ) : null}

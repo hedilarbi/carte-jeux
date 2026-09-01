@@ -7,7 +7,7 @@ import {
 } from "mongoose";
 
 export interface GtaPreorderRecord {
-  product: "gta-vi";
+  product: "fc-27" | "gta-vi";
   firstName: string;
   lastName: string;
   email: string;
@@ -22,7 +22,7 @@ const gtaPreorderSchema = new Schema<GtaPreorderRecord>(
   {
     product: {
       type: String,
-      enum: ["gta-vi"],
+      enum: ["fc-27", "gta-vi"],
       required: true,
       default: "gta-vi",
       index: true,

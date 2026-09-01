@@ -10,7 +10,15 @@ import type { GtaPreorder } from "@/types/entities";
 const inputClassName =
   "h-12 rounded-xl border border-[#012D69]/15 bg-white px-4 text-sm font-semibold text-[#012D69] outline-none transition placeholder:text-[#012D69]/40 focus:border-[#78DAFF] focus:ring-4 focus:ring-[#78DAFF]/20";
 
-export function GtaViPreorderForm() {
+type PreorderFormProps = {
+  apiPath?: string;
+  productLabel?: string;
+};
+
+export function GtaViPreorderForm({
+  apiPath = "/api/precommandes/gta-vi",
+  productLabel = "GTA VI",
+}: PreorderFormProps) {
   const [error, setError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
@@ -33,14 +41,18 @@ export function GtaViPreorderForm() {
     setIsSubmitting(true);
 
     try {
-      await fetchJson<GtaPreorder>("/api/precommandes/gta-vi", {
+      await fetchJson<GtaPreorder>(apiPath, {
         body: JSON.stringify(payload),
         method: "POST",
       });
 
-      if (typeof window !== "undefined" && (window as any).gtag) {
-        (window as any).gtag("event", "manual_event_SUBMIT_LEAD_FORM", {
-          form_name: "GTA VI Preorder Form",
+      const analyticsWindow = window as Window & {
+        gtag?: (...args: unknown[]) => void;
+      };
+
+      if (analyticsWindow.gtag) {
+        analyticsWindow.gtag("event", "manual_event_SUBMIT_LEAD_FORM", {
+          form_name: `${productLabel} Preorder Form`,
         });
       }
 
@@ -68,7 +80,7 @@ export function GtaViPreorderForm() {
           Précommande
         </p>
         <h2 className="mt-2 font-heading text-2xl font-black text-[#012D69]">
-          GTA VI
+          {productLabel}
         </h2>
         <p className="mt-2 text-sm font-semibold leading-6 text-[#012D69]/70">
           Laissez vos coordonnées. Nous vous contacterons dès que la
@@ -112,7 +124,7 @@ export function GtaViPreorderForm() {
       {isSuccess ? (
         <p className="flex items-center gap-2 rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm font-semibold text-emerald-700">
           <CheckCircle2 className="size-4" />
-          Votre précommande GTA VI a été enregistrée.
+          Votre précommande {productLabel} a été enregistrée.
         </p>
       ) : null}
 

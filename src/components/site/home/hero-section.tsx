@@ -85,8 +85,17 @@ type AssassinsCreedHeroSlide = {
   mobileImage: string;
 };
 
+type Fc27HeroSlide = {
+  desktopImage: string;
+  href: string;
+  id: string;
+  kind: "fc-27";
+  mobileImage: string;
+};
+
 type HeroSlide =
   | AssassinsCreedHeroSlide
+  | Fc27HeroSlide
   | ProductGridHeroSlide
   | ImageLinkHeroSlide
   | ImageCtaHeroSlide
@@ -128,6 +137,13 @@ type SwipePoint = {
 };
 
 const heroSlides: HeroSlide[] = [
+  {
+    desktopImage: "/bg-fc27.jpg",
+    href: "/precommande-fc27",
+    id: "fc-27",
+    kind: "fc-27",
+    mobileImage: "/bg-fc27-mobile.jpg",
+  },
   {
     desktopImage: "/bg-ac-desktop.jpg",
     href: "/produits?search=Assassin%27s%20Creed%20Black%20Flag%20Resynced",
@@ -340,7 +356,7 @@ export function HeroSection() {
         onTouchStart={handleTouchStart}
       >
         <div
-          className="flex h-[95svh] max-h-[95svh] transition-transform duration-700 ease-in-out sm:h-[75svh] sm:max-h-[75svh]"
+          className="flex h-[95svh] max-h-[95svh] transition-transform duration-700 ease-in-out md:h-[75svh] md:max-h-[75svh]"
           style={{ transform: `translateX(-${activeSlideIndex * 100}%)` }}
         >
           {heroSlides.map((slide) => (
@@ -348,7 +364,9 @@ export function HeroSection() {
               className="relative isolate h-full min-w-full overflow-hidden"
               key={slide.id}
             >
-              {slide.kind === "assassins-creed" ? (
+              {slide.kind === "fc-27" ? (
+                <Fc27Slide slide={slide} />
+              ) : slide.kind === "assassins-creed" ? (
                 <AssassinsCreedSlide slide={slide} />
               ) : slide.kind === "product-grid" ? (
                 <ProductGridSlide slide={slide} />
@@ -417,6 +435,78 @@ export function HeroSection() {
         </div>
       </div>
     </div>
+  );
+}
+
+function Fc27Slide({ slide }: { slide: Fc27HeroSlide }) {
+  const ctaClassName =
+    "inline-flex min-h-12 items-center justify-center rounded-[11px] bg-[linear-gradient(274.47deg,#B99CF1_-12.06%,#7FCCFF_110.42%)] px-8 text-center font-body text-sm font-black uppercase tracking-[0.04em] text-[#03030A] shadow-[0_10px_28px_rgba(185,156,241,0.35)] transition hover:-translate-y-0.5 hover:shadow-[0_12px_32px_rgba(127,204,255,0.48)] lg:min-h-14 lg:text-base";
+
+  const platforms = [
+    { alt: "PlayStation 5", height: 183, src: "/ps5.png", width: 326 },
+    { alt: "Xbox", height: 128, src: "/xbox-logo.png", width: 307 },
+    { alt: "Nintendo Switch", height: 134, src: "/nintendo.png", width: 291 },
+    { alt: "PC", height: 149, src: "/pc.png", width: 185 },
+  ];
+
+  return (
+    <>
+      <Link
+        aria-label="Commander EA Sports FC27 maintenant"
+        className="relative block h-full bg-black md:hidden"
+        href={slide.href}
+      >
+        <Image
+          alt="EA Sports FC27 Standard Edition"
+          className="object-cover object-top"
+          fill
+          priority
+          sizes="100vw"
+          src={slide.mobileImage}
+        />
+        <span className={`${ctaClassName} absolute bottom-[100px] left-1/2 z-20 -translate-x-1/2 whitespace-nowrap`}>
+          Commander maintenant
+        </span>
+      </Link>
+
+      <div className="relative hidden h-full bg-black md:block">
+        <Image
+          alt="EA Sports FC27 Standard Edition"
+          className="object-cover"
+          fill
+          priority
+          sizes="100vw"
+          src={slide.desktopImage}
+        />
+
+        <div className="relative z-10 mx-auto flex h-full max-w-[1350px] items-center px-6 py-8">
+          <div className="flex w-[min(47vw,650px)] flex-col items-center lg:ml-6 xl:ml-10">
+
+            <h2 className="mt-40 max-w-[640px] text-center font-body text-[clamp(1.25rem,2vw,1.9rem)] font-black uppercase leading-[1.35] text-white drop-shadow-[0_4px_16px_rgba(0,0,0,0.9)]">
+              Dès maintenant : commande ta<br />clé d&apos;activation pour FC27
+            </h2>
+
+            <div className="mt-5 flex w-full max-w-[610px] items-center justify-center gap-2 lg:gap-6">
+              {platforms.map((platform) => (
+                <Image
+                  alt={platform.alt}
+                  className="h-9 w-auto max-w-[22%] object-contain drop-shadow-[0_3px_10px_rgba(0,0,0,0.8)] lg:h-14"
+                  height={platform.height}
+                  key={platform.src}
+                  sizes="140px"
+                  src={platform.src}
+                  width={platform.width}
+                />
+              ))}
+            </div>
+
+            <Link className={`${ctaClassName} mt-8 min-w-[360px]`} href={slide.href}>
+              Commander maintenant
+            </Link>
+          </div>
+        </div>
+      </div>
+    </>
   );
 }
 
