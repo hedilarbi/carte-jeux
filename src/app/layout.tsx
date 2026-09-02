@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { Exo_2, Inter, Orbitron } from "next/font/google";
-import Script from "next/script";
+import { GoogleTagManager, GoogleAnalytics } from "@next/third-parties/google";
 
 import { PublicShell } from "@/components/site/public-shell";
 import { CurrencyProvider } from "@/components/site/providers/currency-provider";
@@ -8,7 +8,7 @@ import "./globals.css";
 
 import { GclidTracker } from "@/components/site/gclid-tracker";
 
-const GOOGLE_TAG_MANAGER_ID = "GTM-N6TLR6P6";
+const GOOGLE_TAG_MANAGER_ID = "GTM-NVN6KW9R";
 const GOOGLE_ANALYTICS_ID = "G-RM7SCXRTE7";
 
 const exo2 = Exo_2({
@@ -54,28 +54,11 @@ export default function RootLayout({
     >
       <body className="min-h-full bg-background text-foreground font-sans max-w-screen">
         <GclidTracker />
-        <noscript>
-          <iframe
-            height="0"
-            src={`https://www.googletagmanager.com/ns.html?id=${GOOGLE_TAG_MANAGER_ID}`}
-            style={{ display: "none", visibility: "hidden" }}
-            title="Google Tag Manager"
-            width="0"
-          />
-        </noscript>
         <CurrencyProvider>
           <PublicShell>{children}</PublicShell>
         </CurrencyProvider>
-        <Script id="google-tag-manager" strategy="afterInteractive">
-          {`(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src='https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);})(window,document,'script','dataLayer','${GOOGLE_TAG_MANAGER_ID}');`}
-        </Script>
-        <Script
-          src={`https://www.googletagmanager.com/gtag/js?id=${GOOGLE_ANALYTICS_ID}`}
-          strategy="afterInteractive"
-        />
-        <Script id="google-analytics" strategy="afterInteractive">
-          {`window.dataLayer = window.dataLayer || [];function gtag(){dataLayer.push(arguments);}gtag('js', new Date());gtag('config', '${GOOGLE_ANALYTICS_ID}');`}
-        </Script>
+        <GoogleTagManager gtmId={GOOGLE_TAG_MANAGER_ID} />
+        <GoogleAnalytics gaId={GOOGLE_ANALYTICS_ID} />
       </body>
     </html>
   );
