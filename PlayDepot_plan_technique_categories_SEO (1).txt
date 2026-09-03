@@ -1,0 +1,631 @@
+GUIDE D’IMPLÉMENTATION
+PlayDepot : catégories, indexation et données structurées
+Mapping complet des nouvelles URLs, actions pour Hedi, robots.txt, sitemap dynamique, correction des filtres et modèles JSON-LD.
+Décision structurante  Les catégories permanentes obtiennent des URLs propres. Les filtres temporaires restent dans l’interface et ne créent aucune URL. Les familles /plateformes/ et /types/ empêchent les collisions de slugs.
+
+Contenu du document
+Mapping des 38 catégories plateformes.
+Mapping des 62 catégories types de produits.
+Règles d’indexation et redirections.
+Plan d’action complet pour Hedi.
+robots.txt immédiat et version finale.
+Sitemap dynamique Next.js.
+Exemples JSON-LD FAQPage et Product.
+Checklist de recette avant mise en production.
+
+1. Architecture des nouvelles URLs
+Les pages de catégories actuellement ouvertes avec /produits?q=... doivent être remplacées par des routes stables. Cette architecture permet d’attribuer un Title, un H1, une introduction, une FAQ et un canonical uniques à chaque catégorie réellement stratégique.
+Famille
+Structure cible
+Exemple
+Plateformes
+/categories/plateformes/[slug]/
+/categories/plateformes/steam/
+Types
+/categories/types/[slug]/
+/categories/types/cartes-prepayees/
+
+Règle SEO  Créer techniquement toutes les routes ne signifie pas indexer automatiquement les 100 catégories. Le champ indexable doit être administrable. Les catégories faibles restent en noindex,follow et hors sitemap.
+
+2. Mapping complet - plateformes
+Catégorie
+URL actuelle
+Nouvelle URL
+PSN
+/produits?q=psn
+/categories/plateformes/psn/
+XBOX
+/produits?q=xbox
+/categories/plateformes/xbox/
+STEAM
+/produits?q=steam
+/categories/plateformes/steam/
+NINTENDO
+/produits?q=nintendo
+/categories/plateformes/nintendo/
+Jeu mobile
+/produits?q=jeu-mobile
+/categories/plateformes/jeu-mobile/
+Epic Games
+/produits?q=epic-games
+/categories/plateformes/epic-games/
+EA Sports
+/produits?q=ea-sports
+/categories/plateformes/ea-sports/
+Jeux PC
+/produits?q=jeux-pc
+/categories/plateformes/jeux-pc/
+Android & iOS
+/produits?q=mobile-ios-android
+/categories/plateformes/android-ios/
+AirlineGift
+/produits?q=airlinegift
+/categories/plateformes/airlinegift/
+Amazon
+/produits?q=amazon
+/categories/plateformes/amazon/
+Apple
+/produits?q=apple
+/categories/plateformes/apple/
+Autodesk
+/produits?q=autodesk
+/categories/plateformes/autodesk/
+By Rewarble
+/produits?q=by-rewarble
+/categories/plateformes/by-rewarble/
+CryptoVoucher
+/produits?q=cryptovoucher
+/categories/plateformes/cryptovoucher/
+Google Play
+/produits?q=google-play
+/categories/plateformes/google-play/
+In Game
+/produits?q=in-game
+/categories/plateformes/in-game/
+Netflix
+/produits?q=netflix
+/categories/plateformes/netflix/
+Nintendo eShop
+/produits?q=nintendo-eshop
+/categories/plateformes/nintendo-eshop/
+Razer
+/produits?q=razer
+/categories/plateformes/razer/
+Roblox
+/produits?q=roblox
+/categories/plateformes/roblox/
+Starbucks
+/produits?q=starbucks
+/categories/plateformes/starbucks/
+The Elder Scrolls Online
+/produits?q=the-elder-scrolls-online
+/categories/plateformes/the-elder-scrolls-online/
+Ubisoft Connect
+/produits?q=ubisoft-connect
+/categories/plateformes/ubisoft-connect/
+Xbox Live
+/produits?q=xbox-live
+/categories/plateformes/xbox-live/
+Albertsons
+/produits?q=albertsons
+/categories/plateformes/albertsons/
+CashtoCode
+/produits?q=cashtocode
+/categories/plateformes/cashtocode/
+Decathlon
+/produits?q=decathlon
+/categories/plateformes/decathlon/
+EA App
+/produits?q=ea-app
+/categories/plateformes/ea-app/
+Gift Me Crypto
+/produits?q=giftmecrypto
+/categories/plateformes/giftmecrypto/
+Mastercard
+/produits?q=mastercard
+/categories/plateformes/mastercard/
+Microsoft
+/produits?q=microsoft
+/categories/plateformes/microsoft/
+Riot
+/produits?q=riot
+/categories/plateformes/riot/
+Adidas
+/produits?q=adidas
+/categories/plateformes/adidas/
+Binance
+/produits?q=binance
+/categories/plateformes/binance/
+Grab
+/produits?q=grab
+/categories/plateformes/grab/
+IKEA
+/produits?q=ikea
+/categories/plateformes/ikea/
+Sephora
+/produits?q=sephora
+/categories/plateformes/sephora/
+
+3. Mapping complet - types de produits
+Catégorie
+URL actuelle
+Nouvelle URL
+E-cartes de jeu
+/produits?q=e-cartes-de-jeu
+/categories/types/e-cartes-de-jeu/
+Points de jeu
+/produits?q=points-de-jeu
+/categories/types/points-de-jeu/
+Cartes prépayées
+/produits?q=cartes-prepayees
+/categories/types/cartes-prepayees/
+Free Fire
+/produits?q=free-fire
+/categories/types/free-fire/
+Steam PC Games
+/produits?q=steam-pc-games
+/categories/types/steam-pc-games/
+PlayStation
+/produits?q=playstation
+/categories/types/playstation/
+Consoles de jeux
+/produits?q=console
+/categories/types/consoles-de-jeux/
+Action
+/produits?q=action
+/categories/types/action/
+Action & Shooting
+/produits?q=action-shooting
+/categories/types/action-shooting/
+Adventure
+/produits?q=adventure
+/categories/types/adventure/
+Amazon
+/produits?q=amazon-category
+/categories/types/amazon/
+Apple
+/produits?q=apple-category
+/categories/types/apple/
+Apps
+/produits?q=apps
+/categories/types/apps/
+Arcade
+/produits?q=arcade
+/categories/types/arcade/
+Cash Gift Cards
+/produits?q=cash-gift-cards
+/categories/types/cash-gift-cards/
+Casual
+/produits?q=casual
+/categories/types/casual/
+Crypto Voucher
+/produits?q=crypto-voucher
+/categories/types/crypto-voucher/
+Dance & Music
+/produits?q=dance-music
+/categories/types/dance-music/
+DLC
+/produits?q=dlcs
+/categories/types/dlc/
+Economy
+/produits?q=economy
+/categories/types/economy/
+Extra Content
+/produits?q=extra-content
+/categories/types/extra-content/
+Fantasy
+/produits?q=fantasy
+/categories/types/fantasy/
+FC Points
+/produits?q=fc-points
+/categories/types/fc-points/
+Food
+/produits?q=food
+/categories/types/food/
+Games
+/produits?q=games
+/categories/types/games/
+Gaming Gift Cards
+/produits?q=gaming-gift-cards
+/categories/types/gaming-gift-cards/
+Gaming Subscriptions
+/produits?q=gaming-subscriptions
+/categories/types/gaming-subscriptions/
+Horror
+/produits?q=horror
+/categories/types/horror/
+Image and Photo Editing
+/produits?q=image-and-photo-editing
+/categories/types/image-photo-editing/
+Indie
+/produits?q=indie
+/categories/types/indie/
+Netflix
+/produits?q=netflix-category
+/categories/types/netflix/
+Nintendo Switch Online
+/produits?q=nintendo-switch-online
+/categories/types/nintendo-switch-online/
+Other
+/produits?q=other
+/categories/types/other/
+Points & Currencies
+/produits?q=points-currencies
+/categories/types/points-currencies/
+PSN
+/produits?q=psn-category
+/categories/types/psn/
+Racing
+/produits?q=racing
+/categories/types/racing/
+Razer Gold
+/produits?q=razer-gold
+/categories/types/razer-gold/
+Roblox
+/produits?q=roblox-category
+/categories/types/roblox/
+RPG
+/produits?q=rpg
+/categories/types/rpg/
+Season Pass
+/produits?q=season-pass
+/categories/types/season-pass/
+Simulator
+/produits?q=simulator
+/categories/types/simulator/
+Sports
+/produits?q=sports
+/categories/types/sports/
+Stealth
+/produits?q=stealth
+/categories/types/stealth/
+Steam
+/produits?q=steam-category
+/categories/types/steam/
+Story-Based DLC
+/produits?q=story-based-dlc-s
+/categories/types/story-based-dlc/
+Strategy
+/produits?q=strategy
+/categories/types/strategy/
+The Real Steam Bangers
+/produits?q=the-real-steam-bangers
+/categories/types/the-real-steam-bangers/
+Travel
+/produits?q=travel
+/categories/types/travel/
+Diablo 4
+/produits?q=diablo-4
+/categories/types/diablo-4/
+Fighting
+/produits?q=fighting
+/categories/types/fighting/
+Gift Me Crypto
+/produits?q=gift-me-crypto
+/categories/types/gift-me-crypto/
+MeetUp 2019
+/produits?q=meetup-2019
+/categories/types/meetup-2019/
+Other Randoms
+/produits?q=other-randoms
+/categories/types/other-randoms/
+Random Classics
+/produits?q=random-classics
+/categories/types/random-classics/
+Random Try To Get
+/produits?q=random-try-to-get
+/categories/types/random-try-to-get/
+Riot Points LoL
+/produits?q=riot-points-lol
+/categories/types/riot-points-lol/
+Windows 11
+/produits?q=windows-11
+/categories/types/windows-11/
+Adidas
+/produits?q=adidas-category
+/categories/types/adidas/
+AI
+/produits?q=ai
+/categories/types/ai/
+Binance
+/produits?q=binance-category
+/categories/types/binance/
+Gift Cards
+/produits?q=gift-cards
+/categories/types/gift-cards/
+Health & Beauty
+/produits?q=health-beauty
+/categories/types/health-beauty/
+
+4. Règles d’indexation des catégories
+Une catégorie devient indexable uniquement si elle possède une intention de recherche identifiable et suffisamment de contenu ou de produits. Les conditions doivent être centralisées dans l’administration.
+Produits actifs et disponibles.
+Intention de recherche identifiable.
+H1, Title et meta description spécifiques.
+Introduction unique et utile.
+Canonical auto-référent.
+Maillage interne depuis /categories, la home ou les pages produits.
+Absence de duplication avec une autre catégorie.
+Les catégories de classement interne telles que random-try-to-get, other-randoms, meetup-2019 ou the-real-steam-bangers peuvent exister, mais doivent rester en noindex,follow et ne pas apparaître dans le sitemap.
+5. Actions à fournir à Hedi
+5.1 Créer les routes catégories
+Créer /categories/plateformes/[slug]/.
+Créer /categories/types/[slug]/.
+Récupérer automatiquement les produits associés au slug.
+Ajouter les champs admin : indexable, seoTitle, metaDescription, h1, intro, canonical et updatedAt.
+Rendre le canonical auto-référent pour toute catégorie indexable.
+Appliquer noindex,follow aux catégories non validées.
+Modifier toutes les cartes de /categories afin qu’elles pointent vers les URLs propres.
+Supprimer les liens de catégorie construits avec ?q=.
+5.2 Rediriger les anciennes catégories
+Chaque ancienne URL ?q= correspondant à une catégorie doit recevoir une redirection 301 côté serveur vers sa nouvelle URL. Les redirections JavaScript seules ne sont pas suffisantes.
+/produits?q=psn
+→ 301 → /categories/plateformes/psn/
+ 
+/produits?q=steam
+→ 301 → /categories/plateformes/steam/
+ 
+/produits?q=free-fire
+→ 301 → /categories/types/free-fire/
+ 
+/produits?q=cartes-prepayees
+→ 301 → /categories/types/cartes-prepayees/
+
+5.3 Corriger les filtres
+Une catégorie permanente utilise une URL propre.
+Un filtre temporaire ne crée aucune URL.
+Conserver les sélections dans l’état React.
+Ne pas utiliser router.push() ou router.replace() pour les filtres.
+Ne pas rendre de <Link href="?..."> ou de formulaire GET.
+Charger les résultats par appel API.
+Dédupliquer les paramètres sélectionnés.
+Ne plus rendre de liens contenant platform, type, region, search, page ou limit.
+Retourner 404 ou 410 pour une pagination impossible, jamais 500.
+5.4 Traiter les anciennes facettes
+Les anciennes URLs de filtres qui ne correspondent pas à une catégorie propre restent temporairement accessibles avec noindex,follow afin que Google puisse constater leur retrait de l’index.
+<meta name="robots" content="noindex,follow">
+<link rel="canonical" href="https://playsdepot.com/produits">
+
+Sont concernés : platform, type, region, search, page et limit. Les combinaisons invalides ou répétées doivent retourner 404 ou 410.
+6. robots.txt
+6.1 Version à publier immédiatement
+Cette version déclare le sitemap et laisse Google revisiter les anciennes facettes pour lire leur noindex.
+User-agent: *
+Disallow: /api/
+ 
+Sitemap: https://playsdepot.com/sitemap.xml
+
+6.2 Version finale après désindexation
+User-agent: *
+ 
+Disallow: /api/
+Disallow: /*?*platform=
+Disallow: /*?*type=
+Disallow: /*?*region=
+Disallow: /*?*search=
+Disallow: /*?*page=
+Disallow: /*?*limit=
+ 
+Sitemap: https://playsdepot.com/sitemap.xml
+
+Attention  Ne pas bloquer /_next/. Ne pas activer les Disallow des paramètres avant que Google ait pu lire les noindex et retirer les anciennes URLs.
+
+7. Sitemap XML dynamique
+7.1 URLs à inclure
+Accueil, /produits et /categories.
+Catégories avec active=true et indexable=true.
+Fiches produit actives et indexables.
+Pages éditoriales canoniques en 200.
+7.2 URLs à exclure
+Toute URL contenant ?.
+Catégories noindex.
+Pages redirigées, 404 ou 500.
+Panier, checkout, connexion, inscription et favoris.
+Recherche interne, /api/ et /_next/.
+7.3 Exemple Next.js - app/sitemap.ts
+import type { MetadataRoute } from "next";
+import { db } from "@/lib/db";
+ 
+const DOMAIN = "https://playsdepot.com";
+ 
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
+  const [products, categories] = await Promise.all([
+    db.product.findMany({
+      where: { active: true, indexable: true },
+      select: { slug: true, updatedAt: true },
+    }),
+    db.category.findMany({
+      where: { active: true, indexable: true },
+      select: { slug: true, family: true, updatedAt: true },
+    }),
+  ]);
+ 
+  return [
+    { url: `${DOMAIN}/`, lastModified: new Date(), priority: 1 },
+    { url: `${DOMAIN}/produits`, lastModified: new Date(), priority: 0.9 },
+    { url: `${DOMAIN}/categories`, lastModified: new Date(), priority: 0.8 },
+    ...categories.map((category) => ({
+      url: `${DOMAIN}/categories/${category.family}/${category.slug}/`,
+      lastModified: category.updatedAt,
+      priority: 0.8,
+    })),
+    ...products.map((product) => ({
+      url: `${DOMAIN}/produits/${product.slug}`,
+      lastModified: product.updatedAt,
+      priority: 0.7,
+    })),
+  ];
+}
+
+Au-delà de 50 000 URLs ou 50 Mo non compressés, répartir les produits dans plusieurs sitemaps et créer un index sitemap.
+8. Markup FAQPage
+Le balisage doit refléter une FAQ réellement visible sur la page. Les questions et réponses doivent être spécifiques à la catégorie ; il ne faut pas injecter la même FAQ sur toutes les pages. Pour un site e-commerce, l’affichage d’un résultat enrichi FAQ n’est pas garanti.
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "@id": "https://playsdepot.com/categories/plateformes/steam/#faq",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "Comment acheter une carte Steam en Tunisie ?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Choisissez la carte Steam correspondant au montant et à la région souhaités, ajoutez-la au panier et payez avec l’un des moyens de paiement proposés en dinars tunisiens. Le code est transmis après validation du paiement."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Les cartes Steam fonctionnent-elles avec un compte tunisien ?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "La compatibilité dépend de la région indiquée sur la fiche produit. Sélectionnez une carte compatible avec la région configurée sur votre compte Steam."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Comment activer un code Steam ?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Connectez-vous à Steam, ouvrez le menu Jeux, sélectionnez Activer un produit sur Steam puis saisissez le code reçu."
+      }
+    }
+  ]
+}
+</script>
+
+Générer dynamiquement @id, questions et réponses.
+Le texte du markup doit être identique au contenu visible.
+Ne pas ajouter de questions absentes de la page.
+Tester la syntaxe avant le déploiement global.
+9. Markup Product
+Ce balisage s’applique uniquement aux fiches produit individuelles. Les données doivent correspondre exactement au prix, au stock, à l’image et au produit visibles sur la page.
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Product",
+  "@id": "https://playsdepot.com/produits/carte-steam-50-eur-global#product",
+  "name": "Carte Steam 50 EUR - Global",
+  "description": "Carte cadeau Steam de 50 EUR permettant d’ajouter du crédit au portefeuille Steam. Vérifiez la région avant l’achat.",
+  "image": [
+    "https://playsdepot.com/images/products/carte-steam-50-eur-global.webp"
+  ],
+  "url": "https://playsdepot.com/produits/carte-steam-50-eur-global",
+  "sku": "STEAM-50-EUR-GL",
+  "category": "Cartes Steam",
+  "brand": {
+    "@type": "Brand",
+    "name": "Steam"
+  },
+  "offers": {
+    "@type": "Offer",
+    "url": "https://playsdepot.com/produits/carte-steam-50-eur-global",
+    "priceCurrency": "TND",
+    "price": "175.00",
+    "availability": "https://schema.org/InStock",
+    "itemCondition": "https://schema.org/NewCondition",
+    "seller": {
+      "@type": "Organization",
+      "name": "PlayDepot",
+      "url": "https://playsdepot.com/"
+    }
+  }
+}
+</script>
+
+9.1 Champs dynamiques obligatoires
+@id, name, description, image et url.
+sku, category et brand.name.
+offers.url, priceCurrency, price et availability.
+const availability = product.inStock
+  ? "https://schema.org/InStock"
+  : "https://schema.org/OutOfStock";
+
+9.2 Règles Product
+N°
+Exigence
+1
+Utiliser TND, jamais DT ou DTN.
+2
+Le prix JSON-LD doit être identique au prix visible.
+3
+La disponibilité doit provenir du stock réel.
+4
+Ne jamais inventer une note ou des avis.
+5
+Ajouter aggregateRating uniquement si les avis sont réels et visibles.
+6
+Conserver une seule URL canonique par produit.
+7
+Tester plusieurs fiches avec le Rich Results Test avant le déploiement global.
+
+10. Checklist de recette
+Contrôle
+Résultat attendu
+Statut
+Routes catégories
+Les 100 nouvelles routes répondent correctement.
+□
+Redirections
+Chaque ancien ?q= stratégique redirige en 301 vers la bonne catégorie.
+□
+Canonical
+Chaque catégorie indexable possède un canonical auto-référent.
+□
+Noindex
+Les catégories faibles et anciennes facettes sont en noindex,follow.
+□
+Filtres
+Aucun filtre temporaire ne modifie l’URL ou ne crée de lien crawlable.
+□
+Erreurs
+Les paginations invalides retournent 404/410, jamais 500.
+□
+robots.txt
+Le fichier répond en 200 et référence sitemap.xml.
+□
+Sitemap
+Aucune URL contenant ? ; uniquement des URLs 200, canoniques et indexables.
+□
+FAQPage
+Les questions du markup sont visibles et spécifiques à la page.
+□
+Product
+Prix, devise, stock, URL et image correspondent à la fiche visible.
+□
+Validation
+Tests Rich Results et inspection Search Console réalisés.
+□
+Crawl
+Un crawl depuis la home ne découvre plus d’explosion combinatoire.
+□
+
+11. Ordre de déploiement recommandé
+Étape
+Action
+1
+Créer les routes propres et les champs d’administration.
+2
+Mettre à jour les liens présents sur /categories et la home.
+3
+Déployer les redirections 301 des anciens ?q=.
+4
+Empêcher les filtres temporaires de créer des URLs.
+5
+Appliquer noindex,follow aux anciennes facettes restantes.
+6
+Déployer le robots.txt immédiat et le sitemap dynamique.
+7
+Ajouter les markups FAQPage et Product sur les pages concernées.
+8
+Tester, soumettre le sitemap et surveiller Search Console.
+9
+Activer le robots.txt final après désindexation des anciennes facettes.
+
+Définition de terminé  Les catégories utiles disposent d’URLs stables, les filtres ne créent plus d’URLs, le sitemap ne contient que des pages canoniques, les anciennes facettes diminuent dans Search Console et les données structurées correspondent au contenu visible.
+
+Sources de référence
+PlayDepot - page Catégories : https://playsdepot.com/categories
+Google Search Central - Product structured data : https://developers.google.com/search/docs/appearance/structured-data/product-snippet
+Schema.org FAQPage : https://schema.org/FAQPage
+Schema.org Product : https://schema.org/Product

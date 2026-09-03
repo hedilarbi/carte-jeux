@@ -1,10 +1,44 @@
-import FilterSection from "@/components/site/products/FilterSection";
-import MainSection from "@/components/site/products/MainSection";
-import { MobileFilterDrawer } from "@/components/site/products/mobile-filter-drawer";
+import { notFound } from "next/navigation";
+import type { Metadata } from "next";
+
+import CatalogClient from "@/components/site/products/CatalogClient";
 import { catalogService } from "@/services/catalog.service";
 
 function readSearchParam(value: string | string[] | undefined) {
   return Array.isArray(value) ? value[0] : value;
+}
+
+export async function generateMetadata({
+  searchParams,
+}: {
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
+}): Promise<Metadata> {
+  const params = await searchParams;
+  const hasOldFilters =
+    params.platform ||
+    params.type ||
+    params.region ||
+    params.search ||
+    params.page ||
+    params.limit;
+
+  if (hasOldFilters) {
+    return {
+      robots: {
+        index: false,
+        follow: true,
+      },
+      alternates: {
+        canonical: "https://playsdepot.com/produits",
+      },
+    };
+  }
+
+  return {
+    alternates: {
+      canonical: "https://playsdepot.com/produits",
+    },
+  };
 }
 
 export default async function ProductsPage({
@@ -26,35 +60,14 @@ export default async function ProductsPage({
     type: params.type,
   });
 
+  const page = parseInt(readSearchParam(params.page) ?? "1", 10);
+  if (page > 1 && page > content.pagination.totalPages) {
+    notFound();
+  }
+
   return (
     <main className="bg-brand-light text-brand-lilac">
-      <div className="mx-auto flex w-full max-w-[1350px] flex-col gap-8 px-6 py-10 lg:flex-row lg:items-start">
-        <FilterSection
-          className="hidden lg:block"
-          platforms={content.filters.platforms}
-          regions={content.filters.regions}
-          selected={content.selected}
-          types={content.filters.types}
-        />
-        <MainSection
-          content={content}
-          mobileFilters={
-            <MobileFilterDrawer
-              key={JSON.stringify(content.selected)}
-              selected={content.selected}
-            >
-              <FilterSection
-                className="w-full shadow-none"
-                groupsOpenByDefault={false}
-                platforms={content.filters.platforms}
-                regions={content.filters.regions}
-                selected={content.selected}
-                types={content.filters.types}
-              />
-            </MobileFilterDrawer>
-          }
-        />
-      </div>
+      <CatalogClient initialContent={content} />
     </main>
   );
 }

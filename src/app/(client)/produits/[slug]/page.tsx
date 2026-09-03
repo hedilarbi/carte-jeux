@@ -61,8 +61,40 @@ export default async function ProductPage({ params }: ProductPageProps) {
     notFound();
   }
 
+  const productMarkup = {
+    "@context": "https://schema.org",
+    "@type": "Product",
+    "@id": `https://playsdepot.com/produits/${product.slug}#product`,
+    name: product.title,
+    description: product.seoDescription || product.description || product.shortDescription,
+    image: product.image ? [product.image] : undefined,
+    url: `https://playsdepot.com/produits/${product.slug}`,
+    sku: product.sku,
+    category: product.categories[0]?.label || "Produit numérique",
+    brand: {
+      "@type": "Brand",
+      name: product.platform.label,
+    },
+    offers: {
+      "@type": "Offer",
+      url: `https://playsdepot.com/produits/${product.slug}`,
+      priceCurrency: "TND",
+      price: product.rawPrice,
+      availability: "https://schema.org/InStock",
+      itemCondition: "https://schema.org/NewCondition",
+      seller: {
+        "@type": "Organization",
+        name: "PlayDepot",
+      },
+    },
+  };
+
   return (
     <main className="min-h-screen bg-[linear-gradient(90deg,#E3CDFF_0%,#D8E0FF_67.31%,#C9CAFF_100%)] text-[#00061E]">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(productMarkup) }}
+      />
       <ProductTopBlock product={product} />
       <ProductDetailsBlock product={product} />
       <RelatedProductsSection products={product.relatedProducts} />

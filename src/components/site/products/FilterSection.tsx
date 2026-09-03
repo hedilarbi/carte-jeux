@@ -15,6 +15,7 @@ interface FilterSectionProps {
     regions: CatalogRegionFilter[];
     selected: CatalogSelectedFilters;
     types: CatalogCategoryFilter[];
+    onFilterChange?: (selected: CatalogSelectedFilters, reset?: boolean) => void;
 }
 
 type ToggleFilterKey = "platforms" | "regions" | "types";
@@ -117,15 +118,11 @@ function appendSelectedParams(
     }
 }
 
-function buildProductsHref({
-    filterKey,
-    selected,
-    value,
-}: {
-    filterKey: ToggleFilterKey;
-    selected: CatalogSelectedFilters;
-    value: string;
-}) {
+function getToggledSelected(
+    filterKey: ToggleFilterKey,
+    selected: CatalogSelectedFilters,
+    value: string,
+) {
     const next = {
         ...selected,
         platforms: [...selected.platforms],
@@ -134,12 +131,7 @@ function buildProductsHref({
     };
 
     next[filterKey] = toggleValue(next[filterKey], value);
-
-    const params = new URLSearchParams();
-    appendSelectedParams(params, next);
-
-    const query = params.toString();
-    return query ? `/produits?${query}` : "/produits";
+    return next;
 }
 
 function hasActiveFilters(selected: CatalogSelectedFilters) {
@@ -159,6 +151,7 @@ export default function FilterSection({
     regions,
     selected,
     types,
+    onFilterChange,
 }: FilterSectionProps) {
     return (
         <aside
@@ -180,11 +173,14 @@ export default function FilterSection({
             </div>
 
             <form
-                action="/produits"
                 className="mt-5 flex h-11 items-center gap-2 rounded-xl border border-white/12 bg-[#0F0F28]/55 px-3"
-                method="get"
+                onSubmit={(e) => {
+                    e.preventDefault();
+                    const formData = new FormData(e.currentTarget);
+                    const search = formData.get("search") as string;
+                    onFilterChange?.({ ...selected, search });
+                }}
             >
-                <HiddenFilterInputs omit={["search"]} selected={selected} />
                 <Search className="size-4 shrink-0 text-brand-lilac/70" />
                 <input
                     className="min-w-0 flex-1 bg-transparent text-sm text-white outline-none placeholder:text-white/45"
@@ -196,12 +192,12 @@ export default function FilterSection({
             </form>
 
             {hasActiveFilters(selected) ? (
-                <Link
-                    className="mt-3 flex h-9 items-center justify-center rounded-lg border border-white/12 bg-white/8 text-xs font-black uppercase tracking-[0.08em] text-white/86 transition hover:border-brand-lavender/45"
-                    href="/produits"
+                <button
+                    className="mt-3 flex w-full h-9 items-center justify-center rounded-lg border border-white/12 bg-white/8 text-xs font-black uppercase tracking-[0.08em] text-white/86 transition hover:border-brand-lavender/45"
+                    onClick={() => onFilterChange?.(selected, true)}
                 >
                     Réinitialiser
-                </Link>
+                </button>
             ) : null}
 
             <FilterGroup
@@ -210,6 +206,7 @@ export default function FilterSection({
                 options={types}
                 selected={selected}
                 title="Type"
+                onFilterChange={onFilterChange}
             />
             <FilterGroup
                 filterKey="platforms"
@@ -217,6 +214,7 @@ export default function FilterSection({
                 options={platforms}
                 selected={selected}
                 title="Plateforme"
+                onFilterChange={onFilterChange}
             />
 
             <div className="mt-5 border-t border-white/10 pt-4">
@@ -228,34 +226,37 @@ export default function FilterSection({
                         const isActive = selected.regions.includes(region.code);
 
                         return (
-                            <Link
+                            <button
                                 className={cn(
                                     "inline-flex cursor-pointer items-center gap-1.5 rounded-lg border px-3 py-2 text-xs font-semibold transition",
                                     isActive
                                         ? "border-brand-lavender bg-brand-lavender text-[#03030A]"
                                         : "border-white/12 bg-white/8 text-white/86 hover:border-brand-lavender/45",
                                 )}
-                                href={buildProductsHref({
-                                    filterKey: "regions",
-                                    selected,
-                                    value: region.code,
-                                })}
+                                onClick={() => {
+                                    onFilterChange?.(getToggledSelected("regions", selected, region.code));
+                                }}
                                 key={region.id}
+                                type="button"
                             >
                                 {isActive ? <Check className="size-3.5" /> : null}
                                 {region.label}
-                            </Link>
+                            </button>
                         );
                     })}
                 </div>
             </div>
 
             <form
-                action="/produits"
                 className="mt-5 border-t border-white/10 pt-4"
-                method="get"
+                onSubmit={(e) => {
+                    e.preventDefault();
+                    const formData = new FormData(e.currentTarget);
+                    const min = formData.get("min") as string;
+                    const max = formData.get("max") as string;
+                    onFilterChange?.({ ...selected, min, max });
+                }}
             >
-                <HiddenFilterInputs omit={["max", "min"]} selected={selected} />
                 <p className="font-mono text-[14px] font-bold uppercase tracking-[0.12em] text-brand-lilac/70">
                     Prix
                 </p>
@@ -292,12 +293,14 @@ function FilterGroup({
     options,
     selected,
     title,
+    onFilterChange,
 }: {
     filterKey: "platforms" | "types";
     openByDefault: boolean;
     options: CatalogCategoryFilter[];
     selected: CatalogSelectedFilters;
     title: string;
+    onFilterChange?: (selected: CatalogSelectedFilters) => void;
 }) {
     return (
         <details
@@ -315,20 +318,19 @@ function FilterGroup({
                     const isActive = selected[filterKey].includes(option.slug);
 
                     return (
-                        <Link
+                        <button
                             className={cn(
-                                "flex items-center gap-2 rounded-lg px-2 py-2 text-sm font-semibold transition",
+                                "flex items-center gap-2 rounded-lg px-2 py-2 text-sm font-semibold transition w-full",
                                 isActive
                                     ? "bg-brand-lavender text-[#03030A]"
                                     : "text-white/86 hover:bg-white/10",
                             )}
-                            href={buildProductsHref({
-                                filterKey,
-                                selected,
-                                value: option.slug,
-                            })}
+                            onClick={() => {
+                                onFilterChange?.(getToggledSelected(filterKey, selected, option.slug));
+                            }}
                             aria-current={isActive ? "true" : undefined}
                             key={option.id}
+                            type="button"
                         >
                             <span
                                 className={cn(
@@ -341,7 +343,7 @@ function FilterGroup({
                                 <Check className="size-3.5 stroke-[3]" />
                             </span>
                             <span>{option.label}</span>
-                        </Link>
+                        </button>
                     );
                 })}
             </div>

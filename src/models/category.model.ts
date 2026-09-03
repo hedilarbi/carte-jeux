@@ -8,6 +8,12 @@ export interface CategoryRecord {
   isPlateforme: boolean;
   isActive: boolean;
   sortOrder: number;
+  indexable: boolean;
+  seoTitle?: string;
+  metaDescription?: string;
+  h1?: string;
+  intro?: string;
+  canonical?: string;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -55,6 +61,36 @@ const categorySchema = new Schema<CategoryRecord>(
       default: 0,
       index: true,
       min: 0,
+    },
+    indexable: {
+      type: Boolean,
+      default: false,
+      index: true,
+    },
+    seoTitle: {
+      type: String,
+      trim: true,
+      maxlength: 160,
+    },
+    metaDescription: {
+      type: String,
+      trim: true,
+      maxlength: 320,
+    },
+    h1: {
+      type: String,
+      trim: true,
+      maxlength: 160,
+    },
+    intro: {
+      type: String,
+      trim: true,
+      maxlength: 2000,
+    },
+    canonical: {
+      type: String,
+      trim: true,
+      maxlength: 500,
     },
   },
   {

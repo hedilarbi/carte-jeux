@@ -125,6 +125,7 @@ export async function POST(request: NextRequest) {
     revalidatePath("/admin");
     revalidatePath("/admin/products");
     revalidatePath("/admin/orders");
+    revalidatePath("/", "layout");
 
     return successResponse(data, { status: 201 });
   } catch (error) {

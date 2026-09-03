@@ -13,6 +13,8 @@ import type { CatalogPageContent, CatalogProduct } from "@/types/catalog";
 interface MainSectionProps {
     content: CatalogPageContent;
     mobileFilters?: ReactNode;
+    onPageChange?: (page: number) => void;
+    onSortChange?: (sort: string) => void;
 }
 
 function resolvePageTitle(content: CatalogPageContent) {
@@ -32,35 +34,7 @@ function resolvePageTitle(content: CatalogPageContent) {
     return "Produits gaming Tunisie - Cartes, jeux et recharges";
 }
 
-function buildPaginationHref(content: CatalogPageContent, page: number) {
-    const { selected } = content;
-    const params = new URLSearchParams();
-
-    selected.types.forEach((type) => params.append("type", type));
-    selected.platforms.forEach((platform) => params.append("platform", platform));
-    selected.regions.forEach((region) => params.append("region", region));
-
-    if (selected.search) {
-        params.set("search", selected.search);
-    }
-
-    if (selected.min) {
-        params.set("min", selected.min);
-    }
-
-    if (selected.max) {
-        params.set("max", selected.max);
-    }
-
-    if (selected.sort !== "popular") {
-        params.set("sort", selected.sort);
-    }
-
-    params.set("page", String(page));
-    params.set("limit", String(content.pagination.limit));
-
-    return `/produits?${params.toString()}`;
-}
+// buildPaginationHref removed
 
 function getPaginationPages(currentPage: number, totalPages: number) {
     const pages = new Set([1, totalPages]);
@@ -74,7 +48,7 @@ function getPaginationPages(currentPage: number, totalPages: number) {
     return Array.from(pages).sort((first, second) => first - second);
 }
 
-export default function MainSection({ content, mobileFilters }: MainSectionProps) {
+export default function MainSection({ content, mobileFilters, onPageChange, onSortChange }: MainSectionProps) {
     const title = resolvePageTitle(content);
 
     return (
@@ -111,7 +85,7 @@ export default function MainSection({ content, mobileFilters }: MainSectionProps
                         <span className="shrink-0 font-mono text-xs uppercase text-brand-navy/55">
                             Popularité :
                         </span>
-                        <ProductSortSelect selected={content.selected} />
+                        <ProductSortSelect selected={content.selected} onSortChange={onSortChange} />
                     </div>
                 </div>
             </div>
@@ -123,7 +97,7 @@ export default function MainSection({ content, mobileFilters }: MainSectionProps
                             <ProductResultCard key={product.id} product={product} />
                         ))}
                     </div>
-                    <CatalogPagination content={content} />
+                    <CatalogPagination content={content} onPageChange={onPageChange} />
                 </>
             ) : (
                 <div className="mt-8 rounded-[18px] border border-brand-ice/18 bg-white/72 p-8 text-center text-brand-dark shadow-[0_12px_34px_rgba(1,45,105,0.08)]">
@@ -139,7 +113,7 @@ export default function MainSection({ content, mobileFilters }: MainSectionProps
     );
 }
 
-function CatalogPagination({ content }: { content: CatalogPageContent }) {
+function CatalogPagination({ content, onPageChange }: { content: CatalogPageContent, onPageChange?: (page: number) => void }) {
     const { pagination } = content;
 
     if (pagination.totalPages <= 1) {
@@ -154,13 +128,14 @@ function CatalogPagination({ content }: { content: CatalogPageContent }) {
             className="mt-10 flex flex-wrap items-center justify-center gap-2"
         >
             {pagination.hasPreviousPage ? (
-                <Link
+                <button
                     aria-label="Page précédente"
                     className="flex size-10 items-center justify-center rounded-lg border border-brand-navy/15 bg-white text-brand-navy transition hover:border-brand-lavender hover:bg-brand-lavender"
-                    href={buildPaginationHref(content, pagination.page - 1)}
+                    onClick={() => onPageChange?.(pagination.page - 1)}
+                    type="button"
                 >
                     <ChevronLeft className="size-4" />
-                </Link>
+                </button>
             ) : (
                 <span
                     aria-disabled="true"
@@ -185,24 +160,26 @@ function CatalogPagination({ content }: { content: CatalogPageContent }) {
                             {page}
                         </span>
                     ) : (
-                        <Link
+                        <button
                             className="flex size-10 items-center justify-center rounded-lg border border-brand-navy/15 bg-white text-sm font-bold text-brand-navy transition hover:border-brand-lavender hover:bg-brand-lavender"
-                            href={buildPaginationHref(content, page)}
+                            onClick={() => onPageChange?.(page)}
+                            type="button"
                         >
                             {page}
-                        </Link>
+                        </button>
                     )}
                 </span>
             ))}
 
             {pagination.hasNextPage ? (
-                <Link
+                <button
                     aria-label="Page suivante"
                     className="flex size-10 items-center justify-center rounded-lg border border-brand-navy/15 bg-white text-brand-navy transition hover:border-brand-lavender hover:bg-brand-lavender"
-                    href={buildPaginationHref(content, pagination.page + 1)}
+                    onClick={() => onPageChange?.(pagination.page + 1)}
+                    type="button"
                 >
                     <ChevronRight className="size-4" />
-                </Link>
+                </button>
             ) : (
                 <span
                     aria-disabled="true"

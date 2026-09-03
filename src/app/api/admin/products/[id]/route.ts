@@ -120,6 +120,7 @@ export async function PUT(
     revalidatePath("/admin");
     revalidatePath("/admin/products");
     revalidatePath("/admin/orders");
+    revalidatePath("/", "layout");
 
     return successResponse(data);
   } catch (error) {
@@ -142,6 +143,7 @@ export async function DELETE(
     revalidatePath("/admin");
     revalidatePath("/admin/products");
     revalidatePath("/admin/orders");
+    revalidatePath("/", "layout");
 
     return successResponse(data);
   } catch (error) {

@@ -31,9 +31,11 @@ function readFirstQueryValue(value?: CatalogQueryValue) {
   return Array.isArray(value) ? value[0] : value;
 }
 
-function normalizeQueryValue(value?: CatalogQueryValue) {
-  const normalized = readFirstQueryValue(value)?.trim();
-
+function normalizeQueryValue(value?: CatalogQueryValue | number) {
+  const firstValue = readFirstQueryValue(value as any);
+  if (firstValue == null) return undefined;
+  
+  const normalized = String(firstValue).trim();
   return normalized ? normalized : undefined;
 }
 

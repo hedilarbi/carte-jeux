@@ -58,6 +58,7 @@ export interface ProductRecord {
   faqItems: ProductFaqItem[];
   seoTitle?: string;
   seoDescription?: string;
+  indexable: boolean;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -308,6 +309,11 @@ const productSchema = new Schema<ProductRecord>(
       type: String,
       trim: true,
       maxlength: 320,
+    },
+    indexable: {
+      type: Boolean,
+      default: true,
+      index: true,
     },
   },
   {
