@@ -1,5 +1,7 @@
 "use client";
 
+import type { CatalogSelectedFilters } from "@/types/catalog";
+
 export function ProductSortSelect({
   selected,
   onSortChange,
