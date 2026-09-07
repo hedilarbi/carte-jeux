@@ -10,11 +10,11 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   const [products, categories] = await Promise.all([
     ProductModel.find(
-      { isActive: true, indexable: true },
+      { isActive: true, indexable: { $ne: false } },
       { slug: 1, updatedAt: 1 }
     ).lean(),
     CategoryModel.find(
-      { isActive: true, indexable: true },
+      { isActive: true, indexable: { $ne: false } },
       { slug: 1, isPlateforme: 1, updatedAt: 1 }
     ).lean(),
   ]);
