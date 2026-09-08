@@ -1,7 +1,14 @@
 "use client";
 
 import { useState } from "react";
-import { BadgePercent, Mail, PackageCheck, ReceiptText, Truck } from "lucide-react";
+import {
+  BadgePercent,
+  Download,
+  Mail,
+  PackageCheck,
+  ReceiptText,
+  Truck,
+} from "lucide-react";
 
 import { OrderStatusBadge } from "@/components/admin/order-status-badge";
 import { PaymentStatusBadge } from "@/components/admin/payment-status-badge";
@@ -96,6 +103,8 @@ export function OrderDetailManager({
   const [statusError, setStatusError] = useState<string | null>(null);
   const [supplierError, setSupplierError] = useState<string | null>(null);
   const [deliveryError, setDeliveryError] = useState<string | null>(null);
+  const [receiptError, setReceiptError] = useState<string | null>(null);
+  const [isGeneratingReceipt, setIsGeneratingReceipt] = useState(false);
   const [activePanel, setActivePanel] = useState<
     "status" | "supplier" | "delivery" | null
   >(null);
@@ -209,6 +218,41 @@ export function OrderDetailManager({
           : "Impossible de mettre à jour les informations de livraison.",
       );
       setActivePanel(null);
+    }
+  }
+
+  async function handleReceiptDownload() {
+    setReceiptError(null);
+    setIsGeneratingReceipt(true);
+
+    try {
+      const response = await fetch(`/api/admin/orders/${order._id}/receipt`);
+
+      if (!response.ok) {
+        const payload = (await response.json().catch(() => null)) as {
+          error?: { message?: string };
+        } | null;
+        throw new Error(
+          payload?.error?.message ?? "Impossible de générer la facture.",
+        );
+      }
+
+      const blobUrl = URL.createObjectURL(await response.blob());
+      const link = document.createElement("a");
+      link.href = blobUrl;
+      link.download = `Facture-${order.orderNumber}.pdf`;
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      URL.revokeObjectURL(blobUrl);
+    } catch (error) {
+      setReceiptError(
+        error instanceof Error
+          ? error.message
+          : "Impossible de générer la facture.",
+      );
+    } finally {
+      setIsGeneratingReceipt(false);
     }
   }
 
@@ -651,6 +695,22 @@ export function OrderDetailManager({
             </div>
           </CardHeader>
           <CardContent className="space-y-3 text-sm text-slate-700">
+            <Button
+              type="button"
+              className="w-full"
+              disabled={isGeneratingReceipt}
+              onClick={handleReceiptDownload}
+            >
+              <Download className="size-4" />
+              {isGeneratingReceipt
+                ? "Génération de la facture..."
+                : "Générer la facture"}
+            </Button>
+            {receiptError ? (
+              <div className="rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-700">
+                {receiptError}
+              </div>
+            ) : null}
             <div className="rounded-2xl border border-border bg-slate-50 p-4">
               Référence de paiement : {order.paymentReference || "—"}
             </div>

@@ -7,6 +7,19 @@ const DOMAIN = "https://playsdepot.com";
 const PRODUCTS_PER_SITEMAP = 10000;
 
 export const revalidate = 3600; // Cache for 1 hour
+export const dynamicParams = true;
+
+export async function generateStaticParams() {
+  await connectToDatabase();
+  const totalProducts = await ProductModel.countDocuments({
+    isActive: true,
+    indexable: { $ne: false },
+  });
+  const sitemapCount = Math.max(1, Math.ceil(totalProducts / PRODUCTS_PER_SITEMAP));
+  return Array.from({ length: sitemapCount }, (_, i) => ({
+    id: `${i}.xml`,
+  }));
+}
 
 export async function GET(
   request: Request,

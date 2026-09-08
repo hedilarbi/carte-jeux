@@ -1,7 +1,9 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  /* config options here */
+  outputFileTracingIncludes: {
+    "/api/admin/orders/*/receipt": ["./Recu_Playsdepot_Vierge.pdf"],
+  },
   
   async redirects() {
     return [

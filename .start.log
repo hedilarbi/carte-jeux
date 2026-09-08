@@ -1,8 +1,131 @@
 
-> eneba@0.1.0 start
-> next start
+> eneba@0.1.0 build
+> next build
 
-▲ Next.js 16.2.3
-- Local:         http://localhost:3000
-- Network:       http://10.117.111.18:3000
-✓ Ready in 144ms
+▲ Next.js 16.2.3 (Turbopack)
+- Environments: .env.local
+
+  Creating an optimized production build ...
+✓ Compiled successfully in 8.1s
+  Running TypeScript ...
+  Finished TypeScript in 5.8s ...
+  Collecting page data using 7 workers ...
+  Generating static pages using 7 workers (0/91) ...
+  Generating static pages using 7 workers (22/91) 
+  Generating static pages using 7 workers (45/91) 
+  Generating static pages using 7 workers (68/91) 
+✓ Generating static pages using 7 workers (91/91) in 41s
+  Finalizing page optimization ...
+
+Route (app)                                    Revalidate  Expire
+┌ ƒ /
+├ ○ /_not-found
+├ ƒ /admin
+├ ƒ /admin/best-seller
+├ ƒ /admin/categories
+├ ƒ /admin/login
+├ ƒ /admin/orders
+├ ƒ /admin/orders/[orderId]
+├ ƒ /admin/precommandes
+├ ƒ /admin/products
+├ ƒ /admin/promos
+├ ƒ /admin/regions
+├ ƒ /admin/section-categorie
+├ ƒ /admin/soumissions
+├ ƒ /admin/soumissions/[id]
+├ ƒ /admin/users
+├ ƒ /api/admin/auth/login
+├ ƒ /api/admin/auth/logout
+├ ƒ /api/admin/best-seller
+├ ƒ /api/admin/bootstrap-admin
+├ ƒ /api/admin/categories
+├ ƒ /api/admin/categories/[id]
+├ ƒ /api/admin/categories/reorder
+├ ƒ /api/admin/contact-submissions
+├ ƒ /api/admin/contact-submissions/[id]
+├ ƒ /api/admin/contact-submissions/[id]/reply
+├ ƒ /api/admin/g2a/import-jobs
+├ ƒ /api/admin/g2a/import-jobs/[id]
+├ ƒ /api/admin/g2a/import-jobs/[id]/pause
+├ ƒ /api/admin/g2a/import-jobs/[id]/resume
+├ ƒ /api/admin/g2a/import/test
+├ ƒ /api/admin/g2a/taxonomies/sync
+├ ƒ /api/admin/g2a/test
+├ ƒ /api/admin/orders
+├ ƒ /api/admin/orders/[id]
+├ ƒ /api/admin/orders/[id]/receipt
+├ ƒ /api/admin/products
+├ ƒ /api/admin/products/[id]
+├ ƒ /api/admin/products/export
+├ ƒ /api/admin/products/import
+├ ƒ /api/admin/promo-codes
+├ ƒ /api/admin/promo-codes/[id]
+├ ƒ /api/admin/regions
+├ ƒ /api/admin/regions/[id]
+├ ƒ /api/admin/section-categorie
+├ ƒ /api/admin/users/[id]
+├ ƒ /api/admin/users/export
+├ ƒ /api/auth/complete-profile
+├ ƒ /api/auth/forgot-password
+├ ƒ /api/auth/login
+├ ƒ /api/auth/logout
+├ ƒ /api/auth/me
+├ ƒ /api/auth/oauth/facebook
+├ ƒ /api/auth/oauth/facebook/callback
+├ ƒ /api/auth/oauth/google
+├ ƒ /api/auth/oauth/google/callback
+├ ƒ /api/auth/register
+├ ƒ /api/auth/resend-registration-otp
+├ ƒ /api/auth/reset-password
+├ ƒ /api/auth/verify-registration-otp
+├ ƒ /api/cart
+├ ƒ /api/cart/items
+├ ƒ /api/cart/items/[productReference]
+├ ƒ /api/cart/promo-code
+├ ƒ /api/checkout
+├ ƒ /api/contact-submissions
+├ ƒ /api/cron/g2a-stock-sync
+├ ƒ /api/favorites
+├ ƒ /api/favorites/items
+├ ƒ /api/favorites/items/[productReference]
+├ ƒ /api/home
+├ ƒ /api/lead
+├ ƒ /api/payments/clictopay/verify
+├ ƒ /api/precommandes/fc27
+├ ƒ /api/precommandes/gta-vi
+├ ƒ /api/products
+├ ƒ /api/products/search
+├ ƒ /api/webhooks/stripe
+├ ƒ /categories
+├ ƒ /categories/plateformes/[slug]
+├ ƒ /categories/types/[slug]
+├ ○ /cgv
+├ ƒ /checkout
+├ ƒ /checkout/success
+├ ○ /checkout/verification
+├ ƒ /completer-profil
+├ ƒ /connexion
+├ ƒ /favoris
+├ ○ /inscription
+├ ○ /mot-de-passe-oublie
+├ ƒ /obtenir-votre-produit
+├ ƒ /panier
+├ ○ /precommande-fc27
+├ ○ /precommande-gta-vi
+├ ƒ /produits
+├ ƒ /produits/[slug]
+├ ƒ /profil
+├ ƒ /reinitialiser-mot-de-passe
+├ ○ /robots.txt
+├ ○ /sitemap.xml                                       1h      1y
+└ ● /sitemap/[id]                                      1h      1y
+  ├ /sitemap/0.xml                                     1h      1y
+  ├ /sitemap/1.xml                                     1h      1y
+  ├ /sitemap/2.xml                                     1h      1y
+  └ [+6 more paths]
+
+
+○  (Static)   prerendered as static content
+●  (SSG)      prerendered as static HTML (uses generateStaticParams)
+ƒ  (Dynamic)  server-rendered on demand
+
