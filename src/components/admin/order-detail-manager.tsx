@@ -257,7 +257,24 @@ export function OrderDetailManager({
   }
 
   return (
-    <div className="grid gap-6 xl:grid-cols-[1.05fr_0.95fr]">
+    <div className="space-y-6">
+      <div className="flex flex-col items-end gap-3">
+        <Button
+          type="button"
+          disabled={isGeneratingReceipt}
+          onClick={handleReceiptDownload}
+        >
+          <Download className="size-4" />
+          {isGeneratingReceipt ? "Génération..." : "Générer facture"}
+        </Button>
+        {receiptError ? (
+          <div className="rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-700">
+            {receiptError}
+          </div>
+        ) : null}
+      </div>
+
+      <div className="grid gap-6 xl:grid-cols-[1.05fr_0.95fr]">
       <div className="space-y-6">
         <Card>
           <CardHeader className="border-b border-border pb-6">
@@ -695,22 +712,6 @@ export function OrderDetailManager({
             </div>
           </CardHeader>
           <CardContent className="space-y-3 text-sm text-slate-700">
-            <Button
-              type="button"
-              className="w-full"
-              disabled={isGeneratingReceipt}
-              onClick={handleReceiptDownload}
-            >
-              <Download className="size-4" />
-              {isGeneratingReceipt
-                ? "Génération de la facture..."
-                : "Générer la facture"}
-            </Button>
-            {receiptError ? (
-              <div className="rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-700">
-                {receiptError}
-              </div>
-            ) : null}
             <div className="rounded-2xl border border-border bg-slate-50 p-4">
               Référence de paiement : {order.paymentReference || "—"}
             </div>
@@ -722,6 +723,7 @@ export function OrderDetailManager({
             </div>
           </CardContent>
         </Card>
+      </div>
       </div>
     </div>
   );
