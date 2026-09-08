@@ -6,8 +6,7 @@ import { CategoryModel } from "@/models/category.model";
 const DOMAIN = "https://playsdepot.com";
 const PRODUCTS_PER_SITEMAP = 10000;
 
-export const revalidate = 3600; // Cache for 1 hour
-export const dynamicParams = true;
+export const dynamicParams = false;
 
 export async function generateStaticParams() {
   await connectToDatabase();

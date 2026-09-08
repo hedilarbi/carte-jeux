@@ -5,8 +5,6 @@ import { ProductModel } from "@/models/product.model";
 const DOMAIN = "https://playsdepot.com";
 const PRODUCTS_PER_SITEMAP = 10000;
 
-export const revalidate = 3600; // Cache for 1 hour
-
 export async function GET() {
   await connectToDatabase();
   
