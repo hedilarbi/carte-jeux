@@ -14,7 +14,6 @@ import {
 
 import { PhoneNumberField } from "@/components/site/auth/phone-number-field";
 import { fetchJson } from "@/lib/utils/fetch-json";
-import { formatProductPrice } from "@/lib/utils/pricing";
 import { useCurrency } from "@/components/site/providers/currency-provider";
 import { formatPriceWithCurrency, type Currency } from "@/lib/utils/currency";
 import type { Cart, CartItem, Order } from "@/types/entities";
@@ -109,12 +108,15 @@ export function CheckoutOrderForm({
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>("whatsapp");
 
   useEffect(() => {
-    // Si la devise est EUR, on force Stripe. Sinon, on garde whatsapp par défaut ou le choix de l'utilisateur.
-    if (currency === "EUR") {
+    // Les devises internationales sont réglées via Stripe.
+    if (currency === "EUR" || currency === "MAD") {
       setPaymentMethod("stripe");
-    } else if (paymentMethod === "stripe") {
-      setPaymentMethod("whatsapp");
+      return;
     }
+
+    setPaymentMethod((currentMethod) =>
+      currentMethod === "stripe" ? "whatsapp" : currentMethod,
+    );
   }, [currency]);
 
   const isAuthenticated = Boolean(customer);
@@ -123,9 +125,11 @@ export function CheckoutOrderForm({
   );
   const isClicToPayConfigured = Boolean(paymentConfig.clicToPayConfigured);
   const isPaymentConfigured =
-    paymentMethod === "clictopay"
-      ? isClicToPayConfigured
-      : Boolean(whatsAppNumber);
+    paymentMethod === "stripe"
+      ? true
+      : paymentMethod === "clictopay"
+        ? isClicToPayConfigured
+        : Boolean(whatsAppNumber);
   const paymentConfigurationMessage =
     paymentMethod === "clictopay"
       ? "Le paiement par carte bancaire doit être configuré avant de continuer."
@@ -290,7 +294,7 @@ function PaymentMethodsCard({
             onClick={() => onPaymentMethodChange("clictopay")}
           />
         )}
-        {currency === "EUR" && (
+        {(currency === "EUR" || currency === "MAD") && (
           <PaymentMethodOption
             description="Payez en toute sécurité par carte bancaire avec Stripe."
             icon={<CreditCard className="size-8" />}

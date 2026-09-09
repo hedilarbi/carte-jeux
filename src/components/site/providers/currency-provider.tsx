@@ -7,7 +7,7 @@ import { type Currency } from "@/lib/utils/currency";
 /** Devise choisie explicitement par le visiteur : elle prime et n'expire pas. */
 const PREFERENCE_KEY = "playsdepot_currency_preference";
 /** Résultat de la détection par IP, réévalué passé le délai ci-dessous. */
-const DETECTION_KEY = "playsdepot_currency_detection";
+const DETECTION_KEY = "playsdepot_currency_detection_v2";
 /** Ancienne clé unique, qui confondait choix explicite et détection. */
 const LEGACY_KEY = "user_currency";
 
@@ -26,7 +26,13 @@ const CurrencyContext = createContext<CurrencyContextType>({
 });
 
 function isCurrency(value: unknown): value is Currency {
-  return value === "TND" || value === "EUR";
+  return value === "TND" || value === "EUR" || value === "MAD";
+}
+
+function currencyForCountry(countryCode?: string): Currency {
+  if (countryCode === "TN") return "TND";
+  if (countryCode === "MA") return "MAD";
+  return "EUR";
 }
 
 /** Toute lecture peut échouer : navigation privée, stockage bloqué. */
@@ -104,8 +110,7 @@ export function CurrencyProvider({ children }: { children: React.ReactNode }) {
           signal: controller.signal,
         });
         const data = (await response.json()) as { country_code?: string };
-        const detectedCurrency: Currency =
-          data.country_code === "TN" ? "TND" : "EUR";
+        const detectedCurrency = currencyForCountry(data.country_code);
 
         writeStorage(
           DETECTION_KEY,

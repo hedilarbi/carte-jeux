@@ -22,5 +22,5 @@ export const checkoutCreateSchema = z.object({
   paymentMethod: z.enum(["whatsapp", "stripe", "clictopay"], {
     error: "Le moyen de paiement sélectionné est invalide.",
   }),
-  currency: z.enum(["TND", "EUR"]).default("TND"),
+  currency: z.enum(["TND", "EUR", "MAD"]).default("TND"),
 });

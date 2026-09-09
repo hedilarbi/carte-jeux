@@ -465,6 +465,7 @@ function CurrencySelector() {
     >
       <option value="TND" className="bg-[#0D0D22] text-white">TND</option>
       <option value="EUR" className="bg-[#0D0D22] text-white">EUR</option>
+      <option value="MAD" className="bg-[#0D0D22] text-white">MAD</option>
     </select>
   );
 }

@@ -93,7 +93,14 @@ type Fc27HeroSlide = {
   mobileImage: string;
 };
 
+type AiSubscriptionsHeroSlide = {
+  background: string;
+  id: string;
+  kind: "ai-subscriptions";
+};
+
 type HeroSlide =
+  | AiSubscriptionsHeroSlide
   | AssassinsCreedHeroSlide
   | Fc27HeroSlide
   | ProductGridHeroSlide
@@ -137,6 +144,11 @@ type SwipePoint = {
 };
 
 const heroSlides: HeroSlide[] = [
+  {
+    background: "/ai-slide-bg.png",
+    id: "ai-subscriptions",
+    kind: "ai-subscriptions",
+  },
   {
     desktopImage: "/bg-fc27.jpg",
     href: "/precommande-fc27",
@@ -364,7 +376,9 @@ export function HeroSection() {
               className="relative isolate h-full min-w-full overflow-hidden"
               key={slide.id}
             >
-              {slide.kind === "fc-27" ? (
+              {slide.kind === "ai-subscriptions" ? (
+                <AiSubscriptionsSlide slide={slide} />
+              ) : slide.kind === "fc-27" ? (
                 <Fc27Slide slide={slide} />
               ) : slide.kind === "assassins-creed" ? (
                 <AssassinsCreedSlide slide={slide} />
@@ -431,6 +445,163 @@ export function HeroSection() {
                 <p className="mt-1 text-xs text-white">{item.description}</p>
               </div>
             </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+const aiOffers = [
+  {
+    accent: "#EA7A60",
+    border: "#D36B4C",
+    cardBackground: "rgba(42, 20, 22, 0.5)",
+    features: [
+      "Accès complet à Claude Pro",
+      "5× plus d'usage qu'en version gratuite",
+      "Projets, analyse de documents & code",
+      "Accès prioritaire aux nouveaux modèles",
+    ],
+    href: "/produits?search=Claude",
+    logo: "/claude.png",
+    name: "Claude AI",
+    price: "80 TND",
+    priceEuro: "≈ 20 €",
+    tags: ["Rédaction longue", "Fichiers", "Prioritaire"],
+    tick: "/tick_orange.png",
+  },
+  {
+    accent: "#2E9978",
+    border: "#4CE5AB",
+    cardBackground: "rgba(12, 76, 51, 0.5)",
+    features: [
+      "Accès aux modèles GPT avancés",
+      "Limites de messages fortement élargies",
+      "Génération d'images & lecture de fichiers",
+      "Mémoire et historique étendus",
+    ],
+    href: "/produits?search=ChatGPT",
+    logo: "/chatgpt.png",
+    name: "ChatGPT",
+    price: "32 TND",
+    priceEuro: "≈ 8 €",
+    tags: ["Recherche web", "Images", "Mises à jour"],
+    tick: "/tick_green.png",
+  },
+] as const;
+
+function AiSubscriptionsSlide({
+  slide,
+}: {
+  slide: AiSubscriptionsHeroSlide;
+}) {
+  return (
+    <div
+      className="relative h-full overflow-hidden text-white"
+      style={{ fontFamily: "var(--font-rubik), sans-serif" }}
+    >
+      <Image
+        alt=""
+        className="-z-10 object-cover"
+        fill
+        priority
+        sizes="100vw"
+        src={slide.background}
+      />
+
+      <div className="mx-auto flex h-full max-w-[1920px] flex-col px-4 pb-11 pt-4 sm:px-7 md:px-10 md:pb-12 md:pt-5 xl:px-[4%]">
+        <div className="shrink-0 text-center">
+          <h2 className="text-[clamp(1.6rem,3.45vw,3.55rem)] font-black leading-none tracking-[-0.035em]">
+            Abonnements <span className="text-[#ADA7F7]">IA Premium</span>
+          </h2>
+          <p className="mx-auto mt-2 max-w-[760px] text-[clamp(.72rem,1.15vw,1.18rem)] font-bold leading-[1.45] md:mt-3">
+            Accédez aux meilleurs outils d&apos;Intelligence Artificielle
+            <br className="hidden sm:block" /> en quelques clics seulement !
+          </p>
+        </div>
+
+        <div className="mt-3 grid min-h-0 flex-1 grid-rows-2 gap-3 md:mt-5 md:grid-cols-2 md:grid-rows-1 md:gap-5 xl:gap-7">
+          {aiOffers.map((offer) => (
+            <article
+              className="flex min-h-0 flex-col justify-center rounded-[22px] border-2 px-4 py-2.5 backdrop-blur-[2px] md:rounded-[28px] md:px-6 md:py-4 xl:px-7"
+              key={offer.name}
+              style={{
+                backgroundColor: offer.cardBackground,
+                borderColor: offer.border,
+                boxShadow: `0 14px 32px color-mix(in srgb, ${offer.accent} 20%, transparent)`,
+              }}
+            >
+              <div className="flex shrink-0 items-center gap-3 md:gap-4">
+                <Image
+                  alt={`Logo ${offer.name}`}
+                  className="size-11 shrink-0 object-contain md:size-[clamp(3.8rem,5.1vw,5.25rem)]"
+                  height={110}
+                  src={offer.logo}
+                  width={110}
+                />
+                <div className="min-w-0">
+                  <h3 className="text-[clamp(1.1rem,2vw,2.05rem)] font-black leading-none tracking-[-0.025em]">
+                    {offer.name}
+                  </h3>
+                  <p
+                    className="mt-1 text-[clamp(.65rem,1.02vw,1.02rem)] font-bold"
+                    style={{ color: offer.accent }}
+                  >
+                    Abonnement Premium
+                  </p>
+                </div>
+                <p className="ml-auto shrink-0 text-right leading-tight">
+                  <span
+                    className="text-[clamp(.9rem,1.92vw,1.95rem)] font-black"
+                    style={{ color: offer.accent }}
+                  >
+                    {offer.price}
+                  </span>{" "}
+                  <span className="text-[clamp(.62rem,.95vw,.95rem)] font-bold">/ mois</span>
+                  <span className="mt-1 block text-[clamp(.6rem,.82vw,.82rem)] font-normal text-white/75">
+                    {offer.priceEuro}
+                  </span>
+                </p>
+              </div>
+
+              <div className="my-2 h-px shrink-0 md:my-3" style={{ backgroundColor: offer.border, opacity: 0.6 }} />
+
+              <ul className="flex shrink-0 flex-col gap-1 md:gap-3">
+                {offer.features.map((feature) => (
+                  <li className="flex items-center gap-2 text-[clamp(.7rem,1.08vw,1.08rem)] leading-tight" key={feature}>
+                    <Image
+                      alt=""
+                      className="h-4 w-4 shrink-0 object-contain md:h-6 md:w-5"
+                      height={28}
+                      src={offer.tick}
+                      width={24}
+                    />
+                    <span>{feature}</span>
+                  </li>
+                ))}
+              </ul>
+
+              <div className="mt-4 hidden flex-wrap justify-center gap-2 lg:flex">
+                {offer.tags.map((tag) => (
+                  <span
+                    className="rounded-full border px-4 py-1 text-[clamp(.68rem,.92vw,.92rem)] leading-none"
+                    key={tag}
+                    style={{ borderColor: offer.border, color: offer.accent }}
+                  >
+                    {tag}
+                  </span>
+                ))}
+              </div>
+
+              <Link
+                className="mx-auto mt-3 inline-flex min-h-8 w-full max-w-[420px] shrink-0 items-center justify-center rounded-full px-5 text-center text-[clamp(.75rem,1.08vw,1.08rem)] font-bold text-white transition hover:-translate-y-0.5 hover:brightness-110 md:min-h-12"
+                href={offer.href}
+                style={{ backgroundColor: offer.accent }}
+              >
+                S&apos;abonner à {offer.name}
+              </Link>
+            </article>
           ))}
         </div>
       </div>
