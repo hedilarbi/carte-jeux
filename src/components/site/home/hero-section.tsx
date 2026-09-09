@@ -510,9 +510,12 @@ function AiSubscriptionsSlide({
         src={slide.background}
       />
 
-      <div className="mx-auto flex h-full max-w-[1920px] flex-col px-4 pb-11 pt-4 sm:px-7 md:px-10 md:pb-12 md:pt-5 xl:px-[4%]">
+      <div className="mx-auto flex h-full max-w-[1920px] flex-col px-4 pb-8 pt-4 sm:px-7 md:px-10 md:pb-7 md:pt-5 xl:px-[4%]">
         <div className="shrink-0 text-center">
-          <h2 className="text-[clamp(1.6rem,3.45vw,3.55rem)] font-black leading-none tracking-[-0.035em]">
+          <h2
+            className="text-[clamp(1.6rem,3.45vw,3.55rem)] leading-none tracking-[-0.035em]"
+            style={{ fontFamily: "var(--font-rubik), sans-serif", fontWeight: 900 }}
+          >
             Abonnements <span className="text-[#ADA7F7]">IA Premium</span>
           </h2>
           <p className="mx-auto mt-2 max-w-[760px] text-[clamp(.72rem,1.15vw,1.18rem)] font-bold leading-[1.45] md:mt-3">
@@ -535,7 +538,7 @@ function AiSubscriptionsSlide({
               <div className="flex shrink-0 items-center gap-3 md:gap-4">
                 <Image
                   alt={`Logo ${offer.name}`}
-                  className="size-11 shrink-0 object-contain md:size-[clamp(3.8rem,5.1vw,5.25rem)]"
+                  className="size-14 shrink-0 object-contain md:size-[clamp(4.5rem,5.8vw,6.25rem)]"
                   height={110}
                   src={offer.logo}
                   width={110}
