@@ -329,6 +329,25 @@ productSchema.index(
   },
 );
 
+productSchema.index(
+  { 
+    title: "text", 
+    slug: "text", 
+    sku: "text", 
+    shortDescription: "text" 
+  },
+  {
+    name: "product_text_search_index",
+    weights: {
+      title: 10,
+      sku: 8,
+      slug: 5,
+      shortDescription: 2
+    },
+    default_language: "french"
+  }
+);
+
 productSchema.pre("validate", function setFinalPrice() {
   const product = this as ProductRecord;
 

@@ -123,15 +123,13 @@ export async function listProducts(filters: ProductListFilters = {}) {
   }
 
   if (filters.search?.trim()) {
-    const searchRegex = new RegExp(filters.search.trim(), "i");
+    const searchTerms = filters.search.trim();
+    // Use MongoDB Text Search instead of regex for massive performance gain and ReDoS prevention
     andFilters.push({
-      $or: [
-        { title: searchRegex },
-        { slug: searchRegex },
-        { sku: searchRegex },
-        { shortDescription: searchRegex },
-      ],
+      $text: { $search: searchTerms }
     });
+    // Fallback: If you really want partial matches in the future on SKU for example, 
+    // it's safer to use an exact regex on a single field with a length limit, but $text is best.
   }
 
   if (andFilters.length > 0) {
@@ -206,6 +204,7 @@ export async function listActiveProductsForSelection() {
   await connectToDatabase();
 
   return ProductModel.find({ isActive: true } as unknown as ProductFindQuery)
+    .select({ _id: 1, title: 1, image: 1, finalPrice: 1, price: 1, discountPercent: 1 }) // Only fetch needed fields for UI to prevent RAM leak
     .sort({ title: 1, createdAt: -1 })
     .lean()
     .exec();
