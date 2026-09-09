@@ -144,6 +144,7 @@ export async function listProducts(filters: ProductListFilters = {}) {
       .sort(resolveProductSort(filters.sort))
       .skip(pagination.skip)
       .limit(pagination.limit)
+      .allowDiskUse(true)
       .lean()
       .exec(),
     ProductModel.countDocuments(countQuery),
@@ -206,6 +207,7 @@ export async function listActiveProductsForSelection() {
   return ProductModel.find({ isActive: true } as unknown as ProductFindQuery)
     .select({ _id: 1, title: 1, image: 1, finalPrice: 1, price: 1, discountPercent: 1 }) // Only fetch needed fields for UI to prevent RAM leak
     .sort({ title: 1, createdAt: -1 })
+    .allowDiskUse(true)
     .lean()
     .exec();
 }
@@ -216,6 +218,7 @@ export async function listProductsForCsvExport() {
   return ProductModel.find({} as ProductFindQuery)
     .select({ _id: 0, slug: 1, title: 1 })
     .sort({ title: 1 })
+    .allowDiskUse(true)
     .lean()
     .exec();
 }
