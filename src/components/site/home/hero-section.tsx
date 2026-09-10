@@ -513,21 +513,21 @@ function AiSubscriptionsSlide({
       <div className="mx-auto flex h-full max-w-[1920px] flex-col px-4 pb-8 pt-4 sm:px-7 md:px-10 md:pb-7 md:pt-5 xl:px-[4%]">
         <div className="shrink-0 text-center">
           <h2
-            className="text-[clamp(1.6rem,3.45vw,3.55rem)] leading-none tracking-[-0.035em]"
+            className="text-[1.6rem] leading-none tracking-[-0.035em] md:text-[2.7rem] xl:text-[3rem]"
             style={{ fontFamily: "var(--font-rubik), sans-serif", fontWeight: 900 }}
           >
             Abonnements <span className="text-[#ADA7F7]">IA Premium</span>
           </h2>
-          <p className="mx-auto mt-2 max-w-[760px] text-[clamp(.72rem,1.15vw,1.18rem)] font-bold leading-[1.45] md:mt-3">
+          <p className="mx-auto mt-2 max-w-[760px] text-xs font-bold leading-[1.45] md:mt-2 md:text-base">
             Accédez aux meilleurs outils d&apos;Intelligence Artificielle
             <br className="hidden sm:block" /> en quelques clics seulement !
           </p>
         </div>
 
-        <div className="mt-3 grid min-h-0 flex-1 grid-rows-2 gap-3 md:mt-5 md:grid-cols-2 md:grid-rows-1 md:gap-5 xl:gap-7">
+        <div className="mt-3 grid min-h-0 flex-1 grid-rows-2 gap-3 md:mt-4 md:grid-cols-2 md:grid-rows-1 md:gap-5 xl:gap-7">
           {aiOffers.map((offer) => (
             <article
-              className="flex min-h-0 flex-col rounded-[22px] border-2 px-4 py-3 backdrop-blur-[2px] md:rounded-[28px] md:px-6 md:py-4 xl:px-7"
+              className="relative flex min-h-0 flex-col overflow-hidden rounded-[22px] border-2 px-4 py-3 backdrop-blur-[2px] md:rounded-[28px] md:px-6 md:py-4 xl:px-7"
               key={offer.name}
               style={{
                 backgroundColor: offer.cardBackground,
@@ -538,17 +538,17 @@ function AiSubscriptionsSlide({
               <div className="flex shrink-0 items-center gap-3 md:gap-4">
                 <Image
                   alt={`Logo ${offer.name}`}
-                  className="size-14 shrink-0 object-contain md:size-[clamp(4.5rem,5.8vw,6.25rem)]"
+                  className="size-14 shrink-0 object-contain md:size-20 xl:size-[5.5rem]"
                   height={110}
                   src={offer.logo}
                   width={110}
                 />
                 <div className="min-w-0">
-                  <h3 className="text-[clamp(1.1rem,2vw,2.05rem)] font-black leading-none tracking-[-0.025em]">
+                  <h3 className="text-lg font-black leading-none tracking-[-0.025em] md:text-2xl xl:text-[1.75rem]">
                     {offer.name}
                   </h3>
                   <p
-                    className="mt-1 text-[clamp(.65rem,1.02vw,1.02rem)] font-bold"
+                    className="mt-1 text-[.65rem] font-bold md:text-sm"
                     style={{ color: offer.accent }}
                   >
                     Abonnement Premium
@@ -556,13 +556,13 @@ function AiSubscriptionsSlide({
                 </div>
                 <p className="ml-auto shrink-0 text-right leading-tight">
                   <span
-                    className="text-[clamp(.9rem,1.92vw,1.95rem)] font-black"
+                    className="text-base font-black md:text-2xl xl:text-[1.7rem]"
                     style={{ color: offer.accent }}
                   >
                     {offer.price}
                   </span>{" "}
-                  <span className="text-[clamp(.62rem,.95vw,.95rem)] font-bold">/ mois</span>
-                  <span className="mt-1 block text-[clamp(.6rem,.82vw,.82rem)] font-normal text-white/75">
+                  <span className="text-[.62rem] font-bold md:text-sm">/ mois</span>
+                  <span className="mt-1 block text-[.6rem] font-normal text-white/75 md:text-xs">
                     {offer.priceEuro}
                   </span>
                 </p>
@@ -572,7 +572,7 @@ function AiSubscriptionsSlide({
 
               <ul className="flex shrink-0 flex-col gap-1 md:mx-2 md:gap-1.5 xl:mx-3">
                 {offer.features.map((feature) => (
-                  <li className="flex items-center gap-2 text-[clamp(.7rem,1.08vw,1.08rem)] leading-tight" key={feature}>
+                  <li className="flex items-center gap-2 text-[.7rem] leading-tight md:text-[.9rem] xl:text-[.95rem]" key={feature}>
                     <Image
                       alt=""
                       className="h-4 w-4 shrink-0 object-contain md:h-6 md:w-5"
@@ -585,10 +585,10 @@ function AiSubscriptionsSlide({
                 ))}
               </ul>
 
-              <div className="mt-2 hidden flex-wrap justify-center gap-2 lg:flex">
+              <div className="mt-2 hidden flex-wrap justify-center gap-2 lg:absolute lg:bottom-[4.35rem] lg:left-1/2 lg:flex lg:-translate-x-1/2 lg:whitespace-nowrap">
                 {offer.tags.map((tag) => (
                   <span
-                    className="rounded-full border px-4 py-1 text-[clamp(.68rem,.92vw,.92rem)] leading-none"
+                    className="rounded-full border px-3 py-1 text-xs leading-none"
                     key={tag}
                     style={{ borderColor: offer.border, color: offer.accent }}
                   >
@@ -598,7 +598,7 @@ function AiSubscriptionsSlide({
               </div>
 
               <Link
-                className="mx-auto mt-6 inline-flex min-h-8 w-full max-w-[420px] shrink-0 items-center justify-center rounded-full px-5 text-center text-[clamp(.75rem,1.08vw,1.08rem)] font-bold text-white transition hover:-translate-y-0.5 hover:brightness-110 md:min-h-10"
+                className="mx-auto mt-4 inline-flex min-h-8 w-full max-w-[390px] shrink-0 items-center justify-center rounded-full px-5 text-center text-xs font-bold text-white transition hover:-translate-y-0.5 hover:brightness-110 md:absolute md:bottom-4 md:left-1/2 md:mt-0 md:min-h-10 md:-translate-x-1/2 md:text-sm"
                 href={offer.href}
                 style={{ backgroundColor: offer.accent }}
               >
