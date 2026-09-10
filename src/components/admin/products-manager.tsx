@@ -30,6 +30,10 @@ interface ProductsManagerProps {
   categories: Category[];
   platformCategories: Category[];
   regions: Region[];
+  pagination?: {
+    page: number;
+    totalPages: number;
+  };
 }
 
 interface ProductCsvImportResult {
@@ -123,6 +127,7 @@ export function ProductsManager({
   categories,
   platformCategories,
   regions,
+  pagination,
 }: ProductsManagerProps) {
   const router = useRouter();
   const [products, setProducts] = useState(initialProducts);
@@ -674,6 +679,40 @@ export function ProductsManager({
               ) : null}
             </tbody>
           </table>
+          
+          {pagination && pagination.totalPages > 1 && !search && (
+            <div className="flex items-center justify-between border-t border-border px-6 py-4">
+              <div className="text-sm text-slate-500">
+                Page {pagination.page} sur {pagination.totalPages}
+              </div>
+              <div className="flex gap-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  disabled={pagination.page <= 1}
+                  onClick={() => {
+                    const params = new URLSearchParams(window.location.search);
+                    params.set("page", String(pagination.page - 1));
+                    router.push(`?${params.toString()}`);
+                  }}
+                >
+                  Précédent
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  disabled={pagination.page >= pagination.totalPages}
+                  onClick={() => {
+                    const params = new URLSearchParams(window.location.search);
+                    params.set("page", String(pagination.page + 1));
+                    router.push(`?${params.toString()}`);
+                  }}
+                >
+                  Suivant
+                </Button>
+              </div>
+            </div>
+          )}
         </CardContent>
       </Card>
 

@@ -205,7 +205,7 @@ export async function listActiveProductsForSelection() {
   await connectToDatabase();
 
   return ProductModel.find({ isActive: true } as unknown as ProductFindQuery)
-    .select({ _id: 1, title: 1, image: 1, finalPrice: 1, price: 1, discountPercent: 1 }) // Only fetch needed fields for UI to prevent RAM leak
+    .select({ _id: 1, title: 1, image: 1, finalPrice: 1, price: 1, discountPercent: 1, sku: 1, slug: 1, isActive: 1, currency: 1 }) // Only fetch needed fields for UI to prevent RAM leak
     .sort({ title: 1, createdAt: -1 })
     .allowDiskUse(true)
     .lean()

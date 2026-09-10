@@ -510,7 +510,7 @@ function AiSubscriptionsSlide({
         src={slide.background}
       />
 
-      <div className="mx-auto flex h-full max-w-[1920px] flex-col px-4 pb-8 pt-4 sm:px-7 md:px-10 md:pb-7 md:pt-5 xl:px-[4%]">
+      <div className="mx-auto flex h-full max-w-[1920px] flex-col justify-center px-4 py-8 sm:px-7 md:px-10 xl:px-[4%]">
         <div className="shrink-0 text-center">
           <h2
             className="text-[1.6rem] leading-none tracking-[-0.035em] md:text-[2.7rem] xl:text-[3rem]"
@@ -518,16 +518,16 @@ function AiSubscriptionsSlide({
           >
             Abonnements <span className="text-[#ADA7F7]">IA Premium</span>
           </h2>
-          <p className="mx-auto mt-2 max-w-[760px] text-xs font-bold leading-[1.45] md:mt-2 md:text-base">
+          <p className="mx-auto mt-2 max-w-[760px] text-xs font-bold leading-[1.45] md:mt-3 md:text-base">
             Accédez aux meilleurs outils d&apos;Intelligence Artificielle
             <br className="hidden sm:block" /> en quelques clics seulement !
           </p>
         </div>
 
-        <div className="mt-3 grid min-h-0 flex-1 grid-rows-2 gap-3 md:mt-4 md:grid-cols-2 md:grid-rows-1 md:gap-5 xl:gap-7">
+        <div className="mt-5 grid min-h-0 items-center gap-4 md:mt-10 md:grid-cols-2 md:grid-rows-1 md:gap-6 xl:gap-8">
           {aiOffers.map((offer) => (
             <article
-              className="relative flex min-h-0 flex-col overflow-hidden rounded-[22px] border-2 px-4 py-3 backdrop-blur-[2px] md:rounded-[28px] md:px-6 md:py-4 xl:px-7"
+              className="relative flex min-h-0 flex-col overflow-hidden rounded-[22px] border-2 px-4 py-4 backdrop-blur-[2px] md:rounded-[28px] md:px-6 md:py-6 xl:px-7"
               key={offer.name}
               style={{
                 backgroundColor: offer.cardBackground,
@@ -568,9 +568,9 @@ function AiSubscriptionsSlide({
                 </p>
               </div>
 
-              <div className="my-2 h-px shrink-0 md:mx-2 xl:mx-3" style={{ backgroundColor: offer.border, opacity: 0.6 }} />
+              <div className="my-3 h-px shrink-0 md:mx-2 md:my-4 xl:mx-3" style={{ backgroundColor: offer.border, opacity: 0.6 }} />
 
-              <ul className="flex shrink-0 flex-col gap-1 md:mx-2 md:translate-y-1 xl:mx-3">
+              <ul className="flex shrink-0 flex-col gap-2 md:mx-2 xl:mx-3">
                 {offer.features.map((feature) => (
                   <li className="flex items-center gap-2 text-[.7rem] leading-tight md:text-[.9rem] xl:text-[.95rem]" key={feature}>
                     <Image
@@ -585,7 +585,7 @@ function AiSubscriptionsSlide({
                 ))}
               </ul>
 
-              <div className="mt-2 hidden flex-wrap justify-center gap-2 lg:absolute lg:bottom-[4.35rem] lg:left-1/2 lg:flex lg:-translate-x-1/2 lg:whitespace-nowrap">
+              <div className="mt-6 hidden flex-wrap justify-center gap-2 lg:flex lg:whitespace-nowrap">
                 {offer.tags.map((tag) => (
                   <span
                     className="rounded-full border px-3 py-1 text-xs leading-none"
@@ -598,7 +598,7 @@ function AiSubscriptionsSlide({
               </div>
 
               <Link
-                className="mx-auto mt-4 inline-flex min-h-8 w-full max-w-[390px] shrink-0 items-center justify-center rounded-full px-5 text-center text-xs font-bold text-white transition hover:-translate-y-0.5 hover:brightness-110 md:absolute md:bottom-4 md:left-1/2 md:mt-0 md:min-h-10 md:-translate-x-1/2 md:text-sm"
+                className="mx-auto mt-4 inline-flex min-h-8 w-full max-w-[390px] shrink-0 items-center justify-center rounded-full px-5 text-center text-xs font-bold text-white transition hover:-translate-y-0.5 hover:brightness-110 md:mt-5 md:min-h-12 md:text-sm"
                 href={offer.href}
                 style={{ backgroundColor: offer.accent }}
               >

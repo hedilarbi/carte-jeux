@@ -45,7 +45,9 @@ function sortBestSellerItems(items: BestSellerItem[]) {
         return firstOrder - secondOrder;
       }
 
-      return firstItem.createdAt.localeCompare(secondItem.createdAt);
+      const firstCreatedAt = firstItem.createdAt || "";
+      const secondCreatedAt = secondItem.createdAt || "";
+      return firstCreatedAt.localeCompare(secondCreatedAt);
     }),
   );
 }
@@ -100,7 +102,7 @@ export function BestSellerManager({
       products
         .filter((product) => !selectedProductIds.has(product._id))
         .sort((firstProduct, secondProduct) =>
-          firstProduct.title.localeCompare(secondProduct.title),
+          (firstProduct.title || "").localeCompare(secondProduct.title || ""),
         ),
     [products, selectedProductIds],
   );

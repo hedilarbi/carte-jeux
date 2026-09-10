@@ -4,9 +4,15 @@ import { categoryService } from "@/services/category.service";
 import { productService } from "@/services/product.service";
 import { regionService } from "@/services/region.service";
 
-export default async function AdminProductsPage() {
+export default async function AdminProductsPage(props: {
+  searchParams?: Promise<{ [key: string]: string | string[] | undefined }>;
+}) {
+  const searchParams = await props.searchParams;
+  const page = searchParams?.page ? parseInt(searchParams.page as string, 10) : 1;
+  const limit = 20;
+
   const [products, categories, platformCategories, regions] = await Promise.all([
-    productService.list({ page: 1, limit: 100 }),
+    productService.list({ page, limit }),
     categoryService.list({ page: 1, limit: 100, isPlateforme: false }),
     categoryService.list({ page: 1, limit: 100, isPlateforme: true }),
     regionService.list({ page: 1, limit: 100 }),
@@ -24,6 +30,10 @@ export default async function AdminProductsPage() {
         categories={categories.items}
         platformCategories={platformCategories.items}
         regions={regions.items}
+        pagination={{
+          page: products.page,
+          totalPages: products.totalPages,
+        }}
       />
     </>
   );
