@@ -527,7 +527,7 @@ function AiSubscriptionsSlide({
         <div className="mt-3 grid min-h-0 flex-1 grid-rows-2 gap-3 md:mt-5 md:grid-cols-2 md:grid-rows-1 md:gap-5 xl:gap-7">
           {aiOffers.map((offer) => (
             <article
-              className="flex min-h-0 flex-col rounded-[22px] border-2 px-4 py-3 backdrop-blur-[2px] md:rounded-[28px] md:px-6 md:py-6 xl:px-7"
+              className="flex min-h-0 flex-col rounded-[22px] border-2 px-4 py-3 backdrop-blur-[2px] md:rounded-[28px] md:px-6 md:py-4 xl:px-7"
               key={offer.name}
               style={{
                 backgroundColor: offer.cardBackground,
@@ -568,9 +568,9 @@ function AiSubscriptionsSlide({
                 </p>
               </div>
 
-              <div className="my-2 h-px shrink-0 md:mx-2 md:my-4 xl:mx-3" style={{ backgroundColor: offer.border, opacity: 0.6 }} />
+              <div className="my-2 h-px shrink-0 md:mx-2 md:my-3 xl:mx-3" style={{ backgroundColor: offer.border, opacity: 0.6 }} />
 
-              <ul className="flex shrink-0 flex-col gap-1 md:mx-2 md:gap-2 xl:mx-3">
+              <ul className="flex shrink-0 flex-col gap-1 md:mx-2 md:gap-1.5 xl:mx-3">
                 {offer.features.map((feature) => (
                   <li className="flex items-center gap-2 text-[clamp(.7rem,1.08vw,1.08rem)] leading-tight" key={feature}>
                     <Image
@@ -585,7 +585,7 @@ function AiSubscriptionsSlide({
                 ))}
               </ul>
 
-              <div className="mt-3 hidden flex-wrap justify-center gap-2 lg:flex">
+              <div className="mt-2 hidden flex-wrap justify-center gap-2 lg:flex">
                 {offer.tags.map((tag) => (
                   <span
                     className="rounded-full border px-4 py-1 text-[clamp(.68rem,.92vw,.92rem)] leading-none"
@@ -598,7 +598,7 @@ function AiSubscriptionsSlide({
               </div>
 
               <Link
-                className="mx-auto mt-3 inline-flex min-h-8 w-full max-w-[420px] shrink-0 items-center justify-center rounded-full px-5 text-center text-[clamp(.75rem,1.08vw,1.08rem)] font-bold text-white transition hover:-translate-y-0.5 hover:brightness-110 md:min-h-11"
+                className="mx-auto mt-6 inline-flex min-h-8 w-full max-w-[420px] shrink-0 items-center justify-center rounded-full px-5 text-center text-[clamp(.75rem,1.08vw,1.08rem)] font-bold text-white transition hover:-translate-y-0.5 hover:brightness-110 md:min-h-10"
                 href={offer.href}
                 style={{ backgroundColor: offer.accent }}
               >
