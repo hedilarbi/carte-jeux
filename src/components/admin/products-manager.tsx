@@ -688,7 +688,7 @@ export function ProductsManager({
               <div className="flex gap-2">
                 <Button
                   variant="outline"
-                  size="sm"
+                  className="px-3 py-1.5 h-auto text-xs"
                   disabled={pagination.page <= 1}
                   onClick={() => {
                     const params = new URLSearchParams(window.location.search);
@@ -700,7 +700,7 @@ export function ProductsManager({
                 </Button>
                 <Button
                   variant="outline"
-                  size="sm"
+                  className="px-3 py-1.5 h-auto text-xs"
                   disabled={pagination.page >= pagination.totalPages}
                   onClick={() => {
                     const params = new URLSearchParams(window.location.search);
