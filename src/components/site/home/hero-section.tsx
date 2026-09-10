@@ -570,7 +570,7 @@ function AiSubscriptionsSlide({
 
               <div className="my-2 h-px shrink-0 md:mx-2 xl:mx-3" style={{ backgroundColor: offer.border, opacity: 0.6 }} />
 
-              <ul className="flex shrink-0 flex-col gap-1 md:mx-2 md:-translate-y-3 xl:mx-3 xl:-translate-y-4">
+              <ul className="flex shrink-0 flex-col gap-1 md:mx-2 md:-translate-y-1.5 xl:mx-3 xl:-translate-y-2">
                 {offer.features.map((feature) => (
                   <li className="flex items-center gap-2 text-[.7rem] leading-tight md:text-[.9rem] xl:text-[.95rem]" key={feature}>
                     <Image
