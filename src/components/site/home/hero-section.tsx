@@ -510,102 +510,104 @@ function AiSubscriptionsSlide({
         src={slide.background}
       />
 
-      <div className="mx-auto flex h-full max-w-[1920px] flex-col justify-center px-4 py-8 sm:px-7 md:px-10 xl:px-[4%]">
-        <div className="shrink-0 text-center">
-          <h2
-            className="text-[1.6rem] leading-none tracking-[-0.035em] md:text-[2.7rem] xl:text-[3rem]"
-            style={{ fontFamily: "var(--font-rubik), sans-serif", fontWeight: 900 }}
-          >
-            Abonnements <span className="text-[#ADA7F7]">IA Premium</span>
-          </h2>
-          <p className="mx-auto mt-2 max-w-[760px] text-xs font-bold leading-[1.45] md:mt-3 md:text-base">
-            Accédez aux meilleurs outils d&apos;Intelligence Artificielle
-            <br className="hidden sm:block" /> en quelques clics seulement !
-          </p>
-        </div>
-
-        <div className="mt-5 grid min-h-0 items-center gap-4 md:mt-10 md:grid-cols-2 md:grid-rows-1 md:gap-6 xl:gap-8">
-          {aiOffers.map((offer) => (
-            <article
-              className="relative flex min-h-0 flex-col overflow-hidden rounded-[22px] border-2 px-4 py-4 backdrop-blur-[2px] md:rounded-[28px] md:px-6 md:py-6 xl:px-7"
-              key={offer.name}
-              style={{
-                backgroundColor: offer.cardBackground,
-                borderColor: offer.border,
-                boxShadow: `0 14px 32px color-mix(in srgb, ${offer.accent} 20%, transparent)`,
-              }}
+      <div className="mx-auto flex h-full max-w-[1920px] flex-col px-4 py-2 sm:px-7 md:px-10 md:py-6 xl:px-[4%]">
+        <div className="my-auto w-full shrink-0">
+          <div className="text-center">
+            <h2
+              className="text-[1.5rem] leading-none tracking-[-0.035em] md:text-[2.7rem] xl:text-[3rem]"
+              style={{ fontFamily: "var(--font-rubik), sans-serif", fontWeight: 900 }}
             >
-              <div className="flex shrink-0 items-center gap-3 md:gap-4">
-                <Image
-                  alt={`Logo ${offer.name}`}
-                  className="size-14 shrink-0 object-contain md:size-20 xl:size-[5.5rem]"
-                  height={110}
-                  src={offer.logo}
-                  width={110}
-                />
-                <div className="min-w-0">
-                  <h3 className="text-lg font-black leading-none tracking-[-0.025em] md:text-2xl xl:text-[1.75rem]">
-                    {offer.name}
-                  </h3>
-                  <p
-                    className="mt-1 text-[.65rem] font-bold md:text-sm"
-                    style={{ color: offer.accent }}
-                  >
-                    Abonnement Premium
+              Abonnements <span className="text-[#ADA7F7]">IA Premium</span>
+            </h2>
+            <p className="mx-auto mt-1.5 max-w-[760px] text-[0.7rem] font-bold leading-[1.3] md:mt-3 md:text-base">
+              Accédez aux meilleurs outils d&apos;Intelligence Artificielle
+              <br className="hidden sm:block" /> en quelques clics seulement !
+            </p>
+          </div>
+
+          <div className="mt-3 grid min-h-0 items-center gap-3 sm:gap-4 md:mt-10 md:grid-cols-2 md:grid-rows-1 md:gap-6 xl:gap-8">
+            {aiOffers.map((offer) => (
+              <article
+                className="relative flex min-h-0 flex-col overflow-hidden rounded-[20px] border-2 px-4 py-3 backdrop-blur-[2px] md:rounded-[28px] md:px-6 md:py-6 xl:px-7"
+                key={offer.name}
+                style={{
+                  backgroundColor: offer.cardBackground,
+                  borderColor: offer.border,
+                  boxShadow: `0 14px 32px color-mix(in srgb, ${offer.accent} 20%, transparent)`,
+                }}
+              >
+                <div className="flex shrink-0 items-center gap-3 md:gap-4">
+                  <Image
+                    alt={`Logo ${offer.name}`}
+                    className="size-12 shrink-0 object-contain md:size-20 xl:size-[5.5rem]"
+                    height={110}
+                    src={offer.logo}
+                    width={110}
+                  />
+                  <div className="min-w-0">
+                    <h3 className="text-base font-black leading-none tracking-[-0.025em] sm:text-lg md:text-2xl xl:text-[1.75rem]">
+                      {offer.name}
+                    </h3>
+                    <p
+                      className="mt-0.5 text-[0.6rem] font-bold sm:text-[0.65rem] md:mt-1 md:text-sm"
+                      style={{ color: offer.accent }}
+                    >
+                      Abonnement Premium
+                    </p>
+                  </div>
+                  <p className="ml-auto shrink-0 text-right leading-tight">
+                    <span
+                      className="text-sm font-black sm:text-base md:text-2xl xl:text-[1.7rem]"
+                      style={{ color: offer.accent }}
+                    >
+                      {offer.price}
+                    </span>{" "}
+                    <span className="text-[0.55rem] font-bold sm:text-[0.62rem] md:text-sm">/ mois</span>
+                    <span className="mt-0.5 block text-[0.55rem] font-normal text-white/75 sm:mt-1 sm:text-[0.6rem] md:text-xs">
+                      {offer.priceEuro}
+                    </span>
                   </p>
                 </div>
-                <p className="ml-auto shrink-0 text-right leading-tight">
-                  <span
-                    className="text-base font-black md:text-2xl xl:text-[1.7rem]"
-                    style={{ color: offer.accent }}
-                  >
-                    {offer.price}
-                  </span>{" "}
-                  <span className="text-[.62rem] font-bold md:text-sm">/ mois</span>
-                  <span className="mt-1 block text-[.6rem] font-normal text-white/75 md:text-xs">
-                    {offer.priceEuro}
-                  </span>
-                </p>
-              </div>
 
-              <div className="my-3 h-px shrink-0 md:mx-2 md:my-4 xl:mx-3" style={{ backgroundColor: offer.border, opacity: 0.6 }} />
+                <div className="my-2.5 h-px shrink-0 md:mx-2 md:my-4 xl:mx-3" style={{ backgroundColor: offer.border, opacity: 0.6 }} />
 
-              <ul className="flex shrink-0 flex-col gap-2 md:mx-2 xl:mx-3">
-                {offer.features.map((feature) => (
-                  <li className="flex items-center gap-2 text-[.7rem] leading-tight md:text-[.9rem] xl:text-[.95rem]" key={feature}>
-                    <Image
-                      alt=""
-                      className="h-4 w-4 shrink-0 object-contain md:h-6 md:w-5"
-                      height={28}
-                      src={offer.tick}
-                      width={24}
-                    />
-                    <span>{feature}</span>
-                  </li>
-                ))}
-              </ul>
+                <ul className="flex shrink-0 flex-col gap-1.5 md:mx-2 xl:mx-3">
+                  {offer.features.map((feature) => (
+                    <li className="flex items-center gap-2 text-[0.65rem] leading-tight sm:text-[0.7rem] md:text-[0.9rem] xl:text-[0.95rem]" key={feature}>
+                      <Image
+                        alt=""
+                        className="h-3.5 w-3.5 shrink-0 object-contain sm:h-4 sm:w-4 md:h-6 md:w-5"
+                        height={28}
+                        src={offer.tick}
+                        width={24}
+                      />
+                      <span>{feature}</span>
+                    </li>
+                  ))}
+                </ul>
 
-              <div className="mt-6 hidden flex-wrap justify-center gap-2 lg:flex lg:whitespace-nowrap">
-                {offer.tags.map((tag) => (
-                  <span
-                    className="rounded-full border px-3 py-1 text-xs leading-none"
-                    key={tag}
-                    style={{ borderColor: offer.border, color: offer.accent }}
-                  >
-                    {tag}
-                  </span>
-                ))}
-              </div>
+                <div className="mt-6 hidden flex-wrap justify-center gap-2 lg:flex lg:whitespace-nowrap">
+                  {offer.tags.map((tag) => (
+                    <span
+                      className="rounded-full border px-3 py-1 text-xs leading-none"
+                      key={tag}
+                      style={{ borderColor: offer.border, color: offer.accent }}
+                    >
+                      {tag}
+                    </span>
+                  ))}
+                </div>
 
-              <Link
-                className="mx-auto mt-4 inline-flex min-h-8 w-full max-w-[390px] shrink-0 items-center justify-center rounded-full px-5 text-center text-xs font-bold text-white transition hover:-translate-y-0.5 hover:brightness-110 md:mt-5 md:min-h-12 md:text-sm"
-                href={offer.href}
-                style={{ backgroundColor: offer.accent }}
-              >
-                S&apos;abonner à {offer.name}
-              </Link>
-            </article>
-          ))}
+                <Link
+                  className="mx-auto mt-3 inline-flex min-h-8 w-full max-w-[390px] shrink-0 items-center justify-center rounded-full px-5 text-center text-[0.65rem] font-bold text-white transition hover:-translate-y-0.5 hover:brightness-110 sm:text-xs md:mt-5 md:min-h-12 md:text-sm"
+                  href={offer.href}
+                  style={{ backgroundColor: offer.accent }}
+                >
+                  S&apos;abonner à {offer.name}
+                </Link>
+              </article>
+            ))}
+          </div>
         </div>
       </div>
     </div>

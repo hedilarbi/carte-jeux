@@ -140,11 +140,10 @@ export async function listProducts(filters: ProductListFilters = {}) {
   const countQuery = query as unknown as ProductCountQuery;
 
   const [items, totalItems] = await Promise.all([
-    ProductModel.find(findQuery)
+    ProductModel.find(findQuery, null, { allowDiskUse: true })
       .sort(resolveProductSort(filters.sort))
       .skip(pagination.skip)
       .limit(pagination.limit)
-      .allowDiskUse(true)
       .lean()
       .exec(),
     ProductModel.countDocuments(countQuery),
@@ -204,10 +203,9 @@ export async function listProductsByIds(
 export async function listActiveProductsForSelection() {
   await connectToDatabase();
 
-  return ProductModel.find({ isActive: true } as unknown as ProductFindQuery)
+  return ProductModel.find({ isActive: true } as unknown as ProductFindQuery, null, { allowDiskUse: true })
     .select({ _id: 1, title: 1, image: 1, finalPrice: 1, price: 1, discountPercent: 1, sku: 1, slug: 1, isActive: 1, currency: 1 }) // Only fetch needed fields for UI to prevent RAM leak
     .sort({ title: 1, createdAt: -1 })
-    .allowDiskUse(true)
     .lean()
     .exec();
 }
@@ -215,10 +213,9 @@ export async function listActiveProductsForSelection() {
 export async function listProductsForCsvExport() {
   await connectToDatabase();
 
-  return ProductModel.find({} as ProductFindQuery)
+  return ProductModel.find({} as ProductFindQuery, null, { allowDiskUse: true })
     .select({ _id: 0, slug: 1, title: 1 })
     .sort({ title: 1 })
-    .allowDiskUse(true)
     .lean()
     .exec();
 }
