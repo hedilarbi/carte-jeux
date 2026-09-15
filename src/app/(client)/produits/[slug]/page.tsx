@@ -4,6 +4,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import {
   CheckCircle2,
+  Globe,
   Star,
 } from "lucide-react";
 
@@ -163,7 +164,7 @@ function ProductTopBlock({ product }: { product: ProductDetailPageContent }) {
           </div>
 
           <div className="my-5 flex flex-wrap items-center gap-3">
-            <InfoPill label={regionLabel} />
+            <InfoPill label={regionLabel} icon={Globe} />
             <InfoPill label={typeLabel} />
           </div>
 
@@ -188,10 +189,16 @@ function ProductTopBlock({ product }: { product: ProductDetailPageContent }) {
   );
 }
 
-function InfoPill({ label }: { label: string }) {
+function InfoPill({
+  label,
+  icon: Icon = CheckCircle2,
+}: {
+  label: string;
+  icon?: any;
+}) {
   return (
     <span className="inline-flex min-h-9 items-center gap-2 rounded-full bg-white px-3 font-body text-sm font-semibold text-[#012D69] shadow-[0_4px_12px_rgba(1,45,105,0.08)]">
-      <CheckCircle2 className="size-4" />
+      <Icon className="size-4" />
       {label}
     </span>
   );
