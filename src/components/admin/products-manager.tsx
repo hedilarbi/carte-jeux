@@ -1,8 +1,8 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
-import { Download, Pencil, Plus, Trash2 } from "lucide-react";
+import { Download, Pencil, Plus, Search, Trash2 } from "lucide-react";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -22,11 +22,11 @@ import { PRODUCT_TYPE_LABELS } from "@/constants/admin";
 import { calculateDiscountedPrice, roundMoney } from "@/lib/utils/pricing";
 import { formatCurrency } from "@/lib/utils/format";
 import { fetchJson } from "@/lib/utils/fetch-json";
-import type { PaginatedResult } from "@/types/common";
 import type { Category, Product, ProductFaqItem, Region } from "@/types/entities";
 
 interface ProductsManagerProps {
   initialProducts: Product[];
+  initialSearch: string;
   categories: Category[];
   platformCategories: Category[];
   regions: Region[];
@@ -124,6 +124,7 @@ function readImagePreview(file: File) {
 
 export function ProductsManager({
   initialProducts,
+  initialSearch,
   categories,
   platformCategories,
   regions,
@@ -131,7 +132,6 @@ export function ProductsManager({
 }: ProductsManagerProps) {
   const router = useRouter();
   const [products, setProducts] = useState(initialProducts);
-  const [defaultProducts, setDefaultProducts] = useState(initialProducts);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [form, setForm] = useState<ProductFormState>(defaultFormState);
   const [imageFile, setImageFile] = useState<File | null>(null);
@@ -143,9 +143,8 @@ export function ProductsManager({
   const [csvImportResult, setCsvImportResult] =
     useState<ProductCsvImportResult | null>(null);
   const [isImportingCsv, setIsImportingCsv] = useState(false);
-  const [search, setSearch] = useState("");
-  const [isSearching, setIsSearching] = useState(false);
-  const [searchError, setSearchError] = useState<string | null>(null);
+  const [search, setSearch] = useState(initialSearch);
+  const [isSearching, startSearchTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -160,60 +159,32 @@ export function ProductsManager({
   );
 
   useEffect(() => {
-    setDefaultProducts(initialProducts);
-  }, [initialProducts]);
-
-  useEffect(() => {
-    const query = search.trim();
-
-    if (!query) {
-      setSearchError(null);
-      setIsSearching(false);
-      setProducts(defaultProducts);
-      return;
-    }
-
-    const controller = new AbortController();
-    const timeout = window.setTimeout(async () => {
-      setIsSearching(true);
-      setSearchError(null);
-
-      try {
-        const params = new URLSearchParams({
-          limit: "100",
-          page: "1",
-          search: query,
-        });
-        const result = await fetchJson<PaginatedResult<Product>>(
-          `/api/admin/products?${params.toString()}`,
-          { signal: controller.signal },
-        );
-
-        setProducts(result.items);
-      } catch (searchRequestError) {
-        if (controller.signal.aborted) {
-          return;
-        }
-
-        setSearchError(
-          searchRequestError instanceof Error
-            ? searchRequestError.message
-            : "Impossible de rechercher les produits.",
-        );
-      } finally {
-        if (!controller.signal.aborted) {
-          setIsSearching(false);
-        }
-      }
-    }, 250);
-
-    return () => {
-      window.clearTimeout(timeout);
-      controller.abort();
-    };
-  }, [defaultProducts, search]);
+    setProducts(initialProducts);
+    setSearch(initialSearch);
+  }, [initialProducts, initialSearch]);
 
   const filteredProducts = products;
+
+  function navigateToProducts(params: URLSearchParams) {
+    startSearchTransition(() => {
+      router.push(`?${params.toString()}`);
+    });
+  }
+
+  function handleSearch(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    const params = new URLSearchParams(window.location.search);
+    const query = search.trim();
+
+    if (query) {
+      params.set("search", query);
+    } else {
+      params.delete("search");
+    }
+
+    params.set("page", "1");
+    navigateToProducts(params);
+  }
 
   const pricePreview = calculateDiscountedPrice(
     Number(form.price) || 0,
@@ -298,7 +269,6 @@ export function ProductsManager({
         ];
 
         setProducts(mergeImportedProducts);
-        setDefaultProducts(mergeImportedProducts);
         router.refresh();
       }
     } catch (importError) {
@@ -436,8 +406,6 @@ export function ProductsManager({
           : [nextProduct, ...current];
 
       setProducts(mergeSavedProduct);
-      setDefaultProducts(mergeSavedProduct);
-
       resetForm();
       router.refresh();
     } catch (submissionError) {
@@ -464,7 +432,6 @@ export function ProductsManager({
         current.filter((product) => product._id !== id);
 
       setProducts(removeDeletedProduct);
-      setDefaultProducts(removeDeletedProduct);
       if (editingId === id) {
         resetForm();
       }
@@ -537,21 +504,15 @@ export function ProductsManager({
 
   return (
     <>
-      <Card>
-        <CardHeader className="flex flex-col gap-4 border-b border-border pb-6 md:flex-row md:items-center md:justify-between">
-          <div>
-            <CardTitle>Catalogue produits</CardTitle>
-            <CardDescription className="mt-2">
-              Construisez la couche d’offre vendable tout en gardant une livraison strictement manuelle.
-            </CardDescription>
-          </div>
-          <div className="flex w-full flex-wrap gap-3 md:w-auto md:flex-nowrap">
-            <Input
-              value={search}
-              onChange={(event) => setSearch(event.target.value)}
-              placeholder="Rechercher des produits"
-              className="md:w-72"
-            />
+      <div>
+        <p className="text-xs font-semibold uppercase tracking-[0.26em] text-primary">
+          Catalogue
+        </p>
+        <div className="mt-2 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+          <h1 className="text-3xl font-semibold tracking-tight text-foreground">
+            Produits
+          </h1>
+          <div className="flex flex-wrap gap-3">
             <Button onClick={startCsvImport} type="button" variant="outline">
               Importer CSV
             </Button>
@@ -563,18 +524,39 @@ export function ProductsManager({
               <Download className="size-4" />
               Exporter CSV
             </Button>
-            <Button onClick={startCreate}>
+            <Button onClick={startCreate} type="button">
               <Plus className="size-4" />
               Ajouter
             </Button>
           </div>
+        </div>
+        <p className="mt-3 max-w-3xl text-sm leading-6 text-muted-foreground">
+          Créez et maintenez le catalogue de produits digitaux vendables tout en
+          conservant un modèle de livraison manuel.
+        </p>
+      </div>
+      <Card>
+        <CardHeader className="flex flex-col gap-4 border-b border-border pb-6 md:flex-row md:items-center md:justify-between">
+          <div>
+            <CardTitle>Catalogue produits</CardTitle>
+            <CardDescription className="mt-2">
+              Construisez la couche d’offre vendable tout en gardant une livraison strictement manuelle.
+            </CardDescription>
+          </div>
+          <form className="flex w-full gap-3 md:w-auto" onSubmit={handleSearch}>
+            <Input
+              value={search}
+              onChange={(event) => setSearch(event.target.value)}
+              placeholder="Rechercher des produits"
+              className="md:w-72"
+            />
+            <Button disabled={isSearching} type="submit">
+              <Search className="size-4" />
+              {isSearching ? "Recherche..." : "Chercher"}
+            </Button>
+          </form>
         </CardHeader>
         <CardContent className="overflow-x-auto p-0">
-          {searchError ? (
-            <div className="border-b border-rose-200 bg-rose-50 px-6 py-3 text-sm text-rose-700">
-              {searchError}
-            </div>
-          ) : null}
           <table className="min-w-full text-left text-sm">
             <thead className="border-b border-border bg-slate-50 text-xs uppercase tracking-[0.24em] text-slate-500">
               <tr>
@@ -671,16 +653,14 @@ export function ProductsManager({
                     className="px-6 py-10 text-center text-sm text-slate-500"
                     colSpan={6}
                   >
-                    {isSearching
-                      ? "Recherche en cours..."
-                      : "Aucun produit ne correspond au filtre actuel."}
+                    Aucun produit ne correspond à la recherche actuelle.
                   </td>
                 </tr>
               ) : null}
             </tbody>
           </table>
           
-          {pagination && pagination.totalPages > 1 && !search && (
+          {pagination && pagination.totalPages > 1 && (
             <div className="flex items-center justify-between border-t border-border px-6 py-4">
               <div className="text-sm text-slate-500">
                 Page {pagination.page} sur {pagination.totalPages}
@@ -693,7 +673,7 @@ export function ProductsManager({
                   onClick={() => {
                     const params = new URLSearchParams(window.location.search);
                     params.set("page", String(pagination.page - 1));
-                    router.push(`?${params.toString()}`);
+                    navigateToProducts(params);
                   }}
                 >
                   Précédent
@@ -705,7 +685,7 @@ export function ProductsManager({
                   onClick={() => {
                     const params = new URLSearchParams(window.location.search);
                     params.set("page", String(pagination.page + 1));
-                    router.push(`?${params.toString()}`);
+                    navigateToProducts(params);
                   }}
                 >
                   Suivant

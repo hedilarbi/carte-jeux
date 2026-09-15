@@ -1,4 +1,3 @@
-import { AdminPageHeader } from "@/components/admin/admin-page-header";
 import { ProductsManager } from "@/components/admin/products-manager";
 import { categoryService } from "@/services/category.service";
 import { productService } from "@/services/product.service";
@@ -8,33 +7,34 @@ export default async function AdminProductsPage(props: {
   searchParams?: Promise<{ [key: string]: string | string[] | undefined }>;
 }) {
   const searchParams = await props.searchParams;
-  const page = searchParams?.page ? parseInt(searchParams.page as string, 10) : 1;
+  const rawPage = Array.isArray(searchParams?.page)
+    ? searchParams.page[0]
+    : searchParams?.page;
+  const rawSearch = Array.isArray(searchParams?.search)
+    ? searchParams.search[0]
+    : searchParams?.search;
+  const page = rawPage ? Number.parseInt(rawPage, 10) : 1;
+  const search = rawSearch?.trim() ?? "";
   const limit = 20;
 
   const [products, categories, platformCategories, regions] = await Promise.all([
-    productService.list({ page, limit }),
+    productService.list({ page, limit, search }),
     categoryService.list({ page: 1, limit: 100, isPlateforme: false }),
     categoryService.list({ page: 1, limit: 100, isPlateforme: true }),
     regionService.list({ page: 1, limit: 100 }),
   ]);
 
   return (
-    <>
-      <AdminPageHeader
-        eyebrow="Catalogue"
-        title="Produits"
-        description="Créez et maintenez le catalogue de produits digitaux vendables tout en conservant un modèle de livraison manuel."
-      />
-      <ProductsManager
-        initialProducts={products.items}
-        categories={categories.items}
-        platformCategories={platformCategories.items}
-        regions={regions.items}
-        pagination={{
-          page: products.page,
-          totalPages: products.totalPages,
-        }}
-      />
-    </>
+    <ProductsManager
+      initialProducts={products.items}
+      initialSearch={search}
+      categories={categories.items}
+      platformCategories={platformCategories.items}
+      regions={regions.items}
+      pagination={{
+        page: products.page,
+        totalPages: products.totalPages,
+      }}
+    />
   );
 }

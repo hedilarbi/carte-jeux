@@ -54,6 +54,18 @@ function resolveObjectIds(ids: Array<string | undefined>) {
     .map((id) => new Types.ObjectId(id));
 }
 
+function escapeRegExp(value: string) {
+  return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
+
+function resolveSearchTerms(search: string) {
+  return search
+    .trim()
+    .split(/\s+/)
+    .filter(Boolean)
+    .slice(0, 10);
+}
+
 export async function listProducts(filters: ProductListFilters = {}) {
   await connectToDatabase();
 
@@ -123,13 +135,29 @@ export async function listProducts(filters: ProductListFilters = {}) {
   }
 
   if (filters.search?.trim()) {
-    const searchTerms = filters.search.trim();
-    // Use MongoDB Text Search instead of regex for massive performance gain and ReDoS prevention
+    const search = filters.search.trim();
+    const searchTerms = resolveSearchTerms(search);
+
+    // `$text` uses the text index to narrow the candidates, but treats separate
+    // words as alternatives. The additional filters make every submitted term
+    // mandatory while still allowing the terms to live in different fields.
     andFilters.push({
-      $text: { $search: searchTerms }
+      $text: { $search: search },
     });
-    // Fallback: If you really want partial matches in the future on SKU for example, 
-    // it's safer to use an exact regex on a single field with a length limit, but $text is best.
+    andFilters.push(
+      ...searchTerms.map((term) => {
+        const termPattern = new RegExp(escapeRegExp(term), "i");
+
+        return {
+          $or: [
+            { title: termPattern },
+            { slug: termPattern },
+            { sku: termPattern },
+            { shortDescription: termPattern },
+          ],
+        } as ProductQuery;
+      }),
+    );
   }
 
   if (andFilters.length > 0) {
