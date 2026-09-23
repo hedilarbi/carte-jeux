@@ -27,6 +27,7 @@ import {
   getOrderByPaymentTransactionId,
   listOrders,
   type OrderListFilters,
+  sumPaidOrderTotalsByPromoCodeId,
   updateOrderById,
 } from "@/repositories/order.repository";
 import { listProductsByIds } from "@/repositories/product.repository";
@@ -79,6 +80,12 @@ export const orderService = {
       result.totalItems,
       pagination,
     );
+  },
+
+  async getPaidTotalByPromoCode(promoCodeId: string) {
+    assertObjectId(promoCodeId, "Identifiant de code promo");
+
+    return sumPaidOrderTotalsByPromoCodeId(promoCodeId);
   },
 
   async getById(id: string) {
