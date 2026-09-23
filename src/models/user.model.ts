@@ -59,7 +59,7 @@ const userSchema = new Schema<UserRecord>(
     },
     role: {
       type: String,
-      enum: ["admin", "customer", "guest"],
+      enum: ["admin", "customer", "guest", "affiliate"],
       required: true,
       default: "customer",
     },

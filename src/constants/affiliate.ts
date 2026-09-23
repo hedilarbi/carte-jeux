@@ -1,0 +1,1 @@
+export const AFFILIATE_COMMISSION_RATE = 0.1;

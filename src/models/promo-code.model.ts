@@ -3,6 +3,7 @@ import {
   model,
   models,
   Schema,
+  Types,
 } from "mongoose";
 
 import type { PromoCodeDiscountType } from "@/types/entities";
@@ -16,6 +17,7 @@ export interface PromoCodeRecord {
   usageLimitPerUser?: number;
   usedCount: number;
   usedByUserIds: Map<string, number> | Record<string, number>;
+  affiliateUserId?: Types.ObjectId;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -68,6 +70,11 @@ const promoCodeSchema = new Schema<PromoCodeRecord>(
       of: Number,
       default: {},
       select: false,
+    },
+    affiliateUserId: {
+      type: Schema.Types.ObjectId,
+      ref: "User",
+      index: true,
     },
   },
   {

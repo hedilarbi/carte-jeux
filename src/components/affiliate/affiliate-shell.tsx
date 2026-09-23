@@ -3,51 +3,22 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
-import {
-  ClipboardList,
-  Handshake,
-  LayoutDashboard,
-  LogOut,
-  Mail,
-  Menu,
-  Package2,
-  PanelsTopLeft,
-  Percent,
-  ShoppingCart,
-  Star,
-  Users,
-  X,
-} from "lucide-react";
+import { LogOut, Menu, Percent, X } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils/cn";
-import type { AdminSession } from "@/types/entities";
+import type { AffiliateSession } from "@/types/entities";
 
-interface AdminShellProps {
-  session: AdminSession;
+interface AffiliateShellProps {
+  session: AffiliateSession;
   children: React.ReactNode;
 }
 
 const navigation = [
-  { href: "/admin", label: "Tableau de bord", icon: LayoutDashboard },
-  { href: "/admin/products", label: "Produits", icon: Package2 },
-  { href: "/admin/best-seller", label: "Best seller", icon: Star },
-  {
-    href: "/admin/section-categorie",
-    label: "Section catégorie",
-    icon: PanelsTopLeft,
-  },
-  { href: "/admin/categories", label: "Catégories", icon: PanelsTopLeft },
-  { href: "/admin/regions", label: "Régions", icon: PanelsTopLeft },
-  { href: "/admin/orders", label: "Commandes", icon: ShoppingCart },
-  { href: "/admin/precommandes", label: "Précommandes", icon: ClipboardList },
-  { href: "/admin/soumissions", label: "Soumissions", icon: Mail },
-  { href: "/admin/users", label: "Utilisateurs", icon: Users },
-  { href: "/admin/promos", label: "Promotions", icon: Percent },
-  { href: "/admin/affiliates", label: "Affiliation", icon: Handshake },
+  { href: "/affiliation", label: "Mes codes promo", icon: Percent },
 ];
 
-export function AdminShell({ session, children }: AdminShellProps) {
+export function AffiliateShell({ session, children }: AffiliateShellProps) {
   const pathname = usePathname();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
@@ -56,10 +27,10 @@ export function AdminShell({ session, children }: AdminShellProps) {
     setIsLoggingOut(true);
 
     try {
-      await fetch("/api/admin/auth/logout", {
+      await fetch("/api/affiliation/auth/logout", {
         method: "POST",
       });
-      window.location.href = "/admin/login";
+      window.location.href = "/affiliation/login";
     } finally {
       setIsLoggingOut(false);
     }
@@ -84,9 +55,9 @@ export function AdminShell({ session, children }: AdminShellProps) {
         )}
       >
         <div className="flex items-center justify-between">
-          <Link href="/" className="block">
+          <Link href="/affiliation" className="block">
             <p className="text-xs font-semibold uppercase tracking-[0.32em] text-primary">
-              Playsdepot Admin
+              Espace Affilié
             </p>
           </Link>
           <Button
@@ -100,10 +71,7 @@ export function AdminShell({ session, children }: AdminShellProps) {
 
         <nav className="mt-8 space-y-2">
           {navigation.map((item) => {
-            const isActive =
-              item.href === "/admin"
-                ? pathname === item.href
-                : pathname.startsWith(item.href);
+            const isActive = pathname.startsWith(item.href);
 
             return (
               <Link
@@ -140,9 +108,7 @@ export function AdminShell({ session, children }: AdminShellProps) {
             <div className="flex items-center gap-3">
               <div className="hidden text-right text-xs text-slate-500 md:block">
                 <p className="font-semibold text-slate-700">{session.email}</p>
-                <p className="mt-0.5 uppercase tracking-[0.18em]">
-                  {session.source}
-                </p>
+                <p className="mt-0.5 uppercase tracking-[0.18em]">Affilié</p>
               </div>
               <Button
                 variant="ghost"

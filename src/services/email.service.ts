@@ -272,6 +272,83 @@ function buildOrderHtml(order: Order) {
   `;
 }
 
+function buildG2ADeliveryText(order: Order) {
+  const codeLines = order.items
+    .filter((item) => item.supplier === "g2a")
+    .flatMap((item) =>
+      (item.g2aPurchases ?? [])
+        .filter((purchase) => purchase.status === "purchased" && purchase.key)
+        .map((purchase, index) => {
+          const suffix = item.quantity > 1 ? ` (${index + 1}/${item.quantity})` : "";
+          return `- ${item.productTitle}${suffix} : ${purchase.key}`;
+        }),
+    );
+
+  return [
+    `Bonjour ${getCustomerName(order)},`,
+    "",
+    `Voici le(s) code(s) de votre commande ${order.orderNumber} :`,
+    "",
+    ...codeLines,
+    "",
+    "Conservez précieusement ce(s) code(s).",
+    "PlaySDepot",
+  ].join("\n");
+}
+
+function buildG2ADeliveryHtml(order: Order) {
+  const customerName = escapeHtml(getCustomerName(order));
+  const orderNumber = escapeHtml(order.orderNumber);
+  const codeRows = order.items
+    .filter((item) => item.supplier === "g2a")
+    .flatMap((item) =>
+      (item.g2aPurchases ?? [])
+        .filter((purchase) => purchase.status === "purchased" && purchase.key)
+        .map((purchase, index) => {
+          const suffix = item.quantity > 1 ? ` (${index + 1}/${item.quantity})` : "";
+          return `
+            <tr>
+              <td style="padding:14px 0;border-bottom:1px solid #DADDFF">
+                <div style="font-weight:700;color:#012D69">${escapeHtml(item.productTitle)}${escapeHtml(suffix)}</div>
+              </td>
+              <td style="padding:14px 0;border-bottom:1px solid #DADDFF;text-align:right;font-family:monospace;font-weight:700;color:#00061E">${escapeHtml(purchase.key ?? "")}</td>
+            </tr>
+          `;
+        }),
+    )
+    .join("");
+
+  return `
+    <div style="font-family:Arial,sans-serif;background:#f6f7ff;padding:24px;color:#012D69">
+      <div style="max-width:640px;margin:0 auto;background:#ffffff;border-radius:18px;padding:28px;border:1px solid #DADDFF">
+        <h1 style="margin:0 0 10px;font-size:24px;color:#012D69">Voici votre/vos code(s)</h1>
+        <p style="margin:0 0 22px;font-size:14px;line-height:1.6;color:#1f2a44">
+          Bonjour ${customerName}, voici le(s) code(s) de votre commande <strong>${orderNumber}</strong>.
+        </p>
+
+        <table style="width:100%;border-collapse:collapse;font-size:14px">
+          <tbody>${codeRows}</tbody>
+        </table>
+
+        <p style="margin:22px 0 0;font-size:13px;line-height:1.6;color:#52617d">
+          Conservez précieusement ce(s) code(s).
+        </p>
+      </div>
+    </div>
+  `;
+}
+
+function buildG2AFailureAlertText(input: { order: Order; failureSummary: string }) {
+  return [
+    `Achat G2A automatique en échec pour la commande ${input.order.orderNumber}.`,
+    `Client : ${input.order.customerEmail}`,
+    "",
+    input.failureSummary,
+    "",
+    `Voir dans l'admin : /admin/orders/${input.order._id}`,
+  ].join("\n");
+}
+
 function buildContactNotificationText(submission: ContactSubmission) {
   return [
     "Nouvelle demande produit depuis l'accueil PlaySDepot.",
@@ -407,6 +484,29 @@ export const emailService = {
       subject: `Récapitulatif de votre commande ${input.order.orderNumber}`,
       text: buildOrderText(input.order),
       html: buildOrderHtml(input.order),
+    });
+  },
+
+  async sendG2ADelivery(input: { order: Order }) {
+    const transporter = createOrderTransporter();
+
+    await transporter.sendMail({
+      from: getOrderSender(),
+      to: input.order.customerEmail,
+      subject: `Vos codes pour la commande ${input.order.orderNumber}`,
+      text: buildG2ADeliveryText(input.order),
+      html: buildG2ADeliveryHtml(input.order),
+    });
+  },
+
+  async sendG2APurchaseFailureAlert(input: { order: Order; failureSummary: string }) {
+    const transporter = createTransporter();
+
+    await transporter.sendMail({
+      from: getSender(),
+      to: getAdminContactRecipient(),
+      subject: `[Alerte] Achat G2A en échec - commande ${input.order.orderNumber}`,
+      text: buildG2AFailureAlertText(input),
     });
   },
 

@@ -26,6 +26,11 @@ export const adminLoginSchema = z.object({
   password: z.string().min(1, "Le mot de passe est requis."),
 });
 
+export const affiliateLoginSchema = z.object({
+  email: z.string().trim().email().transform((value) => value.toLowerCase()),
+  password: z.string().min(1, "Le mot de passe est requis."),
+});
+
 export const customerLoginSchema = z.object({
   email: z.string().trim().email().transform((value) => value.toLowerCase()),
   password: z.string().min(1, "Le mot de passe est requis."),

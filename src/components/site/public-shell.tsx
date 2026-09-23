@@ -8,6 +8,7 @@ import { SiteHeader } from "@/components/site/site-header";
 export function PublicShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const isAdminRoute = pathname.startsWith("/admin");
+  const isAffiliationRoute = pathname.startsWith("/affiliation");
   const isShelllessRoute = [
     "/completer-profil",
     "/connexion",
@@ -16,7 +17,7 @@ export function PublicShell({ children }: { children: React.ReactNode }) {
     "/reinitialiser-mot-de-passe",
   ].some((route) => pathname === route || pathname.startsWith(`${route}/`));
 
-  if (isAdminRoute || isShelllessRoute) {
+  if (isAdminRoute || isAffiliationRoute || isShelllessRoute) {
     return children;
   }
 

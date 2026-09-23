@@ -6,6 +6,7 @@ import Stripe from "stripe";
 import { stripe } from "@/lib/stripe";
 import { OrderModel } from "@/models/order.model";
 import { connectToDatabase } from "@/lib/db/mongoose";
+import { g2aFulfillmentService } from "@/services/g2a-fulfillment.service";
 
 export async function POST(request: NextRequest) {
   const body = await request.text();
@@ -42,6 +43,7 @@ export async function POST(request: NextRequest) {
         { paymentReference },
         {
           paymentStatus: "paid",
+          status: "paid",
           paidAt: new Date(),
           ...(typeof session.amount_total === "number" && session.currency
             ? {
@@ -56,6 +58,11 @@ export async function POST(request: NextRequest) {
       if (updatedOrder) {
         revalidatePath("/admin/orders");
         revalidatePath("/admin");
+        void g2aFulfillmentService
+          .fulfillOrder(String(updatedOrder._id))
+          .catch((error) =>
+            console.error("[g2a] Échec du déclenchement de l'achat automatique.", error),
+          );
       }
     }
   }

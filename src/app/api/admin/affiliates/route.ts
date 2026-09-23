@@ -5,10 +5,9 @@ import { getAdminApiSession } from "@/lib/auth/admin";
 import {
   errorResponse,
   handleRouteError,
-  parseBooleanParam,
   successResponse,
 } from "@/lib/utils/api-response";
-import { promoCodeService } from "@/services/promo-code.service";
+import { affiliateService } from "@/services/affiliate.service";
 
 export async function GET(request: NextRequest) {
   if (!(await getAdminApiSession(request))) {
@@ -16,13 +15,7 @@ export async function GET(request: NextRequest) {
   }
 
   try {
-    const { searchParams } = new URL(request.url);
-    const data = await promoCodeService.list({
-      page: searchParams.get("page"),
-      limit: searchParams.get("limit"),
-      search: searchParams.get("search"),
-      unassigned: parseBooleanParam(searchParams.get("unassigned")),
-    });
+    const data = await affiliateService.list();
 
     return successResponse(data);
   } catch (error) {
@@ -37,8 +30,9 @@ export async function POST(request: NextRequest) {
 
   try {
     const body = await request.json();
-    const data = await promoCodeService.create(body);
+    const data = await affiliateService.create(body);
 
+    revalidatePath("/admin/affiliates");
     revalidatePath("/admin/promos");
 
     return successResponse(data, { status: 201 });

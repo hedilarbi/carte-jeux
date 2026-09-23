@@ -7,7 +7,10 @@ import type { SearchablePaginationInput } from "@/types/common";
 
 type PromoCodeQuery = mongo.Filter<PromoCodeRecord>;
 
-export type PromoCodeListFilters = SearchablePaginationInput;
+export interface PromoCodeListFilters extends SearchablePaginationInput {
+  unassigned?: boolean;
+  affiliateUserId?: string;
+}
 
 export async function listPromoCodes(filters: PromoCodeListFilters = {}) {
   await connectToDatabase();
@@ -17,6 +20,12 @@ export async function listPromoCodes(filters: PromoCodeListFilters = {}) {
 
   if (filters.search?.trim()) {
     query.code = new RegExp(filters.search.trim(), "i");
+  }
+
+  if (filters.affiliateUserId) {
+    query.affiliateUserId = new Types.ObjectId(filters.affiliateUserId);
+  } else if (filters.unassigned) {
+    query.affiliateUserId = { $exists: false };
   }
 
   const [items, totalItems] = await Promise.all([
@@ -94,6 +103,43 @@ export async function updatePromoCodeById(
 export async function deletePromoCodeById(id: string) {
   await connectToDatabase();
   return PromoCodeModel.findByIdAndDelete(id).lean().exec();
+}
+
+export async function listPromoCodesByAffiliateIds(affiliateUserIds: string[]) {
+  await connectToDatabase();
+
+  if (affiliateUserIds.length === 0) {
+    return [];
+  }
+
+  return PromoCodeModel.find({
+    affiliateUserId: {
+      $in: affiliateUserIds.map((id) => new Types.ObjectId(id)),
+    },
+  })
+    .lean()
+    .exec();
+}
+
+export async function attachPromoCodesToAffiliate(
+  promoCodeIds: string[],
+  affiliateUserId: string,
+) {
+  await connectToDatabase();
+
+  if (promoCodeIds.length === 0) {
+    return { matchedCount: 0, modifiedCount: 0 };
+  }
+
+  return PromoCodeModel.updateMany(
+    {
+      _id: { $in: promoCodeIds.map((id) => new Types.ObjectId(id)) },
+      affiliateUserId: { $exists: false },
+    },
+    {
+      $set: { affiliateUserId: new Types.ObjectId(affiliateUserId) },
+    },
+  ).exec();
 }
 
 export async function existsPromoCode(code: string, excludeId?: string) {

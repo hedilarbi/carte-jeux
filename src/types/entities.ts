@@ -1,4 +1,4 @@
-export type UserRole = "admin" | "customer" | "guest";
+export type UserRole = "admin" | "customer" | "guest" | "affiliate";
 export type AuthProvider = "local" | "google" | "facebook";
 export type ProductType = "gift_card" | "subscription" | "game_credit";
 export type DeliveryMode = "manual_email";
@@ -162,6 +162,19 @@ export interface FavoriteList extends BaseEntity {
   items: FavoriteItem[];
 }
 
+export interface OrderItemG2APurchase {
+  status: "pending" | "purchased" | "failed";
+  g2aOrderId?: string;
+  transactionId?: string;
+  cost?: number;
+  currency?: string;
+  key?: string;
+  lastError?: string;
+  attempts: number;
+  lastAttemptAt?: string;
+  purchasedAt?: string;
+}
+
 export interface OrderItem {
   productId?: string;
   productTitle: string;
@@ -173,6 +186,7 @@ export interface OrderItem {
   lineTotal: number;
   currency: string;
   supplier?: ProductSupplier;
+  g2aPurchases?: OrderItemG2APurchase[];
 }
 
 export interface Order extends BaseEntity {
@@ -205,6 +219,7 @@ export interface Order extends BaseEntity {
   paymentTotal?: number;
   paidAt?: string;
   gclid?: string;
+  g2aFulfillmentInProgress?: boolean;
 }
 
 export interface PromoCampaign extends BaseEntity {
@@ -225,6 +240,7 @@ export interface PromoCode extends BaseEntity {
   usageLimit?: number;
   usageLimitPerUser?: number;
   usedCount: number;
+  affiliateUserId?: string;
 }
 
 export interface AppliedPromoCode {
@@ -324,6 +340,13 @@ export interface CustomerSession {
   userId: string;
   email: string;
   role: "customer";
+  source: "cookie";
+}
+
+export interface AffiliateSession {
+  userId: string;
+  email: string;
+  role: "affiliate";
   source: "cookie";
 }
 

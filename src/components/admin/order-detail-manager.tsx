@@ -424,6 +424,41 @@ export function OrderDetailManager({
                     </div>
                   </div>
                 </div>
+                {item.g2aPurchases && item.g2aPurchases.length > 0 ? (
+                  <div className="mt-3 space-y-2 border-t border-border pt-3">
+                    <div className="text-xs uppercase tracking-[0.24em] text-slate-500">
+                      Achat G2A automatique
+                    </div>
+                    {item.g2aPurchases.map((purchase, purchaseIndex) => (
+                      <div
+                        key={`${item.sku}-g2a-${purchaseIndex}`}
+                        className="flex flex-wrap items-center justify-between gap-2 text-xs"
+                      >
+                        <Badge
+                          variant={
+                            purchase.status === "purchased"
+                              ? "success"
+                              : purchase.status === "failed"
+                                ? "danger"
+                                : "muted"
+                          }
+                        >
+                          {purchase.status === "purchased"
+                            ? "Achetée"
+                            : purchase.status === "failed"
+                              ? "Échec"
+                              : "En attente"}
+                        </Badge>
+                        {purchase.key ? (
+                          <span className="font-mono text-slate-700">{purchase.key}</span>
+                        ) : null}
+                        {purchase.lastError ? (
+                          <span className="text-rose-600">{purchase.lastError}</span>
+                        ) : null}
+                      </div>
+                    ))}
+                  </div>
+                ) : null}
               </div>
             ))}
           </CardContent>

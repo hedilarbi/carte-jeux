@@ -13,6 +13,19 @@ import type {
   PromoCodeDiscountType,
 } from "@/types/entities";
 
+export interface OrderItemG2APurchaseRecord {
+  status: "pending" | "purchased" | "failed";
+  g2aOrderId?: string;
+  transactionId?: string;
+  cost?: number;
+  currency?: string;
+  key?: string;
+  lastError?: string;
+  attempts: number;
+  lastAttemptAt?: Date;
+  purchasedAt?: Date;
+}
+
 export interface OrderItemRecord {
   productId?: Types.ObjectId;
   productTitle: string;
@@ -24,6 +37,7 @@ export interface OrderItemRecord {
   lineTotal: number;
   currency: string;
   supplier?: ProductSupplier;
+  g2aPurchases?: OrderItemG2APurchaseRecord[];
 }
 
 export interface OrderAppliedPromoCodeRecord {
@@ -70,9 +84,34 @@ export interface OrderRecord {
   createdAt: Date;
   updatedAt: Date;
   gclid?: string;
+  /** Verrou anti double-achat : empêche webhook et cron de lancer l'achat G2A en parallèle. */
+  g2aFulfillmentInProgress?: boolean;
 }
 
 export type OrderDocument = HydratedDocument<OrderRecord>;
+
+const orderItemG2APurchaseSchema = new Schema<OrderItemG2APurchaseRecord>(
+  {
+    status: {
+      type: String,
+      enum: ["pending", "purchased", "failed"],
+      required: true,
+      default: "pending",
+    },
+    g2aOrderId: { type: String, trim: true, maxlength: 160 },
+    transactionId: { type: String, trim: true, maxlength: 160 },
+    cost: { type: Number, min: 0 },
+    currency: { type: String, trim: true, uppercase: true, maxlength: 3 },
+    key: { type: String, trim: true, maxlength: 4000 },
+    lastError: { type: String, trim: true, maxlength: 2000 },
+    attempts: { type: Number, required: true, default: 0, min: 0 },
+    lastAttemptAt: { type: Date },
+    purchasedAt: { type: Date },
+  },
+  {
+    _id: false,
+  },
+);
 
 const orderItemSchema = new Schema<OrderItemRecord>(
   {
@@ -129,6 +168,10 @@ const orderItemSchema = new Schema<OrderItemRecord>(
     supplier: {
       type: String,
       enum: ["internal", "g2a"],
+    },
+    g2aPurchases: {
+      type: [orderItemG2APurchaseSchema],
+      default: undefined,
     },
   },
   {
@@ -343,6 +386,10 @@ const orderSchema = new Schema<OrderRecord>(
       type: String,
       trim: true,
       maxlength: 1000,
+    },
+    g2aFulfillmentInProgress: {
+      type: Boolean,
+      default: false,
     },
   },
   {
