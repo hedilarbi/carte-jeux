@@ -150,8 +150,8 @@ const heroSlides: HeroSlide[] = [
     kind: "ai-subscriptions",
   },
   {
-    desktopImage: "/bg-fc27.jpg",
-    href: "/precommande-fc27",
+    desktopImage: "/Baner FC271.jpg",
+    href: "/produits?search=fc27",
     id: "fc-27",
     kind: "fc-27",
     mobileImage: "/bg-fc27-mobile.jpg",
