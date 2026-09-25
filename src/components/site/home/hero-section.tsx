@@ -145,16 +145,16 @@ type SwipePoint = {
 
 const heroSlides: HeroSlide[] = [
   {
-    background: "/ai-slide-bg.png",
-    id: "ai-subscriptions",
-    kind: "ai-subscriptions",
-  },
-  {
     desktopImage: "/Baner FC271.jpg",
     href: "/produits?search=fc27",
     id: "fc-27",
     kind: "fc-27",
     mobileImage: "/bg-fc27-mobile.jpg",
+  },
+  {
+    background: "/ai-slide-bg.png",
+    id: "ai-subscriptions",
+    kind: "ai-subscriptions",
   },
   {
     desktopImage: "/bg-ac-desktop.jpg",
