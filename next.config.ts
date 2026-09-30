@@ -16,7 +16,7 @@ const nextConfig: NextConfig = {
                         value: "psn"
                   }
             ],
-            destination: "/categories/plateformes/psn/",
+            destination: "/categories/plateformes/psn",
             permanent: true
       },
       {
@@ -28,7 +28,7 @@ const nextConfig: NextConfig = {
                         value: "xbox"
                   }
             ],
-            destination: "/categories/plateformes/xbox/",
+            destination: "/categories/plateformes/xbox",
             permanent: true
       },
       {
@@ -40,7 +40,7 @@ const nextConfig: NextConfig = {
                         value: "steam"
                   }
             ],
-            destination: "/categories/plateformes/steam/",
+            destination: "/categories/plateformes/steam",
             permanent: true
       },
       {
@@ -52,7 +52,7 @@ const nextConfig: NextConfig = {
                         value: "nintendo"
                   }
             ],
-            destination: "/categories/plateformes/nintendo/",
+            destination: "/categories/plateformes/nintendo",
             permanent: true
       },
       {
@@ -64,7 +64,7 @@ const nextConfig: NextConfig = {
                         value: "jeu-mobile"
                   }
             ],
-            destination: "/categories/plateformes/jeu-mobile/",
+            destination: "/categories/plateformes/jeu-mobile",
             permanent: true
       },
       {
@@ -76,7 +76,7 @@ const nextConfig: NextConfig = {
                         value: "epic-games"
                   }
             ],
-            destination: "/categories/plateformes/epic-games/",
+            destination: "/categories/plateformes/epic-games",
             permanent: true
       },
       {
@@ -88,7 +88,7 @@ const nextConfig: NextConfig = {
                         value: "ea-sports"
                   }
             ],
-            destination: "/categories/plateformes/ea-sports/",
+            destination: "/categories/plateformes/ea-sports",
             permanent: true
       },
       {
@@ -100,7 +100,7 @@ const nextConfig: NextConfig = {
                         value: "jeux-pc"
                   }
             ],
-            destination: "/categories/plateformes/jeux-pc/",
+            destination: "/categories/plateformes/jeux-pc",
             permanent: true
       },
       {
@@ -112,7 +112,7 @@ const nextConfig: NextConfig = {
                         value: "mobile-ios-android"
                   }
             ],
-            destination: "/categories/plateformes/android-ios/",
+            destination: "/categories/plateformes/android-ios",
             permanent: true
       },
       {
@@ -124,7 +124,7 @@ const nextConfig: NextConfig = {
                         value: "airlinegift"
                   }
             ],
-            destination: "/categories/plateformes/airlinegift/",
+            destination: "/categories/plateformes/airlinegift",
             permanent: true
       },
       {
@@ -136,7 +136,7 @@ const nextConfig: NextConfig = {
                         value: "amazon"
                   }
             ],
-            destination: "/categories/plateformes/amazon/",
+            destination: "/categories/plateformes/amazon",
             permanent: true
       },
       {
@@ -148,7 +148,7 @@ const nextConfig: NextConfig = {
                         value: "apple"
                   }
             ],
-            destination: "/categories/plateformes/apple/",
+            destination: "/categories/plateformes/apple",
             permanent: true
       },
       {
@@ -160,7 +160,7 @@ const nextConfig: NextConfig = {
                         value: "autodesk"
                   }
             ],
-            destination: "/categories/plateformes/autodesk/",
+            destination: "/categories/plateformes/autodesk",
             permanent: true
       },
       {
@@ -172,7 +172,7 @@ const nextConfig: NextConfig = {
                         value: "by-rewarble"
                   }
             ],
-            destination: "/categories/plateformes/by-rewarble/",
+            destination: "/categories/plateformes/by-rewarble",
             permanent: true
       },
       {
@@ -184,7 +184,7 @@ const nextConfig: NextConfig = {
                         value: "cryptovoucher"
                   }
             ],
-            destination: "/categories/plateformes/cryptovoucher/",
+            destination: "/categories/plateformes/cryptovoucher",
             permanent: true
       },
       {
@@ -196,7 +196,7 @@ const nextConfig: NextConfig = {
                         value: "google-play"
                   }
             ],
-            destination: "/categories/plateformes/google-play/",
+            destination: "/categories/plateformes/google-play",
             permanent: true
       },
       {
@@ -208,7 +208,7 @@ const nextConfig: NextConfig = {
                         value: "in-game"
                   }
             ],
-            destination: "/categories/plateformes/in-game/",
+            destination: "/categories/plateformes/in-game",
             permanent: true
       },
       {
@@ -220,7 +220,7 @@ const nextConfig: NextConfig = {
                         value: "netflix"
                   }
             ],
-            destination: "/categories/plateformes/netflix/",
+            destination: "/categories/plateformes/netflix",
             permanent: true
       },
       {
@@ -232,7 +232,7 @@ const nextConfig: NextConfig = {
                         value: "nintendo-eshop"
                   }
             ],
-            destination: "/categories/plateformes/nintendo-eshop/",
+            destination: "/categories/plateformes/nintendo-eshop",
             permanent: true
       },
       {
@@ -244,7 +244,7 @@ const nextConfig: NextConfig = {
                         value: "razer"
                   }
             ],
-            destination: "/categories/plateformes/razer/",
+            destination: "/categories/plateformes/razer",
             permanent: true
       },
       {
@@ -256,7 +256,7 @@ const nextConfig: NextConfig = {
                         value: "roblox"
                   }
             ],
-            destination: "/categories/plateformes/roblox/",
+            destination: "/categories/plateformes/roblox",
             permanent: true
       },
       {
@@ -268,7 +268,7 @@ const nextConfig: NextConfig = {
                         value: "starbucks"
                   }
             ],
-            destination: "/categories/plateformes/starbucks/",
+            destination: "/categories/plateformes/starbucks",
             permanent: true
       },
       {
@@ -280,7 +280,7 @@ const nextConfig: NextConfig = {
                         value: "the-elder-scrolls-online"
                   }
             ],
-            destination: "/categories/plateformes/the-elder-scrolls-online/",
+            destination: "/categories/plateformes/the-elder-scrolls-online",
             permanent: true
       },
       {
@@ -292,7 +292,7 @@ const nextConfig: NextConfig = {
                         value: "ubisoft-connect"
                   }
             ],
-            destination: "/categories/plateformes/ubisoft-connect/",
+            destination: "/categories/plateformes/ubisoft-connect",
             permanent: true
       },
       {
@@ -304,7 +304,7 @@ const nextConfig: NextConfig = {
                         value: "xbox-live"
                   }
             ],
-            destination: "/categories/plateformes/xbox-live/",
+            destination: "/categories/plateformes/xbox-live",
             permanent: true
       },
       {
@@ -316,7 +316,7 @@ const nextConfig: NextConfig = {
                         value: "albertsons"
                   }
             ],
-            destination: "/categories/plateformes/albertsons/",
+            destination: "/categories/plateformes/albertsons",
             permanent: true
       },
       {
@@ -328,7 +328,7 @@ const nextConfig: NextConfig = {
                         value: "cashtocode"
                   }
             ],
-            destination: "/categories/plateformes/cashtocode/",
+            destination: "/categories/plateformes/cashtocode",
             permanent: true
       },
       {
@@ -340,7 +340,7 @@ const nextConfig: NextConfig = {
                         value: "decathlon"
                   }
             ],
-            destination: "/categories/plateformes/decathlon/",
+            destination: "/categories/plateformes/decathlon",
             permanent: true
       },
       {
@@ -352,7 +352,7 @@ const nextConfig: NextConfig = {
                         value: "ea-app"
                   }
             ],
-            destination: "/categories/plateformes/ea-app/",
+            destination: "/categories/plateformes/ea-app",
             permanent: true
       },
       {
@@ -364,7 +364,7 @@ const nextConfig: NextConfig = {
                         value: "giftmecrypto"
                   }
             ],
-            destination: "/categories/plateformes/giftmecrypto/",
+            destination: "/categories/plateformes/giftmecrypto",
             permanent: true
       },
       {
@@ -376,7 +376,7 @@ const nextConfig: NextConfig = {
                         value: "mastercard"
                   }
             ],
-            destination: "/categories/plateformes/mastercard/",
+            destination: "/categories/plateformes/mastercard",
             permanent: true
       },
       {
@@ -388,7 +388,7 @@ const nextConfig: NextConfig = {
                         value: "microsoft"
                   }
             ],
-            destination: "/categories/plateformes/microsoft/",
+            destination: "/categories/plateformes/microsoft",
             permanent: true
       },
       {
@@ -400,7 +400,7 @@ const nextConfig: NextConfig = {
                         value: "riot"
                   }
             ],
-            destination: "/categories/plateformes/riot/",
+            destination: "/categories/plateformes/riot",
             permanent: true
       },
       {
@@ -412,7 +412,7 @@ const nextConfig: NextConfig = {
                         value: "adidas"
                   }
             ],
-            destination: "/categories/plateformes/adidas/",
+            destination: "/categories/plateformes/adidas",
             permanent: true
       },
       {
@@ -424,7 +424,7 @@ const nextConfig: NextConfig = {
                         value: "binance"
                   }
             ],
-            destination: "/categories/plateformes/binance/",
+            destination: "/categories/plateformes/binance",
             permanent: true
       },
       {
@@ -436,7 +436,7 @@ const nextConfig: NextConfig = {
                         value: "grab"
                   }
             ],
-            destination: "/categories/plateformes/grab/",
+            destination: "/categories/plateformes/grab",
             permanent: true
       },
       {
@@ -448,7 +448,7 @@ const nextConfig: NextConfig = {
                         value: "ikea"
                   }
             ],
-            destination: "/categories/plateformes/ikea/",
+            destination: "/categories/plateformes/ikea",
             permanent: true
       },
       {
@@ -460,7 +460,7 @@ const nextConfig: NextConfig = {
                         value: "sephora"
                   }
             ],
-            destination: "/categories/plateformes/sephora/",
+            destination: "/categories/plateformes/sephora",
             permanent: true
       },
       {
@@ -472,7 +472,7 @@ const nextConfig: NextConfig = {
                         value: "e-cartes-de-jeu"
                   }
             ],
-            destination: "/categories/types/e-cartes-de-jeu/",
+            destination: "/categories/types/e-cartes-de-jeu",
             permanent: true
       },
       {
@@ -484,7 +484,7 @@ const nextConfig: NextConfig = {
                         value: "points-de-jeu"
                   }
             ],
-            destination: "/categories/types/points-de-jeu/",
+            destination: "/categories/types/points-de-jeu",
             permanent: true
       },
       {
@@ -496,7 +496,7 @@ const nextConfig: NextConfig = {
                         value: "cartes-prepayees"
                   }
             ],
-            destination: "/categories/types/cartes-prepayees/",
+            destination: "/categories/types/cartes-prepayees",
             permanent: true
       },
       {
@@ -508,7 +508,7 @@ const nextConfig: NextConfig = {
                         value: "free-fire"
                   }
             ],
-            destination: "/categories/types/free-fire/",
+            destination: "/categories/types/free-fire",
             permanent: true
       },
       {
@@ -520,7 +520,7 @@ const nextConfig: NextConfig = {
                         value: "steam-pc-games"
                   }
             ],
-            destination: "/categories/types/steam-pc-games/",
+            destination: "/categories/types/steam-pc-games",
             permanent: true
       },
       {
@@ -532,7 +532,7 @@ const nextConfig: NextConfig = {
                         value: "playstation"
                   }
             ],
-            destination: "/categories/types/playstation/",
+            destination: "/categories/types/playstation",
             permanent: true
       },
       {
@@ -544,7 +544,7 @@ const nextConfig: NextConfig = {
                         value: "console"
                   }
             ],
-            destination: "/categories/types/consoles-de-jeux/",
+            destination: "/categories/types/consoles-de-jeux",
             permanent: true
       },
       {
@@ -556,7 +556,7 @@ const nextConfig: NextConfig = {
                         value: "action"
                   }
             ],
-            destination: "/categories/types/action/",
+            destination: "/categories/types/action",
             permanent: true
       },
       {
@@ -568,7 +568,7 @@ const nextConfig: NextConfig = {
                         value: "action-shooting"
                   }
             ],
-            destination: "/categories/types/action-shooting/",
+            destination: "/categories/types/action-shooting",
             permanent: true
       },
       {
@@ -580,7 +580,7 @@ const nextConfig: NextConfig = {
                         value: "adventure"
                   }
             ],
-            destination: "/categories/types/adventure/",
+            destination: "/categories/types/adventure",
             permanent: true
       },
       {
@@ -592,7 +592,7 @@ const nextConfig: NextConfig = {
                         value: "amazon-category"
                   }
             ],
-            destination: "/categories/types/amazon/",
+            destination: "/categories/types/amazon",
             permanent: true
       },
       {
@@ -604,7 +604,7 @@ const nextConfig: NextConfig = {
                         value: "apple-category"
                   }
             ],
-            destination: "/categories/types/apple/",
+            destination: "/categories/types/apple",
             permanent: true
       },
       {
@@ -616,7 +616,7 @@ const nextConfig: NextConfig = {
                         value: "apps"
                   }
             ],
-            destination: "/categories/types/apps/",
+            destination: "/categories/types/apps",
             permanent: true
       },
       {
@@ -628,7 +628,7 @@ const nextConfig: NextConfig = {
                         value: "arcade"
                   }
             ],
-            destination: "/categories/types/arcade/",
+            destination: "/categories/types/arcade",
             permanent: true
       },
       {
@@ -640,7 +640,7 @@ const nextConfig: NextConfig = {
                         value: "cash-gift-cards"
                   }
             ],
-            destination: "/categories/types/cash-gift-cards/",
+            destination: "/categories/types/cash-gift-cards",
             permanent: true
       },
       {
@@ -652,7 +652,7 @@ const nextConfig: NextConfig = {
                         value: "casual"
                   }
             ],
-            destination: "/categories/types/casual/",
+            destination: "/categories/types/casual",
             permanent: true
       },
       {
@@ -664,7 +664,7 @@ const nextConfig: NextConfig = {
                         value: "crypto-voucher"
                   }
             ],
-            destination: "/categories/types/crypto-voucher/",
+            destination: "/categories/types/crypto-voucher",
             permanent: true
       },
       {
@@ -676,7 +676,7 @@ const nextConfig: NextConfig = {
                         value: "dance-music"
                   }
             ],
-            destination: "/categories/types/dance-music/",
+            destination: "/categories/types/dance-music",
             permanent: true
       },
       {
@@ -688,7 +688,7 @@ const nextConfig: NextConfig = {
                         value: "dlcs"
                   }
             ],
-            destination: "/categories/types/dlc/",
+            destination: "/categories/types/dlc",
             permanent: true
       },
       {
@@ -700,7 +700,7 @@ const nextConfig: NextConfig = {
                         value: "economy"
                   }
             ],
-            destination: "/categories/types/economy/",
+            destination: "/categories/types/economy",
             permanent: true
       },
       {
@@ -712,7 +712,7 @@ const nextConfig: NextConfig = {
                         value: "extra-content"
                   }
             ],
-            destination: "/categories/types/extra-content/",
+            destination: "/categories/types/extra-content",
             permanent: true
       },
       {
@@ -724,7 +724,7 @@ const nextConfig: NextConfig = {
                         value: "fantasy"
                   }
             ],
-            destination: "/categories/types/fantasy/",
+            destination: "/categories/types/fantasy",
             permanent: true
       },
       {
@@ -736,7 +736,7 @@ const nextConfig: NextConfig = {
                         value: "fc-points"
                   }
             ],
-            destination: "/categories/types/fc-points/",
+            destination: "/categories/types/fc-points",
             permanent: true
       },
       {
@@ -748,7 +748,7 @@ const nextConfig: NextConfig = {
                         value: "food"
                   }
             ],
-            destination: "/categories/types/food/",
+            destination: "/categories/types/food",
             permanent: true
       },
       {
@@ -760,7 +760,7 @@ const nextConfig: NextConfig = {
                         value: "games"
                   }
             ],
-            destination: "/categories/types/games/",
+            destination: "/categories/types/games",
             permanent: true
       },
       {
@@ -772,7 +772,7 @@ const nextConfig: NextConfig = {
                         value: "gaming-gift-cards"
                   }
             ],
-            destination: "/categories/types/gaming-gift-cards/",
+            destination: "/categories/types/gaming-gift-cards",
             permanent: true
       },
       {
@@ -784,7 +784,7 @@ const nextConfig: NextConfig = {
                         value: "gaming-subscriptions"
                   }
             ],
-            destination: "/categories/types/gaming-subscriptions/",
+            destination: "/categories/types/gaming-subscriptions",
             permanent: true
       },
       {
@@ -796,7 +796,7 @@ const nextConfig: NextConfig = {
                         value: "horror"
                   }
             ],
-            destination: "/categories/types/horror/",
+            destination: "/categories/types/horror",
             permanent: true
       },
       {
@@ -808,7 +808,7 @@ const nextConfig: NextConfig = {
                         value: "image-and-photo-editing"
                   }
             ],
-            destination: "/categories/types/image-photo-editing/",
+            destination: "/categories/types/image-photo-editing",
             permanent: true
       },
       {
@@ -820,7 +820,7 @@ const nextConfig: NextConfig = {
                         value: "indie"
                   }
             ],
-            destination: "/categories/types/indie/",
+            destination: "/categories/types/indie",
             permanent: true
       },
       {
@@ -832,7 +832,7 @@ const nextConfig: NextConfig = {
                         value: "netflix-category"
                   }
             ],
-            destination: "/categories/types/netflix/",
+            destination: "/categories/types/netflix",
             permanent: true
       },
       {
@@ -844,7 +844,7 @@ const nextConfig: NextConfig = {
                         value: "nintendo-switch-online"
                   }
             ],
-            destination: "/categories/types/nintendo-switch-online/",
+            destination: "/categories/types/nintendo-switch-online",
             permanent: true
       },
       {
@@ -856,7 +856,7 @@ const nextConfig: NextConfig = {
                         value: "other"
                   }
             ],
-            destination: "/categories/types/other/",
+            destination: "/categories/types/other",
             permanent: true
       },
       {
@@ -868,7 +868,7 @@ const nextConfig: NextConfig = {
                         value: "points-currencies"
                   }
             ],
-            destination: "/categories/types/points-currencies/",
+            destination: "/categories/types/points-currencies",
             permanent: true
       },
       {
@@ -880,7 +880,7 @@ const nextConfig: NextConfig = {
                         value: "psn-category"
                   }
             ],
-            destination: "/categories/types/psn/",
+            destination: "/categories/types/psn",
             permanent: true
       },
       {
@@ -892,7 +892,7 @@ const nextConfig: NextConfig = {
                         value: "racing"
                   }
             ],
-            destination: "/categories/types/racing/",
+            destination: "/categories/types/racing",
             permanent: true
       },
       {
@@ -904,7 +904,7 @@ const nextConfig: NextConfig = {
                         value: "razer-gold"
                   }
             ],
-            destination: "/categories/types/razer-gold/",
+            destination: "/categories/types/razer-gold",
             permanent: true
       },
       {
@@ -916,7 +916,7 @@ const nextConfig: NextConfig = {
                         value: "roblox-category"
                   }
             ],
-            destination: "/categories/types/roblox/",
+            destination: "/categories/types/roblox",
             permanent: true
       },
       {
@@ -928,7 +928,7 @@ const nextConfig: NextConfig = {
                         value: "rpg"
                   }
             ],
-            destination: "/categories/types/rpg/",
+            destination: "/categories/types/rpg",
             permanent: true
       },
       {
@@ -940,7 +940,7 @@ const nextConfig: NextConfig = {
                         value: "season-pass"
                   }
             ],
-            destination: "/categories/types/season-pass/",
+            destination: "/categories/types/season-pass",
             permanent: true
       },
       {
@@ -952,7 +952,7 @@ const nextConfig: NextConfig = {
                         value: "simulator"
                   }
             ],
-            destination: "/categories/types/simulator/",
+            destination: "/categories/types/simulator",
             permanent: true
       },
       {
@@ -964,7 +964,7 @@ const nextConfig: NextConfig = {
                         value: "sports"
                   }
             ],
-            destination: "/categories/types/sports/",
+            destination: "/categories/types/sports",
             permanent: true
       },
       {
@@ -976,7 +976,7 @@ const nextConfig: NextConfig = {
                         value: "stealth"
                   }
             ],
-            destination: "/categories/types/stealth/",
+            destination: "/categories/types/stealth",
             permanent: true
       },
       {
@@ -988,7 +988,7 @@ const nextConfig: NextConfig = {
                         value: "steam-category"
                   }
             ],
-            destination: "/categories/types/steam/",
+            destination: "/categories/types/steam",
             permanent: true
       },
       {
@@ -1000,7 +1000,7 @@ const nextConfig: NextConfig = {
                         value: "story-based-dlc-s"
                   }
             ],
-            destination: "/categories/types/story-based-dlc/",
+            destination: "/categories/types/story-based-dlc",
             permanent: true
       },
       {
@@ -1012,7 +1012,7 @@ const nextConfig: NextConfig = {
                         value: "strategy"
                   }
             ],
-            destination: "/categories/types/strategy/",
+            destination: "/categories/types/strategy",
             permanent: true
       },
       {
@@ -1024,7 +1024,7 @@ const nextConfig: NextConfig = {
                         value: "the-real-steam-bangers"
                   }
             ],
-            destination: "/categories/types/the-real-steam-bangers/",
+            destination: "/categories/types/the-real-steam-bangers",
             permanent: true
       },
       {
@@ -1036,7 +1036,7 @@ const nextConfig: NextConfig = {
                         value: "travel"
                   }
             ],
-            destination: "/categories/types/travel/",
+            destination: "/categories/types/travel",
             permanent: true
       },
       {
@@ -1048,7 +1048,7 @@ const nextConfig: NextConfig = {
                         value: "diablo-4"
                   }
             ],
-            destination: "/categories/types/diablo-4/",
+            destination: "/categories/types/diablo-4",
             permanent: true
       },
       {
@@ -1060,7 +1060,7 @@ const nextConfig: NextConfig = {
                         value: "fighting"
                   }
             ],
-            destination: "/categories/types/fighting/",
+            destination: "/categories/types/fighting",
             permanent: true
       },
       {
@@ -1072,7 +1072,7 @@ const nextConfig: NextConfig = {
                         value: "gift-me-crypto"
                   }
             ],
-            destination: "/categories/types/gift-me-crypto/",
+            destination: "/categories/types/gift-me-crypto",
             permanent: true
       },
       {
@@ -1084,7 +1084,7 @@ const nextConfig: NextConfig = {
                         value: "meetup-2019"
                   }
             ],
-            destination: "/categories/types/meetup-2019/",
+            destination: "/categories/types/meetup-2019",
             permanent: true
       },
       {
@@ -1096,7 +1096,7 @@ const nextConfig: NextConfig = {
                         value: "other-randoms"
                   }
             ],
-            destination: "/categories/types/other-randoms/",
+            destination: "/categories/types/other-randoms",
             permanent: true
       },
       {
@@ -1108,7 +1108,7 @@ const nextConfig: NextConfig = {
                         value: "random-classics"
                   }
             ],
-            destination: "/categories/types/random-classics/",
+            destination: "/categories/types/random-classics",
             permanent: true
       },
       {
@@ -1120,7 +1120,7 @@ const nextConfig: NextConfig = {
                         value: "random-try-to-get"
                   }
             ],
-            destination: "/categories/types/random-try-to-get/",
+            destination: "/categories/types/random-try-to-get",
             permanent: true
       },
       {
@@ -1132,7 +1132,7 @@ const nextConfig: NextConfig = {
                         value: "riot-points-lol"
                   }
             ],
-            destination: "/categories/types/riot-points-lol/",
+            destination: "/categories/types/riot-points-lol",
             permanent: true
       },
       {
@@ -1144,7 +1144,7 @@ const nextConfig: NextConfig = {
                         value: "windows-11"
                   }
             ],
-            destination: "/categories/types/windows-11/",
+            destination: "/categories/types/windows-11",
             permanent: true
       },
       {
@@ -1156,7 +1156,7 @@ const nextConfig: NextConfig = {
                         value: "adidas-category"
                   }
             ],
-            destination: "/categories/types/adidas/",
+            destination: "/categories/types/adidas",
             permanent: true
       },
       {
@@ -1168,7 +1168,7 @@ const nextConfig: NextConfig = {
                         value: "ai"
                   }
             ],
-            destination: "/categories/types/ai/",
+            destination: "/categories/types/ai",
             permanent: true
       },
       {
@@ -1180,7 +1180,7 @@ const nextConfig: NextConfig = {
                         value: "binance-category"
                   }
             ],
-            destination: "/categories/types/binance/",
+            destination: "/categories/types/binance",
             permanent: true
       },
       {
@@ -1192,7 +1192,7 @@ const nextConfig: NextConfig = {
                         value: "gift-cards"
                   }
             ],
-            destination: "/categories/types/gift-cards/",
+            destination: "/categories/types/gift-cards",
             permanent: true
       },
       {
@@ -1204,10 +1204,23 @@ const nextConfig: NextConfig = {
                         value: "health-beauty"
                   }
             ],
-            destination: "/categories/types/health-beauty/",
+            destination: "/categories/types/health-beauty",
             permanent: true
       }
 ];
+  },
+  async rewrites() {
+    // Public sitemap URLs, all served by src/app/sitemaps/[file]/route.ts.
+    return [
+      {
+        source: "/sitemap.xml",
+        destination: "/sitemaps/index.xml",
+      },
+      {
+        source: "/sitemap-:file(pages|categories|products-\\d+)\\.xml",
+        destination: "/sitemaps/:file.xml",
+      },
+    ];
   },
   images: {
     remotePatterns: [

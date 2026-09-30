@@ -92,6 +92,7 @@ export interface Product extends BaseEntity {
   faqItems: ProductFaqItem[];
   seoTitle?: string;
   seoDescription?: string;
+  indexable?: boolean;
 }
 
 export interface ProductG2AData {

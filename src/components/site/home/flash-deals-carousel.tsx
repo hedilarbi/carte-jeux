@@ -130,7 +130,10 @@ export function FlashDealCard({
           aria-label={`Voir le produit - ${product.name}`}
           className="absolute inset-0 z-50 cursor-pointer md:z-10"
           href={productHref}
-        />
+        >
+          {/* Anchor text for crawlers, which don't reliably read aria-label */}
+          <span className="sr-only">{product.name}</span>
+        </Link>
 
         <div className="relative h-full [grid-area:img]">
           <div className="relative aspect-[625/873] w-full overflow-hidden bg-white transition-[clip-path] duration-500 ease-out [clip-path:inset(0_0_0_0)] md:group-hover:[clip-path:inset(0_0_112px_0)]">

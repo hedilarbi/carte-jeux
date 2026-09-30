@@ -329,9 +329,24 @@ productSchema.index(
   },
 );
 
+// Default catalogue order (/produits, category pages, related products). Without it,
+// every listing page sorts the whole active catalogue in memory, which crawlers
+// walking the pagination turn into thousands of full sorts.
 productSchema.index(
-  { 
-    title: "text", 
+  { isActive: 1, isFeatured: -1, createdAt: -1, _id: -1 },
+  { name: "catalog_popular_sort" },
+);
+
+// Covered index for the XML sitemaps: filter, sort and projection are all read from
+// the index, so generating a sitemap never loads product documents.
+productSchema.index(
+  { isActive: 1, _id: 1, indexable: 1, slug: 1, updatedAt: 1 },
+  { name: "sitemap_products_covered" },
+);
+
+productSchema.index(
+  {
+    title: "text",
     slug: "text", 
     sku: "text", 
     shortDescription: "text" 

@@ -1,20 +1,23 @@
 import Image from "next/image";
 import Link from "next/link";
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import type { ReactNode } from "react";
+import type { MouseEvent, ReactNode } from "react";
 
 import {
     FlashDealCard,
     type FlashDealProduct,
 } from "@/components/site/home/flash-deals-carousel";
 import { ProductSortSelect } from "@/components/site/products/ProductSortSelect";
+import { buildPaginatedHref } from "@/lib/utils/catalog-links";
 import type { CatalogPageContent, CatalogProduct } from "@/types/catalog";
 
 interface MainSectionProps {
     content: CatalogPageContent;
     mobileFilters?: ReactNode;
+    // When set, page links are intercepted and loaded client-side (filtered listing).
     onPageChange?: (page: number) => void;
     onSortChange?: (sort: string) => void;
+    paginationBasePath: string;
 }
 
 function resolvePageTitle(content: CatalogPageContent) {
@@ -34,21 +37,28 @@ function resolvePageTitle(content: CatalogPageContent) {
     return "Produits gaming Tunisie - Cartes, jeux et recharges";
 }
 
-// buildPaginationHref removed
+// Besides the neighbours, link pages 10, 100 and 1000 away: with only
+// previous/next, page 800 of a category would sit ~800 clicks deep for crawlers.
+const PAGINATION_JUMPS = [10, 100, 1000];
 
 function getPaginationPages(currentPage: number, totalPages: number) {
     const pages = new Set([1, totalPages]);
 
-    for (let page = currentPage - 1; page <= currentPage + 1; page += 1) {
-        if (page > 0 && page <= totalPages) {
-            pages.add(page);
-        }
+    for (let page = currentPage - 2; page <= currentPage + 2; page += 1) {
+        pages.add(page);
     }
 
-    return Array.from(pages).sort((first, second) => first - second);
+    for (const jump of PAGINATION_JUMPS) {
+        pages.add(currentPage - jump);
+        pages.add(currentPage + jump);
+    }
+
+    return Array.from(pages)
+        .filter((page) => page > 0 && page <= totalPages)
+        .sort((first, second) => first - second);
 }
 
-export default function MainSection({ content, mobileFilters, onPageChange, onSortChange }: MainSectionProps) {
+export default function MainSection({ content, mobileFilters, onPageChange, onSortChange, paginationBasePath }: MainSectionProps) {
     const title = resolvePageTitle(content);
 
     return (
@@ -97,7 +107,11 @@ export default function MainSection({ content, mobileFilters, onPageChange, onSo
                             <ProductResultCard key={product.id} product={product} />
                         ))}
                     </div>
-                    <CatalogPagination content={content} onPageChange={onPageChange} />
+                    <CatalogPagination
+                        basePath={paginationBasePath}
+                        content={content}
+                        onPageChange={onPageChange}
+                    />
                 </>
             ) : (
                 <div className="mt-8 rounded-[18px] border border-brand-ice/18 bg-white/72 p-8 text-center text-brand-dark shadow-[0_12px_34px_rgba(1,45,105,0.08)]">
@@ -113,7 +127,15 @@ export default function MainSection({ content, mobileFilters, onPageChange, onSo
     );
 }
 
-function CatalogPagination({ content, onPageChange }: { content: CatalogPageContent, onPageChange?: (page: number) => void }) {
+function CatalogPagination({
+    basePath,
+    content,
+    onPageChange,
+}: {
+    basePath: string;
+    content: CatalogPageContent;
+    onPageChange?: (page: number) => void;
+}) {
     const { pagination } = content;
 
     if (pagination.totalPages <= 1) {
@@ -121,6 +143,20 @@ function CatalogPagination({ content, onPageChange }: { content: CatalogPageCont
     }
 
     const pages = getPaginationPages(pagination.page, pagination.totalPages);
+    // Real <a href> links, present in the server HTML, so crawlers and users
+    // without JavaScript can walk the whole catalogue.
+    const linkProps = (page: number) => ({
+        href: buildPaginatedHref(basePath, page),
+        onClick: onPageChange
+            ? (event: MouseEvent<HTMLAnchorElement>) => {
+                  event.preventDefault();
+                  onPageChange(page);
+              }
+            : undefined,
+        // Up to ~13 links per page: prefetching them all would render as many
+        // catalogue pages on the server for every visitor.
+        prefetch: false,
+    });
 
     return (
         <nav
@@ -128,14 +164,14 @@ function CatalogPagination({ content, onPageChange }: { content: CatalogPageCont
             className="mt-10 flex flex-wrap items-center justify-center gap-2"
         >
             {pagination.hasPreviousPage ? (
-                <button
+                <Link
+                    {...linkProps(pagination.page - 1)}
                     aria-label="Page précédente"
                     className="flex size-10 items-center justify-center rounded-lg border border-brand-navy/15 bg-white text-brand-navy transition hover:border-brand-lavender hover:bg-brand-lavender"
-                    onClick={() => onPageChange?.(pagination.page - 1)}
-                    type="button"
+                    rel="prev"
                 >
                     <ChevronLeft className="size-4" />
-                </button>
+                </Link>
             ) : (
                 <span
                     aria-disabled="true"
@@ -155,31 +191,30 @@ function CatalogPagination({ content, onPageChange }: { content: CatalogPageCont
                     {page === pagination.page ? (
                         <span
                             aria-current="page"
-                            className="flex size-10 items-center justify-center rounded-lg bg-brand-lavender text-sm font-black text-[#03030A]"
+                            className="flex h-10 min-w-10 items-center justify-center rounded-lg bg-brand-lavender px-2 text-sm font-black text-[#03030A]"
                         >
                             {page}
                         </span>
                     ) : (
-                        <button
-                            className="flex size-10 items-center justify-center rounded-lg border border-brand-navy/15 bg-white text-sm font-bold text-brand-navy transition hover:border-brand-lavender hover:bg-brand-lavender"
-                            onClick={() => onPageChange?.(page)}
-                            type="button"
+                        <Link
+                            {...linkProps(page)}
+                            className="flex h-10 min-w-10 items-center justify-center rounded-lg border border-brand-navy/15 bg-white px-2 text-sm font-bold text-brand-navy transition hover:border-brand-lavender hover:bg-brand-lavender"
                         >
                             {page}
-                        </button>
+                        </Link>
                     )}
                 </span>
             ))}
 
             {pagination.hasNextPage ? (
-                <button
+                <Link
+                    {...linkProps(pagination.page + 1)}
                     aria-label="Page suivante"
                     className="flex size-10 items-center justify-center rounded-lg border border-brand-navy/15 bg-white text-brand-navy transition hover:border-brand-lavender hover:bg-brand-lavender"
-                    onClick={() => onPageChange?.(pagination.page + 1)}
-                    type="button"
+                    rel="next"
                 >
                     <ChevronRight className="size-4" />
-                </button>
+                </Link>
             ) : (
                 <span
                     aria-disabled="true"

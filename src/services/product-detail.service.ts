@@ -1,4 +1,5 @@
 import { serializeDocument } from "@/lib/utils/serialization";
+import { buildCategoryHref } from "@/lib/utils/catalog-links";
 import { formatProductPrice } from "@/lib/utils/pricing";
 import { listCategories } from "@/repositories/category.repository";
 import {
@@ -21,6 +22,11 @@ export interface ProductDetailRegion {
   label: string;
 }
 
+export interface ProductDetailBreadcrumb {
+  href: string;
+  label: string;
+}
+
 export interface ProductDetailRelatedProduct {
   id: string;
   image?: string;
@@ -33,6 +39,8 @@ export interface ProductDetailRelatedProduct {
 }
 
 export interface ProductDetailPageContent {
+  // Platform then product type: links the product back into the category tree.
+  breadcrumbs: ProductDetailBreadcrumb[];
   categories: ProductDetailCategory[];
   currency: string;
   description?: string;
@@ -42,6 +50,7 @@ export interface ProductDetailPageContent {
   gallery: string[];
   id: string;
   image?: string;
+  indexable: boolean;
   originalPrice?: string;
   rawOriginalPrice?: number;
   platform: ProductDetailCategory;
@@ -189,12 +198,19 @@ export const productDetailService = {
       .filter((relatedProduct) => relatedProduct._id !== product._id)
       .slice(0, 5)
       .map((relatedProduct) => toRelatedProduct(relatedProduct, categoryMap));
+    const breadcrumbs = [platform, productCategories[0]]
+      .filter((category): category is Category => Boolean(category))
+      .map((category) => ({
+        href: buildCategoryHref(category.slug, Boolean(category.isPlateforme)),
+        label: category.name,
+      }));
     const gallery = [
       product.image,
       ...product.gallery,
     ].filter((image): image is string => Boolean(image));
 
     return {
+      breadcrumbs,
       categories: productCategories.map(toDetailCategory),
       currency: product.currency,
       description: product.description,
@@ -204,6 +220,7 @@ export const productDetailService = {
       gallery,
       id: product._id,
       image: product.image,
+      indexable: product.indexable !== false,
       originalPrice:
         product.discountPercent > 0 && product.price > product.finalPrice
           ? formatProductPrice(product.price)

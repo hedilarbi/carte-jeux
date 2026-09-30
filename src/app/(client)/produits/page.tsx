@@ -2,7 +2,21 @@ import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 
 import CatalogClient from "@/components/site/products/CatalogClient";
+import { buildPaginatedHref, toAbsoluteUrl } from "@/lib/utils/catalog-links";
+import {
+  hasListingFilters,
+  type ListingSearchParams,
+  readListingPage,
+  withPageSuffix,
+} from "@/lib/utils/catalog-seo";
 import { catalogService } from "@/services/catalog.service";
+
+const PRODUCTS_PATH = "/produits";
+const PRODUCTS_TITLE = "Produits gaming Tunisie - Cartes, jeux et recharges";
+
+type ProductsPageProps = {
+  searchParams: Promise<ListingSearchParams>;
+};
 
 function readSearchParam(value: string | string[] | undefined) {
   return Array.isArray(value) ? value[0] : value;
@@ -10,48 +24,40 @@ function readSearchParam(value: string | string[] | undefined) {
 
 export async function generateMetadata({
   searchParams,
-}: {
-  searchParams: Promise<Record<string, string | string[] | undefined>>;
-}): Promise<Metadata> {
+}: ProductsPageProps): Promise<Metadata> {
   const params = await searchParams;
-  const hasOldFilters =
-    params.platform ||
-    params.type ||
-    params.region ||
-    params.search ||
-    params.page ||
-    params.limit;
-
-  if (hasOldFilters) {
-    return {
-      robots: {
-        index: false,
-        follow: true,
-      },
-      alternates: {
-        canonical: "https://playsdepot.com/produits",
-      },
-    };
-  }
+  const page = readListingPage(params) ?? 1;
 
   return {
+    title: withPageSuffix(PRODUCTS_TITLE, page),
+    // Every paginated page is self-canonical so crawlers keep following it down
+    // to the products it lists; only legacy filter URLs are kept out of the index.
     alternates: {
-      canonical: "https://playsdepot.com/produits",
+      canonical: toAbsoluteUrl(buildPaginatedHref(PRODUCTS_PATH, page)),
     },
+    ...(hasListingFilters(params)
+      ? {
+          robots: {
+            index: false,
+            follow: true,
+          },
+        }
+      : {}),
   };
 }
 
-export default async function ProductsPage({
-  searchParams,
-}: {
-  searchParams: Promise<Record<string, string | string[] | undefined>>;
-}) {
+export default async function ProductsPage({ searchParams }: ProductsPageProps) {
   const params = await searchParams;
+  const page = readListingPage(params);
+
+  if (page === null) {
+    notFound();
+  }
+
   const content = await catalogService.getProductsPageContent({
-    limit: readSearchParam(params.limit),
     max: readSearchParam(params.max),
     min: readSearchParam(params.min),
-    page: readSearchParam(params.page),
+    page: String(page),
     platform: params.platform,
     q: readSearchParam(params.q),
     region: params.region,
@@ -60,14 +66,17 @@ export default async function ProductsPage({
     type: params.type,
   });
 
-  const page = parseInt(readSearchParam(params.page) ?? "1", 10);
-  if (page > 1 && page > content.pagination.totalPages) {
+  if (page > content.pagination.totalPages) {
     notFound();
   }
 
   return (
     <main className="bg-brand-light text-brand-lilac">
-      <CatalogClient initialContent={content} />
+      <CatalogClient
+        basePath={PRODUCTS_PATH}
+        initialContent={content}
+        key={page}
+      />
     </main>
   );
 }

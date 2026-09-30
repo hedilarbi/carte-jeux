@@ -18,6 +18,7 @@ import {
 } from "@/services/product-detail.service";
 import { ProductPurchaseCard } from "@/components/site/product-purchase-card";
 import { ProductPrice } from "@/components/site/product-price";
+import { toAbsoluteUrl } from "@/lib/utils/catalog-links";
 
 type ProductPageProps = {
   params: Promise<{ slug: string }>;
@@ -43,7 +44,14 @@ export async function generateMetadata({
     `Achetez ${product.title} en Tunisie.`;
 
   return {
+    alternates: {
+      canonical: toAbsoluteUrl(`/produits/${product.slug}`),
+    },
     description,
+    robots: {
+      index: product.indexable,
+      follow: true,
+    },
     openGraph: {
       description,
       images: product.image ? [product.image] : undefined,
@@ -90,11 +98,30 @@ export default async function ProductPage({ params }: ProductPageProps) {
     },
   };
 
+  const breadcrumbMarkup = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      { href: "/", label: "Accueil" },
+      ...product.breadcrumbs,
+      { href: `/produits/${product.slug}`, label: product.title },
+    ].map((crumb, index) => ({
+      "@type": "ListItem",
+      position: index + 1,
+      name: crumb.label,
+      item: toAbsoluteUrl(crumb.href),
+    })),
+  };
+
   return (
     <main className="min-h-screen bg-[linear-gradient(90deg,#E3CDFF_0%,#D8E0FF_67.31%,#C9CAFF_100%)] text-[#00061E]">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(productMarkup) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbMarkup) }}
       />
       <ProductTopBlock product={product} />
       <ProductDetailsBlock product={product} />
@@ -122,6 +149,7 @@ function ProductTopBlock({ product }: { product: ProductDetailPageContent }) {
 
   return (
     <section className="mx-auto max-w-[1350px] px-6 py-10 md:py-14 lg:py-16">
+      <ProductBreadcrumb product={product} />
       <div className="grid gap-8 lg:grid-cols-[320px_minmax(0,1fr)_360px] lg:items-start">
         <div className="relative aspect-[625/873] overflow-hidden bg-white shadow-[0_4px_4px_#B1A3F5]">
           <Image
@@ -186,6 +214,29 @@ function ProductTopBlock({ product }: { product: ProductDetailPageContent }) {
         <PurchaseCard product={product} />
       </div>
     </section>
+  );
+}
+
+// Crawlable path from the product back to its platform and type pages.
+function ProductBreadcrumb({ product }: { product: ProductDetailPageContent }) {
+  const crumbs = [{ href: "/", label: "Accueil" }, ...product.breadcrumbs];
+
+  return (
+    <nav aria-label="Fil d'Ariane" className="mb-6">
+      <ol className="flex flex-wrap items-center gap-x-2 gap-y-1 font-mono text-[11px] font-bold uppercase text-[#012D69]/70">
+        {crumbs.map((crumb) => (
+          <li className="flex items-center gap-2" key={crumb.href}>
+            <Link className="transition hover:text-[#012D69]" href={crumb.href}>
+              {crumb.label}
+            </Link>
+            <span aria-hidden="true">/</span>
+          </li>
+        ))}
+        <li aria-current="page" className="min-w-0 truncate text-[#012D69]">
+          {product.title}
+        </li>
+      </ol>
+    </nav>
   );
 }
 
@@ -314,7 +365,9 @@ function RelatedProductCard({
         aria-label={`Voir le produit - ${product.title}`}
         className="absolute inset-0 z-10"
         href={`/produits/${product.slug}`}
-      />
+      >
+        <span className="sr-only">{product.title}</span>
+      </Link>
       <div className="relative aspect-[625/873]">
         <Image
           alt={product.title}

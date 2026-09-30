@@ -4,11 +4,24 @@ import type { Metadata } from "next";
 import CatalogClient from "@/components/site/products/CatalogClient";
 import { catalogService } from "@/services/catalog.service";
 import { connectToDatabase } from "@/lib/db/mongoose";
+import {
+  buildCategoryHref,
+  buildPaginatedHref,
+  normalizeCanonicalUrl,
+  toAbsoluteUrl,
+} from "@/lib/utils/catalog-links";
+import {
+  hasListingFilters,
+  type ListingSearchParams,
+  readListingPage,
+  withPageSuffix,
+} from "@/lib/utils/catalog-seo";
 import { CategoryModel } from "@/models/category.model";
 
 export async function generateCategoryMetadata(
   slug: string,
-  isPlateforme: boolean
+  isPlateforme: boolean,
+  params: ListingSearchParams,
 ): Promise<Metadata> {
   await connectToDatabase();
   const category = await CategoryModel.findOne({ slug, isPlateforme }).lean();
@@ -17,11 +30,19 @@ export async function generateCategoryMetadata(
     return {};
   }
 
-  const title = category.seoTitle || `${category.name} - PlayDepot`;
+  const page = readListingPage(params) ?? 1;
+  const path = buildCategoryHref(slug, isPlateforme);
+  const title = withPageSuffix(
+    category.seoTitle || `${category.name} - PlayDepot`,
+    page,
+  );
   const description = category.metaDescription || category.description;
+  // Paginated pages are self-canonical: canonicalising them to page 1 would make
+  // Google drop them and lose the path to the products they list.
   const canonical =
-    category.canonical ||
-    `https://playsdepot.com/categories/${isPlateforme ? "plateformes" : "types"}/${slug}/`;
+    page === 1 && category.canonical
+      ? normalizeCanonicalUrl(category.canonical)
+      : toAbsoluteUrl(buildPaginatedHref(path, page));
 
   return {
     title,
@@ -30,7 +51,7 @@ export async function generateCategoryMetadata(
       canonical,
     },
     robots: {
-      index: !!category.indexable,
+      index: !!category.indexable && !hasListingFilters(params),
       follow: true,
     },
   };
@@ -39,10 +60,18 @@ export async function generateCategoryMetadata(
 export default async function CategoryPageTemplate({
   slug,
   isPlateforme,
+  searchParams,
 }: {
   slug: string;
   isPlateforme: boolean;
+  searchParams: ListingSearchParams;
 }) {
+  const page = readListingPage(searchParams);
+
+  if (page === null) {
+    notFound();
+  }
+
   await connectToDatabase();
   const category = await CategoryModel.findOne({ slug, isPlateforme }).lean();
 
@@ -51,21 +80,26 @@ export default async function CategoryPageTemplate({
   }
 
   const content = await catalogService.getProductsPageContent({
-    limit: "12",
+    page: String(page),
     [isPlateforme ? "platform" : "type"]: slug,
   });
 
+  if (page > content.pagination.totalPages) {
+    notFound();
+  }
+
+  const path = buildCategoryHref(slug, isPlateforme);
   const faqMarkup = {
     "@context": "https://schema.org",
     "@type": "FAQPage",
-    "@id": `https://playsdepot.com/categories/${isPlateforme ? "plateformes" : "types"}/${slug}/#faq`,
+    "@id": `${toAbsoluteUrl(path)}#faq`,
     mainEntity: [], // In the future, parse intro or dedicated FAQ items
   };
 
   return (
     <main className="bg-brand-light text-brand-lilac min-h-screen">
-      {/* JSON-LD FAQ */}
-      {category.indexable && (
+      {/* JSON-LD FAQ — an FAQPage without questions is invalid structured data */}
+      {category.indexable && faqMarkup.mainEntity.length > 0 && (
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(faqMarkup) }}
@@ -77,7 +111,8 @@ export default async function CategoryPageTemplate({
         <h1 className="font-heading text-3xl font-black text-[#012D69]">
           {category.h1 || category.name}
         </h1>
-        {category.intro && (
+        {/* The intro only on page 1, so paginated pages don't duplicate it */}
+        {category.intro && page === 1 && (
           <p className="mt-4 text-sm text-[#012D69]/80 max-w-4xl leading-relaxed whitespace-pre-wrap">
             {category.intro}
           </p>
@@ -85,9 +120,11 @@ export default async function CategoryPageTemplate({
       </section>
 
       <CatalogClient
+        basePath={path}
         initialContent={content}
         categorySlug={slug}
         isPlateforme={isPlateforme}
+        key={page}
       />
     </main>
   );

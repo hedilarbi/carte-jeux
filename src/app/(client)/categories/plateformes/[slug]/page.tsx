@@ -2,21 +2,31 @@ import type { Metadata } from "next";
 import CategoryPageTemplate, {
   generateCategoryMetadata,
 } from "@/components/site/categories/CategoryPageTemplate";
+import type { ListingSearchParams } from "@/lib/utils/catalog-seo";
+
+type CategoryPageProps = {
+  params: Promise<{ slug: string }>;
+  searchParams: Promise<ListingSearchParams>;
+};
 
 export async function generateMetadata({
   params,
-}: {
-  params: Promise<{ slug: string }>;
-}): Promise<Metadata> {
+  searchParams,
+}: CategoryPageProps): Promise<Metadata> {
   const { slug } = await params;
-  return generateCategoryMetadata(slug, true);
+  return generateCategoryMetadata(slug, true, await searchParams);
 }
 
 export default async function PlateformeCategoryPage({
   params,
-}: {
-  params: Promise<{ slug: string }>;
-}) {
+  searchParams,
+}: CategoryPageProps) {
   const { slug } = await params;
-  return <CategoryPageTemplate slug={slug} isPlateforme={true} />;
+  return (
+    <CategoryPageTemplate
+      slug={slug}
+      isPlateforme={true}
+      searchParams={await searchParams}
+    />
+  );
 }

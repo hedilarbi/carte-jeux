@@ -14,6 +14,10 @@ import type {
 
 type CatalogQueryValue = string | string[] | undefined;
 
+// Listing page size for /produits and category pages (divisible by 2, 3 and 4
+// grid columns). 48 keeps the ~82k products within ~1,700 crawlable pages.
+export const CATALOG_PAGE_SIZE = 48;
+
 interface CatalogQueryInput {
   limit?: CatalogQueryValue;
   max?: CatalogQueryValue;
@@ -182,7 +186,7 @@ export const catalogService = {
     ];
     let productResult = await listProducts({
       page: normalizeQueryValue(input.page),
-      limit: normalizeQueryValue(input.limit),
+      limit: normalizeQueryValue(input.limit) ?? CATALOG_PAGE_SIZE,
       isActive: true,
       search: selected.search,
       categoryIds: selectedTypeCategories.map((category) => category._id),

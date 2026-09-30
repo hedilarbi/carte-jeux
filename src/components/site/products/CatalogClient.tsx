@@ -6,11 +6,40 @@ import MainSection from "./MainSection";
 import { MobileFilterDrawer } from "./mobile-filter-drawer";
 import type { CatalogPageContent, CatalogSelectedFilters } from "@/types/catalog";
 
+function isSameList(values: string[], expected: string[]) {
+  return (
+    values.length === expected.length &&
+    values.every((value) => expected.includes(value))
+  );
+}
+
+// True when the listing shows exactly what its URL renders server-side (no
+// client-side filter or sort), so pagination can use plain page links.
+function isUnfilteredSelection(
+  selected: CatalogSelectedFilters,
+  categorySlug?: string,
+  isPlateforme?: boolean,
+) {
+  const categorySlugs = categorySlug ? [categorySlug] : [];
+
+  return (
+    isSameList(selected.platforms, isPlateforme ? categorySlugs : []) &&
+    isSameList(selected.types, isPlateforme ? [] : categorySlugs) &&
+    selected.regions.length === 0 &&
+    !selected.search &&
+    !selected.min &&
+    !selected.max &&
+    selected.sort === "popular"
+  );
+}
+
 export default function CatalogClient({
+  basePath,
   initialContent,
   categorySlug,
   isPlateforme,
 }: {
+  basePath: string;
   initialContent: CatalogPageContent;
   categorySlug?: string;
   isPlateforme?: boolean;
@@ -82,6 +111,14 @@ export default function CatalogClient({
     fetchProducts(content.selected, page);
   };
 
+  // Pagination always renders crawlable links; they are only intercepted when a
+  // client-side filter is active, since the filtered listing has no URL.
+  const isUnfiltered = isUnfilteredSelection(
+    content.selected,
+    categorySlug,
+    isPlateforme,
+  );
+
   return (
     <div className={`mx-auto flex w-full max-w-[1350px] flex-col gap-8 px-6 py-10 lg:flex-row lg:items-start ${isLoading ? "opacity-60 pointer-events-none" : ""}`}>
       <FilterSection
@@ -94,7 +131,8 @@ export default function CatalogClient({
       />
       <MainSection
         content={content}
-        onPageChange={handlePageChange}
+        onPageChange={isUnfiltered ? undefined : handlePageChange}
+        paginationBasePath={basePath}
         onSortChange={(sort) =>
           handleFilterChange({ ...content.selected, sort })
         }

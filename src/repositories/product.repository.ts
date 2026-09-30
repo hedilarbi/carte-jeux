@@ -33,18 +33,20 @@ function resolveNumericFilter(value: number | string | null | undefined) {
     : undefined;
 }
 
+// `_id` is the final tie-breaker: bulk imports share the same `createdAt`, and
+// without a unique key a product could move between pages from one request to the next.
 function resolveProductSort(sort?: string | null): Record<string, SortOrder> {
   switch (sort) {
     case "price-asc":
-      return { finalPrice: 1, createdAt: -1 };
+      return { finalPrice: 1, createdAt: -1, _id: -1 };
     case "price-desc":
-      return { finalPrice: -1, createdAt: -1 };
+      return { finalPrice: -1, createdAt: -1, _id: -1 };
     case "new":
-      return { createdAt: -1 };
+      return { createdAt: -1, _id: -1 };
     case "popular":
-      return { isFeatured: -1, createdAt: -1 };
+      return { isFeatured: -1, createdAt: -1, _id: -1 };
     default:
-      return { createdAt: -1 };
+      return { createdAt: -1, _id: -1 };
   }
 }
 

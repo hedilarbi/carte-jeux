@@ -3,6 +3,10 @@
     {
       "path": "/api/cron/g2a-stock-sync",
       "schedule": "*/2 * * * *"
+    },
+    {
+      "path": "/api/cron/g2a-order-retry",
+      "schedule": "*/3 * * * *"
     }
   ]
 }
