@@ -11,7 +11,6 @@ import {
   listUsersForCsvExport,
   type UserListFilters,
   updateUserById,
-  upsertUserByEmail,
 } from "@/repositories/user.repository";
 import { assertObjectId } from "@/lib/utils/object-id";
 import type { AuthProvider, User, UserRole } from "@/types/entities";
@@ -170,38 +169,5 @@ export const userService = {
     });
 
     return serializeDocument<User>(created);
-  },
-
-  async ensureBootstrapAdmin() {
-    const email = "admin@gmail.com";
-    const existing = await getUserByEmail(email);
-    const nextUser = await upsertUserByEmail(email, {
-      firstName: "Admin",
-      lastName: "User",
-      email,
-      passwordHash: hashSync("123123", 12),
-      role: "admin",
-      isActive: true,
-    });
-
-    if (!nextUser) {
-      throw new AppError("Impossible d'initialiser l'utilisateur administrateur.", 500);
-    }
-
-    return {
-      alreadyExisted: Boolean(existing),
-      user: {
-        _id: String(nextUser._id),
-        firstName: nextUser.firstName,
-        lastName: nextUser.lastName,
-        email: nextUser.email,
-        role: nextUser.role,
-        isActive: nextUser.isActive,
-      },
-      credentials: {
-        email,
-        password: "123123",
-      },
-    };
   },
 };

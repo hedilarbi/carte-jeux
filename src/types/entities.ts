@@ -334,7 +334,7 @@ export interface AdminSession {
   userId?: string;
   email: string;
   role: "admin";
-  source: "cookie" | "header" | "dev-bypass";
+  source: "cookie" | "dev-bypass";
 }
 
 export interface CustomerSession {

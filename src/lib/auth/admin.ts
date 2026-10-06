@@ -1,4 +1,5 @@
 import { compare } from "bcryptjs";
+import { timingSafeEqual } from "node:crypto";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { SignJWT, jwtVerify } from "jose";
@@ -11,12 +12,25 @@ import { getUserByEmail } from "@/repositories/user.repository";
 import type { AdminSession } from "@/types/entities";
 
 export const ADMIN_SESSION_COOKIE = "admin_session";
-const ADMIN_ROLE_HEADER = "x-admin-role";
-const ADMIN_EMAIL_HEADER = "x-admin-email";
 const ADMIN_SESSION_DURATION = "7d";
 
 function getConfiguredSessionToken() {
   return process.env.ADMIN_SESSION_TOKEN?.trim();
+}
+
+function isConfiguredSessionToken(cookieValue: string | undefined) {
+  const configuredToken = getConfiguredSessionToken();
+
+  if (!configuredToken || !cookieValue) {
+    return false;
+  }
+
+  const expected = Buffer.from(configuredToken);
+  const received = Buffer.from(cookieValue);
+
+  return (
+    expected.length === received.length && timingSafeEqual(expected, received)
+  );
 }
 
 function getSessionSecret() {
@@ -55,10 +69,9 @@ export async function getAdminPageSession(): Promise<AdminSession | null> {
   }
 
   const cookieStore = await cookies();
-  const configuredToken = getConfiguredSessionToken();
   const cookieValue = cookieStore.get(ADMIN_SESSION_COOKIE)?.value;
 
-  if (configuredToken && cookieValue === configuredToken) {
+  if (isConfiguredSessionToken(cookieValue)) {
     return {
       userId: "static-token-admin",
       email: process.env.ADMIN_SESSION_EMAIL ?? "admin@eneba.local",
@@ -91,10 +104,9 @@ export async function getAdminApiSession(
     return createDevBypassSession();
   }
 
-  const configuredToken = getConfiguredSessionToken();
   const cookieValue = request.cookies.get(ADMIN_SESSION_COOKIE)?.value;
 
-  if (configuredToken && cookieValue === configuredToken) {
+  if (isConfiguredSessionToken(cookieValue)) {
     return {
       userId: "static-token-admin",
       email: process.env.ADMIN_SESSION_EMAIL ?? "admin@eneba.local",
@@ -109,18 +121,6 @@ export async function getAdminApiSession(
     if (session) {
       return session;
     }
-  }
-
-  const role = request.headers.get(ADMIN_ROLE_HEADER);
-  const email = request.headers.get(ADMIN_EMAIL_HEADER);
-
-  if (role === "admin" && email) {
-    return {
-      userId: "header-admin",
-      email,
-      role: "admin",
-      source: "header",
-    };
   }
 
   return null;
