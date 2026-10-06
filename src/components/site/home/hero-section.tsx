@@ -143,13 +143,13 @@ type SwipePoint = {
   y: number;
 };
 
-const heroSlides: HeroSlide[] = [
+const allHeroSlides: HeroSlide[] = [
   {
-    desktopImage: "/Baner FC271.jpg",
+    desktopImage: "/Baner FC27 2.jpg",
     href: "/produits?search=fc27",
     id: "fc-27",
     kind: "fc-27",
-    mobileImage: "/bg-fc27-mobile.jpg",
+    mobileImage: "/BG FC27 mobile 1.jpg",
   },
   {
     background: "/ai-slide-bg.png",
@@ -191,6 +191,13 @@ const heroSlides: HeroSlide[] = [
     kind: "ps-plus",
   },
 ];
+
+// Slides masqués : retirez l'identifiant de cette liste pour les réafficher.
+const hiddenHeroSlideIds = new Set(["examens-ete", "ps-plus-global"]);
+
+const heroSlides = allHeroSlides.filter(
+  (slide) => !hiddenHeroSlideIds.has(slide.id),
+);
 
 export function HeroSection() {
   const [activeSlideIndex, setActiveSlideIndex] = useState(0);
@@ -616,19 +623,12 @@ function AiSubscriptionsSlide({
 
 function Fc27Slide({ slide }: { slide: Fc27HeroSlide }) {
   const ctaClassName =
-    "inline-flex min-h-12 items-center justify-center rounded-[11px] bg-[linear-gradient(274.47deg,#B99CF1_-12.06%,#7FCCFF_110.42%)] px-8 text-center font-body text-sm font-black uppercase tracking-[0.04em] text-[#03030A] shadow-[0_10px_28px_rgba(185,156,241,0.35)] transition hover:-translate-y-0.5 hover:shadow-[0_12px_32px_rgba(127,204,255,0.48)] lg:min-h-14 lg:text-base";
-
-  const platforms = [
-    { alt: "PlayStation 5", height: 183, src: "/ps5.png", width: 326 },
-    { alt: "Xbox", height: 128, src: "/xbox-logo.png", width: 307 },
-    { alt: "Nintendo Switch", height: 134, src: "/nintendo.png", width: 291 },
-    { alt: "PC", height: 149, src: "/pc.png", width: 185 },
-  ];
+    "inline-flex min-h-12 items-center justify-center whitespace-nowrap rounded-[11px] bg-[linear-gradient(274.47deg,#B99CF1_-12.06%,#7FCCFF_110.42%)] px-8 text-center font-body text-sm font-black uppercase tracking-[0.04em] text-[#03030A] shadow-[0_10px_28px_rgba(185,156,241,0.35)] transition hover:-translate-y-0.5 hover:shadow-[0_12px_32px_rgba(127,204,255,0.48)] lg:min-h-14 lg:text-base";
 
   return (
     <>
       <Link
-        aria-label="Commander EA Sports FC27 maintenant"
+        aria-label="Acheter EA Sports FC27 maintenant"
         className="relative block h-full bg-black md:hidden"
         href={slide.href}
       >
@@ -640,8 +640,10 @@ function Fc27Slide({ slide }: { slide: Fc27HeroSlide }) {
           sizes="100vw"
           src={slide.mobileImage}
         />
-        <span className={`${ctaClassName} absolute bottom-[100px] left-1/2 z-20 -translate-x-1/2 whitespace-nowrap`}>
-          Commander maintenant
+        <span
+          className={`${ctaClassName} absolute bottom-[100px] left-1/2 z-20 -translate-x-1/2`}
+        >
+          Achetez maintenant
         </span>
       </Link>
 
@@ -655,32 +657,12 @@ function Fc27Slide({ slide }: { slide: Fc27HeroSlide }) {
           src={slide.desktopImage}
         />
 
-        <div className="relative z-10 mx-auto flex h-full max-w-[1350px] items-center px-6 py-8">
-          <div className="flex w-[min(47vw,650px)] flex-col items-center lg:ml-6 xl:ml-10">
-
-            <h2 className="mt-40 max-w-[640px] text-center font-body text-[clamp(1.25rem,2vw,1.9rem)] font-black uppercase leading-[1.35] text-white drop-shadow-[0_4px_16px_rgba(0,0,0,0.9)]">
-              Dès maintenant : commande ta<br />clé d&apos;activation pour FC27
-            </h2>
-
-            <div className="mt-5 flex w-full max-w-[610px] items-center justify-center gap-2 lg:gap-6">
-              {platforms.map((platform) => (
-                <Image
-                  alt={platform.alt}
-                  className="h-9 w-auto max-w-[22%] object-contain drop-shadow-[0_3px_10px_rgba(0,0,0,0.8)] lg:h-14"
-                  height={platform.height}
-                  key={platform.src}
-                  sizes="140px"
-                  src={platform.src}
-                  width={platform.width}
-                />
-              ))}
-            </div>
-
-            <Link className={`${ctaClassName} mt-8 min-w-[360px]`} href={slide.href}>
-              Commander maintenant
-            </Link>
-          </div>
-        </div>
+        <Link
+          className={`${ctaClassName} absolute bottom-16 left-1/2 z-20 -translate-x-1/2 lg:bottom-20`}
+          href={slide.href}
+        >
+          Achetez maintenant
+        </Link>
       </div>
     </>
   );
