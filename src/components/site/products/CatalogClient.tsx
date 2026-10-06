@@ -38,11 +38,13 @@ export default function CatalogClient({
   initialContent,
   categorySlug,
   isPlateforme,
+  titleAs,
 }: {
   basePath: string;
   initialContent: CatalogPageContent;
   categorySlug?: string;
   isPlateforme?: boolean;
+  titleAs?: "h1" | "p";
 }) {
   const [content, setContent] = useState<CatalogPageContent>(initialContent);
   const [isLoading, setIsLoading] = useState(false);
@@ -131,6 +133,7 @@ export default function CatalogClient({
       />
       <MainSection
         content={content}
+        titleAs={titleAs}
         onPageChange={isUnfiltered ? undefined : handlePageChange}
         paginationBasePath={basePath}
         onSortChange={(sort) =>

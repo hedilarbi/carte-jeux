@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 
+import CategorySeoContent from "@/components/site/categories/category-seo-content";
 import CatalogClient from "@/components/site/products/CatalogClient";
 import { catalogService } from "@/services/catalog.service";
 import { connectToDatabase } from "@/lib/db/mongoose";
@@ -16,7 +17,11 @@ import {
   readListingPage,
   withPageSuffix,
 } from "@/lib/utils/catalog-seo";
-import { CategoryModel } from "@/models/category.model";
+import {
+  CategoryModel,
+  type CategoryFaqItem,
+  type CategorySeoSection,
+} from "@/models/category.model";
 
 export async function generateCategoryMetadata(
   slug: string,
@@ -32,10 +37,14 @@ export async function generateCategoryMetadata(
 
   const page = readListingPage(params) ?? 1;
   const path = buildCategoryHref(slug, isPlateforme);
-  const title = withPageSuffix(
-    category.seoTitle || `${category.name} - PlayDepot`,
-    page,
-  );
+  // `absolute`: the stored titles already carry the brand, the root layout
+  // template would append it a second time.
+  const title = {
+    absolute: withPageSuffix(
+      category.seoTitle || `${category.name} - PlayDepot`,
+      page,
+    ),
+  };
   const description = category.metaDescription || category.description;
   // Paginated pages are self-canonical: canonicalising them to page 1 would make
   // Google drop them and lose the path to the products they list.
@@ -89,20 +98,33 @@ export default async function CategoryPageTemplate({
   }
 
   const path = buildCategoryHref(slug, isPlateforme);
+  // Sections and FAQ sit on page 1 only, so paginated pages don't duplicate them.
+  const sections: CategorySeoSection[] =
+    page === 1 ? (category.sections ?? []) : [];
+  const faq: CategoryFaqItem[] = page === 1 ? (category.faq ?? []) : [];
+  // The FAQPage markup mirrors the visible FAQ exactly (same questions, same answers).
   const faqMarkup = {
     "@context": "https://schema.org",
     "@type": "FAQPage",
     "@id": `${toAbsoluteUrl(path)}#faq`,
-    mainEntity: [], // In the future, parse intro or dedicated FAQ items
+    mainEntity: faq.map((item) => ({
+      "@type": "Question",
+      name: item.question,
+      acceptedAnswer: { "@type": "Answer", text: item.answer },
+    })),
   };
 
   return (
     <main className="bg-brand-light text-brand-lilac min-h-screen">
       {/* JSON-LD FAQ — an FAQPage without questions is invalid structured data */}
-      {category.indexable && faqMarkup.mainEntity.length > 0 && (
+      {category.indexable &&
+        !hasListingFilters(searchParams) &&
+        faqMarkup.mainEntity.length > 0 && (
         <script
           type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(faqMarkup) }}
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify(faqMarkup).replace(/</g, "\\u003c"),
+          }}
         />
       )}
 
@@ -124,8 +146,11 @@ export default async function CategoryPageTemplate({
         initialContent={content}
         categorySlug={slug}
         isPlateforme={isPlateforme}
+        titleAs="p"
         key={page}
       />
+
+      <CategorySeoContent sections={sections} faq={faq} />
     </main>
   );
 }

@@ -1,5 +1,16 @@
 import { type HydratedDocument, model, models, Schema } from "mongoose";
 
+export interface CategorySeoSection {
+  heading: string;
+  // Plain text; internal links use the `[anchor](/path)` syntax.
+  paragraphs: string[];
+}
+
+export interface CategoryFaqItem {
+  question: string;
+  answer: string;
+}
+
 export interface CategoryRecord {
   name: string;
   slug: string;
@@ -14,11 +25,29 @@ export interface CategoryRecord {
   h1?: string;
   intro?: string;
   canonical?: string;
+  sections?: CategorySeoSection[];
+  faq?: CategoryFaqItem[];
   createdAt: Date;
   updatedAt: Date;
 }
 
 export type CategoryDocument = HydratedDocument<CategoryRecord>;
+
+const seoSectionSchema = new Schema<CategorySeoSection>(
+  {
+    heading: { type: String, required: true, trim: true, maxlength: 160 },
+    paragraphs: { type: [{ type: String, trim: true, maxlength: 3000 }], default: [] },
+  },
+  { _id: false },
+);
+
+const faqItemSchema = new Schema<CategoryFaqItem>(
+  {
+    question: { type: String, required: true, trim: true, maxlength: 300 },
+    answer: { type: String, required: true, trim: true, maxlength: 2000 },
+  },
+  { _id: false },
+);
 
 const categorySchema = new Schema<CategoryRecord>(
   {
@@ -91,6 +120,14 @@ const categorySchema = new Schema<CategoryRecord>(
       type: String,
       trim: true,
       maxlength: 500,
+    },
+    sections: {
+      type: [seoSectionSchema],
+      default: undefined,
+    },
+    faq: {
+      type: [faqItemSchema],
+      default: undefined,
     },
   },
   {

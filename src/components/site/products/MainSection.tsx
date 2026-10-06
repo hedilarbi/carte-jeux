@@ -18,6 +18,8 @@ interface MainSectionProps {
     onPageChange?: (page: number) => void;
     onSortChange?: (sort: string) => void;
     paginationBasePath: string;
+    // Category pages render their own H1: the listing title must not be a second one.
+    titleAs?: "h1" | "p";
 }
 
 function resolvePageTitle(content: CatalogPageContent) {
@@ -58,7 +60,7 @@ function getPaginationPages(currentPage: number, totalPages: number) {
         .sort((first, second) => first - second);
 }
 
-export default function MainSection({ content, mobileFilters, onPageChange, onSortChange, paginationBasePath }: MainSectionProps) {
+export default function MainSection({ content, mobileFilters, onPageChange, onSortChange, paginationBasePath, titleAs: TitleTag = "h1" }: MainSectionProps) {
     const title = resolvePageTitle(content);
 
     return (
@@ -79,9 +81,9 @@ export default function MainSection({ content, mobileFilters, onPageChange, onSo
             </Link>
 
             <div className="mt-8">
-                <h1 className="font-heading text-lg font-black leading-tight text-brand-dark sm:text-3xl">
+                <TitleTag className="font-heading text-lg font-black leading-tight text-brand-dark sm:text-3xl">
                     {title}
-                </h1>
+                </TitleTag>
 
                 {mobileFilters}
 
