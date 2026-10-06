@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Plus } from "lucide-react";
+import { Pencil, Plus, Trash2 } from "lucide-react";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -35,13 +35,17 @@ interface AffiliateFormState {
   lastName: string;
   email: string;
   password: string;
+  isActive: boolean;
 }
+
+type SelectablePromoCode = PromoCode | AffiliatePromoCodeSummary;
 
 const defaultFormState: AffiliateFormState = {
   firstName: "",
   lastName: "",
   email: "",
   password: "",
+  isActive: true,
 };
 
 function formatPromoValue(promoCode: PromoCode | AffiliatePromoCodeSummary) {
@@ -59,9 +63,10 @@ export function AffiliatesManager({
   const [selectedPromoCodeIds, setSelectedPromoCodeIds] = useState<string[]>(
     [],
   );
-  const [availablePromoCodes, setAvailablePromoCodes] = useState<PromoCode[]>(
-    [],
-  );
+  const [availablePromoCodes, setAvailablePromoCodes] = useState<
+    SelectablePromoCode[]
+  >([]);
+  const [editingId, setEditingId] = useState<string | null>(null);
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [isLoadingPromoCodes, setIsLoadingPromoCodes] = useState(false);
   const [search, setSearch] = useState("");
@@ -83,6 +88,7 @@ export function AffiliatesManager({
   })();
 
   function resetForm() {
+    setEditingId(null);
     setForm(defaultFormState);
     setSelectedPromoCodeIds([]);
     setAvailablePromoCodes([]);
@@ -90,9 +96,24 @@ export function AffiliatesManager({
     setIsFormOpen(false);
   }
 
-  async function startCreate() {
-    setForm(defaultFormState);
-    setSelectedPromoCodeIds([]);
+  async function openForm(affiliate?: AdminAffiliateListItem) {
+    setEditingId(affiliate?._id ?? null);
+    setForm(
+      affiliate
+        ? {
+            firstName: affiliate.firstName,
+            lastName: affiliate.lastName,
+            email: affiliate.email,
+            password: "",
+            isActive: affiliate.isActive,
+          }
+        : defaultFormState,
+    );
+    setSelectedPromoCodeIds(
+      affiliate ? affiliate.promoCodes.map((promoCode) => promoCode._id) : [],
+    );
+    // Les codes déjà attribués à cet affilié restent proposés (et décochables).
+    setAvailablePromoCodes(affiliate?.promoCodes ?? []);
     setError(null);
     setIsFormOpen(true);
     setIsLoadingPromoCodes(true);
@@ -101,7 +122,10 @@ export function AffiliatesManager({
       const result = await fetchJson<PaginatedResult<PromoCode>>(
         "/api/admin/promo-codes?unassigned=true&limit=100",
       );
-      setAvailablePromoCodes(result.items);
+      setAvailablePromoCodes([
+        ...(affiliate?.promoCodes ?? []),
+        ...result.items,
+      ]);
     } catch (loadError) {
       setError(
         loadError instanceof Error
@@ -111,6 +135,14 @@ export function AffiliatesManager({
     } finally {
       setIsLoadingPromoCodes(false);
     }
+  }
+
+  function startCreate() {
+    return openForm();
+  }
+
+  function startEdit(affiliate: AdminAffiliateListItem) {
+    return openForm(affiliate);
   }
 
   function togglePromoCode(id: string) {
@@ -127,31 +159,76 @@ export function AffiliatesManager({
     setIsSubmitting(true);
 
     try {
-      const createdAffiliate = await fetchJson<AdminAffiliateListItem>(
-        "/api/admin/affiliates",
+      const savedAffiliate = await fetchJson<AdminAffiliateListItem>(
+        editingId
+          ? `/api/admin/affiliates/${editingId}`
+          : "/api/admin/affiliates",
         {
-          method: "POST",
+          method: editingId ? "PUT" : "POST",
           body: JSON.stringify({
             firstName: form.firstName,
             lastName: form.lastName,
             email: form.email,
             password: form.password,
             promoCodeIds: selectedPromoCodeIds,
+            ...(editingId ? { isActive: form.isActive } : {}),
           }),
         },
       );
 
-      setAffiliates((current) => [createdAffiliate, ...current]);
+      setAffiliates((current) =>
+        editingId
+          ? current.map((affiliate) =>
+              affiliate._id === editingId ? savedAffiliate : affiliate,
+            )
+          : [savedAffiliate, ...current],
+      );
       resetForm();
       router.refresh();
     } catch (submissionError) {
       setError(
         submissionError instanceof Error
           ? submissionError.message
-          : "Impossible de créer l'affilié.",
+          : editingId
+            ? "Impossible de modifier l'affilié."
+            : "Impossible de créer l'affilié.",
       );
     } finally {
       setIsSubmitting(false);
+    }
+  }
+
+  async function handleDelete(affiliate: AdminAffiliateListItem) {
+    const codesNote =
+      affiliate.promoCodes.length > 0
+        ? ` Ses ${affiliate.promoCodes.length} code(s) promo seront conservés et redeviendront disponibles.`
+        : "";
+
+    if (
+      !window.confirm(
+        `Supprimer le compte affilié de ${affiliate.firstName} ${affiliate.lastName} (${affiliate.email}) ? Cette action est définitive et coupe immédiatement son accès.${codesNote}`,
+      )
+    ) {
+      return;
+    }
+
+    setError(null);
+
+    try {
+      await fetchJson<{ success: boolean }>(
+        `/api/admin/affiliates/${affiliate._id}`,
+        { method: "DELETE" },
+      );
+      setAffiliates((current) =>
+        current.filter((item) => item._id !== affiliate._id),
+      );
+      router.refresh();
+    } catch (deleteError) {
+      setError(
+        deleteError instanceof Error
+          ? deleteError.message
+          : "Impossible de supprimer l'affilié.",
+      );
     }
   }
 
@@ -162,8 +239,8 @@ export function AffiliatesManager({
           <div>
             <CardTitle>Affiliés</CardTitle>
             <CardDescription className="mt-2">
-              Créez des comptes affiliés et attribuez-leur des codes promo
-              dédiés.
+              Créez, modifiez ou supprimez des comptes affiliés et gérez leurs
+              codes promo dédiés.
             </CardDescription>
           </div>
           <div className="flex w-full gap-3 lg:w-auto">
@@ -193,6 +270,7 @@ export function AffiliatesManager({
                 <th className="px-6 py-4">Codes promo</th>
                 <th className="px-6 py-4">Créé le</th>
                 <th className="px-6 py-4">Statut</th>
+                <th className="px-6 py-4 text-right">Actions</th>
               </tr>
             </thead>
             <tbody>
@@ -234,13 +312,33 @@ export function AffiliatesManager({
                       {affiliate.isActive ? "Actif" : "Inactif"}
                     </Badge>
                   </td>
+                  <td className="px-6 py-4">
+                    <div className="flex justify-end gap-2">
+                      <Button
+                        aria-label="Modifier l'affilié"
+                        className="px-3"
+                        onClick={() => startEdit(affiliate)}
+                        variant="ghost"
+                      >
+                        <Pencil className="size-4" />
+                      </Button>
+                      <Button
+                        aria-label="Supprimer l'affilié"
+                        className="px-3 text-rose-600 hover:text-rose-700"
+                        onClick={() => handleDelete(affiliate)}
+                        variant="ghost"
+                      >
+                        <Trash2 className="size-4" />
+                      </Button>
+                    </div>
+                  </td>
                 </tr>
               ))}
               {filteredAffiliates.length === 0 ? (
                 <tr>
                   <td
                     className="px-6 py-10 text-center text-sm text-slate-500"
-                    colSpan={5}
+                    colSpan={6}
                   >
                     Aucun affilié ne correspond au filtre actuel.
                   </td>
@@ -252,10 +350,14 @@ export function AffiliatesManager({
       </Card>
 
       <Modal
-        description="Le mot de passe permettra à l'affilié de se connecter. Sélectionnez les codes promo à lui attribuer."
+        description={
+          editingId
+            ? "Modifiez les informations du compte. Laissez le mot de passe vide pour le conserver ; décochez un code promo pour le retirer à cet affilié."
+            : "Le mot de passe permettra à l'affilié de se connecter. Sélectionnez les codes promo à lui attribuer."
+        }
         isOpen={isFormOpen}
         onClose={resetForm}
-        title="Créer un affilié"
+        title={editingId ? "Modifier l'affilié" : "Créer un affilié"}
       >
         <form className="space-y-4" onSubmit={handleSubmit}>
           <div className="grid gap-4 md:grid-cols-2">
@@ -308,9 +410,10 @@ export function AffiliatesManager({
           </div>
           <div>
             <label className="mb-2 block text-sm font-medium text-slate-700">
-              Mot de passe
+              {editingId ? "Nouveau mot de passe (optionnel)" : "Mot de passe"}
             </label>
             <Input
+              autoComplete="new-password"
               minLength={8}
               onChange={(event) =>
                 setForm((current) => ({
@@ -318,11 +421,25 @@ export function AffiliatesManager({
                   password: event.target.value,
                 }))
               }
-              required
+              required={!editingId}
               type="password"
               value={form.password}
             />
           </div>
+          {editingId ? (
+            <label className="flex cursor-pointer items-center gap-2 text-sm font-medium text-slate-700">
+              <Checkbox
+                checked={form.isActive}
+                onChange={() =>
+                  setForm((current) => ({
+                    ...current,
+                    isActive: !current.isActive,
+                  }))
+                }
+              />
+              Compte actif (un compte inactif ne peut plus se connecter)
+            </label>
+          ) : null}
           <div>
             <label className="mb-2 block text-sm font-medium text-slate-700">
               Codes promo à attribuer
@@ -366,7 +483,13 @@ export function AffiliatesManager({
           ) : null}
           <div className="flex gap-3">
             <Button className="flex-1" disabled={isSubmitting} type="submit">
-              {isSubmitting ? "Création..." : "Créer l'affilié"}
+              {isSubmitting
+                ? editingId
+                  ? "Enregistrement..."
+                  : "Création..."
+                : editingId
+                  ? "Enregistrer"
+                  : "Créer l'affilié"}
             </Button>
             <Button
               className="flex-1"

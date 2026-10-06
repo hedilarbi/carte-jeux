@@ -142,6 +142,36 @@ export async function attachPromoCodesToAffiliate(
   ).exec();
 }
 
+export async function listPromoCodesByIds(ids: string[]) {
+  await connectToDatabase();
+
+  if (ids.length === 0) {
+    return [];
+  }
+
+  return PromoCodeModel.find({
+    _id: { $in: ids.map((id) => new Types.ObjectId(id)) },
+  })
+    .lean()
+    .exec();
+}
+
+// Les codes restent en base : ils redeviennent simplement non attribués.
+export async function detachPromoCodesFromAffiliate(
+  affiliateUserId: string,
+  keepPromoCodeIds: string[] = [],
+) {
+  await connectToDatabase();
+
+  return PromoCodeModel.updateMany(
+    {
+      affiliateUserId: new Types.ObjectId(affiliateUserId),
+      _id: { $nin: keepPromoCodeIds.map((id) => new Types.ObjectId(id)) },
+    },
+    { $unset: { affiliateUserId: "" } },
+  ).exec();
+}
+
 export async function existsPromoCode(code: string, excludeId?: string) {
   await connectToDatabase();
 
