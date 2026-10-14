@@ -6,6 +6,9 @@ import { ArrowLeft } from "lucide-react";
 import { GtaViPreorderForm } from "@/components/site/preorder/gta-vi-preorder-form";
 
 export const metadata: Metadata = {
+  alternates: {
+    canonical: "https://playsdepot.com/precommande-gta-vi",
+  },
   title: "Précommande GTA VI",
   description:
     "Inscrivez-vous pour être contacté dès l'ouverture des précommandes GTA VI.",

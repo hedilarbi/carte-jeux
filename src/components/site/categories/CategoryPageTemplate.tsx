@@ -15,6 +15,7 @@ import {
   hasListingFilters,
   type ListingSearchParams,
   readListingPage,
+  withPageDescription,
   withPageSuffix,
 } from "@/lib/utils/catalog-seo";
 import {
@@ -45,7 +46,12 @@ export async function generateCategoryMetadata(
       page,
     ),
   };
-  const description = category.metaDescription || category.description;
+  const description = withPageDescription(
+    category.metaDescription ||
+      category.description ||
+      `Découvrez les produits ${category.name} disponibles en Tunisie sur PlayDepot.`,
+    page,
+  );
   // Paginated pages are self-canonical: canonicalising them to page 1 would make
   // Google drop them and lose the path to the products they list.
   const canonical =
@@ -98,6 +104,7 @@ export default async function CategoryPageTemplate({
   }
 
   const path = buildCategoryHref(slug, isPlateforme);
+  const categoryName = category.h1 || category.name;
   // Sections and FAQ sit on page 1 only, so paginated pages don't duplicate them.
   const sections: CategorySeoSection[] =
     page === 1 ? (category.sections ?? []) : [];
@@ -131,12 +138,17 @@ export default async function CategoryPageTemplate({
       {/* Category Header */}
       <section className="mx-auto max-w-[1350px] px-6 pt-10">
         <h1 className="font-heading text-3xl font-black text-[#012D69]">
-          {category.h1 || category.name}
+          {categoryName}
         </h1>
         {/* The intro only on page 1, so paginated pages don't duplicate it */}
-        {category.intro && page === 1 && (
+        {page === 1 && (
           <p className="mt-4 text-sm text-[#012D69]/80 max-w-4xl leading-relaxed whitespace-pre-wrap">
-            {category.intro}
+            {category.intro?.trim() ||
+              `Découvrez ${content.totalItems} ${
+                content.totalItems > 1 ? "offres" : "offre"
+              } ${category.name} actuellement ${
+                content.totalItems > 1 ? "disponibles" : "disponible"
+              } sur PlayDepot. Vérifiez sur chaque fiche la plateforme, la région d’activation et le mode de livraison avant votre achat.`}
           </p>
         )}
       </section>
@@ -146,11 +158,26 @@ export default async function CategoryPageTemplate({
         initialContent={content}
         categorySlug={slug}
         isPlateforme={isPlateforme}
-        titleAs="p"
+        titleAs="h2"
         key={page}
       />
 
-      <CategorySeoContent sections={sections} faq={faq} />
+      <CategorySeoContent
+        sections={sections}
+        faq={faq}
+        fallback={
+          page === 1 && sections.length === 0
+            ? {
+                categoryName,
+                totalItems: content.totalItems,
+                products: content.products.slice(0, 3).map((product) => ({
+                  slug: product.slug,
+                  title: product.title,
+                })),
+              }
+            : undefined
+        }
+      />
     </main>
   );
 }

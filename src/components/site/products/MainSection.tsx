@@ -19,7 +19,7 @@ interface MainSectionProps {
     onSortChange?: (sort: string) => void;
     paginationBasePath: string;
     // Category pages render their own H1: the listing title must not be a second one.
-    titleAs?: "h1" | "p";
+    titleAs?: "h1" | "h2" | "p";
 }
 
 function resolvePageTitle(content: CatalogPageContent) {
@@ -104,6 +104,11 @@ export default function MainSection({ content, mobileFilters, onPageChange, onSo
 
             {content.products.length > 0 ? (
                 <>
+                    {content.pagination.page > 1 ? (
+                        <h2 className="mt-8 font-heading text-xl font-black text-brand-dark">
+                            Offres présentes sur cette page
+                        </h2>
+                    ) : null}
                     <div className="mt-8 grid grid-cols-2 gap-4 md:grid-cols-[repeat(auto-fill,minmax(240px,1fr))] md:gap-6">
                         {content.products.map((product) => (
                             <ProductResultCard key={product.id} product={product} />

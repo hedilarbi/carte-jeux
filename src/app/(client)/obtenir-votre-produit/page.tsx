@@ -1,9 +1,21 @@
+import type { Metadata } from "next";
 import Image from "next/image";
 import { Check, CheckCircle2 } from "lucide-react";
 
 import { formatProductPrice } from "@/lib/utils/pricing";
 import { orderService } from "@/services/order.service";
 import type { Order, OrderItem } from "@/types/entities";
+
+export const metadata: Metadata = {
+  alternates: {
+    canonical: "https://playsdepot.com/obtenir-votre-produit",
+  },
+  robots: {
+    index: false,
+    follow: true,
+  },
+  title: "Obtenir votre produit",
+};
 
 const steps = ["Panier", "Paiement", "Obtenir votre produit"] as const;
 

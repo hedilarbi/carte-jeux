@@ -1,6 +1,7 @@
 import { connectToDatabase } from "@/lib/db/mongoose";
 import {
   buildCategoryHref,
+  isLegacyCategoryRedirectSource,
   normalizeCanonicalUrl,
   toAbsoluteUrl,
 } from "@/lib/utils/catalog-links";
@@ -96,6 +97,15 @@ export const sitemapService = {
       .lean();
 
     const urls = categories.flatMap((category): SitemapUrl[] => {
+      if (
+        isLegacyCategoryRedirectSource(
+          category.slug,
+          Boolean(category.isPlateforme),
+        )
+      ) {
+        return [];
+      }
+
       const loc = toAbsoluteUrl(
         buildCategoryHref(category.slug, Boolean(category.isPlateforme)),
       );

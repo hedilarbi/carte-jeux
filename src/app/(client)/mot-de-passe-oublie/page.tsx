@@ -5,6 +5,13 @@ import Link from "next/link";
 import { AuthPanel } from "@/components/site/auth/auth-panel";
 
 export const metadata: Metadata = {
+  alternates: {
+    canonical: "https://playsdepot.com/mot-de-passe-oublie",
+  },
+  robots: {
+    index: false,
+    follow: true,
+  },
   title: "Mot de passe oublié",
 };
 

@@ -1,5 +1,7 @@
 import { serializeDocument } from "@/lib/utils/serialization";
 import { formatProductPrice } from "@/lib/utils/pricing";
+import { isLegacyCategoryRedirectSource } from "@/lib/utils/catalog-links";
+import { resolveProductImage } from "@/lib/utils/product-image";
 import {
   listCategories,
   listCategoriesBySlugs,
@@ -100,7 +102,7 @@ function toProductPreview(
     originalPrice,
     rawOriginalPrice: product.discountPercent > 0 && product.price > product.finalPrice ? product.price : undefined,
     currency: product.currency,
-    image: product.image,
+    image: resolveProductImage(product.image, product.slug),
     platformImage: platform?.image,
     platformSlug: platform?.slug,
     region: region?.name ?? "Global",
@@ -180,8 +182,17 @@ export const homeService = {
         .map((product) => toProductPreview(product, categoryMap, regionMap)),
       categories: (homeCategorySelection.isConfigured
         ? homeCategorySelection.categories
-        : categories.slice(0, 16)
-      ).map(toHomeCategory),
+        : categories
+      )
+        .filter(
+          (category) =>
+            !isLegacyCategoryRedirectSource(
+              category.slug,
+              Boolean(category.isPlateforme),
+            ),
+        )
+        .slice(0, 16)
+        .map(toHomeCategory),
       productSections,
     };
   },

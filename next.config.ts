@@ -8,6 +8,31 @@ const nextConfig: NextConfig = {
   async redirects() {
     return [
       {
+            source: "/categories/types/mobile-ios-android",
+            destination: "/categories/plateformes/jeu-mobile",
+            statusCode: 301
+      },
+      {
+            source: "/categories/types/amazon-category",
+            destination: "/categories/plateformes/amazon",
+            statusCode: 301
+      },
+      {
+            source: "/categories/types/netflix-category",
+            destination: "/categories/plateformes/netflix",
+            statusCode: 301
+      },
+      {
+            source: "/categories/types/adidas-category",
+            destination: "/categories/plateformes/adidas",
+            statusCode: 301
+      },
+      {
+            source: "/categories/types/binance-category",
+            destination: "/categories/plateformes/binance",
+            statusCode: 301
+      },
+      {
             source: "/produits",
             has: [
                   {
@@ -1223,6 +1248,10 @@ const nextConfig: NextConfig = {
     ];
   },
   images: {
+    // The storefront never renders raster assets wider than its 1920 px layout.
+    // Keeping Next's 2048/3840 defaults made crawlers fetch oversized variants
+    // for every product image, even for cards displayed at a few hundred pixels.
+    deviceSizes: [640, 750, 828, 1080, 1200, 1440, 1920],
     remotePatterns: [
       {
         protocol: "https",

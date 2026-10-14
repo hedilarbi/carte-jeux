@@ -520,12 +520,12 @@ function AiSubscriptionsSlide({
       <div className="mx-auto flex h-full max-w-[1920px] flex-col px-4 py-2 sm:px-7 md:px-10 md:py-6 xl:px-[4%]">
         <div className="my-auto w-full shrink-0">
           <div className="text-center">
-            <h2
+            <h1
               className="text-[1.5rem] leading-none tracking-[-0.035em] md:text-[2.7rem] xl:text-[3rem]"
               style={{ fontFamily: "var(--font-rubik), sans-serif", fontWeight: 900 }}
             >
               Abonnements <span className="text-[#ADA7F7]">IA Premium</span>
-            </h2>
+            </h1>
             <p className="mx-auto mt-1.5 max-w-[760px] text-[0.7rem] font-bold leading-[1.3] md:mt-3 md:text-base">
               Accédez aux meilleurs outils d&apos;Intelligence Artificielle
               <br className="hidden sm:block" /> en quelques clics seulement !
@@ -761,10 +761,10 @@ function ProductGridSlide({ slide }: { slide: ProductGridHeroSlide }) {
 
       <div className="mx-auto grid h-full max-h-full max-w-[1350px] items-center gap-5 overflow-hidden px-6 py-5 sm:gap-6 sm:py-6 lg:grid-cols-[minmax(0,0.95fr)_minmax(360px,0.8fr)] lg:gap-12 lg:py-8">
         <div className="mx-auto max-w-xl text-center lg:mx-0 lg:pl-12 xl:pl-16">
-          <h1 className="font-body text-2xl font-black leading-tight tracking-[0.03em] text-[#78DAFF] drop-shadow-[0_4px_18px_rgba(1,45,105,0.32)] sm:text-4xl lg:text-3xl">
+          <h2 className="font-body text-2xl font-black leading-tight tracking-[0.03em] text-[#78DAFF] drop-shadow-[0_4px_18px_rgba(1,45,105,0.32)] sm:text-4xl lg:text-3xl">
             EXAMENS : TERMINÉ{" "}
             <span>&gt;&gt;</span> MANETTE : EN MAIN
-          </h1>
+          </h2>
           <p className="mx-auto mt-3 max-w-lg text-base font-semibold leading-7 text-white sm:mt-4 sm:text-2xl sm:leading-9">
             Découvrez les jeux PlayStation à ne pas manquer cet été !
           </p>
@@ -944,11 +944,11 @@ function PsPlusSlide({ slide }: { slide: PsPlusHeroSlide }) {
 
       <div className="mx-auto grid h-full max-h-full max-w-[1350px] items-center gap-5 overflow-hidden px-6 py-5 sm:gap-6 sm:py-6 lg:grid-cols-[minmax(0,0.95fr)_minmax(360px,0.8fr)] lg:gap-12 lg:py-8">
         <div className="mx-auto max-w-xl text-center lg:mx-0 lg:pl-12 xl:pl-16">
-          <h1 className="font-body text-2xl font-black leading-tight tracking-[0.02em] text-white drop-shadow-[0_4px_18px_rgba(0,0,0,0.35)] sm:text-4xl lg:text-3xl">
+          <h2 className="font-body text-2xl font-black leading-tight tracking-[0.02em] text-white drop-shadow-[0_4px_18px_rgba(0,0,0,0.35)] sm:text-4xl lg:text-3xl">
             Abonnement Carte <br />
             PlayStations Plus{" "}
             <span className="text-[#FFD600]">Global</span>
-          </h1>
+          </h2>
           <p className="mx-auto mt-3 max-w-xl text-base font-semibold leading-7 text-white sm:mt-4 sm:text-2xl sm:leading-9">
             Permet d&apos;accéder à des fonctionnalités en ligne exclusives
             <br />

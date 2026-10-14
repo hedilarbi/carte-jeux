@@ -1,5 +1,7 @@
 import { serializeDocument } from "@/lib/utils/serialization";
 import { formatProductPrice } from "@/lib/utils/pricing";
+import { isLegacyCategoryRedirectSource } from "@/lib/utils/catalog-links";
+import { resolveProductImage } from "@/lib/utils/product-image";
 import { listCategories } from "@/repositories/category.repository";
 import { listProducts } from "@/repositories/product.repository";
 import { listAllRegions } from "@/repositories/region.repository";
@@ -15,8 +17,9 @@ import type {
 type CatalogQueryValue = string | string[] | undefined;
 
 // Listing page size for /produits and category pages (divisible by 2, 3 and 4
-// grid columns). 48 keeps the ~82k products within ~1,700 crawlable pages.
-export const CATALOG_PAGE_SIZE = 48;
+// grid columns). 24 materially reduces the initial HTML and hydration payload
+// on mobile while keeping enough products visible on every catalogue page.
+export const CATALOG_PAGE_SIZE = 24;
 
 interface CatalogQueryInput {
   limit?: CatalogQueryValue;
@@ -31,12 +34,12 @@ interface CatalogQueryInput {
   type?: CatalogQueryValue;
 }
 
-function readFirstQueryValue(value?: CatalogQueryValue) {
+function readFirstQueryValue(value?: CatalogQueryValue | number) {
   return Array.isArray(value) ? value[0] : value;
 }
 
 function normalizeQueryValue(value?: CatalogQueryValue | number) {
-  const firstValue = readFirstQueryValue(value as any);
+  const firstValue = readFirstQueryValue(value);
   if (firstValue == null) return undefined;
   
   const normalized = String(firstValue).trim();
@@ -107,7 +110,7 @@ function toCatalogProduct(
 
   return {
     id: product._id,
-    image: product.image,
+    image: resolveProductImage(product.image, product.slug),
     originalPrice,
     platform: platform?.name ?? "Global",
     platformImage: platform?.image,
@@ -230,11 +233,25 @@ export const catalogService = {
       },
       filters: {
         platforms: categories
-          .filter((category) => category.isPlateforme)
+          .filter(
+            (category) =>
+              category.isPlateforme &&
+              !isLegacyCategoryRedirectSource(
+                category.slug,
+                Boolean(category.isPlateforme),
+              ),
+          )
           .map(toCategoryFilter),
         regions: activeRegions.map(toRegionFilter),
         types: categories
-          .filter((category) => !category.isPlateforme)
+          .filter(
+            (category) =>
+              !category.isPlateforme &&
+              !isLegacyCategoryRedirectSource(
+                category.slug,
+                Boolean(category.isPlateforme),
+              ),
+          )
           .map(toCategoryFilter),
       },
       products: products.map((product) =>

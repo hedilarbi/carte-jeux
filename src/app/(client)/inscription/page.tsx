@@ -5,6 +5,13 @@ import { AuthPanel } from "@/components/site/auth/auth-panel";
 import { RegistrationOtpForm } from "@/components/site/auth/registration-otp-form";
 
 export const metadata: Metadata = {
+  alternates: {
+    canonical: "https://playsdepot.com/inscription",
+  },
+  robots: {
+    index: false,
+    follow: true,
+  },
   title: "Inscription",
 };
 

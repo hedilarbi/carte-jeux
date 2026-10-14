@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { cookies } from "next/headers";
@@ -11,6 +12,17 @@ import { formatProductPrice } from "@/lib/utils/pricing";
 import { ProductPrice } from "@/components/site/product-price";
 import { favoritesService } from "@/services/favorites.service";
 import type { FavoriteItem, FavoriteList } from "@/types/entities";
+
+export const metadata: Metadata = {
+  alternates: {
+    canonical: "https://playsdepot.com/favoris",
+  },
+  robots: {
+    index: false,
+    follow: true,
+  },
+  title: "Vos produits favoris",
+};
 
 async function getCurrentFavorites(): Promise<FavoriteList> {
   const [cookieStore, customerSession] = await Promise.all([

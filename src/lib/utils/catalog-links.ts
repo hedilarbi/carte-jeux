@@ -9,9 +9,32 @@ const PLATFORMS = new Set([
   "grab", "ikea", "sephora"
 ]);
 
+const LEGACY_CATEGORY_DESTINATIONS = new Map([
+  ["mobile-ios-android", "/categories/plateformes/jeu-mobile"],
+  ["amazon-category", "/categories/plateformes/amazon"],
+  ["netflix-category", "/categories/plateformes/netflix"],
+  ["adidas-category", "/categories/plateformes/adidas"],
+  ["binance-category", "/categories/plateformes/binance"],
+]);
+
+export function isLegacyCategoryRedirectSource(
+  slug: string,
+  isPlateforme: boolean,
+) {
+  return (
+    slug === "mobile-ios-android" ||
+    (!isPlateforme && LEGACY_CATEGORY_DESTINATIONS.has(slug))
+  );
+}
+
 // Category URLs have no trailing slash: Next.js answers "/x/" with a 308 to "/x",
 // so a trailing slash would turn every internal link and canonical into a redirect.
 export function buildCategoryHref(slug: string, isPlateforme: boolean) {
+  if (slug === "mobile-ios-android" || !isPlateforme) {
+    const destination = LEGACY_CATEGORY_DESTINATIONS.get(slug);
+    if (destination) return destination;
+  }
+
   return `/categories/${isPlateforme ? "plateformes" : "types"}/${slug}`;
 }
 

@@ -1,6 +1,10 @@
 import { serializeDocument } from "@/lib/utils/serialization";
 import { buildCategoryHref } from "@/lib/utils/catalog-links";
 import { formatProductPrice } from "@/lib/utils/pricing";
+import {
+  resolveProductGallery,
+  resolveProductImage,
+} from "@/lib/utils/product-image";
 import { listCategories } from "@/repositories/category.repository";
 import {
   getProductBySlug,
@@ -145,7 +149,7 @@ function toRelatedProduct(
 
   return {
     id: product._id,
-    image: product.image,
+    image: resolveProductImage(product.image, product.slug),
     platformImage: platform?.image,
     platformName: platform?.name ?? "Global",
     price: formatProductPrice(product.finalPrice),
@@ -198,16 +202,20 @@ export const productDetailService = {
       .filter((relatedProduct) => relatedProduct._id !== product._id)
       .slice(0, 5)
       .map((relatedProduct) => toRelatedProduct(relatedProduct, categoryMap));
+    const breadcrumbHrefs = new Set<string>();
     const breadcrumbs = [platform, productCategories[0]]
       .filter((category): category is Category => Boolean(category))
       .map((category) => ({
         href: buildCategoryHref(category.slug, Boolean(category.isPlateforme)),
         label: category.name,
-      }));
-    const gallery = [
-      product.image,
-      ...product.gallery,
-    ].filter((image): image is string => Boolean(image));
+      }))
+      .filter((breadcrumb) => {
+        if (breadcrumbHrefs.has(breadcrumb.href)) return false;
+        breadcrumbHrefs.add(breadcrumb.href);
+        return true;
+      });
+    const image = resolveProductImage(product.image, product.slug);
+    const gallery = resolveProductGallery(product.gallery, product.slug, image);
 
     return {
       breadcrumbs,
@@ -219,7 +227,7 @@ export const productDetailService = {
       faqItems: product.faqItems ?? [],
       gallery,
       id: product._id,
-      image: product.image,
+      image,
       indexable: product.indexable !== false,
       originalPrice:
         product.discountPercent > 0 && product.price > product.finalPrice

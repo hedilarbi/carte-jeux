@@ -44,7 +44,7 @@ export default function CatalogClient({
   initialContent: CatalogPageContent;
   categorySlug?: string;
   isPlateforme?: boolean;
-  titleAs?: "h1" | "p";
+  titleAs?: "h1" | "h2" | "p";
 }) {
   const [content, setContent] = useState<CatalogPageContent>(initialContent);
   const [isLoading, setIsLoading] = useState(false);
@@ -56,7 +56,7 @@ export default function CatalogClient({
     setIsLoading(true);
     try {
       // Build request body matching API
-      const body: any = {
+      const body = {
         platforms: newSelected.platforms,
         types: newSelected.types,
         regions: newSelected.regions,

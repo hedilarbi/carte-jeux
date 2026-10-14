@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { cookies } from "next/headers";
 import { Check } from "lucide-react";
 
@@ -7,6 +8,17 @@ import { CART_SESSION_COOKIE } from "@/lib/auth/cart-session";
 import { getCustomerPageSession } from "@/lib/auth/customer";
 import { cartService } from "@/services/cart.service";
 import { customerAuthService } from "@/services/customer-auth.service";
+
+export const metadata: Metadata = {
+  alternates: {
+    canonical: "https://playsdepot.com/checkout",
+  },
+  robots: {
+    index: false,
+    follow: true,
+  },
+  title: "Paiement",
+};
 
 const steps = ["Panier", "Paiement", "Obtenir votre produit"] as const;
 

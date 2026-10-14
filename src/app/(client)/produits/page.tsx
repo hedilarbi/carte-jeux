@@ -2,17 +2,21 @@ import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 
 import CatalogClient from "@/components/site/products/CatalogClient";
-import { buildPaginatedHref, toAbsoluteUrl } from "@/lib/utils/catalog-links";
+import { toAbsoluteUrl } from "@/lib/utils/catalog-links";
 import {
+  buildListingCanonicalHref,
   hasListingFilters,
   type ListingSearchParams,
   readListingPage,
+  withPageDescription,
   withPageSuffix,
 } from "@/lib/utils/catalog-seo";
 import { catalogService } from "@/services/catalog.service";
 
 const PRODUCTS_PATH = "/produits";
-const PRODUCTS_TITLE = "Produits gaming Tunisie - Cartes, jeux et recharges";
+const PRODUCTS_TITLE = "Produits gaming en Tunisie";
+const PRODUCTS_DESCRIPTION =
+  "Achetez vos jeux vidéo, cartes cadeaux et recharges gaming en Tunisie sur PlayDepot.";
 
 type ProductsPageProps = {
   searchParams: Promise<ListingSearchParams>;
@@ -29,11 +33,14 @@ export async function generateMetadata({
   const page = readListingPage(params) ?? 1;
 
   return {
-    title: withPageSuffix(PRODUCTS_TITLE, page),
-    // Every paginated page is self-canonical so crawlers keep following it down
-    // to the products it lists; only legacy filter URLs are kept out of the index.
+    title: {
+      absolute: `${withPageSuffix(PRODUCTS_TITLE, page)} | PlayDepot`,
+    },
+    description: withPageDescription(PRODUCTS_DESCRIPTION, page),
+    // Every listing URL is self-canonical. Legacy filters remain noindex,follow,
+    // while paginated clean listings stay indexable.
     alternates: {
-      canonical: toAbsoluteUrl(buildPaginatedHref(PRODUCTS_PATH, page)),
+      canonical: toAbsoluteUrl(buildListingCanonicalHref(PRODUCTS_PATH, params)),
     },
     ...(hasListingFilters(params)
       ? {

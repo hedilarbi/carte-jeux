@@ -15,6 +15,9 @@ import { homeService } from "@/services/home.service";
 import type { HomeProductSection, HomeProductSectionKey } from "@/types/home";
 
 export const metadata: Metadata = {
+  alternates: {
+    canonical: "https://playsdepot.com/",
+  },
   title: {
     absolute: "PlayDepot | Jeux Vidéo & Cartes Cadeaux en Dinar",
   },

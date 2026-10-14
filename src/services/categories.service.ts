@@ -1,5 +1,7 @@
 import { serializeDocument } from "@/lib/utils/serialization";
 import { formatProductPrice } from "@/lib/utils/pricing";
+import { isLegacyCategoryRedirectSource } from "@/lib/utils/catalog-links";
+import { resolveProductImage } from "@/lib/utils/product-image";
 import { listCategories } from "@/repositories/category.repository";
 import { listProducts } from "@/repositories/product.repository";
 import type { Category, Product } from "@/types/entities";
@@ -62,7 +64,7 @@ function toPageProduct(
 
   return {
     id: product._id,
-    image: product.image,
+    image: resolveProductImage(product.image, product.slug),
     platformImage: platform?.image,
     platformName: platform?.name ?? "Global",
     price: formatProductPrice(product.finalPrice),
@@ -94,11 +96,25 @@ export const categoriesService = {
 
     return {
       platforms: categories
-        .filter((category) => category.isPlateforme)
+        .filter(
+          (category) =>
+            category.isPlateforme &&
+            !isLegacyCategoryRedirectSource(
+              category.slug,
+              Boolean(category.isPlateforme),
+            ),
+        )
         .map(toPageCategory),
       products: products.map((product) => toPageProduct(product, categoryMap)),
       types: categories
-        .filter((category) => !category.isPlateforme)
+        .filter(
+          (category) =>
+            !category.isPlateforme &&
+            !isLegacyCategoryRedirectSource(
+              category.slug,
+              Boolean(category.isPlateforme),
+            ),
+        )
         .map(toPageCategory),
     };
   },

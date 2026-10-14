@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { cookies } from "next/headers";
@@ -15,6 +16,17 @@ import { formatProductPrice } from "@/lib/utils/pricing";
 import { ProductPrice } from "@/components/site/product-price";
 import { cartService } from "@/services/cart.service";
 import type { CartItem } from "@/types/entities";
+
+export const metadata: Metadata = {
+  alternates: {
+    canonical: "https://playsdepot.com/panier",
+  },
+  robots: {
+    index: false,
+    follow: true,
+  },
+  title: "Votre panier",
+};
 
 const inspiredProducts = [
   "Grand Theft Auto V (PSN 5) Edition & Great White Shark Card",

@@ -4,6 +4,13 @@ import Link from "next/link";
 import { AuthPanel } from "@/components/site/auth/auth-panel";
 
 export const metadata: Metadata = {
+  alternates: {
+    canonical: "https://playsdepot.com/connexion",
+  },
+  robots: {
+    index: false,
+    follow: true,
+  },
   title: "Connexion",
 };
 

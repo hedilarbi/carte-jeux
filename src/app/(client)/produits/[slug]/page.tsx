@@ -6,6 +6,7 @@ import {
   CheckCircle2,
   Globe,
   Star,
+  type LucideIcon,
 } from "lucide-react";
 
 import { ProductPlatformBadge } from "@/components/site/product-platform-badge";
@@ -19,6 +20,7 @@ import {
 import { ProductPurchaseCard } from "@/components/site/product-purchase-card";
 import { ProductPrice } from "@/components/site/product-price";
 import { toAbsoluteUrl } from "@/lib/utils/catalog-links";
+import { getProductHeadingStructure } from "@/lib/utils/product-heading-structure";
 
 type ProductPageProps = {
   params: Promise<{ slug: string }>;
@@ -39,9 +41,8 @@ export async function generateMetadata({
   const title = product.seoTitle || `${product.title} | PlaySDepot`;
   const description =
     product.seoDescription ||
-    product.description ||
     product.shortDescription ||
-    `Achetez ${product.title} en Tunisie.`;
+    `Achetez ${product.title} en Tunisie sur PlayDepot. Livraison numérique rapide et paiement sécurisé en dinars.`;
 
   return {
     alternates: {
@@ -245,7 +246,7 @@ function InfoPill({
   icon: Icon = CheckCircle2,
 }: {
   label: string;
-  icon?: any;
+  icon?: LucideIcon;
 }) {
   return (
     <span className="inline-flex min-h-9 items-center gap-2 rounded-full bg-white px-3 font-body text-sm font-semibold text-[#012D69] shadow-[0_4px_12px_rgba(1,45,105,0.08)]">
@@ -269,22 +270,54 @@ function ProductDetailsBlock({
     .map((paragraph) => paragraph.trim())
     .filter(Boolean);
   const gallery = product.gallery.length > 0 ? product.gallery : ["/jeu1.jpg"];
+  const headings = getProductHeadingStructure(product.title);
 
   return (
     <section className="mx-auto grid max-w-[1350px] gap-8 px-6 pb-12 lg:grid-cols-[2fr_1fr] lg:items-start">
-      <div className="bg-white/45 p-5 font-inter shadow-[0_4px_4px_#B1A3F5] backdrop-blur-sm">
-        <h2 className="font-heading text-lg font-bold text-[#012D69]">
-          Description
-        </h2>
-        <div className="mt-4 grid gap-4">
-          {descriptionParagraphs.map((paragraph) => (
-            <p
-              className="text-sm font-semibold leading-7 text-[#00061E]/75"
-              key={paragraph}
-            >
-              {paragraph}
-            </p>
-          ))}
+      <div className="grid gap-8">
+        <div className="bg-white/45 p-5 font-inter shadow-[0_4px_4px_#B1A3F5] backdrop-blur-sm">
+          <h2 className="font-heading text-lg font-bold text-[#012D69]">
+            {headings.presentation}
+          </h2>
+          <div className="mt-4 grid gap-4">
+            {descriptionParagraphs.map((paragraph) => (
+              <p
+                className="text-sm font-semibold leading-7 text-[#00061E]/75"
+                key={paragraph}
+              >
+                {paragraph}
+              </p>
+            ))}
+          </div>
+        </div>
+
+        <div className="bg-white/45 p-5 font-inter shadow-[0_4px_4px_#B1A3F5] backdrop-blur-sm">
+          <h2 className="font-heading text-lg font-bold text-[#012D69]">
+            {headings.compatibility}
+          </h2>
+          <div className="mt-5 grid gap-6 md:grid-cols-2">
+            <section>
+              <h3 className="font-heading text-base font-bold text-[#012D69]">
+                {headings.activation}
+              </h3>
+              <p className="mt-3 text-sm font-semibold leading-7 text-[#00061E]/75">
+                Après validation de la commande, suivez les instructions de
+                livraison et d’activation reçues par e-mail. Vérifiez le format
+                exact et la plateforme indiqués sur cette fiche avant de
+                commander.
+              </p>
+            </section>
+            <section>
+              <h3 className="font-heading text-base font-bold text-[#012D69]">
+                {headings.region}
+              </h3>
+              <p className="mt-3 text-sm font-semibold leading-7 text-[#00061E]/75">
+                Contrôlez la région du produit et assurez-vous que votre compte
+                est compatible. Une restriction régionale peut empêcher
+                l’activation sur un compte créé dans une autre zone.
+              </p>
+            </section>
+          </div>
         </div>
       </div>
 
@@ -437,6 +470,8 @@ function ProductFaqSection({
 }: {
   product: ProductDetailPageContent;
 }) {
+  const headings = getProductHeadingStructure(product.title);
+
   return (
     <FaqSection
       contactDescription="Envoyez-nous votre question sur ce produit. Nous vous répondrons par e-mail avec les informations de compatibilité, région ou disponibilité."
@@ -447,7 +482,7 @@ function ProductFaqSection({
       faqDescription="Les réponses utiles avant de finaliser votre achat."
       faqEyebrow="// FAQ produit"
       faqs={getProductFaqs(product)}
-      faqTitle={`Questions fréquentes - ${product.title}`}
+      faqTitle={headings.faq}
       id="product-faq"
     />
   );

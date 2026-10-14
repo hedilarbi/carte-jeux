@@ -2,6 +2,9 @@ import type { Metadata } from "next";
 import type { ReactNode } from "react";
 
 export const metadata: Metadata = {
+  alternates: {
+    canonical: "https://playsdepot.com/cgv",
+  },
   title: "Mentions légales | PlaysDepot",
   description:
     "Mentions légales de PlaysDepot, plateforme éditée par OPTIN DEVELOPPEMENT.",

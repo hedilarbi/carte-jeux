@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { connection } from "next/server";
@@ -10,6 +11,15 @@ import {
   type CategoriesPageProduct,
 } from "@/services/categories.service";
 
+export const metadata: Metadata = {
+  alternates: {
+    canonical: "https://playsdepot.com/categories",
+  },
+  description:
+    "Découvrez les plateformes gaming, types de jeux, cartes cadeaux et recharges disponibles en Tunisie sur PlayDepot.",
+  title: "Catégories gaming en Tunisie",
+};
+
 export default async function CategoriesPage() {
   await connection();
 
@@ -21,11 +31,13 @@ export default async function CategoriesPage() {
       <CategoryCardsBlock
         categories={content.platforms}
         eyebrow="// Plateformes"
+        titleAs="h1"
         title="Plateformes gaming"
       />
       <CategoryCardsBlock
         categories={content.types}
         eyebrow="// Types"
+        titleAs="h2"
         title="Types de produits"
       />
       <CategoryDescriptionBlock
@@ -58,10 +70,12 @@ function BannerBlock() {
 function CategoryCardsBlock({
   categories,
   eyebrow,
+  titleAs: TitleTag,
   title,
 }: {
   categories: CategoriesPageCategory[];
   eyebrow: string;
+  titleAs: "h1" | "h2";
   title: string;
 }) {
   if (categories.length === 0) {
@@ -74,9 +88,9 @@ function CategoryCardsBlock({
         <span className="font-mono text-[11px] font-bold uppercase text-[#012D69]/70">
           {eyebrow}
         </span>
-        <h1 className="mt-2 font-heading text-2xl font-bold leading-tight tracking-[0.04em] text-[#012D69]">
+        <TitleTag className="mt-2 font-heading text-2xl font-bold leading-tight tracking-[0.04em] text-[#012D69]">
           {title}
-        </h1>
+        </TitleTag>
       </div>
 
       <CategoryCardsGrid categories={categories} />
