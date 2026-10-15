@@ -32,6 +32,7 @@ import {
 } from "@/repositories/order.repository";
 import { listProductsByIds } from "@/repositories/product.repository";
 import { emailService } from "@/services/email.service";
+import { g2aFulfillmentService } from "@/services/g2a-fulfillment.service";
 import { promoCodeService } from "@/services/promo-code.service";
 import { userService } from "@/services/user.service";
 import type { Order, Product } from "@/types/entities";
@@ -375,6 +376,14 @@ export const orderService = {
 
     if (!updated) {
       throw new AppError("Commande introuvable.", 404);
+    }
+
+    if (verification.isPaid) {
+      void g2aFulfillmentService
+        .fulfillOrder(String(updated._id))
+        .catch((error) =>
+          console.error("[g2a] Échec du déclenchement de l'achat automatique.", error),
+        );
     }
 
     return {

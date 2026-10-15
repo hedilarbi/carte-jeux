@@ -57,7 +57,13 @@ export async function connectToDatabase() {
     });
   }
 
-  globalCache.conn = await globalCache.promise;
+  try {
+    globalCache.conn = await globalCache.promise;
+  } catch (error) {
+    // Don't cache a failed connection, or every later request on this instance fails too.
+    globalCache.promise = null;
+    throw error;
+  }
 
   return globalCache.conn;
 }
