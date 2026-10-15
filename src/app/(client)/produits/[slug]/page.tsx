@@ -42,7 +42,7 @@ export async function generateMetadata({
   const description =
     product.seoDescription ||
     product.shortDescription ||
-    `Achetez ${product.title} en Tunisie sur PlayDepot. Livraison numérique rapide et paiement sécurisé en dinars.`;
+    `Achetez ${product.title} en Tunisie sur PlaysDepot. Livraison numérique rapide et paiement sécurisé en dinars.`;
 
   return {
     alternates: {
@@ -94,7 +94,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
       itemCondition: "https://schema.org/NewCondition",
       seller: {
         "@type": "Organization",
-        name: "PlayDepot",
+        name: "PlaysDepot",
       },
     },
   };

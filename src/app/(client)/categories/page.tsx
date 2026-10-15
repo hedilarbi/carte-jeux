@@ -16,7 +16,7 @@ export const metadata: Metadata = {
     canonical: "https://playsdepot.com/categories",
   },
   description:
-    "Découvrez les plateformes gaming, types de jeux, cartes cadeaux et recharges disponibles en Tunisie sur PlayDepot.",
+    "Découvrez les plateformes gaming, types de jeux, cartes cadeaux et recharges disponibles en Tunisie sur PlaysDepot.",
   title: "Catégories gaming en Tunisie",
 };
 

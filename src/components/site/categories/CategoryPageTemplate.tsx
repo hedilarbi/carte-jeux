@@ -42,14 +42,14 @@ export async function generateCategoryMetadata(
   // template would append it a second time.
   const title = {
     absolute: withPageSuffix(
-      category.seoTitle || `${category.name} - PlayDepot`,
+      category.seoTitle || `${category.name} - PlaysDepot`,
       page,
     ),
   };
   const description = withPageDescription(
     category.metaDescription ||
       category.description ||
-      `Découvrez les produits ${category.name} disponibles en Tunisie sur PlayDepot.`,
+      `Découvrez les produits ${category.name} disponibles en Tunisie sur PlaysDepot.`,
     page,
   );
   // Paginated pages are self-canonical: canonicalising them to page 1 would make
@@ -148,7 +148,7 @@ export default async function CategoryPageTemplate({
                 content.totalItems > 1 ? "offres" : "offre"
               } ${category.name} actuellement ${
                 content.totalItems > 1 ? "disponibles" : "disponible"
-              } sur PlayDepot. Vérifiez sur chaque fiche la plateforme, la région d’activation et le mode de livraison avant votre achat.`}
+              } sur PlaysDepot. Vérifiez sur chaque fiche la plateforme, la région d’activation et le mode de livraison avant votre achat.`}
           </p>
         )}
       </section>

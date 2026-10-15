@@ -19,7 +19,7 @@ export const metadata: Metadata = {
     canonical: "https://playsdepot.com/",
   },
   title: {
-    absolute: "PlayDepot | Jeux Vidéo & Cartes Cadeaux en Dinar",
+    absolute: "PlaysDepot | Jeux Vidéo & Cartes Cadeaux en Dinar",
   },
   description:
     "La référence en Tunisie pour acheter des jeux vidéo, cartes PSN, Steam, Xbox, Nintendo et abonnements gaming. Paiement rapide en dinars.",

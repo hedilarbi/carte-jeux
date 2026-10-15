@@ -39,8 +39,8 @@ const rubik = Rubik({
 
 export const metadata: Metadata = {
   title: {
-    default: "PlayDepot | Jeux Vidéo & Cartes Cadeaux en Dinar",
-    template: "%s | PlayDepot",
+    default: "PlaysDepot | Jeux Vidéo & Cartes Cadeaux en Dinar",
+    template: "%s | PlaysDepot",
   },
   description:
     "La référence en Tunisie pour acheter des jeux vidéo, cartes PSN, Steam, Xbox, Nintendo et abonnements gaming. Paiement rapide en dinars.",

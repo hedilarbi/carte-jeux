@@ -98,7 +98,7 @@ export default function CategorySeoContent({
                 className="font-semibold text-[#012D69] underline underline-offset-2 hover:text-brand-navy"
                 href="/produits"
               >
-                l’ensemble du catalogue PlayDepot
+                l’ensemble du catalogue PlaysDepot
               </Link>
               .
             </p>

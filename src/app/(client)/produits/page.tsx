@@ -16,7 +16,7 @@ import { catalogService } from "@/services/catalog.service";
 const PRODUCTS_PATH = "/produits";
 const PRODUCTS_TITLE = "Produits gaming en Tunisie";
 const PRODUCTS_DESCRIPTION =
-  "Achetez vos jeux vidéo, cartes cadeaux et recharges gaming en Tunisie sur PlayDepot.";
+  "Achetez vos jeux vidéo, cartes cadeaux et recharges gaming en Tunisie sur PlaysDepot.";
 
 type ProductsPageProps = {
   searchParams: Promise<ListingSearchParams>;
@@ -34,7 +34,7 @@ export async function generateMetadata({
 
   return {
     title: {
-      absolute: `${withPageSuffix(PRODUCTS_TITLE, page)} | PlayDepot`,
+      absolute: `${withPageSuffix(PRODUCTS_TITLE, page)} | PlaysDepot`,
     },
     description: withPageDescription(PRODUCTS_DESCRIPTION, page),
     // Every listing URL is self-canonical. Legacy filters remain noindex,follow,
